@@ -1,11 +1,25 @@
 import React, { Fragment } from 'react';
-import { ListItemText, Typography } from '@material-ui/core';
+import {
+	ListItemText,
+	Typography,
+	ListItemSecondaryAction,
+	IconButton
+} from '@material-ui/core';
 import moment from 'moment';
 import { StyledListItem } from './styled-components';
 import { withRouter } from 'react-router-dom';
+import { Delete as DeleteIcon } from '@material-ui/icons';
+import { useDispatch } from 'react-redux';
+import * as notificationController from '../../../controllers/notification';
 
 const NotificationItem = withRouter((props) => {
-	const { page, subject, link, createdAt } = props.notification;
+	const dispatch = useDispatch();
+	const { page, subject, link, createdAt, notificationId } = props.notification;
+
+	const deleteClickHandler = () => {
+		dispatch(notificationController.clearNotification(notificationId));
+	};
+
 	return (
 		<StyledListItem
 			onClick={() => {
@@ -28,6 +42,11 @@ const NotificationItem = withRouter((props) => {
 					</Fragment>
 				}
 			/>
+			<ListItemSecondaryAction>
+				<IconButton edge='end' onClick={deleteClickHandler}>
+					<DeleteIcon fontSize='small' />
+				</IconButton>
+			</ListItemSecondaryAction>
 		</StyledListItem>
 	);
 });

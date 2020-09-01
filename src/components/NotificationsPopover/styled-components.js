@@ -17,10 +17,9 @@ export const StyledTitle = styled(Typography)`
 `;
 
 export const StyledList = styled(List)`
-	display: contents;
 	padding-top: 0;
 	max-height: 400px;
-	overflow-y: scroll;
+	overflow-y: auto;
 `;
 
 export const StyledClearAllIcon = styled(ClearAll)`

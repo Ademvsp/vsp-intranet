@@ -75,7 +75,7 @@ export const verifyAuth = () => {
 	};
 };
 
-const unsubscribeUserListener = () => {
+export const unsubscribeUserListener = () => {
 	if (userListener) {
 		userListener();
 	}
@@ -96,7 +96,7 @@ export const logoutAll = () => {
 			.functions()
 			.httpsCallable('revokeRefreshTokens');
 		await functionRef();
-		dispatch(logout);
+		dispatch(logout());
 	};
 };
 

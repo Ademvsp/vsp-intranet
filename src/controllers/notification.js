@@ -82,17 +82,41 @@ export const getNotifications = () => {
 	};
 };
 
+export const clearNotification = (notificationId) => {
+	return async (dispatch, _getState) => {
+		try {
+			await firebase
+				.firestore()
+				.collection('notifications')
+				.doc(notificationId)
+				.delete();
+		} catch (error) {
+			const message = new Message({
+				title: 'Notifications',
+				body: 'Notification failed to clear',
+				feedback: DIALOG
+			});
+			dispatch({
+				type: SET_MESSAGE,
+				message
+			});
+		}
+	};
+};
+
 export const clearNotifications = () => {
 	return async (dispatch, getState) => {
 		try {
 			const notifications = getState().notificationState.notifications;
+			const batch = firebase.firestore().batch();
 			for (const notification of notifications) {
-				firebase
+				const docRef = firebase
 					.firestore()
 					.collection('notifications')
-					.doc(notification.notificationId)
-					.delete();
+					.doc(notification.notificationId);
+				batch.delete(docRef);
 			}
+			await batch.commit();
 		} catch (error) {
 			const message = new Message({
 				title: 'Notifications',

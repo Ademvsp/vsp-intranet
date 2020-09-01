@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { useCallback, useEffect, useState, Fragment } from 'react';
 import {
 	StyledIconButton,
 	StyledToolbar,
@@ -24,13 +24,18 @@ const NotificationsPopover = (props) => {
 	const notifications = notificationState.notifications;
 	const [anchorEl, setAnchorEl] = useState(null);
 
-	const closePopoverHandler = () => {
+	const closePopoverHandler = useCallback(() => {
 		setAnchorEl(null);
-	};
+	}, []);
+	//Close the popover as soon as notifications are empty
+	useEffect(() => {
+		if (notifications.length === 0) {
+			closePopoverHandler();
+		}
+	}, [notifications, closePopoverHandler]);
 
 	const notificationsClearHandler = async () => {
 		dispatch(notificationController.clearNotifications());
-		closePopoverHandler();
 	};
 
 	return (

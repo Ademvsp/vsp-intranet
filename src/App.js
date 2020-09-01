@@ -28,6 +28,13 @@ const App = withRouter((props) => {
 			dispatch(notificationController.getNotifications());
 		}
 	}, [authState.authUser, notificationState.touched, dispatch]);
+	//Unsubscribe to any active listeners upon unmounting app
+	useEffect(() => {
+		return () => {
+			authController.unsubscribeUserListener();
+			notificationController.unsubscribeNotificationsListener();
+		};
+	}, []);
 
 	let children = <CircularProgress />;
 
