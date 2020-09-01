@@ -1,16 +1,15 @@
 import React from 'react';
-import { AppBar, IconButton, Badge } from '@material-ui/core';
+import { AppBar, IconButton } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import NavbarAvatar from '../NavbarAvatar';
 import {
 	StyledMenuIcon,
 	StyledTitle,
 	StyledToolbar,
-	StyledIconButton,
 	StyledDiv
 } from './styled-components';
 import { withRouter } from 'react-router-dom';
-import { Notifications as NotificationsIcon } from '@material-ui/icons';
+import NotificationsPopover from '../NotificationsPopover';
 
 export default withRouter((props) => {
 	const { authUser } = useSelector((state) => state.authState);
@@ -32,11 +31,7 @@ export default withRouter((props) => {
 				)}
 				{authUser && (
 					<StyledDiv>
-						<StyledIconButton edge='start' color='inherit'>
-							<Badge badgeContent={100} max={10} color='secondary'>
-								<NotificationsIcon />
-							</Badge>
-						</StyledIconButton>
+						<NotificationsPopover />
 						<NavbarAvatar authUser={authUser} />
 					</StyledDiv>
 				)}

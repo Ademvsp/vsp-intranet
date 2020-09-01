@@ -3,6 +3,9 @@ export const SET_AUTH_TOUCHED = 'SET_AUTH_TOUCHED';
 export const LOGOUT = 'LOGOUT';
 export const SET_MESSAGE = 'SET_MESSAGE';
 export const CLEAR_MESSAGE = 'CLEAR_MESSAGE';
+export const SET_NOTIFICACTIONS = 'SET_NOTIFICACTIONS';
+export const SET_NOTIFICACTIONS_TOUCHED = 'SET_NOTIFICACTIONS_TOUCHED';
+
 export const DIALOG = 'DIALOG';
 export const SNACKBAR = 'SNACKBAR';
 export const SILENT = 'SILENT';

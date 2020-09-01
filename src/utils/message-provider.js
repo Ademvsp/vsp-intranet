@@ -5,11 +5,10 @@ import {
 	DialogActions,
 	DialogContentText,
 	DialogTitle,
-	Button,
-	Snackbar
+	Button
 } from '@material-ui/core/';
 import { Alert, AlertTitle } from '@material-ui/lab';
-import { StyledDialogContent } from './styled-components';
+import { StyledDialogContent, StyledSnackbar } from './styled-components';
 import * as messageController from '../controllers/message';
 import { DIALOG, SILENT, SNACKBAR } from './constants';
 
@@ -19,7 +18,6 @@ const MessageHandler = (props) => {
 	const messageClearHandler = () => {
 		dispatch(messageController.clearMessage());
 	};
-
 	let messageComponent;
 	if (message) {
 		const { title, body, feedback, options } = message;
@@ -45,10 +43,12 @@ const MessageHandler = (props) => {
 				break;
 			case SNACKBAR:
 				messageComponent = (
-					<Snackbar
+					<StyledSnackbar
 						open={feedback === SNACKBAR}
-						autoHideDuration={5000}
+						autoHideDuration={options.duration}
 						onClose={messageClearHandler}
+						onClick={options.onClick ? options.onClick : null}
+						hover={options.onClick ? true : false}
 					>
 						<Alert
 							onClose={messageClearHandler}
@@ -59,7 +59,7 @@ const MessageHandler = (props) => {
 							<AlertTitle>{title}</AlertTitle>
 							{body}
 						</Alert>
-					</Snackbar>
+					</StyledSnackbar>
 				);
 				break;
 			case SILENT:

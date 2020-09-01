@@ -8,7 +8,8 @@ import {
 	CardHeader,
 	CardActions,
 	Avatar,
-	Button
+	Button,
+	Snackbar
 } from '@material-ui/core';
 import * as styles from './styles';
 import * as colors from './colors';
@@ -65,7 +66,16 @@ export const StyledAvatar = styled(({ darkMode, ...otherProps }) => (
 			? colors.default.secondary.light
 			: colors.default.secondary.dark};
 	margin: 10px;
-	&: hover {
+	&:hover {
 		cursor: pointer;
+	}
+`;
+
+// eslint-disable-next-line no-unused-vars
+export const StyledSnackbar = styled(({ hover, ...otherProps }) => (
+	<Snackbar {...otherProps} />
+))`
+	&:hover {
+		cursor: ${(props) => (props.hover ? 'pointer' : 'default')};
 	}
 `;

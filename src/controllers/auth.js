@@ -11,6 +11,7 @@ import {
 } from '../utils/constants';
 import User from '../models/user';
 import Message from '../models/message';
+import { unsubscribeNotificationsListener } from './notification';
 let userListener;
 
 export const verifyAuth = () => {
@@ -29,9 +30,7 @@ export const verifyAuth = () => {
 						.doc(firebaseAuthUser.uid)
 						.onSnapshot((snapshot) => {
 							if (snapshot.data().logout) {
-								dispatch({
-									type: LOGOUT
-								});
+								dispatch(logout());
 							} else {
 								const authUser = new User({
 									userId: snapshot.id,
@@ -49,6 +48,7 @@ export const verifyAuth = () => {
 										body: `Welcome back ${authUser.firstName}`,
 										feedback: SNACKBAR,
 										options: {
+											duration: 3000,
 											variant: SNACKBAR_VARIANTS.FILLED,
 											severity: SNACKBAR_SEVERITY.INFO
 										}
@@ -75,15 +75,18 @@ export const verifyAuth = () => {
 	};
 };
 
+const unsubscribeUserListener = () => {
+	if (userListener) {
+		userListener();
+	}
+};
+
 export const logout = () => {
 	return async (dispatch, _getState) => {
-		if (userListener) {
-			userListener();
-		}
+		unsubscribeUserListener();
+		unsubscribeNotificationsListener();
 		await firebase.auth().signOut();
-		dispatch({
-			type: LOGOUT
-		});
+		dispatch({ type: LOGOUT });
 	};
 };
 

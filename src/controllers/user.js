@@ -1,4 +1,4 @@
-import { SET_AUTH_USER, DIALOG, SET_MESSAGE } from '../utils/constants';
+import { DIALOG, SET_MESSAGE } from '../utils/constants';
 import firebase from '../utils/firebase';
 import Compressor from 'compressorjs';
 import Message from '../models/message';
@@ -12,13 +12,6 @@ export const updateSettings = (settings) => {
 				.collection('users')
 				.doc(userId)
 				.update({ settings });
-			dispatch({
-				type: SET_AUTH_USER,
-				authUser: {
-					...getState().authState.authUser,
-					settings
-				}
-			});
 		} catch (error) {
 			const message = new Message({
 				title: 'Update Settings',
@@ -76,13 +69,6 @@ export const uploadPicture = (file) => {
 				.collection('users')
 				.doc(authUser.userId)
 				.update({ profilePicture: downloadUrl });
-			dispatch({
-				type: SET_AUTH_USER,
-				authUser: {
-					...getState().authState.authUser,
-					profilePicture: downloadUrl
-				}
-			});
 		} catch (error) {
 			const message = new Message({
 				title: 'Profile Picture',
@@ -113,13 +99,6 @@ export const removePicture = () => {
 				.collection('users')
 				.doc(authUser.userId)
 				.update({ profilePicture: '' });
-			dispatch({
-				type: SET_AUTH_USER,
-				authUser: {
-					...getState().authState.authUser,
-					profilePicture: ''
-				}
-			});
 		} catch (error) {
 			const message = new Message({
 				title: 'Profile Picture',
