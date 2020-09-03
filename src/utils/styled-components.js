@@ -9,10 +9,25 @@ import {
 	CardActions,
 	Avatar,
 	Button,
-	Snackbar
+	Snackbar,
+	Container
 } from '@material-ui/core';
 import * as styles from './styles';
 import * as colors from './colors';
+
+export const StyledPageContainer = styled(Container)`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 50%;
+	padding: 0;
+	@media (max-width: 768px) {
+		width: 100%;
+	}
+	@media (min-width: 768px) and (max-width: 1024px) {
+		width: 75%;
+	}
+`;
 
 export const StyledButton = styled(Button)`
 	width: 100%;
@@ -38,14 +53,6 @@ export const StyledCardContent = styled(CardContent)`
 	flex-direction: column;
 `;
 
-export const StyledCardHeader = styled(CardHeader)`
-	text-align: center;
-	padding-bottom: 0;
-	& .MuiCardHeader-title {
-		font-size: xx-large;
-	}
-`;
-
 export const StyledCardActions = styled(CardActions)`
 	display: flex;
 	flex-direction: column;
@@ -65,7 +72,6 @@ export const StyledAvatar = styled(({ darkMode, ...otherProps }) => (
 		props.dark
 			? colors.default.secondary.light
 			: colors.default.secondary.dark};
-	margin: 10px;
 	&:hover {
 		cursor: pointer;
 	}

@@ -15,7 +15,7 @@ export default withRouter((props) => {
 	const { authUser } = useSelector((state) => state.authState);
 
 	return (
-		<AppBar position='static'>
+		<AppBar position='sticky'>
 			<StyledToolbar authUser={authUser}>
 				<StyledTitle variant='h4' onClick={() => props.history.push('/')}>
 					VSP Intranet

@@ -9,82 +9,92 @@ import {
 	SNACKBAR_SEVERITY,
 	SET_AUTH_TOUCHED
 } from '../utils/constants';
-import User from '../models/user';
+import AuthUser from '../models/auth-user';
 import Message from '../models/message';
 import { unsubscribeNotificationsListener } from './notification';
-let userListener;
+import { unsubscribeUsersListener } from './user';
+let authUserListener;
 
 export const verifyAuth = () => {
 	return async (dispatch, getState) => {
-		return await new Promise((resolve) => {
-			firebase.auth().onAuthStateChanged(async (firebaseAuthUser) => {
-				if (firebaseAuthUser) {
-					await firebase
-						.firestore()
-						.collection('users')
-						.doc(firebaseAuthUser.uid)
-						.update({ logout: false });
-					userListener = firebase
-						.firestore()
-						.collection('users')
-						.doc(firebaseAuthUser.uid)
-						.onSnapshot((snapshot) => {
-							if (snapshot.data().logout) {
-								dispatch(logout());
-							} else {
-								const authUser = new User({
-									userId: snapshot.id,
-									...snapshot.data()
-								});
-								const actions = [
-									{
-										type: SET_AUTH_USER,
-										authUser
-									}
-								];
-								if (!getState().authState.touched) {
-									const message = new Message({
-										title: 'Login Success',
-										body: `Welcome back ${authUser.firstName}`,
-										feedback: SNACKBAR,
-										options: {
-											duration: 3000,
-											variant: SNACKBAR_VARIANTS.FILLED,
-											severity: SNACKBAR_SEVERITY.INFO
-										}
-									});
-									actions.push(
-										{
-											type: SET_AUTH_TOUCHED
-										},
-										{
-											type: SET_MESSAGE,
-											message
-										}
-									);
+		firebase.auth().onAuthStateChanged(async (firebaseAuthUser) => {
+			if (firebaseAuthUser) {
+				await firebase
+					.firestore()
+					.collection('users')
+					.doc(firebaseAuthUser.uid)
+					.update({ logout: false });
+				authUserListener = firebase
+					.firestore()
+					.collection('users')
+					.doc(firebaseAuthUser.uid)
+					.onSnapshot((snapshot) => {
+						if (snapshot.data().logout) {
+							dispatch(logout());
+						} else {
+							const authUser = new AuthUser({
+								userId: snapshot.id,
+								active: snapshot.data().active,
+								admin: snapshot.data().admin,
+								authPhone: snapshot.data().authPhone,
+								email: snapshot.data().email,
+								firstName: snapshot.data().firstName,
+								lastName: snapshot.data().lastName,
+								location: snapshot.data().location,
+								logout: snapshot.data().logout,
+								manager: snapshot.data().manager,
+								phone: snapshot.data().phone,
+								profilePicture: snapshot.data().profilePicture,
+								settings: snapshot.data().settings,
+								title: snapshot.data().title,
+								workFromHome: snapshot.data().workFromHome
+							});
+							const actions = [
+								{
+									type: SET_AUTH_USER,
+									authUser
 								}
-								dispatch(actions);
-								resolve();
+							];
+							if (!getState().authState.touched) {
+								const message = new Message({
+									title: 'Login Success',
+									body: `Welcome back ${authUser.firstName}`,
+									feedback: SNACKBAR,
+									options: {
+										duration: 3000,
+										variant: SNACKBAR_VARIANTS.FILLED,
+										severity: SNACKBAR_SEVERITY.INFO
+									}
+								});
+								actions.push(
+									{
+										type: SET_AUTH_TOUCHED
+									},
+									{
+										type: SET_MESSAGE,
+										message
+									}
+								);
 							}
-						});
-				} else {
-					resolve();
-				}
-			});
+							dispatch(actions);
+						}
+					});
+			}
 		});
 	};
 };
 
-export const unsubscribeUserListener = () => {
-	if (userListener) {
-		userListener();
+export const unsubscribeAuthUserListener = () => {
+	if (authUserListener) {
+		authUserListener();
 	}
 };
 
 export const logout = () => {
 	return async (dispatch, _getState) => {
-		unsubscribeUserListener();
+		unsubscribeAuthUserListener();
 		unsubscribeNotificationsListener();
+		unsubscribeUsersListener();
 		await firebase.auth().signOut();
 		dispatch({ type: LOGOUT });
 	};

@@ -6,12 +6,14 @@ import ReduxThunk from 'redux-thunk';
 import authReducer from '../store/auth';
 import messageReducer from '../store/message';
 import notificationReducer from '../store/notification';
+import dataReducer from '../store/data';
 import { composeWithDevTools } from 'redux-devtools-extension';
 
 const rootReducer = combineReducers({
 	authState: authReducer,
 	messageState: messageReducer,
-	notificationState: notificationReducer
+	notificationState: notificationReducer,
+	dataState: dataReducer
 });
 
 const store = createStore(

@@ -1,7 +1,15 @@
-import { DIALOG, SET_MESSAGE } from '../utils/constants';
+import {
+	DIALOG,
+	SET_MESSAGE,
+	SET_USERS,
+	SILENT,
+	SET_USERS_TOUHED
+} from '../utils/constants';
 import firebase from '../utils/firebase';
 import Compressor from 'compressorjs';
 import Message from '../models/message';
+import User from '../models/user';
+let usersListener;
 
 export const updateSettings = (settings) => {
 	return async (dispatch, getState) => {
@@ -111,4 +119,64 @@ export const removePicture = () => {
 			});
 		}
 	};
+};
+
+export const getUsers = () => {
+	return async (dispatch, getState) => {
+		try {
+			usersListener = firebase
+				.firestore()
+				.collection('users')
+				.where('active', '==', true)
+				.onSnapshot((snapshot) => {
+					const touched = getState().dataState.usersTouched;
+					const actions = [];
+					if (!touched) {
+						actions.push({
+							type: SET_USERS_TOUHED
+						});
+					}
+					const users = snapshot.docs.map((doc) => {
+						const user = new User({
+							userId: doc.id,
+							firstName: doc.data().firstName,
+							lastName: doc.data().lastName,
+							location: doc.data().location,
+							phone: doc.data().phone,
+							profilePicture: doc.data().profilePicture,
+							settings: doc.data().settings,
+							title: doc.data().title
+						});
+						return user;
+					});
+					actions.push({
+						type: SET_USERS,
+						users
+					});
+					dispatch(actions);
+				});
+		} catch (error) {
+			const message = new Message({
+				title: 'User',
+				body: 'Users failed to retrieve',
+				feedback: SILENT
+			});
+			dispatch({
+				type: SET_MESSAGE,
+				message
+			});
+		}
+	};
+};
+
+export const getUser = async (userId) => {
+	return async (_dispatch, getState) => {
+		return getState().dataState.users.find((user) => user.userId === userId);
+	};
+};
+
+export const unsubscribeUsersListener = () => {
+	if (usersListener) {
+		usersListener();
+	}
 };

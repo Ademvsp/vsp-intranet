@@ -6,19 +6,20 @@ import AppContainer from './components/AppContainer';
 import { CircularProgress } from '@material-ui/core';
 import * as authController from './controllers/auth';
 import * as notificationController from './controllers/notification';
+import * as userController from './controllers/user';
 import Login from './pages/Login';
 import Account from './pages/Account';
+import NewsFeed from './pages/NewsFeed';
 
 const App = withRouter((props) => {
-	const [authLoading, setAuthLoading] = useState(true);
 	const dispatch = useDispatch();
 	const authState = useSelector((state) => state.authState);
 	const notificationState = useSelector((state) => state.notificationState);
+	const dataState = useSelector((state) => state.dataState);
 	//Check authentication token from firebase
 	useEffect(() => {
 		const verifyAuth = async () => {
 			await dispatch(authController.verifyAuth());
-			setAuthLoading(false);
 		};
 		verifyAuth();
 	}, [dispatch]);
@@ -28,29 +29,38 @@ const App = withRouter((props) => {
 			dispatch(notificationController.getNotifications());
 		}
 	}, [authState.authUser, notificationState.touched, dispatch]);
+	//Get app users after logged in
+	useEffect(() => {
+		if (authState.authUser && !dataState.usersTouched) {
+			dispatch(userController.getUsers());
+		}
+	}, [authState.authUser, dataState.usersTouched, dispatch]);
 	//Unsubscribe to any active listeners upon unmounting app
 	useEffect(() => {
 		return () => {
-			authController.unsubscribeUserListener();
+			authController.unsubscribeAuthUserListener();
 			notificationController.unsubscribeNotificationsListener();
+			userController.unsubscribeUsersListener();
 		};
 	}, []);
 
 	let children = <CircularProgress />;
 
-	if (!authLoading) {
-		children = (
-			<Switch>
-				<Route path='/login' component={Login} />
-				<Route path='/' component={Login} />
-			</Switch>
-		);
-
-		if (authState.authUser) {
+	if (authState.touched) {
+		if (!authState.authUser) {
+			children = (
+				<Switch>
+					<Route path='/login' component={Login} />
+					<Route path='/' component={Login} />
+				</Switch>
+			);
+		}
+		if (authState.authUser && dataState.users) {
 			children = (
 				<Switch>
 					<Route path='/account' component={Account} />
-					<Route path='/' component={Account} />
+					<Route path='/newsfeed' component={NewsFeed} />
+					<Route path='/' component={NewsFeed} />
 					<Redirect from='/login' to='/' />
 				</Switch>
 			);

@@ -9,6 +9,7 @@ import {
 	DIALOG
 } from '../utils/constants';
 import Message from '../models/message';
+import Notification from '../models/notification';
 let notificationsListener;
 
 export const getNotifications = () => {
@@ -66,10 +67,17 @@ export const getNotifications = () => {
 					} else {
 						actions.push({ type: SET_NOTIFICACTIONS_TOUCHED }); //First time loading, initial loading of all notifications
 					}
-					const notifications = snapshot.docs.map((doc) => ({
-						notificationId: doc.id,
-						...doc.data()
-					}));
+					//page, subject, link, createdAt, notificationId
+					//
+					const notifications = snapshot.docs.map((doc) => {
+						return new Notification({
+							notificationId: doc.id,
+							page: doc.data().page,
+							subject: doc.data().subject,
+							link: doc.data().link,
+							createdAt: doc.data().createdAt
+						});
+					});
 					dispatch([
 						...actions,
 						{

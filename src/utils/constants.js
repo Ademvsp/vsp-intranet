@@ -1,6 +1,8 @@
 export const SET_AUTH_USER = 'SET_AUTH_USER';
 export const SET_AUTH_TOUCHED = 'SET_AUTH_TOUCHED';
 export const LOGOUT = 'LOGOUT';
+export const SET_USERS = 'SET_USERS';
+export const SET_USERS_TOUHED = 'SET_USERS_TOUHED';
 export const SET_MESSAGE = 'SET_MESSAGE';
 export const CLEAR_MESSAGE = 'CLEAR_MESSAGE';
 export const SET_NOTIFICACTIONS = 'SET_NOTIFICACTIONS';
