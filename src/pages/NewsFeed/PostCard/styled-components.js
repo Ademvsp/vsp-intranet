@@ -9,7 +9,7 @@ import {
 
 export const StyledCard = styled(Card)`
 	width: -webkit-fill-available;
-	margin-bottom: 20px;
+	margin-bottom: 30px;
 `;
 
 export const StyledCardHeader = styled(CardHeader)`

@@ -31,10 +31,10 @@ const PostCard = (props) => {
 					postId: doc.id,
 					attachments: doc.data().attachments,
 					body: doc.data().body,
-					createdAt: doc.data().createdAt,
 					comments: doc.data().comments,
 					title: doc.data().title,
-					user: doc.data().user
+					createdAt: doc.data().createdAt,
+					createdBy: doc.data().createdBy
 				});
 				setPost(newPost);
 			});
@@ -48,8 +48,7 @@ const PostCard = (props) => {
 	if (!post) {
 		return <CircularProgress />;
 	}
-
-	const user = users.find((user) => user.userId === post.user);
+	const user = users.find((user) => user.userId === post.createdBy);
 
 	const commentsClickHandler = () => {
 		setShowComments((prevState) => !prevState);
@@ -103,7 +102,9 @@ const PostCard = (props) => {
 			</StyledCardActions>
 			<Collapse in={showComments} timeout='auto'>
 				<Comments
-					comments={[...post.comments].sort((a, b) => (a > b ? 1 : -1))}
+					authUser={authUser}
+					postId={postId}
+					comments={[...post.comments].reverse()}
 				/>
 			</Collapse>
 		</StyledCard>

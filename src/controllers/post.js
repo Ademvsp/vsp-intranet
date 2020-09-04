@@ -1,7 +1,7 @@
 import firebase from '../utils/firebase';
 import Message from '../models/message';
 import { DIALOG, SET_MESSAGE } from '../utils/constants';
-import Post from '../models/post';
+// import Post from '../models/post';
 
 export const getPostCounter = () => {
 	return async (dispatch, _getState) => {
@@ -30,34 +30,33 @@ export const getPostRef = (postId) => {
 	return firebase.firestore().collection('posts').doc(postId);
 };
 
-// export const getPost = (postId) => {
-// 	return async (dispatch, _getState) => {
-// 		try {
-// 			const postListener = firebase
-// 				.firestore()
-// 				.collection('threads')
-// 				.doc(postId)
-// 				.onSnapshot((snapshot) => {});
-// 			const post = new Post({
-// 				threadId: doc.id,
-// 				attachments: doc.data().attachments,
-// 				categories: doc.data().categories,
-// 				content: doc.data().content,
-// 				createdAt: doc.data().createdAt,
-// 				replies: doc.data().replies,
-// 				subject: doc.data().subject,
-// 				user: doc.data().user
-// 			});
-// 		} catch (error) {
-// 			const message = new Message({
-// 				title: 'News Feed',
-// 				body: 'Failed to retrieve news feed',
-// 				feedback: DIALOG
-// 			});
-// 			dispatch({
-// 				type: SET_MESSAGE,
-// 				message
-// 			});
-// 		}
-// 	};
-// };
+export const addComment = (postId, body) => {
+	return async (dispatch, getState) => {
+		try {
+			const comment = {
+				attachments: [],
+				body,
+				createdAt: null,
+				createdBy: getState().authState.authUser.userId
+			};
+			const funcionRef = firebase.functions().httpsCallable('addComment');
+			await funcionRef({
+				collection: 'posts',
+				document: postId,
+				comment
+			});
+			return true;
+		} catch (error) {
+			const message = new Message({
+				title: 'News Feed',
+				body: 'Comment failed to post',
+				feedback: DIALOG
+			});
+			dispatch({
+				type: SET_MESSAGE,
+				message
+			});
+		}
+		return false;
+	};
+};

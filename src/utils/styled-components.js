@@ -5,7 +5,6 @@ import {
 	DialogContent,
 	Card,
 	CardContent,
-	CardHeader,
 	CardActions,
 	Avatar,
 	Button,

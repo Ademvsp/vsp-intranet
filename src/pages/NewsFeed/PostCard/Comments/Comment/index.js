@@ -1,5 +1,5 @@
 import React from 'react';
-import { ListItem, ListItemAvatar, ListItemText } from '@material-ui/core';
+import { ListItemAvatar, ListItemText } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { StyledAvatar } from '../../../../../utils/styled-components';
 import moment from 'moment';
@@ -13,7 +13,7 @@ const Comment = (props) => {
 	const { authUser } = useSelector((state) => state.authState);
 	const { users } = useSelector((state) => state.dataState);
 	const { comment } = props;
-	const user = users.find((user) => user.userId === comment.user);
+	const user = users.find((user) => user.userId === comment.createdBy);
 
 	const firstNameInitial = user.firstName.substring(0, 1);
 	const lastNameInitial = user.lastName.substring(0, 1);

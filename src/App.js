@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';

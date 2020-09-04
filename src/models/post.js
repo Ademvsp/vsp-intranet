@@ -1,11 +1,19 @@
 export default class Post {
-	constructor({ postId, attachments, body, createdAt, comments, title, user }) {
+	constructor({
+		postId,
+		attachments,
+		body,
+		comments,
+		title,
+		createdAt,
+		createdBy
+	}) {
 		this.postId = postId;
 		this.attachments = attachments;
 		this.body = body;
-		this.createdAt = createdAt;
 		this.comments = comments;
 		this.title = title;
-		this.user = user;
+		this.createdAt = createdAt;
+		this.createdBy = createdBy;
 	}
 }

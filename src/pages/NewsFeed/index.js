@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import * as threadController from '../../controllers/post';
 import { Pagination } from '@material-ui/lab';
 import { CircularProgress } from '@material-ui/core';
-import Post from './PostCard';
+import PostCard from './PostCard';
 // import firebase from '../../utils/firebase';
 import { StyledPageContainer } from '../../utils/styled-components';
 
@@ -19,9 +19,7 @@ const NewsFeed = (props) => {
 			const newThreadCounter = await dispatch(
 				threadController.getPostCounter()
 			);
-			newThreadCounter.documents.sort((a, b) =>
-				a.createdAt > b.createdAt ? 1 : -1
-			);
+			newThreadCounter.documents.reverse();
 			setPostCounter(newThreadCounter);
 		};
 		asyncFunction();
@@ -46,7 +44,7 @@ const NewsFeed = (props) => {
 	return (
 		<StyledPageContainer>
 			{postIds.map((postId) => (
-				<Post key={postId} postId={postId} />
+				<PostCard key={postId} postId={postId} />
 			))}
 			<Pagination
 				color='primary'
