@@ -1,9 +1,13 @@
 import React, { Fragment } from 'react';
-import { List, Divider } from '@material-ui/core';
+import { List, Divider, Button } from '@material-ui/core';
 import Comment from './Comment';
 import moment from 'moment';
 import NewComment from './NewComment';
-import { StyledNewCommentContainer } from './styled-components';
+import {
+	StyledNewCommentContainer,
+	StyledButtonContainer
+} from './styled-components';
+import { ArrowDropDown as ArrowDropDownIcon } from '@material-ui/icons';
 
 const Comments = (props) => {
 	const { comments, postId } = props;
@@ -12,11 +16,22 @@ const Comments = (props) => {
 			<StyledNewCommentContainer>
 				<NewComment authUser={props.authUser} postId={postId} />
 			</StyledNewCommentContainer>
+			{comments.length > 0 ? (
+				<StyledButtonContainer>
+					<Button
+						size='small'
+						endIcon={<ArrowDropDownIcon />}
+						color='secondary'
+					>
+						Newest comments
+					</Button>
+				</StyledButtonContainer>
+			) : null}
 			<List>
-				{comments.map((comment) => {
+				{comments.map((comment, index) => {
 					return (
 						<Fragment key={moment(comment.createdAt.toDate()).format('x')}>
-							<Divider variant='middle' light={true} />
+							{index > 0 ? <Divider variant='middle' light={true} /> : null}
 							<Comment comment={comment} />
 						</Fragment>
 					);

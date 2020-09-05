@@ -1,5 +1,5 @@
-import React, { useEffect, useState, Fragment } from 'react';
-import { CircularProgress, Collapse, Typography } from '@material-ui/core';
+import React, { useEffect, useState } from 'react';
+import { Collapse, Typography, Chip } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import * as postContoller from '../../../controllers/post';
 import moment from 'moment';
@@ -8,12 +8,17 @@ import {
 	StyledCardHeader,
 	StyledCardContent,
 	StyledButton,
-	StyledCardActions
+	StyledCardActions,
+	StyledAttachmentsContainer
 } from './styled-components';
 import { StyledAvatar } from '../../../utils/styled-components';
 import Post from '../../../models/post';
-import { Comment as CommentIcon } from '@material-ui/icons';
+import {
+	Comment as CommentIcon,
+	Attachment as AttachmentIcon
+} from '@material-ui/icons';
 import Comments from './Comments';
+import { Skeleton } from '@material-ui/lab';
 
 const PostCard = (props) => {
 	const { authUser } = useSelector((state) => state.authState);
@@ -46,8 +51,29 @@ const PostCard = (props) => {
 	}, [postId]);
 
 	if (!post) {
-		return <CircularProgress />;
+		return (
+			<StyledCard raised>
+				<StyledCardHeader
+					skeleton={true}
+					avatar={
+						<Skeleton animation='pulse' variant='circle'>
+							<StyledAvatar />
+						</Skeleton>
+					}
+					title={<Skeleton animation='pulse' height={10} width='60%' />}
+					subheader={<Skeleton animation='pulse' height={10} width='40%' />}
+				/>
+				<StyledCardContent skeleton={true}>
+					<Skeleton animation='pulse' variant='rect' height={200} />
+				</StyledCardContent>
+				<StyledCardActions>
+					<Skeleton animation='pulse' height={10} width='20%' />
+					<Skeleton animation='pulse' height={15} width='10%' />
+				</StyledCardActions>
+			</StyledCard>
+		);
 	}
+
 	const user = users.find((user) => user.userId === post.createdBy);
 
 	const commentsClickHandler = () => {
@@ -69,12 +95,10 @@ const PostCard = (props) => {
 		<StyledCard raised>
 			<StyledCardHeader
 				avatar={
-					<Fragment>
-						<StyledAvatar
-							src={user.profilePicture}
-							darkMode={authUser.settings.darkMode}
-						>{`${firstNameInitial}${lastNameInitial}`}</StyledAvatar>
-					</Fragment>
+					<StyledAvatar
+						src={user.profilePicture}
+						darkMode={authUser.settings.darkMode}
+					>{`${firstNameInitial}${lastNameInitial}`}</StyledAvatar>
 				}
 				title={post.title}
 				titleTypographyProps={{
@@ -82,11 +106,31 @@ const PostCard = (props) => {
 				}}
 				subheader={`${user.firstName} ${user.lastName}`}
 			/>
-			<StyledCardContent
-				dangerouslySetInnerHTML={{
-					__html: post.body
-				}}
-			/>
+			<StyledCardContent>
+				<div
+					dangerouslySetInnerHTML={{
+						__html: post.body
+					}}
+				/>
+				<StyledAttachmentsContainer>
+					{post.attachments.map((attachment) => {
+						return (
+							<Chip
+								key={attachment.link}
+								label={attachment.name}
+								icon={<AttachmentIcon />}
+								color='primary'
+								clickable={true}
+								component='a'
+								href={attachment.link}
+								target='_blank'
+								size='small'
+								variant='outlined'
+							/>
+						);
+					})}
+				</StyledAttachmentsContainer>
+			</StyledCardContent>
 			<StyledCardActions>
 				<Typography color='secondary' component='span' variant='body2'>
 					{moment(post.createdAt.toDate()).format('llll')}

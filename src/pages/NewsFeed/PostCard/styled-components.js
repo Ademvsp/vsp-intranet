@@ -1,28 +1,42 @@
+import React from 'react';
 import styled from 'styled-components';
-import {
-	Card,
-	CardHeader,
-	CardContent,
-	Button,
-	CardActions
-} from '@material-ui/core';
+import { Card, CardHeader, CardContent, Button } from '@material-ui/core';
 
 export const StyledCard = styled(Card)`
 	width: -webkit-fill-available;
 	margin-bottom: 30px;
 `;
 
-export const StyledCardHeader = styled(CardHeader)`
+// eslint-disable-next-line no-unused-vars
+export const StyledCardHeader = styled(({ skeleton, ...otherProps }) => (
+	<CardHeader {...otherProps} />
+))`
 	padding-bottom: 0;
+	& span.MuiCardHeader-title > span.MuiSkeleton-text {
+		margin-bottom: ${(props) => props.skeleton && '10px'};
+	}
 `;
 
-export const StyledCardContent = styled(CardContent)`
-	padding: 0px 16px;
+// eslint-disable-next-line no-unused-vars
+export const StyledCardContent = styled(({ skeleton, ...otherProps }) => (
+	<CardContent {...otherProps} />
+))`
+	padding: ${(props) => !props.skeleton && '0px 16px'};
 	overflow-wrap: anywhere;
 `;
 
-export const StyledCardActions = styled(CardActions)`
+export const StyledAttachmentsContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	& a.MuiChip-root {
+		margin-bottom: 5px;
+	}
+`;
+
+export const StyledCardActions = styled(CardContent)`
 	padding-top: 0;
+	display: flex;
 	justify-content: space-between;
 	padding: 0px 16px 16px 16px;
 	& span.MuiTypography-root {

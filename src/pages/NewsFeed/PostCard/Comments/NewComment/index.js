@@ -11,7 +11,7 @@ import {
 import { Button, IconButton } from '@material-ui/core';
 import { StyledAvatar } from '../../../../../utils/styled-components';
 import {
-	AttachFile as AttachFileIcon,
+	Attachment as AttachmentIcon,
 	AddAlert as AddAlertIcon
 } from '@material-ui/icons';
 import { useFormik } from 'formik';
@@ -107,7 +107,7 @@ const NewComment = (props) => {
 							<AddAlertIcon />
 						</IconButton>
 						<IconButton>
-							<AttachFileIcon />
+							<AttachmentIcon />
 						</IconButton>
 					</div>
 					<Button
