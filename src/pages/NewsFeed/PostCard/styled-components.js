@@ -22,16 +22,6 @@ export const StyledCardContent = styled(({ skeleton, ...otherProps }) => (
 	<CardContent {...otherProps} />
 ))`
 	padding: ${(props) => !props.skeleton && '0px 16px'};
-	overflow-wrap: anywhere;
-`;
-
-export const StyledAttachmentsContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	& a.MuiChip-root {
-		margin-bottom: 5px;
-	}
 `;
 
 export const StyledCardActions = styled(CardContent)`

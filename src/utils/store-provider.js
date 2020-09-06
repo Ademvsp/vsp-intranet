@@ -7,13 +7,15 @@ import authReducer from '../store/auth';
 import messageReducer from '../store/message';
 import notificationReducer from '../store/notification';
 import dataReducer from '../store/data';
+import uploadReducer from '../store/upload';
 import { composeWithDevTools } from 'redux-devtools-extension';
 
 const rootReducer = combineReducers({
 	authState: authReducer,
 	messageState: messageReducer,
 	notificationState: notificationReducer,
-	dataState: dataReducer
+	dataState: dataReducer,
+	uploadState: uploadReducer
 });
 
 const store = createStore(

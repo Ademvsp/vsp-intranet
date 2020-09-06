@@ -8,7 +8,7 @@ import {
 	StyledContainer,
 	StyledTextAreaContainer
 } from './styled-components';
-import { Button, IconButton } from '@material-ui/core';
+import { Button, IconButton, Badge } from '@material-ui/core';
 import { StyledAvatar } from '../../../../../utils/styled-components';
 import {
 	Attachment as AttachmentIcon,
@@ -16,13 +16,18 @@ import {
 } from '@material-ui/icons';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as postController from '../../../../../controllers/post';
+import AttachmentsDropzone from '../../../../../components/AttachmentsDropZone';
+import ProgressWithLabel from '../../../../../components/ProgressWithLabel';
 
 const NewComment = (props) => {
+	const uploadState = useSelector(state => state.uploadState);
 	const dispatch = useDispatch();
 	const { authUser } = props;
+	const [attachments, setAttachments] = useState([]);
 	const [loading, setLoading] = useState(false);
+	const [dropzoneOpen, setDropzoneOpen] = useState(false);
 
 	const initialValues = { body: '' };
 	const initialErrors = { body: true };
@@ -34,10 +39,11 @@ const NewComment = (props) => {
 	const submitHandler = async (values) => {
 		setLoading(true);
 		const result = await dispatch(
-			postController.addComment(props.postId, values.body)
+			postController.addComment(props.postId, values.body, attachments)
 		);
 		if (result) {
 			formik.setValues(initialValues, true);
+			setAttachments([]);
 		}
 		setLoading(false);
 	};
@@ -68,7 +74,9 @@ const NewComment = (props) => {
 								// setUploading(editor.getData().includes('<figure class="image"><img></figure>'));
 								formik.setFieldValue('body', editor.getData());
 							}}
+							disabled={loading}
 							config={{
+								placeholder: 'Write a comment...',
 								toolbar: {
 									items: [
 										'heading',
@@ -88,7 +96,6 @@ const NewComment = (props) => {
 									],
 									shouldNotGroupWhenFull: true
 								},
-								placeholder: 'Write a comment...',
 								extraPlugins: [
 									// function MyCustomUploadAdapterPlugin(editor) {
 									//   editor.plugins.get('FileRepository').createUploadAdapter = loader => {
@@ -101,14 +108,29 @@ const NewComment = (props) => {
 						/>
 					</StyledCardContent>
 				</StyledCard>
+				{uploadState.filesProgress ? (
+					<ProgressWithLabel
+						transferred={uploadState.filesProgress.reduce((total, value) => total += value.bytesTransferred, 0)}
+						total={uploadState.filesProgress.reduce((total, value) => total += value.totalBytes, 0)}
+					/>
+				) : null}
 				<StyledCardActions>
 					<div>
-						<IconButton>
+						<IconButton disabled={loading}>
 							<AddAlertIcon />
 						</IconButton>
-						<IconButton>
-							<AttachmentIcon />
+						<IconButton onClick={setDropzoneOpen.bind(this, true)}
+							disabled={loading}>
+							<Badge badgeContent={attachments.length} color='secondary'>
+								<AttachmentIcon />
+							</Badge>
 						</IconButton>
+						<AttachmentsDropzone
+							dropzoneOpen={dropzoneOpen}
+							setDropzoneOpen={setDropzoneOpen}
+							attachments={attachments}
+							setAttachments={setAttachments}
+						/>
 					</div>
 					<Button
 						variant='outlined'

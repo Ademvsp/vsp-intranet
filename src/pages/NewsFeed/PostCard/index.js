@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Collapse, Typography, Chip } from '@material-ui/core';
+import { Collapse, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import * as postContoller from '../../../controllers/post';
 import moment from 'moment';
@@ -8,17 +8,15 @@ import {
 	StyledCardHeader,
 	StyledCardContent,
 	StyledButton,
-	StyledCardActions,
-	StyledAttachmentsContainer
+	StyledCardActions
 } from './styled-components';
 import { StyledAvatar } from '../../../utils/styled-components';
 import Post from '../../../models/post';
-import {
-	Comment as CommentIcon,
-	Attachment as AttachmentIcon
-} from '@material-ui/icons';
+import { Comment as CommentIcon } from '@material-ui/icons';
 import Comments from './Comments';
 import { Skeleton } from '@material-ui/lab';
+import InnerHtml from '../../../components/InnerHtml';
+import AttachmentsContainer from '../../../components/AttachmentsContainer';
 
 const PostCard = (props) => {
 	const { authUser } = useSelector((state) => state.authState);
@@ -107,29 +105,8 @@ const PostCard = (props) => {
 				subheader={`${user.firstName} ${user.lastName}`}
 			/>
 			<StyledCardContent>
-				<div
-					dangerouslySetInnerHTML={{
-						__html: post.body
-					}}
-				/>
-				<StyledAttachmentsContainer>
-					{post.attachments.map((attachment) => {
-						return (
-							<Chip
-								key={attachment.link}
-								label={attachment.name}
-								icon={<AttachmentIcon />}
-								color='primary'
-								clickable={true}
-								component='a'
-								href={attachment.link}
-								target='_blank'
-								size='small'
-								variant='outlined'
-							/>
-						);
-					})}
-				</StyledAttachmentsContainer>
+				<InnerHtml html={post.body} />
+				<AttachmentsContainer attachments={post.attachments} />
 			</StyledCardContent>
 			<StyledCardActions>
 				<Typography color='secondary' component='span' variant='body2'>

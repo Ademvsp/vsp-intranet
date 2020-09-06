@@ -3,11 +3,9 @@ import { ListItemAvatar, ListItemText } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { StyledAvatar } from '../../../../../utils/styled-components';
 import moment from 'moment';
-import {
-	StyledListHeader,
-	StyledListItem,
-	StyledListBody
-} from './styled-components';
+import { StyledListHeader, StyledListItem } from './styled-components';
+import InnerHtml from '../../../../../components/InnerHtml';
+import AttachmentsContainer from '../../../../../components/AttachmentsContainer';
 
 const Comment = (props) => {
 	const { authUser } = useSelector((state) => state.authState);
@@ -32,11 +30,8 @@ const Comment = (props) => {
 					secondary={`${moment(comment.createdAt.toDate()).format('llll')}`}
 				/>
 			</StyledListHeader>
-			<StyledListBody
-				dangerouslySetInnerHTML={{
-					__html: comment.body
-				}}
-			/>
+			<InnerHtml html={comment.body} />
+			<AttachmentsContainer attachments={comment.attachments} />
 		</StyledListItem>
 	);
 };

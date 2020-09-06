@@ -20,7 +20,7 @@ export const StyledPageContainer = styled(Container)`
 	align-items: center;
 	width: 50%;
 	padding: 0;
-	@media (max-width: 768px) {
+	@media (max-width: 767px) {
 		width: 100%;
 	}
 	@media (min-width: 768px) and (max-width: 1024px) {

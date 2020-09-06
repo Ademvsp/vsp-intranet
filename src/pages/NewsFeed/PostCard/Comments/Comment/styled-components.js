@@ -11,7 +11,3 @@ export const StyledListHeader = styled.div`
 	justify-content: flex-start;
 	align-items: center;
 `;
-
-export const StyledListBody = styled.div`
-	overflow-wrap: anywhere;
-`;

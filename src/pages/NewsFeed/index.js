@@ -6,21 +6,34 @@ import { CircularProgress } from '@material-ui/core';
 import PostCard from './PostCard';
 // import firebase from '../../utils/firebase';
 import { StyledPageContainer } from '../../utils/styled-components';
+import { withRouter } from 'react-router-dom';
 
-const NewsFeed = (props) => {
+const NewsFeed = withRouter((props) => {
+	const initialPage = 1;
+	const { match, history } = props;
+	const paramsPage = match.params.page;
 	const MAX_PER_PAGE = 5;
 	const dispatch = useDispatch();
-	const [page, setPage] = useState(1);
+	const [page, setPage] = useState(initialPage);
 	const [postCounter, setPostCounter] = useState();
 	const [postIds, setPostIds] = useState();
 
 	useEffect(() => {
+		if (paramsPage && postCounter) {
+			const newPage = parseInt(paramsPage);
+			if (newPage && newPage < postCounter.count) {
+				setPage(newPage);
+			} else {
+				history.replace(`/newsfeed/${initialPage}`);
+			}
+		}
+	}, [paramsPage, postCounter, history]);
+
+	useEffect(() => {
 		const asyncFunction = async () => {
-			const newThreadCounter = await dispatch(
-				threadController.getPostCounter()
-			);
-			newThreadCounter.documents.reverse();
-			setPostCounter(newThreadCounter);
+			const newPostCounter = await dispatch(threadController.getPostCounter());
+			newPostCounter.documents.reverse();
+			setPostCounter(newPostCounter);
 		};
 		asyncFunction();
 	}, [dispatch]);
@@ -50,12 +63,14 @@ const NewsFeed = (props) => {
 				color='primary'
 				count={Math.ceil(postCounter.count / MAX_PER_PAGE)}
 				page={page}
-				onChange={(_event, value) => setPage(value)}
+				onChange={(_event, value) =>
+					props.history.push(`/newsfeed/${value.toString()}`)
+				}
 				showFirstButton={true}
 				showLastButton={true}
 			/>
 		</StyledPageContainer>
 	);
-};
+});
 
 export default NewsFeed;
