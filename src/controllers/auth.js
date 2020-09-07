@@ -79,6 +79,8 @@ export const verifyAuth = () => {
 							dispatch(actions);
 						}
 					});
+			} else {
+				dispatch({ type: SET_AUTH_TOUCHED });
 			}
 		});
 	};

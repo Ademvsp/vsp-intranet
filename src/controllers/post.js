@@ -74,7 +74,7 @@ export const addComment = (post, postId, body, attachments, notifyUsers) => {
 					link: 'newsfeed',
 					page: 'News Feed',
 					sender: authUser,
-					content: transformForEmail(body, '300px'),
+					content: transformForEmail(body, '50%'),
 					attachments: uploadedAttachments,
 					signature: 'VSP Intranet'
 				}

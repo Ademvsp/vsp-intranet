@@ -8,7 +8,7 @@ import {
 	StyledContainer,
 	StyledTextAreaContainer
 } from './styled-components';
-import { Button, IconButton, Badge } from '@material-ui/core';
+import { Button, IconButton, Badge, Tooltip } from '@material-ui/core';
 import { StyledAvatar } from '../../../../../utils/styled-components';
 import {
 	Attachment as AttachmentIcon,
@@ -21,11 +21,13 @@ import * as postController from '../../../../../controllers/post';
 import AttachmentsDropzone from '../../../../../components/AttachmentsDropZone';
 import ProgressWithLabel from '../../../../../components/ProgressWithLabel';
 import NotifyUsersList from '../../../../../components/NotifyUsersList';
+import UploadAdapter from '../../../../../utils/upload-adapter';
 
 const NewComment = (props) => {
 	const uploadState = useSelector((state) => state.uploadState);
 	const dispatch = useDispatch();
 	const { authUser, post } = props;
+	const [uploading, setUploading] = useState();
 	const [loading, setLoading] = useState(false);
 	const [attachments, setAttachments] = useState([]);
 	const [dropzoneOpen, setDropzoneOpen] = useState(false);
@@ -80,7 +82,10 @@ const NewComment = (props) => {
 							editor={BalloonEditor}
 							data={formik.values.body}
 							onChange={(_event, editor) => {
-								// setUploading(editor.getData().includes('<figure class="image"><img></figure>'));
+								const newUploading = editor
+									.getData()
+									.includes('<figure class="image"><img></figure>');
+								setUploading(newUploading);
 								formik.setFieldValue('body', editor.getData());
 							}}
 							disabled={loading}
@@ -106,11 +111,11 @@ const NewComment = (props) => {
 									shouldNotGroupWhenFull: true
 								},
 								extraPlugins: [
-									// function MyCustomUploadAdapterPlugin(editor) {
-									//   editor.plugins.get('FileRepository').createUploadAdapter = loader => {
-									//     return new MyUploadAdapter(loader, collection);
-									//   };
-									// }
+									function MyCustomUploadAdapterPlugin(editor) {
+										const plugin = 'FileRepository';
+										editor.plugins.get(plugin).createUploadAdapter = (loader) =>
+											new UploadAdapter(loader, 'posts');
+									}
 								],
 								removePlugins: ['MediaEmbed']
 							}}
@@ -131,28 +136,33 @@ const NewComment = (props) => {
 				) : null}
 				<StyledCardActions>
 					<div>
-						<IconButton
-							disabled={loading}
-							onClick={setNotifyUsersOpen.bind(this, true)}
-						>
-							<Badge badgeContent={notifyUsers.length} color='secondary'>
-								<NotificationsActiveIcon />
-							</Badge>
-						</IconButton>
+						<Tooltip title='Notify staff' placement='bottom'>
+							<IconButton
+								disabled={loading}
+								onClick={setNotifyUsersOpen.bind(this, true)}
+							>
+								<Badge badgeContent={notifyUsers.length} color='secondary'>
+									<NotificationsActiveIcon />
+								</Badge>
+							</IconButton>
+						</Tooltip>
+
 						<NotifyUsersList
 							setNotifyUsersOpen={setNotifyUsersOpen}
 							notifyUsersOpen={notifyUsersOpen}
 							setNotifyUsers={setNotifyUsers}
 							notifyUsers={notifyUsers}
 						/>
-						<IconButton
-							onClick={setDropzoneOpen.bind(this, true)}
-							disabled={loading}
-						>
-							<Badge badgeContent={attachments.length} color='secondary'>
-								<AttachmentIcon />
-							</Badge>
-						</IconButton>
+						<Tooltip title='Attachments' placement='bottom'>
+							<IconButton
+								onClick={setDropzoneOpen.bind(this, true)}
+								disabled={loading}
+							>
+								<Badge badgeContent={attachments.length} color='secondary'>
+									<AttachmentIcon />
+								</Badge>
+							</IconButton>
+						</Tooltip>
 						<AttachmentsDropzone
 							dropzoneOpen={dropzoneOpen}
 							setDropzoneOpen={setDropzoneOpen}
@@ -164,7 +174,7 @@ const NewComment = (props) => {
 						variant='outlined'
 						color='primary'
 						onClick={formik.handleSubmit}
-						disabled={!formik.isValid || loading}
+						disabled={!formik.isValid || loading || uploading}
 					>
 						Post
 					</Button>

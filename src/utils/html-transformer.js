@@ -29,9 +29,7 @@ export const convertToLink = (html) => {
 export const trimEmptyParagraph = (html) => {
 	const emptyParagraphString = '<p> </p>';
 	html = html.trim();
-	console.log(html);
 	while (html.startsWith(emptyParagraphString)) {
-		console.log('sdsadsadsadfsaf');
 		html = html.substring(emptyParagraphString.length);
 	}
 	while (html.endsWith(emptyParagraphString)) {
