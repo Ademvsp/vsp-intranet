@@ -12,7 +12,7 @@ import { Button, IconButton, Badge } from '@material-ui/core';
 import { StyledAvatar } from '../../../../../utils/styled-components';
 import {
 	Attachment as AttachmentIcon,
-	AddAlert as AddAlertIcon
+	NotificationsActive as NotificationsActiveIcon
 } from '@material-ui/icons';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -20,14 +20,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as postController from '../../../../../controllers/post';
 import AttachmentsDropzone from '../../../../../components/AttachmentsDropZone';
 import ProgressWithLabel from '../../../../../components/ProgressWithLabel';
+import NotifyUsersList from '../../../../../components/NotifyUsersList';
 
 const NewComment = (props) => {
-	const uploadState = useSelector(state => state.uploadState);
+	const uploadState = useSelector((state) => state.uploadState);
 	const dispatch = useDispatch();
 	const { authUser } = props;
-	const [attachments, setAttachments] = useState([]);
 	const [loading, setLoading] = useState(false);
+	const [attachments, setAttachments] = useState([]);
 	const [dropzoneOpen, setDropzoneOpen] = useState(false);
+	const [notifyUsers, setNotifyUsers] = useState([]);
+	const [notifyUsersOpen, setNotifyUsersOpen] = useState(false);
 
 	const initialValues = { body: '' };
 	const initialErrors = { body: true };
@@ -110,17 +113,36 @@ const NewComment = (props) => {
 				</StyledCard>
 				{uploadState.filesProgress ? (
 					<ProgressWithLabel
-						transferred={uploadState.filesProgress.reduce((total, value) => total += value.bytesTransferred, 0)}
-						total={uploadState.filesProgress.reduce((total, value) => total += value.totalBytes, 0)}
+						transferred={uploadState.filesProgress.reduce(
+							(total, value) => (total += value.bytesTransferred),
+							0
+						)}
+						total={uploadState.filesProgress.reduce(
+							(total, value) => (total += value.totalBytes),
+							0
+						)}
 					/>
 				) : null}
 				<StyledCardActions>
 					<div>
-						<IconButton disabled={loading}>
-							<AddAlertIcon />
+						<IconButton
+							disabled={loading}
+							onClick={setNotifyUsersOpen.bind(this, true)}
+						>
+							<Badge badgeContent={notifyUsers.length} color='secondary'>
+								<NotificationsActiveIcon />
+							</Badge>
 						</IconButton>
-						<IconButton onClick={setDropzoneOpen.bind(this, true)}
-							disabled={loading}>
+						<NotifyUsersList
+							setNotifyUsersOpen={setNotifyUsersOpen}
+							notifyUsersOpen={notifyUsersOpen}
+							setNotifyUsers={setNotifyUsers}
+							notifyUsers={notifyUsers}
+						/>
+						<IconButton
+							onClick={setDropzoneOpen.bind(this, true)}
+							disabled={loading}
+						>
 							<Badge badgeContent={attachments.length} color='secondary'>
 								<AttachmentIcon />
 							</Badge>

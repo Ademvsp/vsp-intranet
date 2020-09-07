@@ -128,6 +128,7 @@ export const getUsers = () => {
 				.firestore()
 				.collection('users')
 				.where('active', '==', true)
+				.orderBy('firstName', 'asc')
 				.onSnapshot((snapshot) => {
 					const touched = getState().dataState.usersTouched;
 					const actions = [];
@@ -141,6 +142,7 @@ export const getUsers = () => {
 							userId: doc.id,
 							firstName: doc.data().firstName,
 							lastName: doc.data().lastName,
+							email: doc.data().email,
 							location: doc.data().location,
 							phone: doc.data().phone,
 							profilePicture: doc.data().profilePicture,

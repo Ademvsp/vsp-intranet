@@ -23,7 +23,7 @@ export const StyledContainer = withTheme(styled.div`
 	border-width: 1px;
 	border-radius: 4px;
 	border-style: dashed;
-	background-color: ${props => props.theme.palette.background.default};
+	background-color: ${(props) => props.theme.palette.background.default};
 	transition: border 0.24s ease-in-out;
 	&:hover {
 		cursor: pointer;
@@ -33,9 +33,9 @@ export const StyledContainer = withTheme(styled.div`
 `);
 
 export const StyledList = styled(List)`
+	max-height: 300px;
 	margin-top: 20px;
-	max-height: 200px;
-	overflow-y: auto;
+	overflow-y: overlay;
 	&
 		span.MuiTypography-root.MuiListItemText-primary.MuiTypography-body1.MuiTypography-displayBlock {
 		overflow-x: auto;
