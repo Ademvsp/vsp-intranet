@@ -2,11 +2,11 @@ import React, { Fragment, useState, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { Menu, MenuItem, CircularProgress } from '@material-ui/core';
 import * as userController from '../../../controllers/user';
-import { StyledAvatar } from '../styled-components';
 import { withRouter } from 'react-router-dom';
 import ConfirmDialog from '../../../components/ConfirmDialog';
+import { StyledAvatar } from './styled-components';
 
-const Avatar = withRouter((props) => {
+const AccountAvatar = withRouter((props) => {
 	const authUser = props.authUser;
 	const fileInputRef = useRef();
 	const dispatch = useDispatch();
@@ -49,9 +49,6 @@ const Avatar = withRouter((props) => {
 		fileInputRef.current.value = null;
 	};
 
-	const firstName = authUser.firstName.substring(0, 1);
-	const lastName = authUser.lastName.substring(0, 1);
-
 	return (
 		<Fragment>
 			<ConfirmDialog
@@ -61,14 +58,23 @@ const Avatar = withRouter((props) => {
 				title='Profile Picture'
 				message='Are you sure you want to remove your profile picture?'
 			/>
-			<StyledAvatar
+
+			{/* <StyledAvatar
 				size={3}
 				darkMode={authUser.settings.darkMode}
 				onClick={(event) => setAnchorElement(event.target)}
 				src={authUser.profilePicture}
 			>
 				{loading ? <CircularProgress /> : `${firstName}${lastName}`}
-			</StyledAvatar>
+			</StyledAvatar> */}
+			<StyledAvatar
+				user={authUser}
+				size={3}
+				clickable={true}
+				onClick={(event) => setAnchorElement(event.target)}
+				customFallback={loading ? <CircularProgress /> : null}
+			/>
+
 			<input
 				type='file'
 				accept='image/*'
@@ -100,4 +106,4 @@ const Avatar = withRouter((props) => {
 	);
 });
 
-export default Avatar;
+export default AccountAvatar;

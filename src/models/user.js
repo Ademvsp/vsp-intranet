@@ -5,6 +5,7 @@ export default class User {
 		firstName,
 		lastName,
 		location,
+		extension,
 		phone,
 		profilePicture,
 		settings,
@@ -16,6 +17,7 @@ export default class User {
 		this.lastName = lastName;
 		this.location = location;
 		this.phone = phone;
+		this.extension = extension;
 		this.profilePicture = profilePicture;
 		this.settings = settings;
 		this.title = title;

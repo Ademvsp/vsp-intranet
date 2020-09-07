@@ -6,13 +6,10 @@ import {
 	Card,
 	CardContent,
 	CardActions,
-	Avatar,
 	Button,
 	Snackbar,
 	Container
 } from '@material-ui/core';
-import * as styles from './styles';
-import * as colors from './colors';
 
 export const StyledPageContainer = styled(Container)`
 	display: flex;
@@ -57,22 +54,6 @@ export const StyledCardActions = styled(CardActions)`
 	flex-direction: column;
 	& > :not(:first-child) {
 		margin-left: 0;
-	}
-`;
-
-// eslint-disable-next-line no-unused-vars
-export const StyledAvatar = styled(({ darkMode, ...otherProps }) => (
-	<Avatar {...otherProps} />
-))`
-	width: ${(props) => styles.avatarStyles.width * props.size}px;
-	height: ${(props) => styles.avatarStyles.height * props.size}px;
-	font-size: ${(props) => styles.avatarStyles.fontSize * props.size}rem;
-	background-color: ${(props) =>
-		props.dark
-			? colors.default.secondary.light
-			: colors.default.secondary.dark};
-	&:hover {
-		cursor: pointer;
 	}
 `;
 

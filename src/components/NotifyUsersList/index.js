@@ -11,7 +11,6 @@ import {
 	useMediaQuery
 } from '@material-ui/core';
 import { useSelector } from 'react-redux';
-import { StyledAvatar } from '../../utils/styled-components';
 import {
 	StyledTitleListItem,
 	StyledListItem,
@@ -20,6 +19,7 @@ import {
 	StyledDialogTitle
 } from './styled-components';
 import { AvatarGroup } from '@material-ui/lab';
+import Avatar from '../Avatar';
 
 const NotifyUsersList = (props) => {
 	const {
@@ -29,7 +29,6 @@ const NotifyUsersList = (props) => {
 		setNotifyUsers
 	} = props;
 	const { users } = useSelector((state) => state.dataState);
-	const { authUser } = useSelector((state) => state.authState);
 	const [checkedUsers, setCheckedUsers] = useState([]);
 
 	useEffect(() => {
@@ -83,18 +82,9 @@ const NotifyUsersList = (props) => {
 						{checkedUsers.length > 0 ? (
 							<ListItemAvatar>
 								<AvatarGroup max={mobile ? 3 : 6}>
-									{checkedUsers.map((checkedUser) => {
-										const { firstName, lastName } = checkedUser;
-										const firstNameInitial = firstName.substring(0, 1);
-										const lastNameInitial = lastName.substring(0, 1);
-										return (
-											<StyledAvatar
-												key={checkedUser.userId}
-												src={checkedUser.profilePicture}
-												darkMode={authUser.settings.darkMode}
-											>{`${firstNameInitial}${lastNameInitial}`}</StyledAvatar>
-										);
-									})}
+									{checkedUsers.map((checkedUser) => (
+										<Avatar key={checkedUser.userId} user={checkedUser} />
+									))}
 								</AvatarGroup>
 							</ListItemAvatar>
 						) : null}
@@ -119,8 +109,6 @@ const NotifyUsersList = (props) => {
 				<List dense={true}>
 					{users.map((user) => {
 						const { firstName, lastName } = user;
-						const firstNameInitial = firstName.substring(0, 1);
-						const lastNameInitial = lastName.substring(0, 1);
 						const checked = checkedUsers.some(
 							(checkedUser) => checkedUser.userId === user.userId
 						);
@@ -130,10 +118,7 @@ const NotifyUsersList = (props) => {
 								onClick={checkHandler(user, checked)}
 							>
 								<ListItemAvatar>
-									<StyledAvatar
-										src={user.profilePicture}
-										darkMode={authUser.settings.darkMode}
-									>{`${firstNameInitial}${lastNameInitial}`}</StyledAvatar>
+									<Avatar user={user} />
 								</ListItemAvatar>
 								<ListItemText primary={`${firstName} ${lastName}`} />
 								<ListItemSecondaryAction>

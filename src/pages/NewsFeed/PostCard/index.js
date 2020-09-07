@@ -4,19 +4,19 @@ import { useSelector } from 'react-redux';
 import * as postContoller from '../../../controllers/post';
 import moment from 'moment';
 import {
-	StyledCard,
 	StyledCardHeader,
 	StyledCardContent,
 	StyledButton,
 	StyledCardActions
 } from './styled-components';
-import { StyledAvatar } from '../../../utils/styled-components';
+import { StyledCard } from '../styled-components';
 import Post from '../../../models/post';
 import { Comment as CommentIcon } from '@material-ui/icons';
 import Comments from './Comments';
 import { Skeleton } from '@material-ui/lab';
 import InnerHtml from '../../../components/InnerHtml';
 import AttachmentsContainer from '../../../components/AttachmentsContainer';
+import Avatar from '../../../components/Avatar';
 
 const PostCard = (props) => {
 	const { authUser } = useSelector((state) => state.authState);
@@ -50,12 +50,12 @@ const PostCard = (props) => {
 
 	if (!post) {
 		return (
-			<StyledCard raised>
+			<StyledCard>
 				<StyledCardHeader
 					skeleton={true}
 					avatar={
 						<Skeleton animation='pulse' variant='circle'>
-							<StyledAvatar />
+							<Avatar user={authUser} />
 						</Skeleton>
 					}
 					title={<Skeleton animation='pulse' height={10} width='60%' />}
@@ -78,8 +78,6 @@ const PostCard = (props) => {
 		setShowComments((prevState) => !prevState);
 	};
 
-	const firstNameInitial = user.firstName.substring(0, 1);
-	const lastNameInitial = user.lastName.substring(0, 1);
 	const commentsCount = post.comments.length;
 	let commentButtonText = 'Comment';
 	if (commentsCount > 0) {
@@ -90,14 +88,9 @@ const PostCard = (props) => {
 	}
 
 	return (
-		<StyledCard raised>
+		<StyledCard>
 			<StyledCardHeader
-				avatar={
-					<StyledAvatar
-						src={user.profilePicture}
-						darkMode={authUser.settings.darkMode}
-					>{`${firstNameInitial}${lastNameInitial}`}</StyledAvatar>
-				}
+				avatar={<Avatar user={user} clickable={true} contactCard={true} />}
 				title={post.title}
 				titleTypographyProps={{
 					variant: 'body1'

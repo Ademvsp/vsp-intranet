@@ -145,6 +145,7 @@ export const getUsers = () => {
 							email: doc.data().email,
 							location: doc.data().location,
 							phone: doc.data().phone,
+							extension: doc.data().extension,
 							profilePicture: doc.data().profilePicture,
 							settings: doc.data().settings,
 							title: doc.data().title

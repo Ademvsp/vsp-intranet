@@ -1,12 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Card, CardHeader, CardContent, Button } from '@material-ui/core';
-
-export const StyledCard = styled(Card)`
-	width: -webkit-fill-available;
-	margin-bottom: 30px;
-`;
-
+import { CardHeader, CardContent, Button } from '@material-ui/core';
 // eslint-disable-next-line no-unused-vars
 export const StyledCardHeader = styled(({ skeleton, ...otherProps }) => (
 	<CardHeader {...otherProps} />

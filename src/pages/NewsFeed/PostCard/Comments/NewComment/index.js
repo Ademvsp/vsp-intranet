@@ -9,7 +9,7 @@ import {
 	StyledTextAreaContainer
 } from './styled-components';
 import { Button, IconButton, Badge, Tooltip } from '@material-ui/core';
-import { StyledAvatar } from '../../../../../utils/styled-components';
+import Avatar from '../../../../../components/Avatar';
 import {
 	Attachment as AttachmentIcon,
 	NotificationsActive as NotificationsActiveIcon
@@ -65,15 +65,10 @@ const NewComment = (props) => {
 		onSubmit: submitHandler,
 		validationSchema: validationSchema
 	});
-
-	const firstNameInitial = authUser.firstName.substring(0, 1);
-	const lastNameInitial = authUser.lastName.substring(0, 1);
 	return (
 		<StyledContainer>
 			<div className='MuiListItemAvatar-root'>
-				<StyledAvatar src={authUser.profilePicture}>
-					{`${firstNameInitial}${lastNameInitial}`}
-				</StyledAvatar>
+				<Avatar user={authUser} />
 			</div>
 			<StyledTextAreaContainer>
 				<StyledCard>
