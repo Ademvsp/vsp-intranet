@@ -26,8 +26,35 @@ export const convertToLink = (html) => {
 	return html;
 };
 
-export default (html) => {
+export const trimEmptyParagraph = (html) => {
+	const emptyParagraphString = '<p> </p>';
+	html = html.trim();
+	console.log(html);
+	while (html.startsWith(emptyParagraphString)) {
+		console.log('sdsadsadsadfsaf');
+		html = html.substring(emptyParagraphString.length);
+	}
+	while (html.endsWith(emptyParagraphString)) {
+		html = html.substring(0, html.length - emptyParagraphString.length);
+	}
+	return html;
+};
+
+export const resizeImage = (html, size) => {
+	html = html.split('<img');
+	html = html.join(`<img style="max-width: ${size};"`);
+	return html;
+};
+
+export const transformForWeb = (html) => {
 	html = convertToThumbnail(html);
 	html = convertToLink(html);
+	html = trimEmptyParagraph(html);
+	return html;
+};
+
+export const transformForEmail = (html, size) => {
+	html = transformForWeb(html);
+	html = resizeImage(html, size);
 	return html;
 };

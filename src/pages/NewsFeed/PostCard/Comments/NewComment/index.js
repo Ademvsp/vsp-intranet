@@ -25,7 +25,7 @@ import NotifyUsersList from '../../../../../components/NotifyUsersList';
 const NewComment = (props) => {
 	const uploadState = useSelector((state) => state.uploadState);
 	const dispatch = useDispatch();
-	const { authUser } = props;
+	const { authUser, post } = props;
 	const [loading, setLoading] = useState(false);
 	const [attachments, setAttachments] = useState([]);
 	const [dropzoneOpen, setDropzoneOpen] = useState(false);
@@ -42,7 +42,13 @@ const NewComment = (props) => {
 	const submitHandler = async (values) => {
 		setLoading(true);
 		const result = await dispatch(
-			postController.addComment(props.postId, values.body, attachments)
+			postController.addComment(
+				post,
+				props.postId,
+				values.body,
+				attachments,
+				notifyUsers
+			)
 		);
 		if (result) {
 			formik.setValues(initialValues, true);

@@ -7,11 +7,13 @@ import {
 	ListItemSecondaryAction,
 	Checkbox,
 	Dialog,
-	DialogActions
+	DialogActions,
+	useMediaQuery
 } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { StyledAvatar } from '../../utils/styled-components';
 import {
+	StyledTitleListItem,
 	StyledListItem,
 	StyledListItemText,
 	StyledDialogContent,
@@ -71,14 +73,16 @@ const NotifyUsersList = (props) => {
 		setCheckedUsers(newCheckedUsers);
 	};
 
+	const mobile = useMediaQuery('(max-width: 767px)');
+
 	return (
 		<Dialog open={notifyUsersOpen} onClose={closeHandler}>
 			<StyledDialogTitle>
 				<List dense={true}>
-					<StyledListItem>
+					<StyledTitleListItem>
 						{checkedUsers.length > 0 ? (
 							<ListItemAvatar>
-								<AvatarGroup>
+								<AvatarGroup max={mobile ? 3 : 6}>
 									{checkedUsers.map((checkedUser) => {
 										const { firstName, lastName } = checkedUser;
 										const firstNameInitial = firstName.substring(0, 1);
@@ -108,7 +112,7 @@ const NotifyUsersList = (props) => {
 								}
 							/>
 						</ListItemSecondaryAction>
-					</StyledListItem>
+					</StyledTitleListItem>
 				</List>
 			</StyledDialogTitle>
 			<StyledDialogContent>

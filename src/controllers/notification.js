@@ -139,6 +139,16 @@ export const clearNotifications = () => {
 	};
 };
 
+export const sendEmailNotification = async ({ headerParams, bodyParams }) => {
+	console.log(headerParams);
+	console.log(bodyParams);
+	const functionRef = firebase.functions().httpsCallable('sendNotification');
+	await functionRef({
+		headerParams,
+		bodyParams
+	});
+};
+
 export const unsubscribeNotificationsListener = () => {
 	if (notificationsListener) {
 		notificationsListener();

@@ -10,11 +10,11 @@ import {
 import { ArrowDropDown as ArrowDropDownIcon } from '@material-ui/icons';
 
 const Comments = (props) => {
-	const { comments, postId } = props;
+	const { comments, post, postId } = props;
 	return (
 		<Fragment>
 			<StyledNewCommentContainer>
-				<NewComment authUser={props.authUser} postId={postId} />
+				<NewComment authUser={props.authUser} post={post} postId={postId} />
 			</StyledNewCommentContainer>
 			{comments.length > 0 ? (
 				<StyledButtonContainer>

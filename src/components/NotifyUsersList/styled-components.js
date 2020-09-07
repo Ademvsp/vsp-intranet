@@ -11,9 +11,14 @@ export const StyledListItemText = styled(ListItemText)`
 `;
 
 export const StyledListItem = styled(ListItem)`
+	padding-left: 0;
 	&:hover {
 		cursor: pointer;
 	}
+`;
+
+export const StyledTitleListItem = styled(ListItem)`
+	padding-left: 0;
 `;
 
 export const StyledDialogTitle = styled(DialogTitle)`

@@ -7,7 +7,8 @@ import {
 	SET_UPLOAD_PROGRESS,
 	FINISH_UPLOAD
 } from '../utils/constants';
-// import Post from '../models/post';
+import * as notificationController from './notification';
+import { transformForEmail } from '../utils/html-transformer';
 
 export const getPostCounter = () => {
 	return async (dispatch, _getState) => {
@@ -36,25 +37,23 @@ export const getPostRef = (postId) => {
 	return firebase.firestore().collection('posts').doc(postId);
 };
 
-export const addComment = (postId, body, attachments) => {
+export const addComment = (post, postId, body, attachments, notifyUsers) => {
 	return async (dispatch, getState) => {
 		try {
+			const authUser = getState().authState.authUser;
 			let functionRef = firebase.functions().httpsCallable('getServerTime');
 			let result = await functionRef();
 			const serverTime = result.data;
 			let uploadedAttachments = [];
 			if (attachments.length > 0) {
-				uploadedAttachments = await dispatch(uploadFiles(
-					attachments,
-					'posts',
-					postId,
-					serverTime.toString()
-				));
+				uploadedAttachments = await dispatch(
+					uploadFiles(attachments, 'posts', postId, serverTime.toString())
+				);
 			}
 			const comment = {
 				attachments: uploadedAttachments,
 				body,
-				createdBy: getState().authState.authUser.userId
+				createdBy: authUser.userId
 			};
 			functionRef = firebase.functions().httpsCallable('addComment');
 			await functionRef({
@@ -62,6 +61,23 @@ export const addComment = (postId, body, attachments) => {
 				document: postId,
 				comment,
 				serverTime
+			});
+			notificationController.sendEmailNotification({
+				headerParams: {
+					from: null,
+					recipients: notifyUsers,
+					bcc: null
+				},
+				bodyParams: {
+					template: 'newThreadReply',
+					title: post.title,
+					link: 'newsfeed',
+					page: 'News Feed',
+					sender: authUser,
+					content: transformForEmail(body, '300px'),
+					attachments: uploadedAttachments,
+					signature: 'VSP Intranet'
+				}
 			});
 			return true;
 		} catch (error) {
@@ -133,7 +149,7 @@ const uploadFiles = (files, collection, collectionId, folder) => {
 				);
 			}
 			await Promise.all(promises);
-			dispatch({ type: FINISH_UPLOAD })
+			dispatch({ type: FINISH_UPLOAD });
 			return uploadedFiles;
 		} catch (error) {
 			const message = new Message({

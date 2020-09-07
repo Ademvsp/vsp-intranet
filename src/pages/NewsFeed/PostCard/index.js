@@ -124,6 +124,7 @@ const PostCard = (props) => {
 			<Collapse in={showComments} timeout='auto'>
 				<Comments
 					authUser={authUser}
+					post={post}
 					postId={postId}
 					comments={[...post.comments].reverse()}
 				/>
