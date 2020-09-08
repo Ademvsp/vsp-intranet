@@ -8,7 +8,8 @@ import {
 	CardActions,
 	Button,
 	Snackbar,
-	Container
+	Container,
+	Grid
 } from '@material-ui/core';
 
 export const StyledPageContainer = styled(Container)`
@@ -64,4 +65,24 @@ export const StyledSnackbar = styled(({ hover, ...otherProps }) => (
 	&:hover {
 		cursor: ${(props) => (props.hover ? 'pointer' : 'default')};
 	}
+`;
+
+export const StyledCkEditorContainer = styled(Card)`
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	box-shadow: none;
+	flex-grow: 1;
+	padding: 0px 8px;
+	margin-bottom: 10px;
+	& div.MuiCardContent-root:last-child {
+		padding-bottom: 0;
+	}
+	& div.ck.ck-editor__editable:not(.ck-editor__nested-editable) {
+		border: none;
+		box-shadow: none;
+		font-size: initial;
+	}
+`;
+
+export const GridFlexGrow = styled(Grid)`
+	flex-grow: 1;
 `;

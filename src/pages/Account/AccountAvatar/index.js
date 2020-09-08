@@ -58,18 +58,9 @@ const AccountAvatar = withRouter((props) => {
 				title='Profile Picture'
 				message='Are you sure you want to remove your profile picture?'
 			/>
-
-			{/* <StyledAvatar
-				size={3}
-				darkMode={authUser.settings.darkMode}
-				onClick={(event) => setAnchorElement(event.target)}
-				src={authUser.profilePicture}
-			>
-				{loading ? <CircularProgress /> : `${firstName}${lastName}`}
-			</StyledAvatar> */}
 			<StyledAvatar
 				user={authUser}
-				size={3}
+				size={5}
 				clickable={true}
 				onClick={(event) => setAnchorElement(event.target)}
 				customFallback={loading ? <CircularProgress /> : null}

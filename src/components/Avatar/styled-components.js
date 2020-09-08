@@ -4,9 +4,9 @@ import styled from 'styled-components';
 import { Avatar } from '@material-ui/core';
 import * as colors from '../../utils/colors';
 
-const FONT_SIZE = 2; //rem
-const WIDTH = 64; //px
-const HEIGHT = 64; //px
+const FONT_SIZE = 1.25; //rem
+const WIDTH = 40; //px
+const HEIGHT = 40; //px
 
 // eslint-disable-next-line no-unused-vars
 export const StyledAvatar = styled(
@@ -19,11 +19,11 @@ export const StyledAvatar = styled(
 		...otherProps
 	}) => <Avatar {...otherProps} />
 )`
-	width: ${(props) => WIDTH * props.size}px;
-	height: ${(props) => HEIGHT * props.size}px;
-	font-size: ${(props) => FONT_SIZE * props.size}rem;
+	width: ${(props) => props.size && `${WIDTH * props.size}px`};
+	height: ${(props) => props.size && `${HEIGHT * props.size}px`};
+	font-size: ${(props) => props.size && `${FONT_SIZE * props.size}rem`};
 	background-color: ${(props) =>
-		props.dark
+		props.darkMode
 			? colors.default.secondary.light
 			: colors.default.secondary.dark};
 	&:hover {

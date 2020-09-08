@@ -1,38 +1,21 @@
 import React, { useState } from 'react';
-import BalloonEditor from '@ckeditor/ckeditor5-build-balloon';
-import CKEditor from '@ckeditor/ckeditor5-react';
-import {
-	StyledCard,
-	StyledCardActions,
-	StyledCardContent,
-	StyledContainer,
-	StyledTextAreaContainer
-} from './styled-components';
-import { Button, IconButton, Badge, Tooltip } from '@material-ui/core';
+import { StyledContainer } from './styled-components';
+import { ListItemAvatar, Grid } from '@material-ui/core';
 import Avatar from '../../../../../components/Avatar';
-import {
-	Attachment as AttachmentIcon,
-	NotificationsActive as NotificationsActiveIcon
-} from '@material-ui/icons';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import * as postController from '../../../../../controllers/post';
-import AttachmentsDropzone from '../../../../../components/AttachmentsDropZone';
-import ProgressWithLabel from '../../../../../components/ProgressWithLabel';
-import NotifyUsersList from '../../../../../components/NotifyUsersList';
-import UploadAdapter from '../../../../../utils/upload-adapter';
+import BalloonEditorWrapper from '../../../../../components/BalloonEditorWrapper';
+import ActionsBar from '../../../../../components/ActionsBar';
 
 const NewComment = (props) => {
-	const uploadState = useSelector((state) => state.uploadState);
 	const dispatch = useDispatch();
 	const { authUser, post } = props;
 	const [uploading, setUploading] = useState();
 	const [loading, setLoading] = useState(false);
 	const [attachments, setAttachments] = useState([]);
-	const [dropzoneOpen, setDropzoneOpen] = useState(false);
 	const [notifyUsers, setNotifyUsers] = useState([]);
-	const [notifyUsersOpen, setNotifyUsersOpen] = useState(false);
 
 	const initialValues = { body: '' };
 	const initialErrors = { body: true };
@@ -55,6 +38,7 @@ const NewComment = (props) => {
 		if (result) {
 			formik.setValues(initialValues, true);
 			setAttachments([]);
+			setNotifyUsers([]);
 		}
 		setLoading(false);
 	};
@@ -65,116 +49,36 @@ const NewComment = (props) => {
 		onSubmit: submitHandler,
 		validationSchema: validationSchema
 	});
+
 	return (
 		<StyledContainer>
-			<div className='MuiListItemAvatar-root'>
+			<ListItemAvatar>
 				<Avatar user={authUser} />
-			</div>
-			<StyledTextAreaContainer>
-				<StyledCard>
-					<StyledCardContent>
-						<CKEditor
-							editor={BalloonEditor}
-							data={formik.values.body}
-							onChange={(_event, editor) => {
-								const newUploading = editor
-									.getData()
-									.includes('<figure class="image"><img></figure>');
-								setUploading(newUploading);
-								formik.setFieldValue('body', editor.getData());
-							}}
-							disabled={loading}
-							config={{
-								placeholder: 'Write a comment...',
-								toolbar: {
-									items: [
-										'heading',
-										'bold',
-										'italic',
-										'numberedList',
-										'bulletedList',
-										'indent',
-										'outdent',
-										'blockQuote',
-										'insertTable',
-										'tableColumn',
-										'tableRow',
-										'mergeTableCells',
-										'link',
-										'imageUpload'
-									],
-									shouldNotGroupWhenFull: true
-								},
-								extraPlugins: [
-									function MyCustomUploadAdapterPlugin(editor) {
-										const plugin = 'FileRepository';
-										editor.plugins.get(plugin).createUploadAdapter = (loader) =>
-											new UploadAdapter(loader, 'posts');
-									}
-								],
-								removePlugins: ['MediaEmbed']
-							}}
-						/>
-					</StyledCardContent>
-				</StyledCard>
-				{uploadState.filesProgress ? (
-					<ProgressWithLabel
-						transferred={uploadState.filesProgress.reduce(
-							(total, value) => (total += value.bytesTransferred),
-							0
-						)}
-						total={uploadState.filesProgress.reduce(
-							(total, value) => (total += value.totalBytes),
-							0
-						)}
+			</ListItemAvatar>
+			<Grid container direction='column' spacing={1}>
+				<Grid item>
+					<BalloonEditorWrapper
+						value={formik.values.body}
+						setValue={formik.handleChange('body')}
+						setUploading={setUploading}
+						loading={loading}
+						borderChange={false}
 					/>
-				) : null}
-				<StyledCardActions>
-					<div>
-						<Tooltip title='Notify staff' placement='bottom'>
-							<IconButton
-								disabled={loading}
-								onClick={setNotifyUsersOpen.bind(this, true)}
-							>
-								<Badge badgeContent={notifyUsers.length} color='secondary'>
-									<NotificationsActiveIcon />
-								</Badge>
-							</IconButton>
-						</Tooltip>
-
-						<NotifyUsersList
-							setNotifyUsersOpen={setNotifyUsersOpen}
-							notifyUsersOpen={notifyUsersOpen}
-							setNotifyUsers={setNotifyUsers}
-							notifyUsers={notifyUsers}
-						/>
-						<Tooltip title='Attachments' placement='bottom'>
-							<IconButton
-								onClick={setDropzoneOpen.bind(this, true)}
-								disabled={loading}
-							>
-								<Badge badgeContent={attachments.length} color='secondary'>
-									<AttachmentIcon />
-								</Badge>
-							</IconButton>
-						</Tooltip>
-						<AttachmentsDropzone
-							dropzoneOpen={dropzoneOpen}
-							setDropzoneOpen={setDropzoneOpen}
-							attachments={attachments}
-							setAttachments={setAttachments}
-						/>
-					</div>
-					<Button
-						variant='outlined'
-						color='primary'
-						onClick={formik.handleSubmit}
-						disabled={!formik.isValid || loading || uploading}
-					>
-						Post
-					</Button>
-				</StyledCardActions>
-			</StyledTextAreaContainer>
+				</Grid>
+				<Grid item>
+					<ActionsBar
+						uploading={uploading}
+						loading={loading}
+						notifyUsers={notifyUsers}
+						setNotifyUsers={setNotifyUsers}
+						attachments={attachments}
+						setAttachments={setAttachments}
+						isValid={formik.isValid}
+						handleSubmit={formik.handleSubmit}
+						tooltipPlacement='bottom'
+					/>
+				</Grid>
+			</Grid>
 		</StyledContainer>
 	);
 };

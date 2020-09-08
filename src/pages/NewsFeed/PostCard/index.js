@@ -50,7 +50,7 @@ const PostCard = (props) => {
 
 	if (!post) {
 		return (
-			<StyledCard>
+			<StyledCard elevation={2}>
 				<StyledCardHeader
 					skeleton={true}
 					avatar={
@@ -88,7 +88,7 @@ const PostCard = (props) => {
 	}
 
 	return (
-		<StyledCard>
+		<StyledCard elevation={2}>
 			<StyledCardHeader
 				avatar={<Avatar user={user} clickable={true} contactCard={true} />}
 				title={post.title}

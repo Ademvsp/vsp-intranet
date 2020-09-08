@@ -1,24 +1,36 @@
 import firebase from '../utils/firebase';
 import Message from '../models/message';
+import Counter from '../models/counter';
 import {
 	DIALOG,
 	SET_MESSAGE,
 	START_UPLOAD,
 	SET_UPLOAD_PROGRESS,
-	FINISH_UPLOAD
+	FINISH_UPLOAD,
+	SET_POSTS_COUNTER
 } from '../utils/constants';
 import * as notificationController from './notification';
 import { transformForEmail } from '../utils/html-transformer';
+let postsCounterListener;
 
-export const getPostCounter = () => {
+export const subscribePostsCounterListener = () => {
 	return async (dispatch, _getState) => {
 		try {
-			const doc = await firebase
+			postsCounterListener = firebase
 				.firestore()
 				.collection('counters')
 				.doc('posts')
-				.get();
-			return { ...doc.data() };
+				.onSnapshot((snapshot) => {
+					const postsCounter = new Counter({
+						collection: snapshot.id,
+						count: snapshot.data().count,
+						documents: snapshot.data().documents.reverse()
+					});
+					dispatch({
+						type: SET_POSTS_COUNTER,
+						postsCounter
+					});
+				});
 		} catch (error) {
 			const message = new Message({
 				title: 'News Feed',
@@ -35,6 +47,67 @@ export const getPostCounter = () => {
 
 export const getPostRef = (postId) => {
 	return firebase.firestore().collection('posts').doc(postId);
+};
+
+export const addPost = (values, attachments, notifyUsers) => {
+	return async (dispatch, getState) => {
+		try {
+			const { title, body } = values;
+			const authUser = getState().authState.authUser;
+			let functionRef = firebase.functions().httpsCallable('getServerTime');
+			let result = await functionRef();
+			const serverTime = result.data;
+			const post = {
+				attachments: [],
+				body: body.trim(),
+				comments: [],
+				createdAt: null,
+				createdBy: authUser.userId,
+				title: title.trim()
+			};
+			functionRef = firebase.functions().httpsCallable('addPost');
+			result = await functionRef({ post, serverTime });
+			const postId = result.data;
+			let uploadedAttachments = [];
+			if (attachments.length > 0) {
+				uploadedAttachments = await dispatch(
+					uploadFiles(attachments, 'posts', postId, serverTime.toString())
+				);
+				await firebase.firestore().collection('posts').doc(postId).update({
+					attachments: uploadedAttachments
+				});
+			}
+			notificationController.sendEmailNotification({
+				headerParams: {
+					from: null,
+					recipients: notifyUsers,
+					bcc: null
+				},
+				bodyParams: {
+					template: 'newThread',
+					title: title.trim(),
+					link: 'newsfeed',
+					page: 'News Feed',
+					sender: authUser,
+					content: transformForEmail(body, '50%'),
+					attachments: uploadedAttachments,
+					signature: 'VSP Intranet'
+				}
+			});
+			return true;
+		} catch (error) {
+			const message = new Message({
+				title: 'News Feed',
+				body: 'Post failed to post',
+				feedback: DIALOG
+			});
+			dispatch({
+				type: SET_MESSAGE,
+				message
+			});
+		}
+		return false;
+	};
 };
 
 export const addComment = (post, postId, body, attachments, notifyUsers) => {
@@ -163,4 +236,10 @@ const uploadFiles = (files, collection, collectionId, folder) => {
 			});
 		}
 	};
+};
+
+export const unsubscribePostsCounter = () => {
+	if (postsCounterListener) {
+		postsCounterListener();
+	}
 };

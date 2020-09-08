@@ -14,7 +14,7 @@ const ContactCard = (props) => {
 		<StyledCard>
 			<StyledInnerContainer>
 				<CardContent>
-					<Avatar user={user} size={2} iconFallback={true} variant='rounded' />
+					<Avatar user={user} size={3} iconFallback={true} variant='rounded' />
 				</CardContent>
 			</StyledInnerContainer>
 			<StyledInnerContainer>

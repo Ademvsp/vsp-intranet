@@ -3,7 +3,7 @@ import {
 	SET_MESSAGE,
 	SET_USERS,
 	SILENT,
-	SET_USERS_TOUHED
+	SET_USERS_TOUCHED
 } from '../utils/constants';
 import firebase from '../utils/firebase';
 import Compressor from 'compressorjs';
@@ -134,7 +134,7 @@ export const getUsers = () => {
 					const actions = [];
 					if (!touched) {
 						actions.push({
-							type: SET_USERS_TOUHED
+							type: SET_USERS_TOUCHED
 						});
 					}
 					const users = snapshot.docs.map((doc) => {

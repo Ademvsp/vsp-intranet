@@ -23,3 +23,7 @@ code {
 	border-radius: 5px;
 	background: #bbbbbb;
 }
+
+.ck-balloon-panel {
+	z-index: 9999 !important;
+}

@@ -26,7 +26,7 @@ const NavbarAvatar = withRouter(({ authUser, history }) => {
 		<Fragment>
 			<Avatar
 				user={authUser}
-				size={1}
+				size={1.5}
 				clickable={true}
 				onClick={(event) => setAnchorEl(event.target)}
 			/>
