@@ -1,6 +1,7 @@
 import firebase from '../utils/firebase';
 import Message from '../models/message';
 import Counter from '../models/counter';
+import Post from '../models/post';
 import {
 	DIALOG,
 	SET_MESSAGE,
@@ -236,6 +237,79 @@ const uploadFiles = (files, collection, collectionId, folder) => {
 			});
 		}
 	};
+};
+
+export const searchPosts = (values) => {
+	return async (dispatch, getState) => {
+		try {
+			const collection = await firebase.firestore().collection('posts').get();
+			const results = [];
+			collection.docs.forEach((doc) => {
+				const value = values.value.trim().toLowerCase();
+				const userId = values.user ? values.user.userId : null;
+				const post = new Post({
+					postId: doc.id,
+					attachments: doc.data().attachments,
+					body: doc.data().body,
+					comments: doc.data().comments,
+					title: doc.data().title,
+					createdAt: doc.data().createdAt,
+					createdBy: doc.data().createdBy
+				});
+				if (getSearchMatch(post, value, userId)) {
+					results.push(post.postId);
+				}
+			});
+			if (results.length === 0 || results.length === collection.docs.length) {
+				return null;
+			}
+			return results;
+		} catch (error) {
+			const message = new Message({
+				title: 'News Feed',
+				body: 'Search failed',
+				feedback: DIALOG
+			});
+			dispatch({
+				type: SET_MESSAGE,
+				message
+			});
+		}
+	};
+};
+
+const getSearchMatch = (post, value, userId) => {
+	if (post.title.toLowerCase().includes(value)) {
+		if (userId) {
+			if (userId === post.createdBy) {
+				return true;
+			}
+		} else {
+			return true;
+		}
+	}
+	if (post.body.toLowerCase().includes(value)) {
+		if (userId) {
+			if (userId === post.createdBy) {
+				return true;
+			}
+		} else {
+			return true;
+		}
+	}
+	const commentMatch = post.comments.find((comment) =>
+		comment.body.toLowerCase().includes(value)
+	);
+	if (commentMatch) {
+		if (userId) {
+			if (userId === commentMatch.createdBy) {
+				return true;
+			}
+		} else {
+			return true;
+		}
+	}
+	return false;
 };
 
 export const unsubscribePostsCounter = () => {

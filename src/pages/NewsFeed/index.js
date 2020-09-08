@@ -4,7 +4,6 @@ import * as postController from '../../controllers/post';
 import { Pagination } from '@material-ui/lab';
 import { CircularProgress } from '@material-ui/core';
 import PostCard from './PostCard';
-// import firebase from '../../utils/firebase';
 import { StyledPageContainer } from '../../utils/styled-components';
 import { withRouter } from 'react-router-dom';
 import NewPost from './NewPost';
@@ -17,8 +16,9 @@ const NewsFeed = withRouter((props) => {
 	const dispatch = useDispatch();
 	const { postsCounter } = useSelector((state) => state.dataState);
 	const [page, setPage] = useState(initialPage);
-	// const [postsCounter, setpostsCounter] = useState();
 	const [postIds, setPostIds] = useState();
+	const [searchResults, setSearchResults] = useState();
+	const [dataSource, setDataSource] = useState();
 
 	useEffect(() => {
 		dispatch(postController.subscribePostsCounterListener());
@@ -26,6 +26,17 @@ const NewsFeed = withRouter((props) => {
 			dispatch(postController.unsubscribePostsCounter());
 		};
 	}, [dispatch]);
+
+	useEffect(() => {
+		if (postsCounter) {
+			let newDataSource = postsCounter.documents;
+			if (searchResults) {
+				newDataSource = searchResults;
+				props.history.push('/newsfeed/1');
+			}
+			setDataSource(newDataSource);
+		}
+	}, [postsCounter, searchResults, props.history]);
 
 	useEffect(() => {
 		if (paramsPage && postsCounter) {
@@ -39,30 +50,32 @@ const NewsFeed = withRouter((props) => {
 	}, [paramsPage, postsCounter, history]);
 
 	useEffect(() => {
-		const asyncFunction = async () => {
+		if (dataSource) {
 			const START_INDEX = page * MAX_PER_PAGE - MAX_PER_PAGE;
 			const END_INDEX = START_INDEX + MAX_PER_PAGE;
-			const newPostIds = postsCounter.documents.slice(START_INDEX, END_INDEX);
+			const newPostIds = dataSource.slice(START_INDEX, END_INDEX);
 			setPostIds(newPostIds);
-		};
-		if (postsCounter) {
-			asyncFunction();
 		}
-	}, [postsCounter, page, dispatch]);
+	}, [dataSource, page]);
 
 	if (!postIds) {
 		return <CircularProgress />;
 	}
 
+	const count = Math.ceil(dataSource.length / MAX_PER_PAGE);
+
 	return (
 		<StyledPageContainer>
-			<NewPost />
+			<NewPost
+				searchResults={searchResults}
+				setSearchResults={setSearchResults}
+			/>
 			{postIds.map((postId) => (
 				<PostCard key={postId} postId={postId} />
 			))}
 			<Pagination
 				color='primary'
-				count={Math.ceil(postsCounter.count / MAX_PER_PAGE)}
+				count={count}
 				page={page}
 				onChange={(_event, value) =>
 					props.history.push(`/newsfeed/${value.toString()}`)
