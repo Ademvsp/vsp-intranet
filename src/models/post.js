@@ -5,6 +5,7 @@ export default class Post {
 		body,
 		comments,
 		title,
+		subscribers,
 		createdAt,
 		createdBy
 	}) {
@@ -13,6 +14,7 @@ export default class Post {
 		this.body = body;
 		this.comments = comments;
 		this.title = title;
+		this.subscribers = subscribers;
 		this.createdAt = createdAt;
 		this.createdBy = createdBy;
 	}

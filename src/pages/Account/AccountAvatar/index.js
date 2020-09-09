@@ -2,11 +2,10 @@ import React, { Fragment, useState, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { Menu, MenuItem, CircularProgress } from '@material-ui/core';
 import * as userController from '../../../controllers/user';
-import { withRouter } from 'react-router-dom';
 import ConfirmDialog from '../../../components/ConfirmDialog';
 import { StyledAvatar } from './styled-components';
 
-const AccountAvatar = withRouter((props) => {
+const AccountAvatar = (props) => {
 	const authUser = props.authUser;
 	const fileInputRef = useRef();
 	const dispatch = useDispatch();
@@ -95,6 +94,6 @@ const AccountAvatar = withRouter((props) => {
 			</Menu>
 		</Fragment>
 	);
-});
+};
 
 export default AccountAvatar;

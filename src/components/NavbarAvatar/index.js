@@ -2,10 +2,11 @@ import React, { Fragment, useState } from 'react';
 import { Menu, MenuItem } from '@material-ui/core/';
 import { useDispatch } from 'react-redux';
 import * as authController from '../../controllers/auth';
-import { withRouter } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import Avatar from '../Avatar';
 
-const NavbarAvatar = withRouter(({ authUser, history }) => {
+const NavbarAvatar = (props) => {
+	const history = useHistory();
 	const dispatch = useDispatch();
 	const [anchorEl, setAnchorEl] = useState(null);
 
@@ -25,14 +26,14 @@ const NavbarAvatar = withRouter(({ authUser, history }) => {
 	return (
 		<Fragment>
 			<Avatar
-				user={authUser}
+				user={props.authUser}
 				size={1.5}
 				clickable={true}
 				onClick={(event) => setAnchorEl(event.target)}
 			/>
 			<Menu
 				anchorEl={anchorEl}
-				keepMounted
+				keepMounted={true}
 				open={!!anchorEl}
 				onClose={menuCloseHandler}
 				anchorOrigin={{
@@ -51,6 +52,6 @@ const NavbarAvatar = withRouter(({ authUser, history }) => {
 			</Menu>
 		</Fragment>
 	);
-});
+};
 
 export default NavbarAvatar;

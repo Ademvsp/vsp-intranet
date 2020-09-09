@@ -8,16 +8,17 @@ import {
 	StyledToolbar,
 	StyledDiv
 } from './styled-components';
-import { withRouter } from 'react-router-dom';
 import NotificationsPopover from '../NotificationsPopover';
+import { useHistory } from 'react-router-dom';
 
-export default withRouter((props) => {
+const Navbar = (props) => {
+	const history = useHistory();
 	const { authUser } = useSelector((state) => state.authState);
 
 	return (
 		<AppBar position='sticky'>
 			<StyledToolbar authUser={authUser}>
-				<StyledTitle variant='h4' onClick={() => props.history.push('/')}>
+				<StyledTitle variant='h4' onClick={() => history.push('/')}>
 					VSP Intranet
 				</StyledTitle>
 				{authUser && (
@@ -38,4 +39,6 @@ export default withRouter((props) => {
 			</StyledToolbar>
 		</AppBar>
 	);
-});
+};
+
+export default Navbar;

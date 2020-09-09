@@ -7,12 +7,19 @@ import { useSelector } from 'react-redux';
 import { Search as SearchIcon, Clear as ClearIcon } from '@material-ui/icons';
 import NewPostDialog from './NewPostDialog';
 import SearchPostDialog from './SearchPostDialog';
+import { useHistory } from 'react-router-dom';
 
 const NewPost = (props) => {
+	const history = useHistory();
 	const { authUser } = useSelector((state) => state.authState);
 	const { searchResults, setSearchResults } = props;
 	const [newPostDialogOpen, setNewPostDialogOpen] = useState(false);
 	const [searchPostDialogOpen, setSearchPostDialogOpen] = useState(false);
+
+	const clearResultsHandler = () => {
+		setSearchResults(null);
+		history.replace('/newsfeed/page/1');
+	};
 
 	return (
 		<Fragment>
@@ -44,7 +51,7 @@ const NewPost = (props) => {
 						<Grid item>
 							{searchResults ? (
 								<Tooltip title='Clear search results' placement='bottom'>
-									<IconButton onClick={() => setSearchResults(null)}>
+									<IconButton onClick={clearResultsHandler}>
 										<ClearIcon />
 									</IconButton>
 								</Tooltip>

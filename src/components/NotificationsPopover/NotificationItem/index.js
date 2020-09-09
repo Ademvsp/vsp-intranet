@@ -7,12 +7,13 @@ import {
 } from '@material-ui/core';
 import moment from 'moment';
 import { StyledListItem } from './styled-components';
-import { withRouter } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { Delete as DeleteIcon } from '@material-ui/icons';
 import { useDispatch } from 'react-redux';
 import * as notificationController from '../../../controllers/notification';
 
-const NotificationItem = withRouter((props) => {
+const NotificationItem = (props) => {
+	const history = useHistory();
 	const dispatch = useDispatch();
 	const { page, subject, link, createdAt, notificationId } = props.notification;
 
@@ -24,7 +25,7 @@ const NotificationItem = withRouter((props) => {
 		<StyledListItem
 			onClick={() => {
 				if (link) {
-					props.history.push(link);
+					history.push(link);
 				}
 				props.closePopover();
 			}}
@@ -49,6 +50,6 @@ const NotificationItem = withRouter((props) => {
 			</ListItemSecondaryAction>
 		</StyledListItem>
 	);
-});
+};
 
 export default NotificationItem;

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import './App.css';
-import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import AppContainer from './components/AppContainer';
 import { CircularProgress } from '@material-ui/core';
@@ -11,7 +11,7 @@ import Login from './pages/Login';
 import Account from './pages/Account';
 import NewsFeed from './pages/NewsFeed';
 
-const App = withRouter((props) => {
+const App = (props) => {
 	const dispatch = useDispatch();
 	const authState = useSelector((state) => state.authState);
 	const notificationState = useSelector((state) => state.notificationState);
@@ -58,9 +58,15 @@ const App = withRouter((props) => {
 		if (authState.authUser && dataState.users) {
 			children = (
 				<Switch>
-					<Route path='/account' component={Account} />
-					<Route path='/newsfeed/page/:page' component={NewsFeed} />
-					<Route path='/newsfeed/post' component={NewsFeed} />
+					<Route path='/account'>
+						<Account />
+					</Route>
+					<Route path='/newsfeed/page/:page'>
+						<NewsFeed />
+					</Route>
+					<Route path='/newsfeed/post'>
+						<NewsFeed />
+					</Route>
 					<Redirect from='/login' to='/' />
 					<Redirect from='/newsfeed' to='/newsfeed/page/1' />
 					<Redirect from='/' to='/newsfeed' />
@@ -69,6 +75,6 @@ const App = withRouter((props) => {
 		}
 	}
 	return <AppContainer>{children}</AppContainer>;
-});
+};
 
 export default App;

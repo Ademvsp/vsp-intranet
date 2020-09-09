@@ -13,6 +13,7 @@ import {
 import { NEW_POST, NEW_COMMENT } from '../utils/email-template-codes';
 import * as notificationController from './notification';
 import { transformForEmail } from '../utils/html-transformer';
+const region = process.env.REACT_APP_FIREBASE_FUNCTIONS_REGION;
 let postsCounterListener;
 
 export const subscribePostsCounterListener = () => {
@@ -112,17 +113,28 @@ export const addPost = (values, attachments, notifyUsers) => {
 	};
 };
 
-export const addComment = (post, postId, body, attachments, notifyUsers) => {
+export const addComment = (post, body, attachments, notifyUsers) => {
 	return async (dispatch, getState) => {
 		try {
 			const authUser = getState().authState.authUser;
-			let functionRef = firebase.functions().httpsCallable('getServerTime');
+			const users = getState().dataState.users;
+			const recipients = users.filter((user) => {
+				const notifyUsersMatch = notifyUsers.find(
+					(notifyUser) => notifyUser.userId === user.userId
+				);
+				const subscribersMatch = post.subscribers.includes(user.userId);
+				return notifyUsersMatch || subscribersMatch;
+			});
+			let functionRef = firebase
+				.app()
+				.functions(region)
+				.httpsCallable('getServerTime');
 			let result = await functionRef();
 			const serverTime = result.data;
 			let uploadedAttachments = [];
 			if (attachments.length > 0) {
 				uploadedAttachments = await dispatch(
-					uploadFiles(attachments, 'posts', postId, serverTime.toString())
+					uploadFiles(attachments, 'posts', post.postId, serverTime.toString())
 				);
 			}
 			const comment = {
@@ -130,23 +142,26 @@ export const addComment = (post, postId, body, attachments, notifyUsers) => {
 				body,
 				createdBy: authUser.userId
 			};
-			functionRef = firebase.functions().httpsCallable('addComment');
+			functionRef = firebase
+				.app()
+				.functions(region)
+				.httpsCallable('addComment');
 			await functionRef({
 				collection: 'posts',
-				document: postId,
+				document: post.postId,
 				comment,
 				serverTime
 			});
 			notificationController.sendEmailNotification({
 				headerParams: {
 					from: null,
-					recipients: notifyUsers,
+					recipients: recipients,
 					bcc: null
 				},
 				bodyParams: {
 					template: NEW_COMMENT,
 					title: post.title,
-					link: `/newsfeed/post?postId=${postId}`,
+					link: `/newsfeed/post?postId=${post.postId}`,
 					page: 'News Feed',
 					sender: authUser,
 					content: transformForEmail(body, '50%'),
@@ -167,6 +182,32 @@ export const addComment = (post, postId, body, attachments, notifyUsers) => {
 			});
 		}
 		return false;
+	};
+};
+
+export const toggleSubscribePost = (post) => {
+	return async (dispatch, getState) => {
+		try {
+			const postId = post.postId;
+			const userId = getState().authState.authUser.userId;
+			let dbAction = firebase.firestore.FieldValue.arrayUnion(userId);
+			if (post.subscribers.includes(userId)) {
+				dbAction = firebase.firestore.FieldValue.arrayRemove(userId);
+			}
+			await firebase.firestore().collection('posts').doc(postId).update({
+				subscribers: dbAction
+			});
+		} catch (error) {
+			const message = new Message({
+				title: 'News Feed',
+				body: 'Failed to subscribe/unsubscribe to post',
+				feedback: DIALOG
+			});
+			dispatch({
+				type: SET_MESSAGE,
+				message
+			});
+		}
 	};
 };
 
@@ -254,6 +295,7 @@ export const searchPosts = (values) => {
 					body: doc.data().body,
 					comments: doc.data().comments,
 					title: doc.data().title,
+					subscribers: doc.data().subscribers,
 					createdAt: doc.data().createdAt,
 					createdBy: doc.data().createdBy
 				});

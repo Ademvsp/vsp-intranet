@@ -6,8 +6,10 @@ import * as yup from 'yup';
 import * as postController from '../../../../controllers/post';
 import { useDispatch, useSelector } from 'react-redux';
 import { Autocomplete } from '@material-ui/lab';
+import { useHistory } from 'react-router-dom';
 
 const SearchPostDialog = (props) => {
+	const history = useHistory();
 	const dispatch = useDispatch();
 	const { users } = useSelector((state) => state.dataState);
 	const [loading, setLoading] = useState(false);
@@ -43,6 +45,7 @@ const SearchPostDialog = (props) => {
 			formik.setValues(initialValues, true);
 			setSearchPostDialogOpen(false);
 			setSearchResults(results);
+			history.replace('/newsfeed/page/1');
 		}
 		setLoading(false);
 	};

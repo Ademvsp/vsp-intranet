@@ -11,6 +11,7 @@ import {
 import Message from '../models/message';
 import Notification from '../models/notification';
 let notificationsListener;
+const region = process.env.REACT_APP_FIREBASE_FUNCTIONS_REGION;
 
 export const getNotifications = () => {
 	return async (dispatch, getState) => {
@@ -20,6 +21,7 @@ export const getNotifications = () => {
 		const ONE_MONTH_AGO_MILLISECONDS =
 			new Date().getTime() - ONE_MONTH_MILLISECONDS;
 		const ONE_MONTH_AGO_DATE = new Date(ONE_MONTH_AGO_MILLISECONDS);
+
 		const ONE_MONTH_AGO_TIMESTAMP = firebase.firestore.Timestamp.fromDate(
 			ONE_MONTH_AGO_DATE
 		);
@@ -140,7 +142,10 @@ export const clearNotifications = () => {
 };
 
 export const sendEmailNotification = async ({ headerParams, bodyParams }) => {
-	const functionRef = firebase.functions().httpsCallable('sendNotification');
+	const functionRef = firebase
+		.app()
+		.functions(region)
+		.httpsCallable('sendNotificationNew');
 	await functionRef({
 		headerParams,
 		bodyParams

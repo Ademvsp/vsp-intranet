@@ -27,13 +27,7 @@ const NewComment = (props) => {
 	const submitHandler = async (values) => {
 		setLoading(true);
 		const result = await dispatch(
-			postController.addComment(
-				post,
-				props.postId,
-				values.body,
-				attachments,
-				notifyUsers
-			)
+			postController.addComment(post, values.body, attachments, notifyUsers)
 		);
 		if (result) {
 			formik.setValues(initialValues, true);

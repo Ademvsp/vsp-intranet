@@ -1,4 +1,7 @@
 {
+	"globals": {
+		"process": true
+	},
 	"env": {
 		"browser": true,
 		"es2020": true
@@ -45,6 +48,7 @@
 			{
 				"argsIgnorePattern": "^_|^props$"
 			}
-		]
+		],
+		"no-undef": "error"
 	}
 }

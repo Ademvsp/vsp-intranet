@@ -5,16 +5,11 @@ import { Pagination } from '@material-ui/lab';
 import { CircularProgress } from '@material-ui/core';
 import PostCard from './PostCard';
 import { StyledPageContainer } from '../../utils/styled-components';
-import {
-	withRouter,
-	useParams,
-	useHistory,
-	useLocation
-} from 'react-router-dom';
+import { useParams, useHistory, useLocation } from 'react-router-dom';
 import NewPost from './NewPost';
 import queryString from 'query-string';
 
-const NewsFeed = withRouter((props) => {
+const NewsFeed = (props) => {
 	const params = useParams();
 	const history = useHistory();
 	const location = useLocation();
@@ -27,13 +22,15 @@ const NewsFeed = withRouter((props) => {
 	const [dataSource, setDataSource] = useState();
 	const [postIds, setPostIds] = useState();
 	const [activePostId, setActivePostId] = useState(null);
+
 	//Mount and dismount
 	useEffect(() => {
 		dispatch(postController.subscribePostsCounterListener());
 		return () => {
-			dispatch(postController.unsubscribePostsCounter());
+			postController.unsubscribePostsCounter();
 		};
 	}, [dispatch]);
+
 	//If search results change or postsCounter changes, update the data source
 	useEffect(() => {
 		if (postsCounter) {
@@ -44,15 +41,17 @@ const NewsFeed = withRouter((props) => {
 			setDataSource(newDataSource);
 		}
 	}, [postsCounter, searchResults, history, location]);
+
 	//If search results, or clear search results, reset back to page 1
 	useEffect(() => {
-		history.replace(`/newsfeed/page/${initialPage}`);
+		// history.replace(`/newsfeed/page/${initialPage}`);
 	}, [searchResults, history]);
+
 	//When a new change in the data source is detected
 	useEffect(() => {
 		if (dataSource) {
 			let newPage = initialPage;
-			//Coming from email link
+			//Coming from direct link
 			if (location.pathname === '/newsfeed/post') {
 				const { postId } = queryString.parse(location.search);
 				const index = dataSource.findIndex((document) => document === postId);
@@ -123,6 +122,6 @@ const NewsFeed = withRouter((props) => {
 			/>
 		</StyledPageContainer>
 	);
-});
+};
 
 export default NewsFeed;

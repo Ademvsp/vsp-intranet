@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Collapse, Typography } from '@material-ui/core';
+import { Collapse, Typography, IconButton } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import * as postContoller from '../../../controllers/post';
 import moment from 'moment';
@@ -11,13 +11,17 @@ import {
 } from './styled-components';
 import { StyledCard } from '../styled-components';
 import Post from '../../../models/post';
-import { Comment as CommentIcon } from '@material-ui/icons';
+import {
+	Comment as CommentIcon,
+	MoreVert as MoreVertIcon
+} from '@material-ui/icons';
 import Comments from './Comments';
 import { Skeleton } from '@material-ui/lab';
 import InnerHtml from '../../../components/InnerHtml';
 import AttachmentsContainer from '../../../components/AttachmentsContainer';
 import Avatar from '../../../components/Avatar';
 import scrollToComponent from 'react-scroll-to-component';
+import PostCardMenu from './PostCardMenu';
 
 const PostCard = (props) => {
 	const scrollRef = useRef();
@@ -50,6 +54,7 @@ const PostCard = (props) => {
 					body: doc.data().body,
 					comments: doc.data().comments,
 					title: doc.data().title,
+					subscribers: doc.data().subscribers,
 					createdAt: doc.data().createdAt,
 					createdBy: doc.data().createdBy
 				});
@@ -74,6 +79,11 @@ const PostCard = (props) => {
 					}
 					title={<Skeleton animation='pulse' height={10} width='60%' />}
 					subheader={<Skeleton animation='pulse' height={10} width='40%' />}
+					action={
+						<IconButton disabled={true}>
+							<MoreVertIcon />
+						</IconButton>
+					}
 				/>
 				<StyledCardContent skeleton={true}>
 					<Skeleton animation='pulse' variant='rect' height={200} />
@@ -110,6 +120,7 @@ const PostCard = (props) => {
 					variant: 'body1'
 				}}
 				subheader={`${user.firstName} ${user.lastName}`}
+				action={<PostCardMenu post={post} />}
 			/>
 			<StyledCardContent>
 				<InnerHtml html={post.body} />
@@ -132,7 +143,6 @@ const PostCard = (props) => {
 				<Comments
 					authUser={authUser}
 					post={post}
-					postId={postId}
 					comments={[...post.comments].reverse()}
 				/>
 			</Collapse>
