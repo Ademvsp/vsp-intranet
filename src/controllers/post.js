@@ -10,6 +10,7 @@ import {
 	FINISH_UPLOAD,
 	SET_POSTS_COUNTER
 } from '../utils/constants';
+import { NEW_POST, NEW_COMMENT } from '../utils/email-template-codes';
 import * as notificationController from './notification';
 import { transformForEmail } from '../utils/html-transformer';
 let postsCounterListener;
@@ -85,9 +86,9 @@ export const addPost = (values, attachments, notifyUsers) => {
 					bcc: null
 				},
 				bodyParams: {
-					template: 'newThread',
+					template: NEW_POST,
 					title: title.trim(),
-					link: 'newsfeed',
+					link: `/newsfeed/post?postId=${postId}`,
 					page: 'News Feed',
 					sender: authUser,
 					content: transformForEmail(body, '50%'),
@@ -143,9 +144,9 @@ export const addComment = (post, postId, body, attachments, notifyUsers) => {
 					bcc: null
 				},
 				bodyParams: {
-					template: 'newThreadReply',
+					template: NEW_COMMENT,
 					title: post.title,
-					link: 'newsfeed',
+					link: `/newsfeed/post?postId=${postId}`,
 					page: 'News Feed',
 					sender: authUser,
 					content: transformForEmail(body, '50%'),
@@ -240,7 +241,7 @@ const uploadFiles = (files, collection, collectionId, folder) => {
 };
 
 export const searchPosts = (values) => {
-	return async (dispatch, getState) => {
+	return async (dispatch, _getState) => {
 		try {
 			const collection = await firebase.firestore().collection('posts').get();
 			const results = [];

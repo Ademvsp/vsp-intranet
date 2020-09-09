@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Collapse, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import * as postContoller from '../../../controllers/post';
@@ -17,13 +17,27 @@ import { Skeleton } from '@material-ui/lab';
 import InnerHtml from '../../../components/InnerHtml';
 import AttachmentsContainer from '../../../components/AttachmentsContainer';
 import Avatar from '../../../components/Avatar';
+import scrollToComponent from 'react-scroll-to-component';
 
 const PostCard = (props) => {
+	const scrollRef = useRef();
 	const { authUser } = useSelector((state) => state.authState);
 	const { users } = useSelector((state) => state.dataState);
-	const postId = props.postId;
+	const { postId, scroll, setActivePostId } = props;
 	const [post, setPost] = useState();
 	const [showComments, setShowComments] = useState(false);
+
+	useEffect(() => {
+		if (scroll && post) {
+			scrollToComponent(scrollRef.current, {
+				ease: 'linear',
+				align: 'top',
+				offset: -90,
+				duration: 500
+			});
+			setActivePostId(null);
+		}
+	}, [scroll, setActivePostId, post]);
 
 	useEffect(() => {
 		let postListener;
@@ -88,7 +102,7 @@ const PostCard = (props) => {
 	}
 
 	return (
-		<StyledCard elevation={2}>
+		<StyledCard ref={scrollRef} elevation={2}>
 			<StyledCardHeader
 				avatar={<Avatar user={user} clickable={true} contactCard={true} />}
 				title={post.title}

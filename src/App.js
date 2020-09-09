@@ -59,9 +59,10 @@ const App = withRouter((props) => {
 			children = (
 				<Switch>
 					<Route path='/account' component={Account} />
-					<Route path='/newsfeed/:page' component={NewsFeed} />
+					<Route path='/newsfeed/page/:page' component={NewsFeed} />
+					<Route path='/newsfeed/post' component={NewsFeed} />
 					<Redirect from='/login' to='/' />
-					<Redirect from='/newsfeed' to='/newsfeed/1' />
+					<Redirect from='/newsfeed' to='/newsfeed/page/1' />
 					<Redirect from='/' to='/newsfeed' />
 				</Switch>
 			);

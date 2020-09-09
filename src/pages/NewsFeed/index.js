@@ -5,58 +5,85 @@ import { Pagination } from '@material-ui/lab';
 import { CircularProgress } from '@material-ui/core';
 import PostCard from './PostCard';
 import { StyledPageContainer } from '../../utils/styled-components';
-import { withRouter } from 'react-router-dom';
+import {
+	withRouter,
+	useParams,
+	useHistory,
+	useLocation
+} from 'react-router-dom';
 import NewPost from './NewPost';
+import queryString from 'query-string';
 
 const NewsFeed = withRouter((props) => {
+	const params = useParams();
+	const history = useHistory();
+	const location = useLocation();
 	const initialPage = 1;
-	const { match, history } = props;
-	const paramsPage = match.params.page;
 	const MAX_PER_PAGE = 5;
 	const dispatch = useDispatch();
 	const { postsCounter } = useSelector((state) => state.dataState);
 	const [page, setPage] = useState(initialPage);
-	const [postIds, setPostIds] = useState();
 	const [searchResults, setSearchResults] = useState();
 	const [dataSource, setDataSource] = useState();
-
+	const [postIds, setPostIds] = useState();
+	const [activePostId, setActivePostId] = useState(null);
+	//Mount and dismount
 	useEffect(() => {
 		dispatch(postController.subscribePostsCounterListener());
 		return () => {
 			dispatch(postController.unsubscribePostsCounter());
 		};
 	}, [dispatch]);
-
+	//If search results change or postsCounter changes, update the data source
 	useEffect(() => {
 		if (postsCounter) {
 			let newDataSource = postsCounter.documents;
 			if (searchResults) {
 				newDataSource = searchResults;
-				props.history.push('/newsfeed/1');
 			}
 			setDataSource(newDataSource);
 		}
-	}, [postsCounter, searchResults, props.history]);
-
+	}, [postsCounter, searchResults, history, location]);
+	//If search results, or clear search results, reset back to page 1
 	useEffect(() => {
-		if (paramsPage && postsCounter) {
-			const newPage = parseInt(paramsPage);
-			if (newPage && newPage < postsCounter.count) {
-				setPage(newPage);
-			} else {
-				history.replace(`/newsfeed/${initialPage}`);
-			}
-		}
-	}, [paramsPage, postsCounter, history]);
-
+		history.replace(`/newsfeed/page/${initialPage}`);
+	}, [searchResults, history]);
+	//When a new change in the data source is detected
 	useEffect(() => {
 		if (dataSource) {
-			const START_INDEX = page * MAX_PER_PAGE - MAX_PER_PAGE;
+			let newPage = initialPage;
+			//Coming from email link
+			if (location.pathname === '/newsfeed/post') {
+				const { postId } = queryString.parse(location.search);
+				const index = dataSource.findIndex((document) => document === postId);
+				if (index !== -1) {
+					newPage = Math.floor(index / MAX_PER_PAGE) + 1;
+					const newActivePostId = postId;
+					setActivePostId(newActivePostId);
+				} else {
+					newPage = initialPage;
+					history.replace(`/newsfeed/page/${initialPage}`);
+				}
+			}
+			//Common case
+			if (location.pathname.startsWith('/newsfeed/page')) {
+				const pageNumber = parseInt(params.page);
+				const lastPage = Math.ceil(dataSource.length / MAX_PER_PAGE);
+				if (pageNumber > 0 && pageNumber <= lastPage) {
+					newPage = pageNumber;
+				} else {
+					newPage = initialPage;
+					history.replace(`/newsfeed/page/${initialPage}`);
+				}
+			}
+			//Slicing the data source to only include 5 results
+			const START_INDEX = newPage * MAX_PER_PAGE - MAX_PER_PAGE;
 			const END_INDEX = START_INDEX + MAX_PER_PAGE;
 			const newPostIds = dataSource.slice(START_INDEX, END_INDEX);
+			setPage(newPage);
 			setPostIds(newPostIds);
 		}
-	}, [dataSource, page]);
+	}, [dataSource, location.pathname, location.search, params.page, history]);
 
 	if (!postIds) {
 		return <CircularProgress />;
@@ -70,15 +97,26 @@ const NewsFeed = withRouter((props) => {
 				searchResults={searchResults}
 				setSearchResults={setSearchResults}
 			/>
-			{postIds.map((postId) => (
-				<PostCard key={postId} postId={postId} />
-			))}
+			{postIds.map((postId) => {
+				let scroll = false;
+				if (activePostId === postId) {
+					scroll = true;
+				}
+				return (
+					<PostCard
+						key={postId}
+						postId={postId}
+						setActivePostId={setActivePostId}
+						scroll={scroll}
+					/>
+				);
+			})}
 			<Pagination
 				color='primary'
 				count={count}
 				page={page}
 				onChange={(_event, value) =>
-					props.history.push(`/newsfeed/${value.toString()}`)
+					history.push(`/newsfeed/page/${value.toString()}`)
 				}
 				showFirstButton={true}
 				showLastButton={true}
