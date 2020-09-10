@@ -1,16 +1,6 @@
 import styled from 'styled-components';
 import { withTheme } from '@material-ui/core/styles';
-import { List, DialogContent } from '@material-ui/core';
-
-export const StyledDialogContent = styled(DialogContent)`
-	width: 600px;
-	@media (min-width: 768px) and (max-width: 1024px) {
-		width: 600px;
-	}
-	@media (max-width: 767px) {
-		width: unset;
-	}
-`;
+import { List } from '@material-ui/core';
 
 export const StyledContainer = withTheme(styled.div`
 	border-color: ${(props) =>

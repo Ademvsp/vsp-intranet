@@ -6,7 +6,6 @@ import {
 	ListItemText,
 	ListItemSecondaryAction,
 	Checkbox,
-	Dialog,
 	DialogActions,
 	useMediaQuery
 } from '@material-ui/core';
@@ -20,6 +19,7 @@ import {
 } from './styled-components';
 import { AvatarGroup } from '@material-ui/lab';
 import Avatar from '../Avatar';
+import { StyledDialog } from '../../utils/styled-components';
 
 const NotifyUsersList = (props) => {
 	const {
@@ -28,7 +28,7 @@ const NotifyUsersList = (props) => {
 		notifyUsers,
 		setNotifyUsers
 	} = props;
-	const { users } = useSelector((state) => state.dataState);
+	const { activeUsers: users } = useSelector((state) => state.dataState);
 	const [checkedUsers, setCheckedUsers] = useState([]);
 
 	useEffect(() => {
@@ -75,7 +75,7 @@ const NotifyUsersList = (props) => {
 	const mobile = useMediaQuery('(max-width: 767px)');
 
 	return (
-		<Dialog open={notifyUsersOpen} onClose={closeHandler}>
+		<StyledDialog open={notifyUsersOpen} onClose={closeHandler} width={400}>
 			<StyledDialogTitle>
 				<List dense={true}>
 					<StyledTitleListItem>
@@ -145,7 +145,7 @@ const NotifyUsersList = (props) => {
 					Confirm
 				</Button>
 			</DialogActions>
-		</Dialog>
+		</StyledDialog>
 	);
 };
 

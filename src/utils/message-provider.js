@@ -1,14 +1,14 @@
 import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-	Dialog,
 	DialogActions,
 	DialogContentText,
 	DialogTitle,
-	Button
+	Button,
+	DialogContent
 } from '@material-ui/core/';
 import { Alert, AlertTitle } from '@material-ui/lab';
-import { StyledDialogContent, StyledSnackbar } from './styled-components';
+import { StyledSnackbar, StyledDialog } from './styled-components';
 import * as messageController from '../controllers/message';
 import { DIALOG, SILENT, SNACKBAR } from './constants';
 
@@ -24,11 +24,14 @@ const MessageHandler = (props) => {
 		switch (feedback) {
 			case DIALOG:
 				messageComponent = (
-					<Dialog open={feedback === DIALOG} onClose={messageClearHandler}>
+					<StyledDialog
+						open={feedback === DIALOG}
+						onClose={messageClearHandler}
+					>
 						<DialogTitle>{title}</DialogTitle>
-						<StyledDialogContent>
+						<DialogContent>
 							<DialogContentText>{body}</DialogContentText>
-						</StyledDialogContent>
+						</DialogContent>
 						<DialogActions>
 							<Button
 								onClick={messageClearHandler}
@@ -38,7 +41,7 @@ const MessageHandler = (props) => {
 								Close
 							</Button>
 						</DialogActions>
-					</Dialog>
+					</StyledDialog>
 				);
 				break;
 			case SNACKBAR:

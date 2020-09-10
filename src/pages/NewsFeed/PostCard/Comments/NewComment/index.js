@@ -61,15 +61,21 @@ const NewComment = (props) => {
 				</Grid>
 				<Grid item>
 					<ActionsBar
-						uploading={uploading}
-						loading={loading}
-						notifyUsers={notifyUsers}
-						setNotifyUsers={setNotifyUsers}
-						attachments={attachments}
-						setAttachments={setAttachments}
+						notifications={{
+							enabled: true,
+							notifyUsers: notifyUsers,
+							setNotifyUsers: setNotifyUsers
+						}}
+						attachments={{
+							enabled: true,
+							attachments: attachments,
+							setAttachments: setAttachments
+						}}
+						loading={loading || uploading}
 						isValid={formik.isValid}
 						handleSubmit={formik.handleSubmit}
 						tooltipPlacement='bottom'
+						actionButtonText='Post'
 					/>
 				</Grid>
 			</Grid>

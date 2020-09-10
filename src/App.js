@@ -7,9 +7,11 @@ import { CircularProgress } from '@material-ui/core';
 import * as authController from './controllers/auth';
 import * as notificationController from './controllers/notification';
 import * as userController from './controllers/user';
+import * as locationController from './controllers/location';
 import Login from './pages/Login';
 import Account from './pages/Account';
 import NewsFeed from './pages/NewsFeed';
+import Calendar from './pages/Calendar';
 
 const App = (props) => {
 	const dispatch = useDispatch();
@@ -29,12 +31,18 @@ const App = (props) => {
 			dispatch(notificationController.getNotifications());
 		}
 	}, [authState.authUser, notificationState.touched, dispatch]);
-	//Get app users after logged in
+	//Get locations after logged in
 	useEffect(() => {
 		if (authState.authUser && !dataState.usersTouched) {
-			dispatch(userController.getUsers());
+			dispatch(locationController.getLocations());
 		}
 	}, [authState.authUser, dataState.usersTouched, dispatch]);
+	//Get app users with mapped locations after locations are retrieved
+	useEffect(() => {
+		if (dataState.locations) {
+			dispatch(userController.subscribeUsers());
+		}
+	}, [dataState.locations, dispatch]);
 	//Unsubscribe to any active listeners upon unmounting app
 	useEffect(() => {
 		return () => {
@@ -66,6 +74,9 @@ const App = (props) => {
 					</Route>
 					<Route path='/newsfeed/post'>
 						<NewsFeed />
+					</Route>
+					<Route path='/calendar'>
+						<Calendar />
 					</Route>
 					<Redirect from='/login' to='/' />
 					<Redirect from='/newsfeed' to='/newsfeed/page/1' />

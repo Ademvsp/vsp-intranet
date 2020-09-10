@@ -1,12 +1,6 @@
 import styled from 'styled-components';
 import { Card, Chip } from '@material-ui/core';
 
-export const StyledPageContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	width: 50%;
-`;
-
 export const StyledCard = styled(Card)`
 	width: -webkit-fill-available;
 	margin-bottom: 16px;
@@ -14,7 +8,6 @@ export const StyledCard = styled(Card)`
 		padding-bottom: 16px;
 	}
 `;
-
 export const StyledChip = styled(Chip)`
 	width: -webkit-fill-available;
 	justify-content: flex-start;

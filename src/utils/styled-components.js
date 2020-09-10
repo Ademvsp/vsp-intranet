@@ -2,14 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 import {
 	Input,
-	DialogContent,
 	Card,
-	CardContent,
-	CardActions,
 	Button,
 	Snackbar,
 	Container,
-	Grid
+	Grid,
+	Dialog,
+	CardHeader
 } from '@material-ui/core';
 
 export const StyledPageContainer = styled(Container)`
@@ -37,26 +36,41 @@ export const StyledInput = styled(Input)`
 	}
 `;
 
-export const StyledDialogContent = styled(DialogContent)`
-	width: 400px;
+export const StyledDialog = styled(Dialog)`
+	${(props) =>
+		props.width &&
+		`& div.MuiDialog-paperWidthSm {
+		width: ${props.width}px;
+	}`}
+`;
+export const StyledCard = styled(
+	// eslint-disable-next-line no-unused-vars
+	({ headerPadding, contentPadding, ...otherProps }) => <Card {...otherProps} />
+)`
+	${(props) =>
+		props.headerPadding &&
+		`& div.MuiCardHeader-root { padding: ${props.headerPadding}}`}
+	${(props) =>
+		props.contentPadding &&
+		`& div.MuiCardContent-root { padding: ${props.contentPadding}}`}
 `;
 
-export const StyledCard = styled(Card)`
-	min-width: 400px;
+export const StyledCardHeader = styled(CardHeader)`
+	padding: 16px 16px 0 16px;
 `;
 
-export const StyledCardContent = styled(CardContent)`
-	display: flex;
-	flex-direction: column;
-`;
+// export const StyledCardContent = styled(CardContent)`
+// 	display: flex;
+// 	flex-direction: column;
+// `;
 
-export const StyledCardActions = styled(CardActions)`
-	display: flex;
-	flex-direction: column;
-	& > :not(:first-child) {
-		margin-left: 0;
-	}
-`;
+// export const StyledCardActions = styled(CardActions)`
+// 	display: flex;
+// 	flex-direction: column;
+// 	& > :not(:first-child) {
+// 		margin-left: 0;
+// 	}
+// `;
 
 // eslint-disable-next-line no-unused-vars
 export const StyledSnackbar = styled(({ hover, ...otherProps }) => (

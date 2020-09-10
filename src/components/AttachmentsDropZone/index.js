@@ -2,18 +2,18 @@ import React, { useEffect, useCallback, useState, Fragment } from 'react';
 import { useDropzone } from 'react-dropzone';
 import {
 	DialogActions,
-	Dialog,
 	Typography,
 	ListItem,
 	ListItemSecondaryAction,
 	IconButton,
 	ListItemText,
-	Button
+	Button,
+	DialogContent
 } from '@material-ui/core';
 import { StyledContainer, StyledList } from './styled-components';
 import { Delete as DeleteIcon } from '@material-ui/icons';
-import { StyledDialogContent } from './styled-components';
 import fileSizeTranformer from '../../utils/filesize-tranformer';
+import { StyledDialog } from '../../utils/styled-components';
 
 const AttachmentsDropzone = (props) => {
 	const { dropzoneOpen, setDropzoneOpen, attachments, setAttachments } = props;
@@ -67,8 +67,8 @@ const AttachmentsDropzone = (props) => {
 	};
 
 	return (
-		<Dialog open={dropzoneOpen} onClose={closeHandler}>
-			<StyledDialogContent>
+		<StyledDialog width={600} open={dropzoneOpen} onClose={closeHandler}>
+			<DialogContent>
 				<StyledContainer {...getRootProps({ isDragActive })}>
 					<input {...getInputProps()} />
 					<Typography>Select files to upload</Typography>
@@ -97,7 +97,7 @@ const AttachmentsDropzone = (props) => {
 						})}
 					</StyledList>
 				) : null}
-			</StyledDialogContent>
+			</DialogContent>
 			<DialogActions>
 				<Button onClick={closeHandler} color='primary' variant='outlined'>
 					Cancel
@@ -110,7 +110,7 @@ const AttachmentsDropzone = (props) => {
 					Confirm
 				</Button>
 			</DialogActions>
-		</Dialog>
+		</StyledDialog>
 	);
 };
 

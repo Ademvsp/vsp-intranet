@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
-import { Dialog, DialogActions, TextField, Button } from '@material-ui/core';
-import { StyledDialogContent } from './styled-components';
+import {
+	DialogActions,
+	TextField,
+	Button,
+	DialogContent
+} from '@material-ui/core';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import * as postController from '../../../../controllers/post';
 import { useDispatch, useSelector } from 'react-redux';
 import { Autocomplete } from '@material-ui/lab';
 import { useHistory } from 'react-router-dom';
+import { StyledDialog } from '../../../../utils/styled-components';
 
 const SearchPostDialog = (props) => {
 	const history = useHistory();
@@ -58,8 +63,12 @@ const SearchPostDialog = (props) => {
 	});
 
 	return (
-		<Dialog open={searchPostDialogOpen} onClose={dialogCloseHandler}>
-			<StyledDialogContent>
+		<StyledDialog
+			open={searchPostDialogOpen}
+			onClose={dialogCloseHandler}
+			width={400}
+		>
+			<DialogContent>
 				<TextField
 					label='Search'
 					margin='dense'
@@ -88,7 +97,7 @@ const SearchPostDialog = (props) => {
 						/>
 					)}
 				/>
-			</StyledDialogContent>
+			</DialogContent>
 			<DialogActions>
 				<Button
 					variant='outlined'
@@ -99,7 +108,7 @@ const SearchPostDialog = (props) => {
 					Search
 				</Button>
 			</DialogActions>
-		</Dialog>
+		</StyledDialog>
 	);
 };
 

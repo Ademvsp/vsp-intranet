@@ -1,13 +1,7 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import {
-	FormControl,
-	InputLabel,
-	Button,
-	Input,
-	CircularProgress
-} from '@material-ui/core';
+import { Button, CircularProgress, TextField } from '@material-ui/core';
 import {
 	StyledButtonContainer,
 	StyledCardContent,
@@ -60,23 +54,20 @@ const EmailForm = (props) => {
 					<CircularProgress />
 				</StyledSpinnerContainer>
 			) : (
-				<FormControl margin='dense'>
-					<InputLabel>
-						{props.passwordMode ? 'Password' : 'SMS confirmation code'}
-					</InputLabel>
-					<Input
-						type={props.passwordMode ? 'password' : 'text'}
-						value={formik.values.verificationCode}
-						onKeyDown={keyDownHandler}
-						onChange={formik.handleChange('verificationCode')}
-						onBlur={formik.handleBlur('verificationCode')}
-						error={
-							!!formik.touched.verificationCode &&
-							!!formik.errors.verificationCode
-						}
-						autoFocus={true}
-					/>
-				</FormControl>
+				<TextField
+					margin='dense'
+					label={props.passwordMode ? 'Password' : 'SMS confirmation code'}
+					type={props.passwordMode ? 'password' : 'text'}
+					value={formik.values.verificationCode}
+					onKeyDown={keyDownHandler}
+					onChange={formik.handleChange('verificationCode')}
+					onBlur={formik.handleBlur('verificationCode')}
+					error={
+						!!formik.touched.verificationCode &&
+						!!formik.errors.verificationCode
+					}
+					autoFocus={true}
+				/>
 			)}
 			<StyledButtonContainer>
 				<Button

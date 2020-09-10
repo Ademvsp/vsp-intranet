@@ -1,6 +1,14 @@
 import styled from 'styled-components';
-import { Button } from '@material-ui/core';
+import { CircularProgress } from '@material-ui/core';
 
-export const StyledPostButton = styled(Button)`
+export const StyledButtonContainer = styled.div`
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	margin-left: 12px;
+`;
+
+export const StyledButtonProgress = styled(CircularProgress)`
+	position: absolute;
 `;

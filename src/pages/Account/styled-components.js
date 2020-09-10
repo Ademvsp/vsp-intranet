@@ -6,7 +6,7 @@ export const StyledChildContainer = styled.div`
 `;
 
 export const StyledCard = styled(Card)`
-	width: 350px;
+	width: 100%;
 `;
 
 export const StyledContainer = styled.div`

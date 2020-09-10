@@ -1,13 +1,7 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import {
-	FormControl,
-	InputLabel,
-	Button,
-	Input,
-	CircularProgress
-} from '@material-ui/core';
+import { Button, CircularProgress, TextField } from '@material-ui/core';
 import {
 	StyledButtonContainer,
 	StyledCardContent,
@@ -46,18 +40,17 @@ const EmailForm = (props) => {
 					<CircularProgress />
 				</StyledSpinnerContainer>
 			) : (
-				<FormControl margin='dense'>
-					<InputLabel>Email address</InputLabel>
-					<Input
-						type='email'
-						value={formik.values.email}
-						onKeyDown={keyDownHandler}
-						onChange={formik.handleChange('email')}
-						onBlur={formik.handleBlur('email')}
-						error={!!formik.touched.email && !!formik.errors.email}
-						autoFocus={true}
-					/>
-				</FormControl>
+				<TextField
+					margin='dense'
+					label='Email address'
+					type='email'
+					value={formik.values.email}
+					onKeyDown={keyDownHandler}
+					onChange={formik.handleChange('email')}
+					onBlur={formik.handleBlur('email')}
+					error={!!formik.touched.email && !!formik.errors.email}
+					autoFocus={true}
+				/>
 			)}
 			<StyledButtonContainer>
 				<Button

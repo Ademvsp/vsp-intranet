@@ -26,5 +26,7 @@ export default {
 		lighter: '#CCFFFF',
 		dark: '#2D9B8A',
 		darker: '#006857'
-	}
+	},
+	globalEvent: '#607D8B',
+	agendaText: '#FFFFFF'
 };

@@ -1,10 +1,10 @@
+import { DIALOG, SILENT } from '../utils/constants';
 import {
-	DIALOG,
 	SET_MESSAGE,
 	SET_USERS,
-	SILENT,
+	SET_ACTIVE_USERS,
 	SET_USERS_TOUCHED
-} from '../utils/constants';
+} from '../utils/actions';
 import firebase from '../utils/firebase';
 import Compressor from 'compressorjs';
 import Message from '../models/message';
@@ -121,16 +121,16 @@ export const removePicture = () => {
 	};
 };
 
-export const getUsers = () => {
+export const subscribeUsers = () => {
 	return async (dispatch, getState) => {
 		try {
 			usersListener = firebase
 				.firestore()
 				.collection('users')
-				.where('active', '==', true)
 				.orderBy('firstName', 'asc')
 				.onSnapshot((snapshot) => {
 					const touched = getState().dataState.usersTouched;
+					const locations = getState().dataState.locations;
 					const actions = [];
 					if (!touched) {
 						actions.push({
@@ -138,23 +138,30 @@ export const getUsers = () => {
 						});
 					}
 					const users = snapshot.docs.map((doc) => {
-						const user = new User({
+						const location = locations.find(
+							(location) => location.locationId === doc.data().location
+						);
+						return new User({
 							userId: doc.id,
+							active: doc.data().active,
 							firstName: doc.data().firstName,
 							lastName: doc.data().lastName,
 							email: doc.data().email,
-							location: doc.data().location,
+							location: location,
 							phone: doc.data().phone,
 							extension: doc.data().extension,
 							profilePicture: doc.data().profilePicture,
 							settings: doc.data().settings,
 							title: doc.data().title
 						});
-						return user;
 					});
 					actions.push({
 						type: SET_USERS,
 						users
+					});
+					actions.push({
+						type: SET_ACTIVE_USERS,
+						activeUsers: users.filter((user) => user.active)
 					});
 					dispatch(actions);
 				});

@@ -1,13 +1,15 @@
 import firebase from '../utils/firebase';
 import {
-	SET_MESSAGE,
 	SNACKBAR_VARIANTS,
 	SNACKBAR_SEVERITY,
-	SET_NOTIFICACTIONS_TOUCHED,
-	SET_NOTIFICACTIONS,
 	SNACKBAR,
 	DIALOG
 } from '../utils/constants';
+import {
+	SET_MESSAGE,
+	SET_NOTIFICACTIONS_TOUCHED,
+	SET_NOTIFICACTIONS
+} from '../utils/actions';
 import Message from '../models/message';
 import Notification from '../models/notification';
 let notificationsListener;
@@ -27,9 +29,8 @@ export const getNotifications = () => {
 		);
 		notificationsListener = firebase
 			.firestore()
-			.collection('notifications')
-			.where('user', '==', authUser.userId)
-			.where('read', '==', false)
+			.collection('notificationsNew')
+			.where('createdBy', '==', authUser.userId)
 			.where('createdAt', '>=', ONE_MONTH_AGO_TIMESTAMP)
 			.orderBy('createdAt', 'desc')
 			.onSnapshot((snapshot) => {
@@ -52,7 +53,7 @@ export const getNotifications = () => {
 							) {
 								const message = new Message({
 									title: change.doc.data().page,
-									body: change.doc.data().subject,
+									body: change.doc.data().title,
 									feedback: SNACKBAR,
 									options: {
 										duration: 5000,
@@ -75,7 +76,7 @@ export const getNotifications = () => {
 						return new Notification({
 							notificationId: doc.id,
 							page: doc.data().page,
-							subject: doc.data().subject,
+							title: doc.data().title,
 							link: doc.data().link,
 							createdAt: doc.data().createdAt
 						});
@@ -97,7 +98,7 @@ export const clearNotification = (notificationId) => {
 		try {
 			await firebase
 				.firestore()
-				.collection('notifications')
+				.collection('notificationsNew')
 				.doc(notificationId)
 				.delete();
 		} catch (error) {
@@ -122,7 +123,7 @@ export const clearNotifications = () => {
 			for (const notification of notifications) {
 				const docRef = firebase
 					.firestore()
-					.collection('notifications')
+					.collection('notificationsNew')
 					.doc(notification.notificationId);
 				batch.delete(docRef);
 			}
@@ -141,15 +142,12 @@ export const clearNotifications = () => {
 	};
 };
 
-export const sendEmailNotification = async ({ headerParams, bodyParams }) => {
+export const sendEmailNotification = async (data) => {
 	const functionRef = firebase
 		.app()
 		.functions(region)
 		.httpsCallable('sendNotificationNew');
-	await functionRef({
-		headerParams,
-		bodyParams
-	});
+	await functionRef(data);
 };
 
 export const unsubscribeNotificationsListener = () => {

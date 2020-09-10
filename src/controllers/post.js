@@ -4,15 +4,19 @@ import Counter from '../models/counter';
 import Post from '../models/post';
 import {
 	DIALOG,
+	SNACKBAR,
+	SNACKBAR_VARIANTS,
+	SNACKBAR_SEVERITY
+} from '../utils/constants';
+import {
 	SET_MESSAGE,
 	START_UPLOAD,
 	SET_UPLOAD_PROGRESS,
 	FINISH_UPLOAD,
 	SET_POSTS_COUNTER
-} from '../utils/constants';
-import { NEW_POST, NEW_COMMENT } from '../utils/email-template-codes';
+} from '../utils/actions';
+import { NEW_POST, NEW_COMMENT } from '../utils/notification-template-codes';
 import * as notificationController from './notification';
-import { transformForEmail } from '../utils/html-transformer';
 const region = process.env.REACT_APP_FIREBASE_FUNCTIONS_REGION;
 let postsCounterListener;
 
@@ -57,7 +61,10 @@ export const addPost = (values, attachments, notifyUsers) => {
 		try {
 			const { title, body } = values;
 			const authUser = getState().authState.authUser;
-			let functionRef = firebase.functions().httpsCallable('getServerTime');
+			let functionRef = firebase
+				.app()
+				.functions(region)
+				.httpsCallable('getServerTime');
 			let result = await functionRef();
 			const serverTime = result.data;
 			const post = {
@@ -66,9 +73,10 @@ export const addPost = (values, attachments, notifyUsers) => {
 				comments: [],
 				createdAt: null,
 				createdBy: authUser.userId,
+				subscribers: [authUser.userId],
 				title: title.trim()
 			};
-			functionRef = firebase.functions().httpsCallable('addPost');
+			functionRef = firebase.app().functions(region).httpsCallable('addPost');
 			result = await functionRef({ post, serverTime });
 			const postId = result.data;
 			let uploadedAttachments = [];
@@ -80,22 +88,27 @@ export const addPost = (values, attachments, notifyUsers) => {
 					attachments: uploadedAttachments
 				});
 			}
-			notificationController.sendEmailNotification({
-				headerParams: {
-					from: null,
-					recipients: notifyUsers,
-					bcc: null
-				},
-				bodyParams: {
-					template: NEW_POST,
-					title: title.trim(),
-					link: `/newsfeed/post?postId=${postId}`,
-					page: 'News Feed',
-					sender: authUser,
-					content: transformForEmail(body, '50%'),
-					attachments: uploadedAttachments,
-					signature: 'VSP Intranet'
+			await notificationController.sendEmailNotification({
+				type: NEW_POST,
+				recipients: notifyUsers,
+				postId,
+				title: title.trim(),
+				postBody: body,
+				attachments: uploadedAttachments
+			});
+			const message = new Message({
+				title: 'News Feed',
+				body: 'Post created successfully',
+				feedback: SNACKBAR,
+				options: {
+					duration: 3000,
+					variant: SNACKBAR_VARIANTS.FILLED,
+					severity: SNACKBAR_SEVERITY.INFO
 				}
+			});
+			dispatch({
+				type: SET_MESSAGE,
+				message
 			});
 			return true;
 		} catch (error) {
@@ -152,22 +165,13 @@ export const addComment = (post, body, attachments, notifyUsers) => {
 				comment,
 				serverTime
 			});
-			notificationController.sendEmailNotification({
-				headerParams: {
-					from: null,
-					recipients: recipients,
-					bcc: null
-				},
-				bodyParams: {
-					template: NEW_COMMENT,
-					title: post.title,
-					link: `/newsfeed/post?postId=${post.postId}`,
-					page: 'News Feed',
-					sender: authUser,
-					content: transformForEmail(body, '50%'),
-					attachments: uploadedAttachments,
-					signature: 'VSP Intranet'
-				}
+			await notificationController.sendEmailNotification({
+				type: NEW_COMMENT,
+				recipients,
+				postId: post.postId,
+				title: post.title,
+				commentBody: body,
+				attachments: uploadedAttachments
 			});
 			return true;
 		} catch (error) {

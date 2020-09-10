@@ -1,6 +1,7 @@
 export default class User {
 	constructor({
 		userId,
+		active,
 		email,
 		firstName,
 		lastName,
@@ -12,6 +13,7 @@ export default class User {
 		title
 	}) {
 		this.userId = userId;
+		this.active = active;
 		this.email = email;
 		this.firstName = firstName;
 		this.lastName = lastName;

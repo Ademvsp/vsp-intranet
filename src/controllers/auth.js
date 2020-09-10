@@ -1,14 +1,16 @@
 import firebase from '../utils/firebase';
 import {
-	SET_AUTH_USER,
-	LOGOUT,
-	SET_MESSAGE,
 	DIALOG,
 	SNACKBAR,
 	SNACKBAR_VARIANTS,
-	SNACKBAR_SEVERITY,
-	SET_AUTH_TOUCHED
+	SNACKBAR_SEVERITY
 } from '../utils/constants';
+import {
+	SET_AUTH_USER,
+	LOGOUT,
+	SET_MESSAGE,
+	SET_AUTH_TOUCHED
+} from '../utils/actions';
 import AuthUser from '../models/auth-user';
 import Message from '../models/message';
 import { unsubscribeNotificationsListener } from './notification';

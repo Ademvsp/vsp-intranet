@@ -4,10 +4,10 @@ import * as postController from '../../controllers/post';
 import { Pagination } from '@material-ui/lab';
 import { CircularProgress } from '@material-ui/core';
 import PostCard from './PostCard';
-import { StyledPageContainer } from '../../utils/styled-components';
 import { useParams, useHistory, useLocation } from 'react-router-dom';
 import NewPost from './NewPost';
 import queryString from 'query-string';
+import PageContainer from '../../components/PageContainer';
 
 const NewsFeed = (props) => {
 	const params = useParams();
@@ -91,7 +91,7 @@ const NewsFeed = (props) => {
 	const count = Math.ceil(dataSource.length / MAX_PER_PAGE);
 
 	return (
-		<StyledPageContainer>
+		<PageContainer width={35}>
 			<NewPost
 				searchResults={searchResults}
 				setSearchResults={setSearchResults}
@@ -120,7 +120,7 @@ const NewsFeed = (props) => {
 				showFirstButton={true}
 				showLastButton={true}
 			/>
-		</StyledPageContainer>
+		</PageContainer>
 	);
 };
 

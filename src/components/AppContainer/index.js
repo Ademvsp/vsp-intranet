@@ -10,7 +10,9 @@ const AppContainer = (props) => {
 		<Fragment>
 			<Navbar setDrawerOpen={setDrawerOpen} />
 			<SideDrawer drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />
-			<StyledContainer>{props.children}</StyledContainer>
+			<StyledContainer disableGutters={true} maxWidth={false}>
+				{props.children}
+			</StyledContainer>
 		</Fragment>
 	);
 };

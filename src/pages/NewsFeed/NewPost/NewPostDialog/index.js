@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
-	Dialog,
 	Grid,
 	ListItemAvatar,
 	Typography,
-	TextField
+	TextField,
+	DialogContent
 } from '@material-ui/core';
-import { StyledDialogContent } from './styled-components';
 import Avatar from '../../../../components/Avatar';
 import ActionsBar from '../../../../components/ActionsBar';
 import BalloonEditorWrapper from '../../../../components/BalloonEditorWrapper';
 import * as postController from '../../../../controllers/post';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import { StyledDialog } from '../../../../utils/styled-components';
+import { useHistory } from 'react-router-dom';
 
 const NewPostDialog = (props) => {
 	const dispatch = useDispatch();
@@ -23,6 +24,7 @@ const NewPostDialog = (props) => {
 		setNewPostDialogOpen,
 		setSearchResults
 	} = props;
+	const history = useHistory();
 	const [loading, setLoading] = useState(false);
 	const [notifyUsers, setNotifyUsers] = useState([]);
 	const [attachments, setAttachments] = useState([]);
@@ -47,6 +49,7 @@ const NewPostDialog = (props) => {
 			setNotifyUsers([]);
 			setNewPostDialogOpen(false);
 			setSearchResults(null);
+			history.push('/newsfeed/page/1');
 		}
 		setLoading(false);
 	};
@@ -66,8 +69,12 @@ const NewPostDialog = (props) => {
 	});
 
 	return (
-		<Dialog open={newPostDialogOpen} onClose={dialogCloseHandler}>
-			<StyledDialogContent>
+		<StyledDialog
+			width={500}
+			open={newPostDialogOpen}
+			onClose={dialogCloseHandler}
+		>
+			<DialogContent>
 				<Grid container direction='column' spacing={1}>
 					<Grid
 						item
@@ -107,20 +114,26 @@ const NewPostDialog = (props) => {
 					</Grid>
 					<Grid item>
 						<ActionsBar
-							uploading={uploading}
-							loading={loading}
-							notifyUsers={notifyUsers}
-							setNotifyUsers={setNotifyUsers}
-							attachments={attachments}
-							setAttachments={setAttachments}
+							notifications={{
+								enabled: true,
+								notifyUsers: notifyUsers,
+								setNotifyUsers: setNotifyUsers
+							}}
+							attachments={{
+								enabled: true,
+								attachments: attachments,
+								setAttachments: setAttachments
+							}}
+							loading={loading || uploading}
 							isValid={formik.isValid}
 							handleSubmit={formik.handleSubmit}
 							tooltipPlacement='top'
+							actionButtonText='Post'
 						/>
 					</Grid>
 				</Grid>
-			</StyledDialogContent>
-		</Dialog>
+			</DialogContent>
+		</StyledDialog>
 	);
 };
 

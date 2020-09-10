@@ -27,12 +27,5 @@ export const StyledDialogTitle = styled(DialogTitle)`
 
 export const StyledDialogContent = styled(DialogContent)`
 	max-height: 300px;
-	width: 400px;
-	@media (min-width: 768px) and (max-width: 1024px) {
-		width: 400px;
-	}
-	@media (max-width: 767px) {
-		width: unset;
-	}
 	overflow-y: overlay;
 `;

@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react';
-import { Menu, MenuItem } from '@material-ui/core/';
+import { Menu, MenuItem, Divider } from '@material-ui/core/';
 import { useDispatch } from 'react-redux';
 import * as authController from '../../controllers/auth';
 import { useHistory } from 'react-router-dom';
@@ -48,6 +48,7 @@ const NavbarAvatar = (props) => {
 			>
 				<MenuItem onClick={accountClickHandler}>Account</MenuItem>
 				<MenuItem onClick={accountClickHandler}>Feedback</MenuItem>
+				<Divider />
 				<MenuItem onClick={logoutClickHandler}>Logout</MenuItem>
 			</Menu>
 		</Fragment>

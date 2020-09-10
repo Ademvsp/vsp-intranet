@@ -1,4 +1,4 @@
-import { SET_AUTH_USER, SET_AUTH_TOUCHED, LOGOUT } from '../utils/constants';
+import { SET_AUTH_USER, SET_AUTH_TOUCHED, LOGOUT } from '../utils/actions';
 
 const initialState = {
 	authUser: null,

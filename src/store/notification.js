@@ -1,7 +1,7 @@
 import {
 	SET_NOTIFICACTIONS,
 	SET_NOTIFICACTIONS_TOUCHED
-} from '../utils/constants';
+} from '../utils/actions';
 
 const initialState = {
 	notifications: [],
