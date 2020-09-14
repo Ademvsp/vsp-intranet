@@ -5,14 +5,20 @@ import { Avatar, Card } from '@material-ui/core';
 import { withTheme } from '@material-ui/core/styles';
 
 export const StyledCkEditorContainer = withTheme(styled(
-	({ hover, focus, minHeight, maxHeight, borderChange, ...otherProps }) => (
-		<Card {...otherProps} />
-	)
+	({
+		loading,
+		hover,
+		focus,
+		minHeight,
+		maxHeight,
+		borderChange,
+		...otherProps
+	}) => <Card {...otherProps} />
 )`
 	border: ${(props) => {
 		let border = '1px solid rgba(0, 0, 0, 0.2)';
 		if (props.borderChange) {
-			if (props.hover) {
+			if (props.hover && !props.loading) {
 				border = '2px solid rgba(0, 0, 0, 0.87)';
 			}
 			if (props.focus) {

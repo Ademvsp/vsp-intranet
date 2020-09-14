@@ -142,7 +142,7 @@ export const clearNotifications = () => {
 	};
 };
 
-export const sendEmailNotification = async (data) => {
+export const sendNotification = async (data) => {
 	const functionRef = firebase
 		.app()
 		.functions(region)

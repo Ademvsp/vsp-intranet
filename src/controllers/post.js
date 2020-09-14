@@ -58,9 +58,11 @@ export const getPostRef = (postId) => {
 
 export const addPost = (values, attachments, notifyUsers) => {
 	return async (dispatch, getState) => {
+		const { title, body } = values;
+		const authUser = getState().authState.authUser;
+		let uploadedAttachments = [];
+		let postId;
 		try {
-			const { title, body } = values;
-			const authUser = getState().authState.authUser;
 			let functionRef = firebase
 				.app()
 				.functions(region)
@@ -78,8 +80,7 @@ export const addPost = (values, attachments, notifyUsers) => {
 			};
 			functionRef = firebase.app().functions(region).httpsCallable('addPost');
 			result = await functionRef({ post, serverTime });
-			const postId = result.data;
-			let uploadedAttachments = [];
+			postId = result.data;
 			if (attachments.length > 0) {
 				uploadedAttachments = await dispatch(
 					uploadFiles(attachments, 'posts', postId, serverTime.toString())
@@ -88,14 +89,6 @@ export const addPost = (values, attachments, notifyUsers) => {
 					attachments: uploadedAttachments
 				});
 			}
-			await notificationController.sendEmailNotification({
-				type: NEW_POST,
-				recipients: notifyUsers,
-				postId,
-				title: title.trim(),
-				postBody: body,
-				attachments: uploadedAttachments
-			});
 			const message = new Message({
 				title: 'News Feed',
 				body: 'Post created successfully',
@@ -110,7 +103,6 @@ export const addPost = (values, attachments, notifyUsers) => {
 				type: SET_MESSAGE,
 				message
 			});
-			return true;
 		} catch (error) {
 			const message = new Message({
 				title: 'News Feed',
@@ -121,30 +113,44 @@ export const addPost = (values, attachments, notifyUsers) => {
 				type: SET_MESSAGE,
 				message
 			});
+			return false;
 		}
-		return false;
+		//Perform this without disruptive error catching
+		try {
+			await notificationController.sendNotification({
+				type: NEW_POST,
+				recipients: notifyUsers,
+				postId,
+				title: title.trim(),
+				postBody: body,
+				attachments: uploadedAttachments
+			});
+		} catch (error) {
+			return true;
+		}
+		return true;
 	};
 };
 
 export const addComment = (post, body, attachments, notifyUsers) => {
 	return async (dispatch, getState) => {
+		const authUser = getState().authState.authUser;
+		const users = getState().dataState.users;
+		const recipients = users.filter((user) => {
+			const notifyUsersMatch = notifyUsers.find(
+				(notifyUser) => notifyUser.userId === user.userId
+			);
+			const subscribersMatch = post.subscribers.includes(user.userId);
+			return notifyUsersMatch || subscribersMatch;
+		});
+		let uploadedAttachments = [];
 		try {
-			const authUser = getState().authState.authUser;
-			const users = getState().dataState.users;
-			const recipients = users.filter((user) => {
-				const notifyUsersMatch = notifyUsers.find(
-					(notifyUser) => notifyUser.userId === user.userId
-				);
-				const subscribersMatch = post.subscribers.includes(user.userId);
-				return notifyUsersMatch || subscribersMatch;
-			});
 			let functionRef = firebase
 				.app()
 				.functions(region)
 				.httpsCallable('getServerTime');
 			let result = await functionRef();
 			const serverTime = result.data;
-			let uploadedAttachments = [];
 			if (attachments.length > 0) {
 				uploadedAttachments = await dispatch(
 					uploadFiles(attachments, 'posts', post.postId, serverTime.toString())
@@ -165,15 +171,6 @@ export const addComment = (post, body, attachments, notifyUsers) => {
 				comment,
 				serverTime
 			});
-			await notificationController.sendEmailNotification({
-				type: NEW_COMMENT,
-				recipients,
-				postId: post.postId,
-				title: post.title,
-				commentBody: body,
-				attachments: uploadedAttachments
-			});
-			return true;
 		} catch (error) {
 			const message = new Message({
 				title: 'News Feed',
@@ -184,8 +181,22 @@ export const addComment = (post, body, attachments, notifyUsers) => {
 				type: SET_MESSAGE,
 				message
 			});
+			return false;
 		}
-		return false;
+		//Perform this without disruptive error catching
+		try {
+			await notificationController.sendNotification({
+				type: NEW_COMMENT,
+				recipients,
+				postId: post.postId,
+				title: post.title,
+				commentBody: body,
+				attachments: uploadedAttachments
+			});
+		} catch (error) {
+			return true;
+		}
+		return true;
 	};
 };
 

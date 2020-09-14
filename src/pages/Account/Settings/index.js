@@ -45,7 +45,7 @@ const Settings = (props) => {
 				<ListItemIcon>
 					<HomeIcon />
 				</ListItemIcon>
-				<ListItemText primary='Work from home' />
+				<ListItemText primary='Work from Home' />
 				<ListItemSecondaryAction>
 					<Switch
 						checked={authUser.settings.workFromHome}

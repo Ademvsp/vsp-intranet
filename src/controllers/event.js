@@ -142,7 +142,7 @@ export const addEvent = (values, notifyUsers) => {
 			return false;
 		}
 		try {
-			//Perform this without error catching, as do not want to fail the function.
+			//Perform this without disruptive error catching
 			const readableTitle = getReadableTitle(
 				{
 					details,
@@ -151,7 +151,7 @@ export const addEvent = (values, notifyUsers) => {
 				},
 				users
 			);
-			await notificationController.sendEmailNotification({
+			await notificationController.sendNotification({
 				type: NEW_EVENT,
 				recipients: notifyUsers,
 				eventId,

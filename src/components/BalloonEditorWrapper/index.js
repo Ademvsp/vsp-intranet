@@ -24,6 +24,7 @@ const BalloonEditorWrapper = (props) => {
 			onMouseEnter={() => setHover(true)}
 			onMouseLeave={() => setHover(false)}
 			onClick={() => editorRef.current.editor.editing.view.focus()}
+			loading={loading}
 			minHeight={minHeight}
 			maxHeight={maxHeight}
 			focus={focus}

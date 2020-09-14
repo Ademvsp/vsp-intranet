@@ -6,19 +6,20 @@ import {
 	ExpandMore as ExpandMoreIcon
 } from '@material-ui/icons';
 import { useSelector } from 'react-redux';
-import CalendarsListeItem from './CalendarsListItem';
+import CalendarsListItem from './CalendarsListItem';
 import EventTypesListItem from './EventTypesListItem';
 import WorkFromHomeListItem from './WorkFromHomeListItem';
 import LeaveListItem from './LeaveListItem';
 import { eventTypeNames } from '../../../utils/event-types';
 import SkeletonContainer from './SkeletonContainer';
+import WorkFromHomeSwitch from './WorkFromHomeSwitch';
 
 const Panel = (props) => {
 	const initialPanelItems = [
 		{
 			name: 'Calendars',
 			expanded: true,
-			component: <CalendarsListeItem />
+			component: <CalendarsListItem />
 		},
 		{
 			name: 'Event Types',
@@ -70,6 +71,7 @@ const Panel = (props) => {
 				<SkeletonContainer />
 			) : (
 				<List>
+					<WorkFromHomeSwitch />
 					{panelItems.map((panelItem, index) => {
 						const ExpandedIcon = panelItem.expanded
 							? ExpandLessIcon
