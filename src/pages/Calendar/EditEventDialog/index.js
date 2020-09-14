@@ -28,31 +28,28 @@ import { getReadableTitle } from '../../../controllers/event';
 import { StyledTitle } from './styled-components';
 import * as eventController from '../../../controllers/event';
 
-const NewEventDialog = (props) => {
+const EditEventDialog = (props) => {
 	const dispatch = useDispatch();
 	const detailsFieldRef = useRef();
 	const { authUser } = useSelector((state) => state.authState);
-	const { users } = useSelector((state) => state.dataState);
+	const { users, locations } = useSelector((state) => state.dataState);
 	const [notifyUsers, setNotifyUsers] = useState([]);
-	const [loading, setLoading] = useState();
-	const { open, close } = props;
+	const [editLoading, setEditLoading] = useState(false);
+	const [deleteLoading, setDeleteLoading] = useState(false);
+	const loading = deleteLoading || editLoading;
+	const { open, close, event } = props;
 
 	const initialValues = {
-		type: eventTypes[0],
-		details: '',
-		start: moment(new Date()).startOf('day').add(8, 'hours').toDate(),
-		end: moment(new Date()).startOf('day').add(9, 'hours').toDate(),
-		allDay: false,
-		allCalendars: false
+		type: eventTypes.find((eventType) => eventType.eventTypeId === event.type),
+		details: event.details,
+		start: event.start,
+		end: event.end,
+		allDay: event.allDay,
+		allCalendars: locations.every((location) =>
+			event.locations.includes(location.locationId)
+		)
 	};
-	const initialErrors = {
-		type: true,
-		details: true,
-		start: true,
-		end: true,
-		allDay: true,
-		allCalendars: true
-	};
+
 	const validationSchema = yup.object().shape({
 		type: yup
 			.object()
@@ -76,15 +73,27 @@ const NewEventDialog = (props) => {
 	});
 
 	const submitHandler = async (values) => {
-		setLoading(true);
+		setEditLoading(true);
 		const result = await dispatch(
-			eventController.addEvent(values, notifyUsers)
+			eventController.editEvent(event, values, notifyUsers)
 		);
 		if (result) {
-			formik.setValues(initialValues);
 			close();
+		} else {
+			setEditLoading(false);
 		}
-		setLoading(false);
+	};
+
+	const deleteHandler = async () => {
+		setDeleteLoading(true);
+		const result = await dispatch(
+			eventController.deleteEvent(event, notifyUsers)
+		);
+		if (result) {
+			close();
+		} else {
+			setDeleteLoading(false);
+		}
 	};
 
 	const closeHandler = () => {
@@ -95,10 +104,10 @@ const NewEventDialog = (props) => {
 
 	const formik = useFormik({
 		initialValues: initialValues,
-		initialErrors: initialErrors,
 		onSubmit: submitHandler,
 		validationSchema: validationSchema
 	});
+
 	const { start, end, type } = formik.values;
 	const { setFieldValue } = formik;
 
@@ -260,15 +269,23 @@ const NewEventDialog = (props) => {
 					attachments={{
 						enabled: false
 					}}
+					buttonLoading={editLoading}
 					loading={loading}
 					isValid={formik.isValid}
 					onClick={formik.handleSubmit}
 					tooltipPlacement='top'
-					actionButtonText='Create'
+					actionButtonText='Update'
+					additionalButtons={[
+						{
+							buttonText: 'Delete',
+							onClick: deleteHandler,
+							buttonLoading: deleteLoading
+						}
+					]}
 				/>
 			</DialogActions>
 		</StyledDialog>
 	);
 };
 
-export default NewEventDialog;
+export default EditEventDialog;

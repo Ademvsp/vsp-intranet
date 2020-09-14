@@ -73,7 +73,7 @@ const NewComment = (props) => {
 						}}
 						loading={loading || uploading}
 						isValid={formik.isValid}
-						handleSubmit={formik.handleSubmit}
+						onClick={formik.handleSubmit}
 						tooltipPlacement='bottom'
 						actionButtonText='Post'
 					/>

@@ -7,7 +7,6 @@ import { BrowserRouter } from 'react-router-dom';
 import StoreProvider from './utils/store-provider';
 import ThemeProvider from './utils/theme-provider';
 import MessageHandler from './utils/message-provider';
-// import firebase from './utils/firebase';
 
 ReactDOM.render(
 	<BrowserRouter>

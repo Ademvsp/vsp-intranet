@@ -12,25 +12,25 @@ import moment from 'moment';
 const AnnualLeaveListItem = (props) => {
 	const { activeUsers, events } = useSelector((state) => state.dataState);
 	const [annualLeaveUsers, setAnnualLeaveUsers] = useState();
-
+	const { eventTypeId } = props;
 	useEffect(() => {
 		const todayEvents = events.filter((event) => {
-			return moment(new Date()).isBetween(
+			const todayMatch = moment(new Date()).isBetween(
 				moment(event.start).startOf('day'),
 				moment(event.end).endOf('day')
 			);
+			const typeMatch = event.type === eventTypeId;
+			return todayMatch && typeMatch;
 		});
-		const todayAnnualLeaveEvents = todayEvents.filter(
-			(todayEvent) => todayEvent.type === props.eventTypeId
-		);
-		const eventUsers = todayAnnualLeaveEvents.map(
-			(todayEvent) => todayEvent.createdBy
-		);
+
+		const eventUsers = todayEvents.map((todayEvent) => todayEvent.createdBy);
+
 		const newAnnualLeaveUsers = activeUsers.filter((activeUser) =>
 			eventUsers.includes(activeUser.userId)
 		);
+
 		setAnnualLeaveUsers(newAnnualLeaveUsers);
-	}, [events, activeUsers, props.eventTypeId]);
+	}, [events, activeUsers, eventTypeId]);
 
 	if (!annualLeaveUsers) {
 		return <CircularProgress />;

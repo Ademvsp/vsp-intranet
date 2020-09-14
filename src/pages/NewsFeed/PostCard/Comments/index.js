@@ -30,7 +30,9 @@ const Comments = (props) => {
 			<List>
 				{comments.map((comment, index) => {
 					return (
-						<Fragment key={moment(comment.createdAt.toDate()).format('x')}>
+						<Fragment
+							key={moment(comment.metadata.createdAt.toDate()).format('x')}
+						>
 							{index > 0 ? <Divider variant='middle' light={true} /> : null}
 							<Comment comment={comment} />
 						</Fragment>

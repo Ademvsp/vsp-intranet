@@ -19,16 +19,16 @@ const PostCardMenu = (props) => {
 	const { post } = props;
 
 	const copyClickHandler = () => {
-		const message = new Message({
-			title: 'News Feed',
-			body: 'Link copied to clipboard',
-			feedback: SNACKBAR,
-			options: {
+		const message = new Message(
+			'News Feed',
+			'Link copied to clipboard',
+			SNACKBAR,
+			{
 				duration: 2000,
 				variant: SNACKBAR_VARIANTS.FILLED,
 				severity: SNACKBAR_SEVERITY.INFO
 			}
-		});
+		);
 		dispatch(messageController.setMessage(message));
 		setAnchorEl(null);
 	};

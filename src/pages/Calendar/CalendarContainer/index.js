@@ -7,6 +7,7 @@ import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import { Skeleton } from '@material-ui/lab';
 import { Grid } from '@material-ui/core';
 import colors from '../../../utils/colors';
+import { useHistory } from 'react-router-dom';
 const DragAndDropCalendar = withDragAndDrop(BigCalendar);
 moment.locale('en-au', {
 	week: { dow: 1 }
@@ -14,6 +15,7 @@ moment.locale('en-au', {
 const localizer = momentLocalizer(moment);
 
 const CalendarContainer = (props) => {
+	const history = useHistory();
 	const [transformedEvents, setTransformedEvents] = useState();
 	const { locations, users } = useSelector((state) => state.dataState);
 	const dispatch = useDispatch();
@@ -27,8 +29,20 @@ const CalendarContainer = (props) => {
 	useEffect(() => {
 		if (props.events) {
 			const newTransformedEvents = props.events.map((event) => {
-				const title = eventController.getReadableTitle(event, users);
-				return { ...event, title };
+				const title = eventController.getReadableTitle(
+					{
+						details: event.details,
+						type: event.type,
+						user: event.user
+					},
+					users
+				);
+				return {
+					...event,
+					title,
+					start: event.start,
+					end: event.end
+				};
 			});
 			setTransformedEvents(newTransformedEvents);
 		}
@@ -92,6 +106,9 @@ const CalendarContainer = (props) => {
 			showMultiDayTimes={true}
 			longPressThreshold={50}
 			eventPropGetter={eventPropGetterHandler}
+			onSelectEvent={(event) =>
+				history.push(`/calendar/event?eventId=${event.eventId}`)
+			}
 		/>
 	);
 };

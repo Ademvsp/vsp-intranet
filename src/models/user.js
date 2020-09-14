@@ -1,25 +1,27 @@
 export default class User {
-	constructor({
+	constructor(
 		userId,
 		active,
 		email,
+		extension,
 		firstName,
 		lastName,
 		location,
-		extension,
+		manager,
 		phone,
 		profilePicture,
 		settings,
 		title
-	}) {
+	) {
 		this.userId = userId;
 		this.active = active;
 		this.email = email;
+		this.extension = extension;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.location = location;
+		this.manager = manager;
 		this.phone = phone;
-		this.extension = extension;
 		this.profilePicture = profilePicture;
 		this.settings = settings;
 		this.title = title;

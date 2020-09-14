@@ -51,16 +51,16 @@ export const getNotifications = () => {
 								change.type === 'added' &&
 								SECONDS_AGO <= TWO_MINUTES_SECONDS
 							) {
-								const message = new Message({
-									title: change.doc.data().page,
-									body: change.doc.data().title,
-									feedback: SNACKBAR,
-									options: {
+								const message = new Message(
+									change.doc.data().page,
+									change.doc.data().title,
+									SNACKBAR,
+									{
 										duration: 5000,
 										variant: SNACKBAR_VARIANTS.FILLED,
 										severity: SNACKBAR_SEVERITY.INFO
 									}
-								});
+								);
 								actions.push({
 									type: SET_MESSAGE,
 									message
@@ -73,13 +73,15 @@ export const getNotifications = () => {
 					//page, subject, link, createdAt, notificationId
 					//
 					const notifications = snapshot.docs.map((doc) => {
-						return new Notification({
-							notificationId: doc.id,
-							page: doc.data().page,
-							title: doc.data().title,
-							link: doc.data().link,
-							createdAt: doc.data().createdAt
-						});
+						return new Notification(
+							doc.id,
+							doc.data().createdAt,
+							doc.data().createdBy,
+							doc.data().link,
+							doc.data().page,
+							doc.data().recipient,
+							doc.data().title
+						);
 					});
 					dispatch([
 						...actions,
@@ -102,11 +104,11 @@ export const clearNotification = (notificationId) => {
 				.doc(notificationId)
 				.delete();
 		} catch (error) {
-			const message = new Message({
-				title: 'Notifications',
-				body: 'Notification failed to clear',
-				feedback: DIALOG
-			});
+			const message = new Message(
+				'Notifications',
+				'Notification failed to clear',
+				DIALOG
+			);
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -129,11 +131,11 @@ export const clearNotifications = () => {
 			}
 			await batch.commit();
 		} catch (error) {
-			const message = new Message({
-				title: 'Notifications',
-				body: 'Notifications failed to clear',
-				feedback: DIALOG
-			});
+			const message = new Message(
+				'Notifications',
+				'Notifications failed to clear',
+				DIALOG
+			);
 			dispatch({
 				type: SET_MESSAGE,
 				message

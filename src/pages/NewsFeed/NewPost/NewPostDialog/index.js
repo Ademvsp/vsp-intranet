@@ -126,7 +126,7 @@ const NewPostDialog = (props) => {
 							}}
 							loading={loading || uploading}
 							isValid={formik.isValid}
-							handleSubmit={formik.handleSubmit}
+							onClick={formik.handleSubmit}
 							tooltipPlacement='top'
 							actionButtonText='Post'
 						/>

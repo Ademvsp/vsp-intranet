@@ -15,7 +15,7 @@ import {
 	FINISH_UPLOAD,
 	SET_POSTS_COUNTER
 } from '../utils/actions';
-import { NEW_POST, NEW_COMMENT } from '../utils/notification-template-codes';
+import { NEW_POST, NEW_COMMENT } from '../utils/notification-types';
 import * as notificationController from './notification';
 const region = process.env.REACT_APP_FIREBASE_FUNCTIONS_REGION;
 let postsCounterListener;
@@ -28,22 +28,22 @@ export const subscribePostsCounterListener = () => {
 				.collection('counters')
 				.doc('posts')
 				.onSnapshot((snapshot) => {
-					const postsCounter = new Counter({
-						collection: snapshot.id,
-						count: snapshot.data().count,
-						documents: snapshot.data().documents.reverse()
-					});
+					const postsCounter = new Counter(
+						snapshot.id,
+						snapshot.data().count,
+						snapshot.data().documents.reverse()
+					);
 					dispatch({
 						type: SET_POSTS_COUNTER,
 						postsCounter
 					});
 				});
 		} catch (error) {
-			const message = new Message({
-				title: 'News Feed',
-				body: 'Failed to retrieve news feed',
-				feedback: DIALOG
-			});
+			const message = new Message(
+				'News Feed',
+				'Failed to retrieve news feed',
+				DIALOG
+			);
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -89,26 +89,22 @@ export const addPost = (values, attachments, notifyUsers) => {
 					attachments: uploadedAttachments
 				});
 			}
-			const message = new Message({
-				title: 'News Feed',
-				body: 'Post created successfully',
-				feedback: SNACKBAR,
-				options: {
+			const message = new Message(
+				'News Feed',
+				'Post created successfully',
+				SNACKBAR,
+				{
 					duration: 3000,
 					variant: SNACKBAR_VARIANTS.FILLED,
 					severity: SNACKBAR_SEVERITY.INFO
 				}
-			});
+			);
 			dispatch({
 				type: SET_MESSAGE,
 				message
 			});
 		} catch (error) {
-			const message = new Message({
-				title: 'News Feed',
-				body: 'Post failed to post',
-				feedback: DIALOG
-			});
+			const message = new Message('News Feed', 'Post failed to post', DIALOG);
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -172,11 +168,11 @@ export const addComment = (post, body, attachments, notifyUsers) => {
 				serverTime
 			});
 		} catch (error) {
-			const message = new Message({
-				title: 'News Feed',
-				body: 'Comment failed to post',
-				feedback: DIALOG
-			});
+			const message = new Message(
+				'News Feed',
+				'Comment failed to post',
+				DIALOG
+			);
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -213,11 +209,11 @@ export const toggleSubscribePost = (post) => {
 				subscribers: dbAction
 			});
 		} catch (error) {
-			const message = new Message({
-				title: 'News Feed',
-				body: 'Failed to subscribe/unsubscribe to post',
-				feedback: DIALOG
-			});
+			const message = new Message(
+				'News Feed',
+				'Failed to subscribe/unsubscribe to post',
+				DIALOG
+			);
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -283,11 +279,11 @@ const uploadFiles = (files, collection, collectionId, folder) => {
 			dispatch({ type: FINISH_UPLOAD });
 			return uploadedFiles;
 		} catch (error) {
-			const message = new Message({
-				title: 'News Feed',
-				body: 'Attachments failed to upload',
-				feedback: DIALOG
-			});
+			const message = new Message(
+				'News Feed',
+				'Attachments failed to upload',
+				DIALOG
+			);
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -304,16 +300,16 @@ export const searchPosts = (values) => {
 			collection.docs.forEach((doc) => {
 				const value = values.value.trim().toLowerCase();
 				const userId = values.user ? values.user.userId : null;
-				const post = new Post({
-					postId: doc.id,
-					attachments: doc.data().attachments,
-					body: doc.data().body,
-					comments: doc.data().comments,
-					title: doc.data().title,
-					subscribers: doc.data().subscribers,
-					createdAt: doc.data().createdAt,
-					createdBy: doc.data().createdBy
-				});
+				const post = new Post(
+					doc.id,
+					doc.data().attachments,
+					doc.data().body,
+					doc.data().comments,
+					doc.data().metadata,
+					doc.data().title,
+					doc.data().subscribers,
+					doc.data().user
+				);
 				if (getSearchMatch(post, value, userId)) {
 					results.push(post.postId);
 				}
@@ -323,11 +319,7 @@ export const searchPosts = (values) => {
 			}
 			return results;
 		} catch (error) {
-			const message = new Message({
-				title: 'News Feed',
-				body: 'Search failed',
-				feedback: DIALOG
-			});
+			const message = new Message('News Feed', 'Search failed', DIALOG);
 			dispatch({
 				type: SET_MESSAGE,
 				message

@@ -12,7 +12,6 @@ import WorkFromHomeListItem from './WorkFromHomeListItem';
 import LeaveListItem from './LeaveListItem';
 import { eventTypeNames } from '../../../utils/event-types';
 import SkeletonContainer from './SkeletonContainer';
-import WorkFromHomeSwitch from './WorkFromHomeSwitch';
 
 const Panel = (props) => {
 	const initialPanelItems = [
@@ -30,6 +29,15 @@ const Panel = (props) => {
 			name: 'Work from Home',
 			expanded: false,
 			component: <WorkFromHomeListItem />
+		},
+		{
+			name: 'Out of Office',
+			expanded: false,
+			component: (
+				<LeaveListItem
+					eventTypeId={eventTypeNames.OUT_OF_OFFICE.toLowerCase()}
+				/>
+			)
 		},
 		{
 			name: 'Annual Leave',
@@ -71,7 +79,6 @@ const Panel = (props) => {
 				<SkeletonContainer />
 			) : (
 				<List>
-					<WorkFromHomeSwitch />
 					{panelItems.map((panelItem, index) => {
 						const ExpandedIcon = panelItem.expanded
 							? ExpandLessIcon

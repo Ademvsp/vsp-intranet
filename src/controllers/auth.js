@@ -34,23 +34,17 @@ export const verifyAuth = () => {
 						if (snapshot.data().logout) {
 							dispatch(logout());
 						} else {
-							const authUser = new AuthUser({
-								userId: snapshot.id,
-								active: snapshot.data().active,
-								admin: snapshot.data().admin,
-								authPhone: snapshot.data().authPhone,
-								email: snapshot.data().email,
-								firstName: snapshot.data().firstName,
-								lastName: snapshot.data().lastName,
-								location: snapshot.data().location,
-								logout: snapshot.data().logout,
-								manager: snapshot.data().manager,
-								phone: snapshot.data().phone,
-								profilePicture: snapshot.data().profilePicture,
-								settings: snapshot.data().settings,
-								title: snapshot.data().title,
-								workFromHome: snapshot.data().workFromHome
-							});
+							const authUser = new AuthUser(
+								snapshot.id,
+								snapshot.data().email,
+								snapshot.data().firstName,
+								snapshot.data().lastName,
+								snapshot.data().location,
+								snapshot.data().manager,
+								snapshot.data().profilePicture,
+								snapshot.data().settings
+							);
+
 							const actions = [
 								{
 									type: SET_AUTH_USER,
@@ -58,16 +52,16 @@ export const verifyAuth = () => {
 								}
 							];
 							if (!getState().authState.touched) {
-								const message = new Message({
-									title: 'Login Success',
-									body: `Welcome back ${authUser.firstName}`,
-									feedback: SNACKBAR,
-									options: {
+								const message = new Message(
+									'Login Success',
+									`Welcome back ${authUser.firstName}`,
+									SNACKBAR,
+									{
 										duration: 3000,
 										variant: SNACKBAR_VARIANTS.FILLED,
 										severity: SNACKBAR_SEVERITY.INFO
 									}
-								});
+								);
 								actions.push(
 									{
 										type: SET_AUTH_TOUCHED
@@ -123,11 +117,11 @@ export const getPhoneNumber = (email) => {
 			const result = await functionRef({ email });
 			return result.data;
 		} catch (error) {
-			const message = new Message({
-				title: 'Invalid Credentials',
-				body: 'Email address is invalid',
-				feedback: DIALOG
-			});
+			const message = new Message(
+				'Invalid Credentials',
+				'Email address is invalid',
+				DIALOG
+			);
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -145,11 +139,11 @@ export const signInWithPhoneNumber = (phoneNumber, appVerifier) => {
 				.signInWithPhoneNumber(phoneNumber, appVerifier);
 			return result;
 		} catch (error) {
-			const message = new Message({
-				title: 'Invalid Credentials',
-				body: 'Email address is invalid',
-				feedback: DIALOG
-			});
+			const message = new Message(
+				'Invalid Credentials',
+				'Email address is invalid',
+				DIALOG
+			);
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -168,11 +162,11 @@ export const confirmVerificationCode = (
 			await confirmationResult.confirm(verificationCode);
 			return true;
 		} catch (error) {
-			const message = new Message({
-				title: 'Invalid Credentials',
-				body: 'Verification code is invalid',
-				feedback: DIALOG
-			});
+			const message = new Message(
+				'Invalid Credentials',
+				'Verification code is invalid',
+				DIALOG
+			);
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -188,11 +182,11 @@ export const loginWithPassword = (email, password) => {
 			await firebase.auth().signInWithEmailAndPassword(email, password);
 			return true;
 		} catch (error) {
-			const message = new Message({
-				title: 'Invalid Credentials',
-				body: 'Incorrect email or password',
-				feedback: DIALOG
-			});
+			const message = new Message(
+				'Invalid Credentials',
+				'Incorrect email or password',
+				DIALOG
+			);
 			dispatch({
 				type: SET_MESSAGE,
 				message

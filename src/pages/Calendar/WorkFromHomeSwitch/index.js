@@ -5,7 +5,7 @@ import {
 	ListItemSecondaryAction,
 	Switch
 } from '@material-ui/core';
-import * as userController from '../../../../controllers/user';
+import * as userController from '../../../controllers/user';
 import { useSelector, useDispatch } from 'react-redux';
 
 const WorkFromHomeSwitch = (props) => {
@@ -21,6 +21,7 @@ const WorkFromHomeSwitch = (props) => {
 			<ListItemText primary='Work from Home' />
 			<ListItemSecondaryAction>
 				<Switch
+					color='primary'
 					checked={authUser.settings.workFromHome}
 					onChange={() =>
 						switchChangeHandler({

@@ -21,11 +21,11 @@ export const updateSettings = (settings) => {
 				.doc(userId)
 				.update({ settings });
 		} catch (error) {
-			const message = new Message({
-				title: 'Update Settings',
-				body: 'Settings failed to update',
-				feedback: DIALOG
-			});
+			const message = new Message(
+				'Update Settings',
+				'Settings failed to update',
+				DIALOG
+			);
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -78,11 +78,11 @@ export const uploadPicture = (file) => {
 				.doc(authUser.userId)
 				.update({ profilePicture: downloadUrl });
 		} catch (error) {
-			const message = new Message({
-				title: 'Profile Picture',
-				body: 'Profile picture failed to upload',
-				feedback: DIALOG
-			});
+			const message = new Message(
+				'Profile Picture',
+				'Profile picture failed to upload',
+				DIALOG
+			);
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -108,11 +108,11 @@ export const removePicture = () => {
 				.doc(authUser.userId)
 				.update({ profilePicture: '' });
 		} catch (error) {
-			const message = new Message({
-				title: 'Profile Picture',
-				body: 'Profile picture failed to remove',
-				feedback: DIALOG
-			});
+			const message = new Message(
+				'Profile Picture',
+				'Profile picture failed to remove',
+				DIALOG
+			);
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -141,19 +141,20 @@ export const subscribeUsers = () => {
 						const location = locations.find(
 							(location) => location.locationId === doc.data().location
 						);
-						return new User({
-							userId: doc.id,
-							active: doc.data().active,
-							firstName: doc.data().firstName,
-							lastName: doc.data().lastName,
-							email: doc.data().email,
-							location: location,
-							phone: doc.data().phone,
-							extension: doc.data().extension,
-							profilePicture: doc.data().profilePicture,
-							settings: doc.data().settings,
-							title: doc.data().title
-						});
+						return new User(
+							doc.id,
+							doc.data().active,
+							doc.data().email,
+							doc.data().extension,
+							doc.data().firstName,
+							doc.data().lastName,
+							location,
+							doc.data().manager,
+							doc.data().phone,
+							doc.data().profilePicture,
+							doc.data().settings,
+							doc.data().title
+						);
 					});
 					actions.push({
 						type: SET_USERS,
@@ -166,11 +167,7 @@ export const subscribeUsers = () => {
 					dispatch(actions);
 				});
 		} catch (error) {
-			const message = new Message({
-				title: 'User',
-				body: 'Users failed to retrieve',
-				feedback: SILENT
-			});
+			const message = new Message('User', 'Users failed to retrieve', SILENT);
 			dispatch({
 				type: SET_MESSAGE,
 				message

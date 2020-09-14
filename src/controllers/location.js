@@ -13,27 +13,27 @@ export const getLocations = () => {
 				.orderBy('state', 'asc')
 				.get();
 			const locations = collection.docs.map((doc) => {
-				return new Location({
-					locationId: doc.id,
-					address: doc.data().address,
-					branch: doc.data().branch,
-					colors: doc.data().colors,
-					map: doc.data().map,
-					phone: doc.data().phone,
-					state: doc.data().state,
-					timezone: doc.data().timezone
-				});
+				return new Location(
+					doc.id,
+					doc.data().address,
+					doc.data().branch,
+					doc.data().colors,
+					doc.data().map,
+					doc.data().phone,
+					doc.data().state,
+					doc.data().timezone
+				);
 			});
 			dispatch({
 				type: SET_LOCATIONS,
 				locations
 			});
 		} catch (error) {
-			const message = new Message({
-				title: 'Locations',
-				body: 'Failed to retrieve locations',
-				feedback: DIALOG
-			});
+			const message = new Message(
+				'Locations',
+				'Failed to retrieve locations',
+				DIALOG
+			);
 			dispatch({
 				type: SET_MESSAGE,
 				message

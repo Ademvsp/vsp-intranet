@@ -48,16 +48,16 @@ const PostCard = (props) => {
 		const asyncFunction = async () => {
 			const postRef = postContoller.getPostRef(postId);
 			postListener = postRef.onSnapshot((doc) => {
-				const newPost = new Post({
-					postId: doc.id,
-					attachments: doc.data().attachments,
-					body: doc.data().body,
-					comments: doc.data().comments,
-					title: doc.data().title,
-					subscribers: doc.data().subscribers,
-					createdAt: doc.data().createdAt,
-					createdBy: doc.data().createdBy
-				});
+				const newPost = new Post(
+					doc.id,
+					doc.data().attachments,
+					doc.data().body,
+					doc.data().comments,
+					doc.data().metadata,
+					doc.data().title,
+					doc.data().subscribers,
+					doc.data().user
+				);
 				setPost(newPost);
 			});
 		};
@@ -65,7 +65,7 @@ const PostCard = (props) => {
 		return () => {
 			postListener();
 		};
-	}, [postId]);
+	}, [postId, users]);
 
 	if (!post) {
 		return (
@@ -96,8 +96,6 @@ const PostCard = (props) => {
 		);
 	}
 
-	const user = users.find((user) => user.userId === post.createdBy);
-
 	const commentsClickHandler = () => {
 		setShowComments((prevState) => !prevState);
 	};
@@ -110,6 +108,8 @@ const PostCard = (props) => {
 			commentButtonText = `${commentButtonText}s`;
 		}
 	}
+
+	const user = users.find((user) => user.userId === post.user);
 
 	return (
 		<StyledCard ref={scrollRef} elevation={2}>
@@ -128,7 +128,7 @@ const PostCard = (props) => {
 			</StyledCardContent>
 			<StyledCardActions>
 				<Typography color='secondary' component='span' variant='body2'>
-					{moment(post.createdAt.toDate()).format('llll')}
+					{moment(post.metadata.createdAt.toDate()).format('llll')}
 				</Typography>
 				<StyledButton
 					size='small'

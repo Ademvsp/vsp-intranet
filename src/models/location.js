@@ -1,5 +1,5 @@
 export default class Location {
-	constructor({
+	constructor(
 		locationId,
 		address,
 		branch,
@@ -8,7 +8,7 @@ export default class Location {
 		phone,
 		state,
 		timezone
-	}) {
+	) {
 		this.locationId = locationId;
 		this.address = address;
 		this.branch = branch;
