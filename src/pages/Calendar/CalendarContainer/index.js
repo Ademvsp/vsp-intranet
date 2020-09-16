@@ -59,6 +59,9 @@ const CalendarContainer = (props) => {
 
 	useEffect(() => {
 		dispatch(eventController.subscribeEventsListener(range.start, range.end));
+		return () => {
+			eventController.unsubscribeEventsListener();
+		};
 	}, [range, dispatch]);
 
 	const eventPropGetterHandler = (event) => {

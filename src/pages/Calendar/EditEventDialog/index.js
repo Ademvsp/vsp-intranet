@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Fragment } from 'react';
 import {
 	DialogTitle,
 	DialogContent,
@@ -27,6 +27,9 @@ import moment from 'moment';
 import { getReadableTitle } from '../../../controllers/event';
 import { StyledTitle } from './styled-components';
 import * as eventController from '../../../controllers/event';
+import * as notificationController from '../../../controllers/notification';
+import { EDIT_EVENT, DELETE_EVENT } from '../../../utils/notification-types';
+import ConfirmDialog from '../../../components/ConfirmDialog';
 
 const EditEventDialog = (props) => {
 	const dispatch = useDispatch();
@@ -36,6 +39,7 @@ const EditEventDialog = (props) => {
 	const [notifyUsers, setNotifyUsers] = useState([]);
 	const [editLoading, setEditLoading] = useState(false);
 	const [deleteLoading, setDeleteLoading] = useState(false);
+	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 	const loading = deleteLoading || editLoading;
 	const { open, close, event } = props;
 
@@ -74,13 +78,37 @@ const EditEventDialog = (props) => {
 
 	const submitHandler = async (values) => {
 		setEditLoading(true);
-		const result = await dispatch(
+		const newEvent = await dispatch(
 			eventController.editEvent(event, values, notifyUsers)
 		);
-		if (result) {
+		setEditLoading(false);
+		if (newEvent) {
 			close();
-		} else {
-			setEditLoading(false);
+			const recipients = users.filter(
+				(user) =>
+					newEvent.subscribers.includes(user.userId) ||
+					notifyUsers.includes(user.userId)
+			);
+			try {
+				const readableTitle = getReadableTitle(
+					{
+						details: newEvent.details,
+						type: newEvent.type,
+						user: newEvent.user
+					},
+					users
+				);
+				notificationController.sendNotification({
+					type: EDIT_EVENT,
+					recipients: recipients,
+					eventId: newEvent.eventId,
+					title: readableTitle,
+					start: newEvent.start.getTime(),
+					end: newEvent.end.getTime(),
+					allDay: newEvent.allDay
+				});
+				// eslint-disable-next-line no-empty
+			} catch (error) {}
 		}
 	};
 
@@ -89,10 +117,33 @@ const EditEventDialog = (props) => {
 		const result = await dispatch(
 			eventController.deleteEvent(event, notifyUsers)
 		);
+		setDeleteLoading(false);
 		if (result) {
 			close();
-		} else {
-			setDeleteLoading(false);
+			const recipients = users.filter(
+				(user) =>
+					event.subscribers.includes(user.userId) ||
+					notifyUsers.includes(user.userId)
+			);
+			try {
+				const readableTitle = getReadableTitle(
+					{
+						details: event.details,
+						type: event.type,
+						user: event.user
+					},
+					users
+				);
+				notificationController.sendNotification({
+					type: DELETE_EVENT,
+					recipients: recipients,
+					title: readableTitle,
+					start: event.start.getTime(),
+					end: event.end.getTime(),
+					allDay: event.allDay
+				});
+				// eslint-disable-next-line no-empty
+			} catch (error) {}
 		}
 	};
 
@@ -151,140 +202,149 @@ const EditEventDialog = (props) => {
 	}
 
 	return (
-		<StyledDialog open={open} onClose={closeHandler} width={500}>
-			<DialogTitle>
-				<StyledTitle>{`Title Preview: ${readableTitle}`}</StyledTitle>
-			</DialogTitle>
-			<DialogContent>
-				<Grid container direction='column' spacing={1}>
-					<Grid item>
-						<TextField
-							label='Event type'
-							select={true}
-							fullWidth={true}
-							value={formik.values.type}
-							onBlur={formik.handleBlur('type')}
-							onChange={formik.handleChange('type')}
-						>
-							{eventTypes.map((type) => (
-								<MenuItem key={type.eventTypeId} value={type}>
-									{type.name}
-								</MenuItem>
-							))}
-						</TextField>
-					</Grid>
-					{formik.values.type.detailsEditable ? (
+		<Fragment>
+			<ConfirmDialog
+				open={showConfirmDialog}
+				cancel={() => setShowConfirmDialog(false)}
+				confirm={deleteHandler}
+				title='Staff Calendar'
+				message='Are you sure you want to delete this event?'
+			/>
+			<StyledDialog open={open} onClose={closeHandler} width={500}>
+				<DialogTitle>
+					<StyledTitle>{`Title Preview: ${readableTitle}`}</StyledTitle>
+				</DialogTitle>
+				<DialogContent>
+					<Grid container direction='column' spacing={1}>
 						<Grid item>
 							<TextField
-								inputRef={detailsFieldRef}
-								label='Details'
+								label='Event type'
+								select={true}
 								fullWidth={true}
-								value={formik.values.details}
-								onBlur={formik.handleBlur('details')}
-								onChange={formik.handleChange('details')}
-								autoFocus={true}
-							/>
+								value={formik.values.type}
+								onBlur={formik.handleBlur('type')}
+								onChange={formik.handleChange('type')}
+							>
+								{eventTypes.map((type) => (
+									<MenuItem key={type.eventTypeId} value={type}>
+										{type.name}
+									</MenuItem>
+								))}
+							</TextField>
 						</Grid>
-					) : null}
-					<Grid
-						item
-						container
-						direction='row'
-						justify='space-between'
-						spacing={2}
-					>
-						<GridFlexGrow item>
-							<MuiPickersUtilsProvider utils={MomentUtils}>
-								<StartPicker
-									label='Start'
-									value={formik.values.start}
-									onChange={(value) =>
-										formik.setFieldValue('start', value.toDate())
-									}
-									onBlur={formik.handleBlur('start')}
-									format={dateFormat}
+						{formik.values.type.detailsEditable ? (
+							<Grid item>
+								<TextField
+									inputRef={detailsFieldRef}
+									label='Details'
 									fullWidth={true}
+									value={formik.values.details}
+									onBlur={formik.handleBlur('details')}
+									onChange={formik.handleChange('details')}
+									autoFocus={true}
 								/>
-							</MuiPickersUtilsProvider>
-						</GridFlexGrow>
-						<GridFlexGrow item>
-							<MuiPickersUtilsProvider utils={MomentUtils}>
-								<EndPicker
-									label='End'
-									value={formik.values.end}
-									onChange={(value) =>
-										formik.setFieldValue('end', value.toDate())
-									}
-									onBlur={formik.handleBlur('end')}
-									format={dateFormat}
-									fullWidth={true}
-									minDate={formik.values.start}
-								/>
-							</MuiPickersUtilsProvider>
-						</GridFlexGrow>
+							</Grid>
+						) : null}
+						<Grid
+							item
+							container
+							direction='row'
+							justify='space-between'
+							spacing={2}
+						>
+							<GridFlexGrow item>
+								<MuiPickersUtilsProvider utils={MomentUtils}>
+									<StartPicker
+										label='Start'
+										value={formik.values.start}
+										onChange={(value) =>
+											formik.setFieldValue('start', value.toDate())
+										}
+										onBlur={formik.handleBlur('start')}
+										format={dateFormat}
+										fullWidth={true}
+									/>
+								</MuiPickersUtilsProvider>
+							</GridFlexGrow>
+							<GridFlexGrow item>
+								<MuiPickersUtilsProvider utils={MomentUtils}>
+									<EndPicker
+										label='End'
+										value={formik.values.end}
+										onChange={(value) =>
+											formik.setFieldValue('end', value.toDate())
+										}
+										onBlur={formik.handleBlur('end')}
+										format={dateFormat}
+										fullWidth={true}
+										minDate={formik.values.start}
+									/>
+								</MuiPickersUtilsProvider>
+							</GridFlexGrow>
+						</Grid>
+						<Grid item>
+							<FormGroup row>
+								<Tooltip
+									title='Event will not have any time boundaries'
+									arrow={true}
+								>
+									<FormControlLabel
+										control={
+											<Checkbox
+												checked={formik.values.allDay}
+												onChange={formik.handleChange('allDay')}
+												onBlur={formik.handleBlur('allDay')}
+											/>
+										}
+										label='All day event'
+									/>
+								</Tooltip>
+								<Tooltip
+									title="Event will appear on all state's calendars"
+									arrow={true}
+								>
+									<FormControlLabel
+										control={
+											<Checkbox
+												checked={formik.values.allCalendars}
+												onChange={formik.handleChange('allCalendars')}
+												onBlur={formik.handleBlur('allCalendars')}
+											/>
+										}
+										label='Publish to all calendars'
+									/>
+								</Tooltip>
+							</FormGroup>
+						</Grid>
 					</Grid>
-					<Grid item>
-						<FormGroup row>
-							<Tooltip
-								title='Event will not have any time boundaries'
-								arrow={true}
-							>
-								<FormControlLabel
-									control={
-										<Checkbox
-											checked={formik.values.allDay}
-											onChange={formik.handleChange('allDay')}
-											onBlur={formik.handleBlur('allDay')}
-										/>
-									}
-									label='All day event'
-								/>
-							</Tooltip>
-							<Tooltip
-								title="Event will appear on all state's calendars"
-								arrow={true}
-							>
-								<FormControlLabel
-									control={
-										<Checkbox
-											checked={formik.values.allCalendars}
-											onChange={formik.handleChange('allCalendars')}
-											onBlur={formik.handleBlur('allCalendars')}
-										/>
-									}
-									label='Publish to all calendars'
-								/>
-							</Tooltip>
-						</FormGroup>
-					</Grid>
-				</Grid>
-			</DialogContent>
-			<DialogActions>
-				<ActionsBar
-					notifications={{
-						enabled: true,
-						notifyUsers: notifyUsers,
-						setNotifyUsers: setNotifyUsers
-					}}
-					attachments={{
-						enabled: false
-					}}
-					buttonLoading={editLoading}
-					loading={loading}
-					isValid={formik.isValid}
-					onClick={formik.handleSubmit}
-					tooltipPlacement='top'
-					actionButtonText='Update'
-					additionalButtons={[
-						{
-							buttonText: 'Delete',
-							onClick: deleteHandler,
-							buttonLoading: deleteLoading
-						}
-					]}
-				/>
-			</DialogActions>
-		</StyledDialog>
+				</DialogContent>
+				<DialogActions>
+					<ActionsBar
+						notifications={{
+							enabled: true,
+							notifyUsers: notifyUsers,
+							setNotifyUsers: setNotifyUsers
+						}}
+						attachments={{
+							enabled: false
+						}}
+						buttonLoading={editLoading}
+						loading={loading}
+						isValid={formik.isValid}
+						onClick={formik.handleSubmit}
+						tooltipPlacement='top'
+						actionButtonText='Update'
+						additionalButtons={[
+							{
+								buttonText: 'Delete',
+								onClick: () => setShowConfirmDialog(true),
+								buttonLoading: deleteLoading
+							}
+						]}
+					/>
+				</DialogActions>
+			</StyledDialog>
+		</Fragment>
 	);
 };
 

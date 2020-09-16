@@ -124,6 +124,7 @@ const NewPostDialog = (props) => {
 								attachments: attachments,
 								setAttachments: setAttachments
 							}}
+							buttonLoading={loading}
 							loading={loading || uploading}
 							isValid={formik.isValid}
 							onClick={formik.handleSubmit}

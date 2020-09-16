@@ -48,15 +48,15 @@ const NotifyUsersList = (props) => {
 		setCheckedUsers([]);
 	};
 
-	const checkHandler = (user, checked) => () => {
+	const checkHandler = (userId, checked) => () => {
 		const newCheckedUsers = [...checkedUsers];
 		if (checked) {
 			const index = checkedUsers.findIndex(
-				(checkedUser) => checkedUser.userId === user.userId
+				(checkedUser) => checkedUser === userId
 			);
 			newCheckedUsers.splice(index, 1);
 		} else {
-			newCheckedUsers.push(user);
+			newCheckedUsers.push(userId);
 		}
 		setCheckedUsers(newCheckedUsers);
 	};
@@ -67,7 +67,7 @@ const NotifyUsersList = (props) => {
 		if (checked) {
 			newCheckedUsers = [];
 		} else {
-			newCheckedUsers = [...users];
+			newCheckedUsers = users.map((user) => user.userId);
 		}
 		setCheckedUsers(newCheckedUsers);
 	};
@@ -82,9 +82,12 @@ const NotifyUsersList = (props) => {
 						{checkedUsers.length > 0 ? (
 							<ListItemAvatar>
 								<AvatarGroup max={mobile ? 3 : 6}>
-									{checkedUsers.map((checkedUser) => (
-										<Avatar key={checkedUser.userId} user={checkedUser} />
-									))}
+									{checkedUsers.map((checkedUser) => {
+										const user = users.find(
+											(user) => user.userId === checkedUser
+										);
+										return <Avatar key={checkedUser} user={user} />;
+									})}
 								</AvatarGroup>
 							</ListItemAvatar>
 						) : null}
@@ -110,12 +113,12 @@ const NotifyUsersList = (props) => {
 					{users.map((user) => {
 						const { firstName, lastName } = user;
 						const checked = checkedUsers.some(
-							(checkedUser) => checkedUser.userId === user.userId
+							(checkedUser) => checkedUser === user.userId
 						);
 						return (
 							<StyledListItem
 								key={user.userId}
-								onClick={checkHandler(user, checked)}
+								onClick={checkHandler(user.userId, checked)}
 							>
 								<ListItemAvatar>
 									<Avatar user={user} />
@@ -124,7 +127,7 @@ const NotifyUsersList = (props) => {
 								<ListItemSecondaryAction>
 									<Checkbox
 										edge='end'
-										onChange={checkHandler(user, checked)}
+										onChange={checkHandler(user.userId, checked)}
 										checked={checked}
 									/>
 								</ListItemSecondaryAction>

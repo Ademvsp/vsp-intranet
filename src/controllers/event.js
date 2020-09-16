@@ -5,14 +5,8 @@ import {
 	SNACKBAR_SEVERITY
 } from '../utils/constants';
 import { SET_MESSAGE, SET_EVENTS } from '../utils/actions';
-import {
-	NEW_EVENT,
-	EDIT_EVENT,
-	DELETE_EVENT
-} from '../utils/notification-types';
 import Message from '../models/message';
 import Event from '../models/event';
-import * as notificationController from './notification';
 import { eventTypeNames } from '../utils/event-types';
 import moment from 'moment-timezone';
 let eventsListener;
@@ -21,38 +15,39 @@ export const subscribeEventsListener = (start, end) => {
 	return async (dispatch, _getState) => {
 		try {
 			unsubscribeEventsListener();
-			eventsListener = Event.getEventListener(start, end);
-			eventsListener.onSnapshot((snapshot) => {
-				if (!snapshot.metadata.hasPendingWrites) {
-					const events = snapshot.docs.map((doc) => {
-						const metadata = {
-							...doc.data().metadata,
-							createdAt: doc.data().metadata.createdAt.toDate(),
-							updatedAt: doc.data().metadata.updatedAt.toDate()
-						};
-						return new Event(
-							doc.id,
-							doc.data().allDay,
-							doc.data().details,
-							doc.data().end.toDate(),
-							doc.data().locations,
-							metadata,
-							doc.data().start.toDate(),
-							doc.data().subscribers,
-							doc.data().type,
-							doc.data().user
-						);
-					});
-					dispatch({
-						type: SET_EVENTS,
-						events
-					});
+			eventsListener = Event.getEventListener(start, end).onSnapshot(
+				(snapshot) => {
+					if (!snapshot.metadata.hasPendingWrites) {
+						const events = snapshot.docs.map((doc) => {
+							const metadata = {
+								...doc.data().metadata,
+								createdAt: doc.data().metadata.createdAt.toDate(),
+								updatedAt: doc.data().metadata.updatedAt.toDate()
+							};
+							return new Event(
+								doc.id,
+								doc.data().allDay,
+								doc.data().details,
+								doc.data().end.toDate(),
+								doc.data().locations,
+								metadata,
+								doc.data().start.toDate(),
+								doc.data().subscribers,
+								doc.data().type,
+								doc.data().user
+							);
+						});
+						dispatch({
+							type: SET_EVENTS,
+							events
+						});
+					}
 				}
-			});
+			);
 		} catch (error) {
 			const message = new Message(
-				'Invalid Credentials',
-				'Incorrect email or password',
+				'Staff Calendar',
+				'Failed to retrieve events',
 				DIALOG
 			);
 			dispatch({
@@ -64,12 +59,12 @@ export const subscribeEventsListener = (start, end) => {
 	};
 };
 
-export const addEvent = (values, notifyUsers) => {
+export const addEvent = (values) => {
 	return async (dispatch, getState) => {
 		const { allDay, details, end, start, type, allCalendars } = values;
 		const { authUser } = getState().authState;
-		const { locations: dataStateLocations, users } = getState().dataState;
-		let eventId, startTransformed, endTransformed;
+		const { locations: dataStateLocations } = getState().dataState;
+		let startTransformed, endTransformed;
 		try {
 			const userLocation = dataStateLocations.find(
 				(dataStateLocation) =>
@@ -119,7 +114,6 @@ export const addEvent = (values, notifyUsers) => {
 				authUser.userId
 			);
 			await newEvent.save();
-			eventId = newEvent.eventId;
 			const message = new Message(
 				'Staff Calendar',
 				'Event added successfully',
@@ -127,13 +121,14 @@ export const addEvent = (values, notifyUsers) => {
 				{
 					duration: 3000,
 					variant: SNACKBAR_VARIANTS.FILLED,
-					severity: SNACKBAR_SEVERITY.INFO
+					severity: SNACKBAR_SEVERITY.SUCCESS
 				}
 			);
 			dispatch({
 				type: SET_MESSAGE,
 				message
 			});
+			return newEvent;
 		} catch (error) {
 			const message = new Message(
 				'Staff Calendar',
@@ -144,41 +139,16 @@ export const addEvent = (values, notifyUsers) => {
 				type: SET_MESSAGE,
 				message
 			});
-			return false;
+			return null;
 		}
-		try {
-			if (notifyUsers.length > 0) {
-				//Perform this without disruptive error catching
-				const readableTitle = getReadableTitle(
-					{
-						details,
-						type: type.eventTypeId,
-						user: authUser.userId
-					},
-					users
-				);
-				notificationController.sendNotification({
-					type: NEW_EVENT,
-					recipients: notifyUsers,
-					eventId,
-					title: readableTitle,
-					start: startTransformed.getTime(),
-					end: endTransformed.getTime(),
-					allDay
-				});
-			}
-		} catch (error) {
-			return true;
-		}
-		return true;
 	};
 };
 
-export const editEvent = (event, values, notifyUsers) => {
+export const editEvent = (event, values) => {
 	return async (dispatch, getState) => {
 		const { allDay, details, end, start, type, allCalendars } = values;
 		const { authUser } = getState().authState;
-		const { locations: dataStateLocations, users } = getState().dataState;
+		const { locations: dataStateLocations } = getState().dataState;
 		const { eventId } = event;
 		try {
 			const userLocation = dataStateLocations.find(
@@ -234,13 +204,14 @@ export const editEvent = (event, values, notifyUsers) => {
 				{
 					duration: 3000,
 					variant: SNACKBAR_VARIANTS.FILLED,
-					severity: SNACKBAR_SEVERITY.INFO
+					severity: SNACKBAR_SEVERITY.SUCCESS
 				}
 			);
 			dispatch({
 				type: SET_MESSAGE,
 				message
 			});
+			return newEvent;
 		} catch (error) {
 			const message = new Message(
 				'Staff Calendar',
@@ -253,37 +224,11 @@ export const editEvent = (event, values, notifyUsers) => {
 			});
 			return false;
 		}
-		try {
-			if (notifyUsers.length > 0) {
-				//Perform this without disruptive error catching
-				const readableTitle = getReadableTitle(
-					{
-						details,
-						type: type.eventTypeId,
-						user: authUser.userId
-					},
-					users
-				);
-				notificationController.sendNotification({
-					type: EDIT_EVENT,
-					recipients: notifyUsers,
-					eventId,
-					title: readableTitle,
-					start: start.getTime(),
-					end: end.getTime(),
-					allDay
-				});
-			}
-		} catch (error) {
-			return true;
-		}
-		return true;
 	};
 };
 
-export const deleteEvent = (event, notifyUsers) => {
-	return async (dispatch, getState) => {
-		const { users } = getState().dataState;
+export const deleteEvent = (event) => {
+	return async (dispatch, _getState) => {
 		try {
 			await event.delete();
 			const message = new Message(
@@ -293,13 +238,14 @@ export const deleteEvent = (event, notifyUsers) => {
 				{
 					duration: 3000,
 					variant: SNACKBAR_VARIANTS.FILLED,
-					severity: SNACKBAR_SEVERITY.INFO
+					severity: SNACKBAR_SEVERITY.SUCCESS
 				}
 			);
 			dispatch({
 				type: SET_MESSAGE,
 				message
 			});
+			return true;
 		} catch (error) {
 			const message = new Message(
 				'Staff Calendar',
@@ -312,30 +258,6 @@ export const deleteEvent = (event, notifyUsers) => {
 			});
 			return false;
 		}
-		try {
-			if (notifyUsers.length > 0) {
-				// Perform this without disruptive error catching
-				const readableTitle = getReadableTitle(
-					{
-						details: event.details,
-						type: event.type,
-						user: event.user
-					},
-					users
-				);
-				notificationController.sendNotification({
-					type: DELETE_EVENT,
-					recipients: notifyUsers,
-					title: readableTitle,
-					start: event.start.getTime(),
-					end: event.end.getTime(),
-					allDay: event.allDay
-				});
-			}
-		} catch (error) {
-			return true;
-		}
-		return true;
 	};
 };
 

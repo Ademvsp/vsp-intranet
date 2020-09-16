@@ -1,4 +1,3 @@
-import firebase from '../utils/firebase';
 import {
 	DIALOG,
 	SNACKBAR,
@@ -19,32 +18,40 @@ let authUserListener;
 
 export const verifyAuth = () => {
 	return async (dispatch, getState) => {
-		firebase.auth().onAuthStateChanged(async (firebaseAuthUser) => {
+		AuthUser.getAuth().onAuthStateChanged(async (firebaseAuthUser) => {
 			if (firebaseAuthUser) {
-				await firebase
-					.firestore()
-					.collection('users')
-					.doc(firebaseAuthUser.uid)
-					.update({ logout: false });
-				authUserListener = firebase
-					.firestore()
-					.collection('users')
-					.doc(firebaseAuthUser.uid)
-					.onSnapshot((snapshot) => {
-						if (snapshot.data().logout) {
+				const loggedInAuthUser = await AuthUser.get(firebaseAuthUser.uid);
+				if (loggedInAuthUser.settings.forceLogout) {
+					dispatch(logout());
+				} else {
+					const settings = {
+						...loggedInAuthUser.settings,
+						forceLogout: false
+					};
+					const metadata = {
+						...loggedInAuthUser.metadata,
+						loggedInAt: AuthUser.getServerTime()
+					};
+					loggedInAuthUser.settings = settings;
+					loggedInAuthUser.metadata = metadata;
+					await loggedInAuthUser.save();
+					authUserListener = AuthUser.getAuthListener(
+						firebaseAuthUser.uid
+					).onSnapshot(async (snapshot) => {
+						const authUser = new AuthUser(
+							snapshot.id,
+							snapshot.data().email,
+							snapshot.data().firstName,
+							snapshot.data().lastName,
+							snapshot.data().location,
+							snapshot.data().manager,
+							snapshot.data().metadata,
+							snapshot.data().profilePicture,
+							snapshot.data().settings
+						);
+						if (authUser.settings.forceLogout) {
 							dispatch(logout());
 						} else {
-							const authUser = new AuthUser(
-								snapshot.id,
-								snapshot.data().email,
-								snapshot.data().firstName,
-								snapshot.data().lastName,
-								snapshot.data().location,
-								snapshot.data().manager,
-								snapshot.data().profilePicture,
-								snapshot.data().settings
-							);
-
 							const actions = [
 								{
 									type: SET_AUTH_USER,
@@ -75,6 +82,7 @@ export const verifyAuth = () => {
 							dispatch(actions);
 						}
 					});
+				}
 			} else {
 				dispatch({ type: SET_AUTH_TOUCHED });
 			}
@@ -89,33 +97,28 @@ export const unsubscribeAuthUserListener = () => {
 };
 
 export const logout = () => {
-	return async (dispatch, _getState) => {
+	return async (dispatch, getState) => {
+		const { authUser } = getState().authState;
 		unsubscribeAuthUserListener();
 		unsubscribeNotificationsListener();
 		unsubscribeUsersListener();
-		await firebase.auth().signOut();
+		await authUser.logout();
 		dispatch({ type: LOGOUT });
 	};
 };
 
 export const logoutAll = () => {
-	return async (dispatch, _getState) => {
-		const functionRef = firebase
-			.functions()
-			.httpsCallable('revokeRefreshTokens');
-		await functionRef();
-		dispatch(logout());
+	return async (dispatch, getState) => {
+		const { authUser } = getState().authState;
+		await authUser.logoutAll();
+		dispatch({ type: LOGOUT });
 	};
 };
 
 export const getPhoneNumber = (email) => {
 	return async (dispatch, _getState) => {
 		try {
-			const functionRef = firebase
-				.functions()
-				.httpsCallable('getPhoneNumberNew');
-			const result = await functionRef({ email });
-			return result.data;
+			return AuthUser.getPhoneNumber(email);
 		} catch (error) {
 			const message = new Message(
 				'Invalid Credentials',
@@ -134,10 +137,7 @@ export const getPhoneNumber = (email) => {
 export const signInWithPhoneNumber = (phoneNumber, appVerifier) => {
 	return async (dispatch, _getState) => {
 		try {
-			const result = await firebase
-				.auth()
-				.signInWithPhoneNumber(phoneNumber, appVerifier);
-			return result;
+			return AuthUser.signInWithPhoneNumber(phoneNumber, appVerifier);
 		} catch (error) {
 			const message = new Message(
 				'Invalid Credentials',
@@ -159,7 +159,10 @@ export const confirmVerificationCode = (
 ) => {
 	return async (dispatch, _getState) => {
 		try {
-			await confirmationResult.confirm(verificationCode);
+			await AuthUser.confirmVerificationCode(
+				confirmationResult,
+				verificationCode
+			);
 			return true;
 		} catch (error) {
 			const message = new Message(
@@ -179,7 +182,7 @@ export const confirmVerificationCode = (
 export const loginWithPassword = (email, password) => {
 	return async (dispatch, _getState) => {
 		try {
-			await firebase.auth().signInWithEmailAndPassword(email, password);
+			await AuthUser.signInWithEmailAndPassword(email, password);
 			return true;
 		} catch (error) {
 			const message = new Message(
