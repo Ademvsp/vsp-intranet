@@ -1,4 +1,3 @@
-import firebase from '../utils/firebase';
 import Message from '../models/message';
 import Counter from '../models/counter';
 import Post from '../models/post';
@@ -8,36 +7,26 @@ import {
 	SNACKBAR_VARIANTS,
 	SNACKBAR_SEVERITY
 } from '../utils/constants';
-import {
-	SET_MESSAGE,
-	START_UPLOAD,
-	SET_UPLOAD_PROGRESS,
-	FINISH_UPLOAD,
-	SET_POSTS_COUNTER
-} from '../utils/actions';
-import { NEW_POST, NEW_COMMENT } from '../utils/notification-types';
-import * as notificationController from './notification';
-const region = process.env.REACT_APP_FIREBASE_FUNCTIONS_REGION;
+import { SET_MESSAGE, SET_POSTS_COUNTER } from '../utils/actions';
+import * as fileUtils from '../utils/file-utils';
 let postsCounterListener;
 
 export const subscribePostsCounterListener = () => {
 	return async (dispatch, _getState) => {
 		try {
-			postsCounterListener = firebase
-				.firestore()
-				.collection('counters')
-				.doc('posts')
-				.onSnapshot((snapshot) => {
+			postsCounterListener = Counter.getListener('posts').onSnapshot(
+				(snapshot) => {
 					const postsCounter = new Counter(
 						snapshot.id,
 						snapshot.data().count,
-						snapshot.data().documents.reverse()
+						snapshot.data().documents
 					);
 					dispatch({
 						type: SET_POSTS_COUNTER,
 						postsCounter
 					});
-				});
+				}
+			);
 		} catch (error) {
 			const message = new Message(
 				'News Feed',
@@ -52,42 +41,37 @@ export const subscribePostsCounterListener = () => {
 	};
 };
 
-export const getPostRef = (postId) => {
-	return firebase.firestore().collection('posts').doc(postId);
+export const getListener = (postId) => {
+	return Post.getListener(postId);
 };
 
-export const addPost = (values, attachments, notifyUsers) => {
+export const addPost = (values, attachments) => {
 	return async (dispatch, getState) => {
 		const { title, body } = values;
 		const authUser = getState().authState.authUser;
-		let uploadedAttachments = [];
-		let postId;
 		try {
-			let functionRef = firebase
-				.app()
-				.functions(region)
-				.httpsCallable('getServerTime');
-			let result = await functionRef();
-			const serverTime = result.data;
-			const post = {
-				attachments: [],
-				body: body.trim(),
-				comments: [],
-				createdAt: null,
-				createdBy: authUser.userId,
-				subscribers: [authUser.userId],
-				title: title.trim()
-			};
-			functionRef = firebase.app().functions(region).httpsCallable('addPost');
-			result = await functionRef({ post, serverTime });
-			postId = result.data;
+			const newPost = new Post(
+				null,
+				[],
+				body.trim(),
+				[],
+				null,
+				[authUser.userId],
+				title.trim(),
+				authUser.userId
+			);
+			await newPost.save();
 			if (attachments.length > 0) {
-				uploadedAttachments = await dispatch(
-					uploadFiles(attachments, 'posts', postId, serverTime.toString())
+				const uploadedAttachments = await dispatch(
+					fileUtils.upload(
+						attachments,
+						'posts',
+						newPost.postId,
+						newPost.metadata.createdAt.getTime().toString()
+					)
 				);
-				await firebase.firestore().collection('posts').doc(postId).update({
-					attachments: uploadedAttachments
-				});
+				newPost.attachments = uploadedAttachments;
+				await newPost.save();
 			}
 			const message = new Message(
 				'News Feed',
@@ -103,6 +87,7 @@ export const addPost = (values, attachments, notifyUsers) => {
 				type: SET_MESSAGE,
 				message
 			});
+			return newPost;
 		} catch (error) {
 			const message = new Message('News Feed', 'Post failed to post', DIALOG);
 			dispatch({
@@ -111,62 +96,25 @@ export const addPost = (values, attachments, notifyUsers) => {
 			});
 			return false;
 		}
-		//Perform this without disruptive error catching
-		try {
-			await notificationController.sendNotification({
-				type: NEW_POST,
-				recipients: notifyUsers,
-				postId,
-				title: title.trim(),
-				postBody: body,
-				attachments: uploadedAttachments
-			});
-		} catch (error) {
-			return true;
-		}
-		return true;
 	};
 };
 
-export const addComment = (post, body, attachments, notifyUsers) => {
-	return async (dispatch, getState) => {
-		const authUser = getState().authState.authUser;
-		const users = getState().dataState.users;
-		const recipients = users.filter((user) => {
-			const notifyUsersMatch = notifyUsers.find(
-				(notifyUser) => notifyUser.userId === user.userId
-			);
-			const subscribersMatch = post.subscribers.includes(user.userId);
-			return notifyUsersMatch || subscribersMatch;
-		});
-		let uploadedAttachments = [];
+export const addComment = (post, body, attachments) => {
+	return async (dispatch, _getState) => {
 		try {
-			let functionRef = firebase
-				.app()
-				.functions(region)
-				.httpsCallable('getServerTime');
-			let result = await functionRef();
-			const serverTime = result.data;
+			const serverTime = await Post.getServerTime();
+			let uploadedAttachments = [];
 			if (attachments.length > 0) {
 				uploadedAttachments = await dispatch(
-					uploadFiles(attachments, 'posts', post.postId, serverTime.toString())
+					fileUtils.upload(
+						attachments,
+						'posts',
+						post.postId,
+						serverTime.toString()
+					)
 				);
 			}
-			const comment = {
-				attachments: uploadedAttachments,
-				body,
-				createdBy: authUser.userId
-			};
-			functionRef = firebase
-				.app()
-				.functions(region)
-				.httpsCallable('addComment');
-			await functionRef({
-				collection: 'posts',
-				document: post.postId,
-				comment,
-				serverTime
-			});
+			await post.addComment(body.trim(), uploadedAttachments, serverTime);
 		} catch (error) {
 			const message = new Message(
 				'News Feed',
@@ -179,35 +127,13 @@ export const addComment = (post, body, attachments, notifyUsers) => {
 			});
 			return false;
 		}
-		//Perform this without disruptive error catching
-		try {
-			await notificationController.sendNotification({
-				type: NEW_COMMENT,
-				recipients,
-				postId: post.postId,
-				title: post.title,
-				commentBody: body,
-				attachments: uploadedAttachments
-			});
-		} catch (error) {
-			return true;
-		}
-		return true;
 	};
 };
 
 export const toggleSubscribePost = (post) => {
-	return async (dispatch, getState) => {
+	return async (dispatch, _getState) => {
 		try {
-			const postId = post.postId;
-			const userId = getState().authState.authUser.userId;
-			let dbAction = firebase.firestore.FieldValue.arrayUnion(userId);
-			if (post.subscribers.includes(userId)) {
-				dbAction = firebase.firestore.FieldValue.arrayRemove(userId);
-			}
-			await firebase.firestore().collection('posts').doc(postId).update({
-				subscribers: dbAction
-			});
+			await post.toggleSubscribePost();
 		} catch (error) {
 			const message = new Message(
 				'News Feed',
@@ -222,82 +148,12 @@ export const toggleSubscribePost = (post) => {
 	};
 };
 
-const uploadFiles = (files, collection, collectionId, folder) => {
-	return async (dispatch, getState) => {
-		try {
-			const promises = [];
-			const uploadedFiles = [];
-			const filesProgress = files.map((file) => {
-				return {
-					name: file.name,
-					totalBytes: file.size,
-					bytesTransferred: 0
-				};
-			});
-			dispatch({
-				type: START_UPLOAD,
-				files,
-				filesProgress
-			});
-
-			for (const [index, file] of files.entries()) {
-				const storageRef = firebase
-					.storage()
-					.ref(`${collection}/${collectionId}/${folder}/${file.name}`);
-				const uploadTask = storageRef.put(file);
-				promises.push(
-					new Promise((resolve, reject) => {
-						uploadTask.on(
-							'state_changed',
-							(snapshot) => {
-								const newFilesProgress = [
-									...getState().uploadState.filesProgress
-								];
-								newFilesProgress[index].bytesTransferred =
-									snapshot.bytesTransferred;
-								newFilesProgress[index].totalBytes = snapshot.totalBytes;
-								dispatch({
-									type: SET_UPLOAD_PROGRESS,
-									filesProgress: newFilesProgress
-								});
-							},
-							() => reject(),
-							async () => {
-								const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
-								uploadedFiles.push({
-									link: downloadUrl,
-									name: file.name,
-									size: file.size
-								});
-								resolve();
-							}
-						);
-					})
-				);
-			}
-			await Promise.all(promises);
-			dispatch({ type: FINISH_UPLOAD });
-			return uploadedFiles;
-		} catch (error) {
-			const message = new Message(
-				'News Feed',
-				'Attachments failed to upload',
-				DIALOG
-			);
-			dispatch({
-				type: SET_MESSAGE,
-				message
-			});
-		}
-	};
-};
-
 export const searchPosts = (values) => {
 	return async (dispatch, _getState) => {
 		try {
-			const collection = await firebase.firestore().collection('posts').get();
+			const posts = await Post.getAll();
 			const results = [];
-			collection.docs.forEach((doc) => {
+			posts.forEach((doc) => {
 				const value = values.value.trim().toLowerCase();
 				const userId = values.user ? values.user.userId : null;
 				const post = new Post(
@@ -306,15 +162,15 @@ export const searchPosts = (values) => {
 					doc.data().body,
 					doc.data().comments,
 					doc.data().metadata,
-					doc.data().title,
 					doc.data().subscribers,
+					doc.data().title,
 					doc.data().user
 				);
 				if (getSearchMatch(post, value, userId)) {
 					results.push(post.postId);
 				}
 			});
-			if (results.length === 0 || results.length === collection.docs.length) {
+			if (results.length === 0 || results.length === posts.length) {
 				return null;
 			}
 			return results;

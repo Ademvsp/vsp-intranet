@@ -85,7 +85,7 @@ export default class AuthUser {
 		);
 	}
 
-	static getServerTime() {
+	static getServerTimestamp() {
 		return firebase.firestore.FieldValue.serverTimestamp();
 	}
 
@@ -94,7 +94,7 @@ export default class AuthUser {
 	}
 
 	static getAuthListener(userId) {
-		return firebase.firestore().collection('users').doc(userId);
+		return firebase.firestore().collection('usersNew').doc(userId);
 	}
 
 	static async getPhoneNumber(email) {

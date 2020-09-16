@@ -56,6 +56,11 @@ export default class Event {
 
 	async save() {
 		if (this.eventId) {
+			this.metadata = {
+				...this.metadata,
+				updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+				updatedBy: firebase.auth().currentUser.uid
+			};
 			await firebase
 				.firestore()
 				.collection('eventsNew')
@@ -72,6 +77,12 @@ export default class Event {
 					user: this.user
 				});
 		} else {
+			this.metadata = {
+				createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+				createdBy: firebase.auth().currentUser.uid,
+				updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+				updatedBy: firebase.auth().currentUser.uid
+			};
 			const docRef = await firebase.firestore().collection('eventsNew').add({
 				allDay: this.allDay,
 				details: this.details,
@@ -104,16 +115,12 @@ export default class Event {
 			.delete();
 	}
 
-	static getEventListener(start, end) {
+	static getListener(start, end) {
 		return firebase
 			.firestore()
 			.collection('eventsNew')
 			.where('start', '>=', start)
 			.where('start', '<=', end)
 			.orderBy('start', 'asc');
-	}
-
-	static getServerTimestamp() {
-		return firebase.firestore.FieldValue.serverTimestamp();
 	}
 }

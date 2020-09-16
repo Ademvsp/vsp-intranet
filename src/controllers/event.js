@@ -15,35 +15,33 @@ export const subscribeEventsListener = (start, end) => {
 	return async (dispatch, _getState) => {
 		try {
 			unsubscribeEventsListener();
-			eventsListener = Event.getEventListener(start, end).onSnapshot(
-				(snapshot) => {
-					if (!snapshot.metadata.hasPendingWrites) {
-						const events = snapshot.docs.map((doc) => {
-							const metadata = {
-								...doc.data().metadata,
-								createdAt: doc.data().metadata.createdAt.toDate(),
-								updatedAt: doc.data().metadata.updatedAt.toDate()
-							};
-							return new Event(
-								doc.id,
-								doc.data().allDay,
-								doc.data().details,
-								doc.data().end.toDate(),
-								doc.data().locations,
-								metadata,
-								doc.data().start.toDate(),
-								doc.data().subscribers,
-								doc.data().type,
-								doc.data().user
-							);
-						});
-						dispatch({
-							type: SET_EVENTS,
-							events
-						});
-					}
+			eventsListener = Event.getListener(start, end).onSnapshot((snapshot) => {
+				if (!snapshot.metadata.hasPendingWrites) {
+					const events = snapshot.docs.map((doc) => {
+						const metadata = {
+							...doc.data().metadata,
+							createdAt: doc.data().metadata.createdAt.toDate(),
+							updatedAt: doc.data().metadata.updatedAt.toDate()
+						};
+						return new Event(
+							doc.id,
+							doc.data().allDay,
+							doc.data().details,
+							doc.data().end.toDate(),
+							doc.data().locations,
+							metadata,
+							doc.data().start.toDate(),
+							doc.data().subscribers,
+							doc.data().type,
+							doc.data().user
+						);
+					});
+					dispatch({
+						type: SET_EVENTS,
+						events
+					});
 				}
-			);
+			});
 		} catch (error) {
 			const message = new Message(
 				'Staff Calendar',
@@ -94,20 +92,13 @@ export const addEvent = (values) => {
 					.toDate();
 			}
 			const subscribers = [authUser.userId];
-			const metadata = {
-				createdAt: Event.getServerTimestamp(),
-				createdBy: authUser.userId,
-				updatedAt: Event.getServerTimestamp(),
-				updatedBy: authUser.userId
-			};
-
 			const newEvent = new Event(
 				null,
 				allDay,
 				details,
 				endTransformed,
 				locations,
-				metadata,
+				null,
 				startTransformed,
 				subscribers,
 				type.eventTypeId,
@@ -149,7 +140,6 @@ export const editEvent = (event, values) => {
 		const { allDay, details, end, start, type, allCalendars } = values;
 		const { authUser } = getState().authState;
 		const { locations: dataStateLocations } = getState().dataState;
-		const { eventId } = event;
 		try {
 			const userLocation = dataStateLocations.find(
 				(dataStateLocation) =>
@@ -178,23 +168,18 @@ export const editEvent = (event, values) => {
 					})
 					.toDate();
 			}
-			const metadata = {
-				...event.metadata,
-				updatedAt: Event.getServerTimestamp(),
-				updatedBy: authUser.userId
-			};
 
 			const newEvent = new Event(
-				eventId,
+				event.eventId,
 				allDay,
 				details,
 				endTransformed,
 				locations,
-				metadata,
+				event.metadata,
 				startTransformed,
 				event.subscribers,
 				type.eventTypeId,
-				authUser.userId
+				event.user
 			);
 			await newEvent.save();
 			const message = new Message(

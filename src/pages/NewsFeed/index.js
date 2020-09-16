@@ -34,7 +34,7 @@ const NewsFeed = (props) => {
 	//If search results change or postsCounter changes, update the data source
 	useEffect(() => {
 		if (postsCounter) {
-			let newDataSource = postsCounter.documents;
+			let newDataSource = [...postsCounter.documents].reverse();
 			if (searchResults) {
 				newDataSource = searchResults;
 			}

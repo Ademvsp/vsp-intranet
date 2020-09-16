@@ -81,34 +81,36 @@ const NewEventDialog = (props) => {
 		setLoading(true);
 		const event = await dispatch(eventController.addEvent(values, notifyUsers));
 		setLoading(false);
-		formik.setValues(initialValues);
 		if (event) {
+			formik.setValues(initialValues);
 			close();
 			const recipients = users.filter(
 				(user) =>
 					event.subscribers.includes(user.userId) ||
 					notifyUsers.includes(user.userId)
 			);
-			const readableTitle = getReadableTitle(
-				{
-					details: event.details,
-					type: event.type,
-					user: event.user
-				},
-				users
-			);
-			try {
-				await notificationController.sendNotification({
-					type: NEW_EVENT,
-					recipients: recipients,
-					eventId: event.eventId,
-					title: readableTitle,
-					start: event.start.getTime(),
-					end: event.end.getTime(),
-					allDay: event.allDay
-				});
-				// eslint-disable-next-line no-empty
-			} catch (error) {}
+			if (recipients.length > 0) {
+				const readableTitle = getReadableTitle(
+					{
+						details: event.details,
+						type: event.type,
+						user: event.user
+					},
+					users
+				);
+				try {
+					await notificationController.sendNotification({
+						type: NEW_EVENT,
+						recipients: recipients,
+						eventId: event.eventId,
+						title: readableTitle,
+						start: event.start.getTime(),
+						end: event.end.getTime(),
+						allDay: event.allDay
+					});
+					// eslint-disable-next-line no-empty
+				} catch (error) {}
+			}
 		}
 	};
 

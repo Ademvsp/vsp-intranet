@@ -1,3 +1,5 @@
+import firebase from '../utils/firebase';
+
 export default class User {
 	constructor(
 		userId,
@@ -25,5 +27,12 @@ export default class User {
 		this.profilePicture = profilePicture;
 		this.settings = settings;
 		this.title = title;
+	}
+
+	static getListener() {
+		return firebase
+			.firestore()
+			.collection('usersNew')
+			.orderBy('firstName', 'asc');
 	}
 }

@@ -15,10 +15,10 @@ import * as notificationController from '../../../controllers/notification';
 const NotificationItem = (props) => {
 	const history = useHistory();
 	const dispatch = useDispatch();
-	const { page, title, link, createdAt, notificationId } = props.notification;
+	const { page, title, link, createdAt } = props.notification;
 
 	const deleteClickHandler = () => {
-		dispatch(notificationController.clearNotification(notificationId));
+		dispatch(notificationController.clearNotification(props.notification));
 	};
 
 	return (

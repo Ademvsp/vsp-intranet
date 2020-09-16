@@ -46,16 +46,15 @@ const PostCard = (props) => {
 	useEffect(() => {
 		let postListener;
 		const asyncFunction = async () => {
-			const postRef = postContoller.getPostRef(postId);
-			postListener = postRef.onSnapshot((doc) => {
+			postListener = postContoller.getListener(postId).onSnapshot((doc) => {
 				const newPost = new Post(
 					doc.id,
 					doc.data().attachments,
 					doc.data().body,
 					doc.data().comments,
 					doc.data().metadata,
-					doc.data().title,
 					doc.data().subscribers,
+					doc.data().title,
 					doc.data().user
 				);
 				setPost(newPost);

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
 	Grid,
 	ListItemAvatar,
@@ -15,6 +15,8 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { StyledDialog } from '../../../../utils/styled-components';
 import { useHistory } from 'react-router-dom';
+import * as notificationController from '../../../../controllers/notification';
+import { NEW_POST } from '../../../../utils/notification-types';
 
 const NewPostDialog = (props) => {
 	const dispatch = useDispatch();
@@ -25,6 +27,7 @@ const NewPostDialog = (props) => {
 		setSearchResults
 	} = props;
 	const history = useHistory();
+	const { users } = useSelector((state) => state.dataState);
 	const [loading, setLoading] = useState(false);
 	const [notifyUsers, setNotifyUsers] = useState([]);
 	const [attachments, setAttachments] = useState([]);
@@ -40,18 +43,36 @@ const NewPostDialog = (props) => {
 
 	const submitHandler = async (values) => {
 		setLoading(true);
-		const result = await dispatch(
+		const post = await dispatch(
 			postController.addPost(values, attachments, notifyUsers)
 		);
-		if (result) {
+		setLoading(false);
+		if (post) {
 			formik.setValues(initialValues, true);
 			setAttachments([]);
 			setNotifyUsers([]);
 			setNewPostDialogOpen(false);
 			setSearchResults(null);
 			history.push('/newsfeed/page/1');
+			const recipients = users.filter(
+				(user) =>
+					post.subscribers.includes(user.userId) ||
+					notifyUsers.includes(user.userId)
+			);
+			if (recipients.length > 0) {
+				try {
+					await notificationController.sendNotification({
+						type: NEW_POST,
+						recipients: recipients,
+						postId: post.postId,
+						title: post.title,
+						postBody: post.body,
+						attachments: post.attachments
+					});
+					// eslint-disable-next-line no-empty
+				} catch (error) {}
+			}
 		}
-		setLoading(false);
 	};
 	const validationSchema = yup.object().shape({
 		title: yup.string().label('title').required(),

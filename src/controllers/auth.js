@@ -14,6 +14,8 @@ import AuthUser from '../models/auth-user';
 import Message from '../models/message';
 import { unsubscribeNotificationsListener } from './notification';
 import { unsubscribeUsersListener } from './user';
+import * as pictureUtils from '../utils/picture-utils';
+import * as fileUtils from '../utils/file-utils';
 let authUserListener;
 
 export const verifyAuth = () => {
@@ -30,7 +32,7 @@ export const verifyAuth = () => {
 					};
 					const metadata = {
 						...loggedInAuthUser.metadata,
-						loggedInAt: AuthUser.getServerTime()
+						loggedInAt: AuthUser.getServerTimestamp()
 					};
 					loggedInAuthUser.settings = settings;
 					loggedInAuthUser.metadata = metadata;
@@ -195,6 +197,102 @@ export const loginWithPassword = (email, password) => {
 				message
 			});
 			return false;
+		}
+	};
+};
+
+export const updateSettings = (settings) => {
+	return async (dispatch, getState) => {
+		try {
+			const { authUser } = getState().authState;
+			const newAuthUser = new AuthUser(
+				authUser.userId,
+				authUser.email,
+				authUser.firstName,
+				authUser.lastName,
+				authUser.location,
+				authUser.manager,
+				authUser.metadata,
+				authUser.profilePicture,
+				settings
+			);
+			await newAuthUser.save();
+		} catch (error) {
+			const message = new Message(
+				'Update Settings',
+				'Settings failed to update',
+				DIALOG
+			);
+			dispatch({
+				type: SET_MESSAGE,
+				message
+			});
+		}
+	};
+};
+
+export const uploadPicture = (file) => {
+	return async (dispatch, getState) => {
+		try {
+			const { authUser } = getState().authState;
+			const profilePicture = await pictureUtils.upload(
+				`users/${authUser.userId}/profilePicture`,
+				file,
+				200
+			);
+			const newAuthUser = new AuthUser(
+				authUser.userId,
+				authUser.email,
+				authUser.firstName,
+				authUser.lastName,
+				authUser.location,
+				authUser.manager,
+				authUser.metadata,
+				profilePicture,
+				authUser.settings
+			);
+			await newAuthUser.save();
+		} catch (error) {
+			const message = new Message(
+				'Profile Picture',
+				'Profile picture failed to upload',
+				DIALOG
+			);
+			dispatch({
+				type: SET_MESSAGE,
+				message
+			});
+		}
+	};
+};
+
+export const removePicture = () => {
+	return async (dispatch, getState) => {
+		try {
+			const authUser = getState().authState.authUser;
+			await fileUtils.removeAll(`users/${authUser.userId}/profilePicture`);
+			const newAuthUser = new AuthUser(
+				authUser.userId,
+				authUser.email,
+				authUser.firstName,
+				authUser.lastName,
+				authUser.location,
+				authUser.manager,
+				authUser.metadata,
+				null,
+				authUser.settings
+			);
+			await newAuthUser.save();
+		} catch (error) {
+			const message = new Message(
+				'Profile Picture',
+				'Profile picture failed to remove',
+				DIALOG
+			);
+			dispatch({
+				type: SET_MESSAGE,
+				message
+			});
 		}
 	};
 };

@@ -1,4 +1,3 @@
-import firebase from '../utils/firebase';
 import {
 	SNACKBAR_VARIANTS,
 	SNACKBAR_SEVERITY,
@@ -12,97 +11,76 @@ import {
 } from '../utils/actions';
 import Message from '../models/message';
 import Notification from '../models/notification';
+import Notificaion from '../models/notification';
 let notificationsListener;
-const region = process.env.REACT_APP_FIREBASE_FUNCTIONS_REGION;
 
 export const getNotifications = () => {
 	return async (dispatch, getState) => {
 		const authUser = getState().authState.authUser;
-		const TWO_MINUTES_SECONDS = 120;
-		const ONE_MONTH_MILLISECONDS = 2592000000;
-		const ONE_MONTH_AGO_MILLISECONDS =
-			new Date().getTime() - ONE_MONTH_MILLISECONDS;
-		const ONE_MONTH_AGO_DATE = new Date(ONE_MONTH_AGO_MILLISECONDS);
-
-		const ONE_MONTH_AGO_TIMESTAMP = firebase.firestore.Timestamp.fromDate(
-			ONE_MONTH_AGO_DATE
-		);
-		notificationsListener = firebase
-			.firestore()
-			.collection('notificationsNew')
-			.where('createdBy', '==', authUser.userId)
-			.where('createdAt', '>=', ONE_MONTH_AGO_TIMESTAMP)
-			.orderBy('createdAt', 'desc')
-			.onSnapshot((snapshot) => {
-				if (
-					//Make sure database is fully updated when udpates are made or deletions of notifications happen
-					!snapshot.docs.some((doc) => doc.metadata.hasPendingWrites) &&
-					snapshot.docs.every((doc) => doc.data().createdAt)
-				) {
-					const touched = getState().notificationState.touched;
-					const actions = [];
-					if (touched) {
-						snapshot.docChanges().forEach((change) => {
-							//Every times there is an update with new notifications
-							const SECONDS_AGO =
-								Number.parseInt(new Date().getTime() / 1000) -
-								change.doc.data().createdAt.seconds;
-							if (
-								change.type === 'added' &&
-								SECONDS_AGO <= TWO_MINUTES_SECONDS
-							) {
-								const message = new Message(
-									change.doc.data().page,
-									change.doc.data().title,
-									SNACKBAR,
-									{
-										duration: 5000,
-										variant: SNACKBAR_VARIANTS.FILLED,
-										severity: SNACKBAR_SEVERITY.INFO
-									}
-								);
-								actions.push({
-									type: SET_MESSAGE,
-									message
-								});
-							}
-						});
-					} else {
-						actions.push({ type: SET_NOTIFICACTIONS_TOUCHED }); //First time loading, initial loading of all notifications
-					}
-					//page, subject, link, createdAt, notificationId
-					//
-					const notifications = snapshot.docs.map((doc) => {
-						return new Notification(
-							doc.id,
-							doc.data().createdAt,
-							doc.data().createdBy,
-							doc.data().link,
-							doc.data().page,
-							doc.data().recipient,
-							doc.data().title
-						);
-					});
-					dispatch([
-						...actions,
-						{
-							type: SET_NOTIFICACTIONS,
-							notifications
+		notificationsListener = Notification.getListener(
+			authUser.userId
+		).onSnapshot((snapshot) => {
+			if (
+				//Make sure database is fully updated when udpates are made or deletions of notifications happen
+				!snapshot.docs.some((doc) => doc.metadata.hasPendingWrites) &&
+				snapshot.docs.every((doc) => doc.data().createdAt)
+			) {
+				const touched = getState().notificationState.touched;
+				const actions = [];
+				if (touched) {
+					snapshot.docChanges().forEach((change) => {
+						//Every times there is an update with new notifications
+						const SECONDS_AGO =
+							Number.parseInt(new Date().getTime() / 1000) -
+							change.doc.data().createdAt.seconds;
+						const TWO_MINUTES_SECONDS = 120;
+						if (change.type === 'added' && SECONDS_AGO <= TWO_MINUTES_SECONDS) {
+							const message = new Message(
+								change.doc.data().page,
+								change.doc.data().title,
+								SNACKBAR,
+								{
+									duration: 5000,
+									variant: SNACKBAR_VARIANTS.FILLED,
+									severity: SNACKBAR_SEVERITY.INFO
+								}
+							);
+							actions.push({
+								type: SET_MESSAGE,
+								message
+							});
 						}
-					]);
+					});
+				} else {
+					actions.push({ type: SET_NOTIFICACTIONS_TOUCHED }); //First time loading, initial loading of all notifications
 				}
-			});
+				const notifications = snapshot.docs.map((doc) => {
+					return new Notification(
+						doc.id,
+						doc.data().createdAt,
+						doc.data().createdBy,
+						doc.data().link,
+						doc.data().page,
+						doc.data().recipient,
+						doc.data().title
+					);
+				});
+				dispatch([
+					...actions,
+					{
+						type: SET_NOTIFICACTIONS,
+						notifications
+					}
+				]);
+			}
+		});
 	};
 };
 
-export const clearNotification = (notificationId) => {
+export const clearNotification = (notification) => {
 	return async (dispatch, _getState) => {
 		try {
-			await firebase
-				.firestore()
-				.collection('notificationsNew')
-				.doc(notificationId)
-				.delete();
+			await notification.delete();
 		} catch (error) {
 			const message = new Message(
 				'Notifications',
@@ -121,15 +99,7 @@ export const clearNotifications = () => {
 	return async (dispatch, getState) => {
 		try {
 			const notifications = getState().notificationState.notifications;
-			const batch = firebase.firestore().batch();
-			for (const notification of notifications) {
-				const docRef = firebase
-					.firestore()
-					.collection('notificationsNew')
-					.doc(notification.notificationId);
-				batch.delete(docRef);
-			}
-			await batch.commit();
+			await Notificaion.deleteAll(notifications);
 		} catch (error) {
 			const message = new Message(
 				'Notifications',
@@ -145,11 +115,7 @@ export const clearNotifications = () => {
 };
 
 export const sendNotification = async (data) => {
-	const functionRef = firebase
-		.app()
-		.functions(region)
-		.httpsCallable('sendNotificationNew');
-	await functionRef(data);
+	await Notification.send(data);
 };
 
 export const unsubscribeNotificationsListener = () => {

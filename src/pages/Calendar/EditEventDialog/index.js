@@ -89,26 +89,28 @@ const EditEventDialog = (props) => {
 					newEvent.subscribers.includes(user.userId) ||
 					notifyUsers.includes(user.userId)
 			);
-			try {
-				const readableTitle = getReadableTitle(
-					{
-						details: newEvent.details,
-						type: newEvent.type,
-						user: newEvent.user
-					},
-					users
-				);
-				notificationController.sendNotification({
-					type: EDIT_EVENT,
-					recipients: recipients,
-					eventId: newEvent.eventId,
-					title: readableTitle,
-					start: newEvent.start.getTime(),
-					end: newEvent.end.getTime(),
-					allDay: newEvent.allDay
-				});
-				// eslint-disable-next-line no-empty
-			} catch (error) {}
+			if (recipients.length > 0) {
+				try {
+					const readableTitle = getReadableTitle(
+						{
+							details: newEvent.details,
+							type: newEvent.type,
+							user: newEvent.user
+						},
+						users
+					);
+					notificationController.sendNotification({
+						type: EDIT_EVENT,
+						recipients: recipients,
+						eventId: newEvent.eventId,
+						title: readableTitle,
+						start: newEvent.start.getTime(),
+						end: newEvent.end.getTime(),
+						allDay: newEvent.allDay
+					});
+					// eslint-disable-next-line no-empty
+				} catch (error) {}
+			}
 		}
 	};
 
@@ -125,6 +127,27 @@ const EditEventDialog = (props) => {
 					event.subscribers.includes(user.userId) ||
 					notifyUsers.includes(user.userId)
 			);
+			if (recipients.length > 0) {
+				try {
+					const readableTitle = getReadableTitle(
+						{
+							details: event.details,
+							type: event.type,
+							user: event.user
+						},
+						users
+					);
+					notificationController.sendNotification({
+						type: DELETE_EVENT,
+						recipients: recipients,
+						title: readableTitle,
+						start: event.start.getTime(),
+						end: event.end.getTime(),
+						allDay: event.allDay
+					});
+					// eslint-disable-next-line no-empty
+				} catch (error) {}
+			}
 			try {
 				const readableTitle = getReadableTitle(
 					{
