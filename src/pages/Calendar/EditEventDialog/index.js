@@ -27,8 +27,6 @@ import moment from 'moment';
 import { getReadableTitle } from '../../../controllers/event';
 import { StyledTitle } from './styled-components';
 import * as eventController from '../../../controllers/event';
-import * as notificationController from '../../../controllers/notification';
-import { EDIT_EVENT, DELETE_EVENT } from '../../../utils/notification-types';
 import ConfirmDialog from '../../../components/ConfirmDialog';
 
 const EditEventDialog = (props) => {
@@ -78,39 +76,12 @@ const EditEventDialog = (props) => {
 
 	const submitHandler = async (values) => {
 		setEditLoading(true);
-		const newEvent = await dispatch(
+		const result = await dispatch(
 			eventController.editEvent(event, values, notifyUsers)
 		);
 		setEditLoading(false);
-		if (newEvent) {
+		if (result) {
 			close();
-			const recipients = users.filter(
-				(user) =>
-					newEvent.subscribers.includes(user.userId) ||
-					notifyUsers.includes(user.userId)
-			);
-			if (recipients.length > 0) {
-				try {
-					const readableTitle = getReadableTitle(
-						{
-							details: newEvent.details,
-							type: newEvent.type,
-							user: newEvent.user
-						},
-						users
-					);
-					notificationController.sendNotification({
-						type: EDIT_EVENT,
-						recipients: recipients,
-						eventId: newEvent.eventId,
-						title: readableTitle,
-						start: newEvent.start.getTime(),
-						end: newEvent.end.getTime(),
-						allDay: newEvent.allDay
-					});
-					// eslint-disable-next-line no-empty
-				} catch (error) {}
-			}
 		}
 	};
 
@@ -122,51 +93,6 @@ const EditEventDialog = (props) => {
 		setDeleteLoading(false);
 		if (result) {
 			close();
-			const recipients = users.filter(
-				(user) =>
-					event.subscribers.includes(user.userId) ||
-					notifyUsers.includes(user.userId)
-			);
-			if (recipients.length > 0) {
-				try {
-					const readableTitle = getReadableTitle(
-						{
-							details: event.details,
-							type: event.type,
-							user: event.user
-						},
-						users
-					);
-					notificationController.sendNotification({
-						type: DELETE_EVENT,
-						recipients: recipients,
-						title: readableTitle,
-						start: event.start.getTime(),
-						end: event.end.getTime(),
-						allDay: event.allDay
-					});
-					// eslint-disable-next-line no-empty
-				} catch (error) {}
-			}
-			try {
-				const readableTitle = getReadableTitle(
-					{
-						details: event.details,
-						type: event.type,
-						user: event.user
-					},
-					users
-				);
-				notificationController.sendNotification({
-					type: DELETE_EVENT,
-					recipients: recipients,
-					title: readableTitle,
-					start: event.start.getTime(),
-					end: event.end.getTime(),
-					allDay: event.allDay
-				});
-				// eslint-disable-next-line no-empty
-			} catch (error) {}
 		}
 	};
 

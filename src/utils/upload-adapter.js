@@ -1,4 +1,4 @@
-import firebase from '../utils/firebase';
+import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
 
 export default class UploadAdapter {
 	constructor(loader, folder) {
@@ -9,9 +9,7 @@ export default class UploadAdapter {
 	// Starts the upload process.
 	async upload() {
 		const file = await this.loader.file;
-		let functionRef = firebase.functions().httpsCallable('getServerTime');
-		let result = await functionRef();
-		const serverTime = result.data;
+		const serverTime = await getServerTimeInMilliseconds();
 		const fullPath = `inlineImages/${this.folder}/${serverTime}/${file.name}`;
 		this.uploadTask = await firebase.storage().ref().child(fullPath).put(file);
 		const imageUrl = await firebase

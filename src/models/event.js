@@ -1,4 +1,4 @@
-import firebase from '../utils/firebase';
+import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
 
 export default class Event {
 	constructor(
@@ -55,10 +55,11 @@ export default class Event {
 	}
 
 	async save() {
+		const serverTime = await getServerTimeInMilliseconds();
 		if (this.eventId) {
 			this.metadata = {
 				...this.metadata,
-				updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+				updatedAt: new Date(serverTime),
 				updatedBy: firebase.auth().currentUser.uid
 			};
 			await firebase
@@ -78,9 +79,9 @@ export default class Event {
 				});
 		} else {
 			this.metadata = {
-				createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+				createdAt: new Date(serverTime),
 				createdBy: firebase.auth().currentUser.uid,
-				updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+				updatedAt: new Date(serverTime),
 				updatedBy: firebase.auth().currentUser.uid
 			};
 			const docRef = await firebase.firestore().collection('eventsNew').add({
@@ -94,15 +95,14 @@ export default class Event {
 				type: this.type,
 				user: this.user
 			});
-			const eventId = docRef.id;
-			this.eventId = eventId;
+			this.eventId = docRef.id;
 			await firebase
 				.firestore()
 				.collection('counters')
 				.doc('events')
 				.update({
 					count: firebase.firestore.FieldValue.increment(1),
-					documents: firebase.firestore.FieldValue.arrayUnion(eventId)
+					documents: firebase.firestore.FieldValue.arrayUnion(this.eventId)
 				});
 		}
 	}
@@ -113,6 +113,14 @@ export default class Event {
 			.collection('eventsNew')
 			.doc(this.eventId)
 			.delete();
+		await firebase
+			.firestore()
+			.collection('counters')
+			.doc('events')
+			.update({
+				count: firebase.firestore.FieldValue.increment(-1),
+				documents: firebase.firestore.FieldValue.arrayRemove(this.eventId)
+			});
 	}
 
 	static getListener(start, end) {

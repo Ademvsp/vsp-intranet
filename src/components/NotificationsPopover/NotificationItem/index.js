@@ -15,7 +15,7 @@ import * as notificationController from '../../../controllers/notification';
 const NotificationItem = (props) => {
 	const history = useHistory();
 	const dispatch = useDispatch();
-	const { page, title, link, createdAt } = props.notification;
+	const { page, title, link, metadata } = props.notification;
 
 	const deleteClickHandler = () => {
 		dispatch(notificationController.clearNotification(props.notification));
@@ -39,7 +39,7 @@ const NotificationItem = (props) => {
 							{title}
 						</Typography>
 						<br />
-						{moment(createdAt.toDate()).format('llll')}
+						{moment(metadata.createdAt).format('llll')}
 					</Fragment>
 				}
 			/>

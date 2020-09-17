@@ -12,7 +12,7 @@ import {
 } from '../utils/actions';
 import AuthUser from '../models/auth-user';
 import Message from '../models/message';
-import { unsubscribeNotificationsListener } from './notification';
+import { unsubscribeNotificationsListenerListener } from './notification';
 import { unsubscribeUsersListener } from './user';
 import * as pictureUtils from '../utils/picture-utils';
 import * as fileUtils from '../utils/file-utils';
@@ -102,7 +102,7 @@ export const logout = () => {
 	return async (dispatch, getState) => {
 		const { authUser } = getState().authState;
 		unsubscribeAuthUserListener();
-		unsubscribeNotificationsListener();
+		unsubscribeNotificationsListenerListener();
 		unsubscribeUsersListener();
 		await authUser.logout();
 		dispatch({ type: LOGOUT });

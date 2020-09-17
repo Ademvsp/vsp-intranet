@@ -7,8 +7,14 @@ import {
 import { SET_MESSAGE, SET_EVENTS } from '../utils/actions';
 import Message from '../models/message';
 import Event from '../models/event';
+import Notification from '../models/notification';
 import { eventTypeNames } from '../utils/event-types';
 import moment from 'moment-timezone';
+import {
+	DELETE_EVENT,
+	EDIT_EVENT,
+	NEW_EVENT
+} from '../utils/notification-types';
 let eventsListener;
 
 export const subscribeEventsListener = (start, end) => {
@@ -16,31 +22,29 @@ export const subscribeEventsListener = (start, end) => {
 		try {
 			unsubscribeEventsListener();
 			eventsListener = Event.getListener(start, end).onSnapshot((snapshot) => {
-				if (!snapshot.metadata.hasPendingWrites) {
-					const events = snapshot.docs.map((doc) => {
-						const metadata = {
-							...doc.data().metadata,
-							createdAt: doc.data().metadata.createdAt.toDate(),
-							updatedAt: doc.data().metadata.updatedAt.toDate()
-						};
-						return new Event(
-							doc.id,
-							doc.data().allDay,
-							doc.data().details,
-							doc.data().end.toDate(),
-							doc.data().locations,
-							metadata,
-							doc.data().start.toDate(),
-							doc.data().subscribers,
-							doc.data().type,
-							doc.data().user
-						);
-					});
-					dispatch({
-						type: SET_EVENTS,
-						events
-					});
-				}
+				const events = snapshot.docs.map((doc) => {
+					const metadata = {
+						...doc.data().metadata,
+						createdAt: doc.data().metadata.createdAt.toDate(),
+						updatedAt: doc.data().metadata.updatedAt.toDate()
+					};
+					return new Event(
+						doc.id,
+						doc.data().allDay,
+						doc.data().details,
+						doc.data().end.toDate(),
+						doc.data().locations,
+						metadata,
+						doc.data().start.toDate(),
+						doc.data().subscribers,
+						doc.data().type,
+						doc.data().user
+					);
+				});
+				dispatch({
+					type: SET_EVENTS,
+					events
+				});
 			});
 		} catch (error) {
 			const message = new Message(
@@ -57,12 +61,12 @@ export const subscribeEventsListener = (start, end) => {
 	};
 };
 
-export const addEvent = (values) => {
+export const addEvent = (values, notifyUsers) => {
 	return async (dispatch, getState) => {
 		const { allDay, details, end, start, type, allCalendars } = values;
 		const { authUser } = getState().authState;
-		const { locations: dataStateLocations } = getState().dataState;
-		let startTransformed, endTransformed;
+		const { locations: dataStateLocations, users } = getState().dataState;
+		let newEvent;
 		try {
 			const userLocation = dataStateLocations.find(
 				(dataStateLocation) =>
@@ -73,8 +77,8 @@ export const addEvent = (values) => {
 				locations = dataStateLocations.map((location) => location.locationId);
 			}
 
-			startTransformed = moment.tz(start, userLocation.timezone).toDate();
-			endTransformed = moment.tz(end, userLocation.timezone).toDate();
+			let startTransformed = moment.tz(start, userLocation.timezone).toDate();
+			let endTransformed = moment.tz(end, userLocation.timezone).toDate();
 			if (allDay) {
 				startTransformed = moment
 					.tz(start, userLocation.timezone)
@@ -92,7 +96,7 @@ export const addEvent = (values) => {
 					.toDate();
 			}
 			const subscribers = [authUser.userId];
-			const newEvent = new Event(
+			newEvent = new Event(
 				null,
 				allDay,
 				details,
@@ -119,7 +123,6 @@ export const addEvent = (values) => {
 				type: SET_MESSAGE,
 				message
 			});
-			return newEvent;
 		} catch (error) {
 			const message = new Message(
 				'Staff Calendar',
@@ -132,14 +135,65 @@ export const addEvent = (values) => {
 			});
 			return null;
 		}
+		//Send notification, do nothing if this fails so no error is thrown
+		try {
+			const recipients = users.filter(
+				(user) =>
+					newEvent.subscribers.includes(user.userId) ||
+					notifyUsers.includes(user.userId)
+			);
+			if (recipients.length > 0) {
+				const notifications = [];
+				for (const recipient of recipients) {
+					const senderFullName = `${authUser.firstName} ${authUser.lastName}`;
+					const readableTitle = getReadableTitle(
+						{
+							details: newEvent.details,
+							type: newEvent.type,
+							user: authUser.userId
+						},
+						users
+					);
+					const emailData = {
+						eventTitle: readableTitle,
+						start: newEvent.start.getTime(),
+						end: newEvent.end.getTime(),
+						allDay: newEvent.allDay
+					};
+					const transformedRecipient = {
+						userId: recipient.userId,
+						email: recipient.email,
+						firstName: recipient.firstName,
+						lastName: recipient.lastName,
+						location: recipient.location.locationId
+					};
+					const notification = new Notification(
+						null,
+						emailData,
+						`/calendar/event?eventId=${newEvent.eventId}`,
+						null,
+						'Staff Calendar',
+						transformedRecipient,
+						`Staff Calendar "${readableTitle}" created by ${senderFullName}`,
+						NEW_EVENT
+					);
+					notifications.push(notification);
+				}
+				await Notification.saveAll(notifications);
+			}
+			return true;
+		} catch (error) {
+			return true;
+		}
 	};
 };
 
-export const editEvent = (event, values) => {
+export const editEvent = (event, values, notifyUsers) => {
 	return async (dispatch, getState) => {
 		const { allDay, details, end, start, type, allCalendars } = values;
 		const { authUser } = getState().authState;
-		const { locations: dataStateLocations } = getState().dataState;
+		const { locations: dataStateLocations, users } = getState().dataState;
+		let newEvent;
 		try {
 			const userLocation = dataStateLocations.find(
 				(dataStateLocation) =>
@@ -169,7 +223,7 @@ export const editEvent = (event, values) => {
 					.toDate();
 			}
 
-			const newEvent = new Event(
+			newEvent = new Event(
 				event.eventId,
 				allDay,
 				details,
@@ -196,7 +250,6 @@ export const editEvent = (event, values) => {
 				type: SET_MESSAGE,
 				message
 			});
-			return newEvent;
 		} catch (error) {
 			const message = new Message(
 				'Staff Calendar',
@@ -209,11 +262,63 @@ export const editEvent = (event, values) => {
 			});
 			return false;
 		}
+		//Send notification, do nothing if this fails so no error is thrown
+		try {
+			const recipients = users.filter(
+				(user) =>
+					newEvent.subscribers.includes(user.userId) ||
+					notifyUsers.includes(user.userId)
+			);
+			if (recipients.length > 0) {
+				const notifications = [];
+				for (const recipient of recipients) {
+					const senderFullName = `${authUser.firstName} ${authUser.lastName}`;
+					const readableTitle = getReadableTitle(
+						{
+							details: newEvent.details,
+							type: newEvent.type,
+							user: authUser.userId
+						},
+						users
+					);
+					const emailData = {
+						eventTitle: readableTitle,
+						start: newEvent.start.getTime(),
+						end: newEvent.end.getTime(),
+						allDay: newEvent.allDay
+					};
+					const transformedRecipient = {
+						userId: recipient.userId,
+						email: recipient.email,
+						firstName: recipient.firstName,
+						lastName: recipient.lastName,
+						location: recipient.location.locationId
+					};
+					const notification = new Notification(
+						null,
+						emailData,
+						`/calendar/event?eventId=${newEvent.eventId}`,
+						null,
+						'Staff Calendar',
+						transformedRecipient,
+						`Staff Calendar "${readableTitle}" updated by ${senderFullName}`,
+						EDIT_EVENT
+					);
+					notifications.push(notification);
+				}
+				await Notification.saveAll(notifications);
+			}
+			return true;
+		} catch (error) {
+			return true;
+		}
 	};
 };
 
-export const deleteEvent = (event) => {
-	return async (dispatch, _getState) => {
+export const deleteEvent = (event, notifyUsers) => {
+	return async (dispatch, getState) => {
+		const { authUser } = getState().authState;
+		const { users } = getState().dataState;
 		try {
 			await event.delete();
 			const message = new Message(
@@ -230,7 +335,6 @@ export const deleteEvent = (event) => {
 				type: SET_MESSAGE,
 				message
 			});
-			return true;
 		} catch (error) {
 			const message = new Message(
 				'Staff Calendar',
@@ -242,6 +346,56 @@ export const deleteEvent = (event) => {
 				message
 			});
 			return false;
+		}
+		//Send notification, do nothing if this fails so no error is thrown
+		try {
+			const recipients = users.filter(
+				(user) =>
+					event.subscribers.includes(user.userId) ||
+					notifyUsers.includes(user.userId)
+			);
+			if (recipients.length > 0) {
+				const notifications = [];
+				for (const recipient of recipients) {
+					const senderFullName = `${authUser.firstName} ${authUser.lastName}`;
+					const readableTitle = getReadableTitle(
+						{
+							details: event.details,
+							type: event.type,
+							user: authUser.userId
+						},
+						users
+					);
+					const emailData = {
+						eventTitle: readableTitle,
+						start: event.start.getTime(),
+						end: event.end.getTime(),
+						allDay: event.allDay
+					};
+					const transformedRecipient = {
+						userId: recipient.userId,
+						email: recipient.email,
+						firstName: recipient.firstName,
+						lastName: recipient.lastName,
+						location: recipient.location.locationId
+					};
+					const notification = new Notification(
+						null,
+						emailData,
+						'/calendar',
+						null,
+						'Staff Calendar',
+						transformedRecipient,
+						`Staff Calendar "${readableTitle}" deleted by ${senderFullName}`,
+						DELETE_EVENT
+					);
+					notifications.push(notification);
+				}
+				await Notification.saveAll(notifications);
+			}
+			return true;
+		} catch (error) {
+			return true;
 		}
 	};
 };

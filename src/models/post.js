@@ -1,5 +1,4 @@
-import firebase from '../utils/firebase';
-const region = process.env.REACT_APP_FIREBASE_FUNCTIONS_REGION;
+import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
 
 export default class Post {
 	constructor(
@@ -23,10 +22,11 @@ export default class Post {
 	}
 
 	async save() {
+		const serverTime = await getServerTimeInMilliseconds();
 		if (this.postId) {
 			this.metadata = {
 				...this.metadata,
-				updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+				updatedAt: new Date(serverTime),
 				updatedBy: firebase.auth().currentUser.uid
 			};
 			await firebase.firestore().collection('posts').doc(this.postId).update({
@@ -40,9 +40,9 @@ export default class Post {
 			});
 		} else {
 			this.metadata = {
-				createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+				createdAt: new Date(serverTime),
 				createdBy: firebase.auth().currentUser.uid,
-				updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+				updatedAt: new Date(serverTime),
 				updatedBy: firebase.auth().currentUser.uid
 			};
 			const docRef = await firebase.firestore().collection('posts').add({
@@ -134,14 +134,5 @@ export default class Post {
 
 	static getListener(postId) {
 		return firebase.firestore().collection('posts').doc(postId);
-	}
-
-	static async getServerTime() {
-		let functionRef = firebase
-			.app()
-			.functions(region)
-			.httpsCallable('getServerTime');
-		let result = await functionRef();
-		return result.data;
 	}
 }

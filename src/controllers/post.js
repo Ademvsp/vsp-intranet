@@ -1,6 +1,7 @@
 import Message from '../models/message';
 import Counter from '../models/counter';
 import Post from '../models/post';
+import Notification from '../models/notification';
 import {
 	DIALOG,
 	SNACKBAR,
@@ -9,6 +10,8 @@ import {
 } from '../utils/constants';
 import { SET_MESSAGE, SET_POSTS_COUNTER } from '../utils/actions';
 import * as fileUtils from '../utils/file-utils';
+import { NEW_COMMENT, NEW_POST } from '../utils/notification-types';
+import { getServerTimeInMilliseconds } from '../utils/firebase';
 let postsCounterListener;
 
 export const subscribePostsCounterListener = () => {
@@ -45,12 +48,14 @@ export const getListener = (postId) => {
 	return Post.getListener(postId);
 };
 
-export const addPost = (values, attachments) => {
+export const addPost = (values, attachments, notifyUsers) => {
 	return async (dispatch, getState) => {
 		const { title, body } = values;
-		const authUser = getState().authState.authUser;
+		const { authUser } = getState().authState;
+		const { users } = getState().dataState;
+		let newPost;
 		try {
-			const newPost = new Post(
+			newPost = new Post(
 				null,
 				[],
 				body.trim(),
@@ -87,7 +92,6 @@ export const addPost = (values, attachments) => {
 				type: SET_MESSAGE,
 				message
 			});
-			return newPost;
 		} catch (error) {
 			const message = new Message('News Feed', 'Post failed to post', DIALOG);
 			dispatch({
@@ -96,14 +100,58 @@ export const addPost = (values, attachments) => {
 			});
 			return false;
 		}
+		//Send notification, do nothing if this fails so no error is thrown
+		try {
+			const recipients = users.filter(
+				(user) =>
+					newPost.subscribers.includes(user.userId) ||
+					notifyUsers.includes(user.userId)
+			);
+			if (recipients.length > 0) {
+				const notifications = [];
+				for (const recipient of recipients) {
+					const senderFullName = `${authUser.firstName} ${authUser.lastName}`;
+					const emailData = {
+						postBody: body.trim(),
+						attachments: newPost.attachments,
+						postTitle: title.trim()
+					};
+					const transformedRecipient = {
+						userId: recipient.userId,
+						email: recipient.email,
+						firstName: recipient.firstName,
+						lastName: recipient.lastName,
+						location: recipient.location.locationId
+					};
+					const notification = new Notification(
+						null,
+						emailData,
+						`/newsfeed/post?postId=${newPost.postId}`,
+						null,
+						'News Feed',
+						transformedRecipient,
+						`News Feed "${title}" New post from ${senderFullName}`,
+						NEW_POST
+					);
+					notifications.push(notification);
+				}
+				await Notification.saveAll(notifications);
+			}
+			return true;
+		} catch (error) {
+			return true;
+		}
 	};
 };
 
-export const addComment = (post, body, attachments) => {
-	return async (dispatch, _getState) => {
+export const addComment = (post, body, attachments, notifyUsers) => {
+	return async (dispatch, getState) => {
+		const { authUser } = getState().authState;
+		const { users } = getState().dataState;
+		let uploadedAttachments;
 		try {
-			const serverTime = await Post.getServerTime();
-			let uploadedAttachments = [];
+			const serverTime = await getServerTimeInMilliseconds();
+			uploadedAttachments = [];
 			if (attachments.length > 0) {
 				uploadedAttachments = await dispatch(
 					fileUtils.upload(
@@ -126,6 +174,47 @@ export const addComment = (post, body, attachments) => {
 				message
 			});
 			return false;
+		}
+		//Send notification, do nothing if this fails so no error is thrown
+		try {
+			const recipients = users.filter(
+				(user) =>
+					post.subscribers.includes(user.userId) ||
+					notifyUsers.includes(user.userId)
+			);
+			if (recipients.length > 0) {
+				const notifications = [];
+				for (const recipient of recipients) {
+					const senderFullName = `${authUser.firstName} ${authUser.lastName}`;
+					const emailData = {
+						commentBody: body.trim(),
+						attachments: uploadedAttachments,
+						postTitle: post.title
+					};
+					const transformedRecipient = {
+						userId: recipient.userId,
+						email: recipient.email,
+						firstName: recipient.firstName,
+						lastName: recipient.lastName,
+						location: recipient.location.locationId
+					};
+					const notification = new Notification(
+						null,
+						emailData,
+						`/newsfeed/post?postId=${post.postId}`,
+						null,
+						'News Feed',
+						transformedRecipient,
+						`News Feed "${post.title}" New comment from ${senderFullName}`,
+						NEW_COMMENT
+					);
+					notifications.push(notification);
+				}
+				await Notification.saveAll(notifications);
+			}
+			return true;
+		} catch (error) {
+			return true;
 		}
 	};
 };

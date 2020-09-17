@@ -28,7 +28,7 @@ const App = (props) => {
 	//Get notification after logged in
 	useEffect(() => {
 		if (authState.authUser && !notificationState.touched) {
-			dispatch(notificationController.getNotifications());
+			dispatch(notificationController.subscribeNotificationsListener());
 		}
 	}, [authState.authUser, notificationState.touched, dispatch]);
 	//Get locations after logged in
@@ -40,14 +40,14 @@ const App = (props) => {
 	//Get app users with mapped locations after locations are retrieved
 	useEffect(() => {
 		if (dataState.locations) {
-			dispatch(userController.subscribeUsers());
+			dispatch(userController.subscribeUserListener());
 		}
 	}, [dataState.locations, dispatch]);
 	//Unsubscribe to any active listeners upon unmounting app
 	useEffect(() => {
 		return () => {
 			authController.unsubscribeAuthUserListener();
-			notificationController.unsubscribeNotificationsListener();
+			notificationController.unsubscribeNotificationsListenerListener();
 			userController.unsubscribeUsersListener();
 		};
 	}, []);

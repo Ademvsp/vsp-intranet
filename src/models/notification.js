@@ -1,23 +1,25 @@
 import firebase from '../utils/firebase';
 const region = process.env.REACT_APP_FIREBASE_FUNCTIONS_REGION;
 
-export default class Notificaion {
+export default class Notification {
 	constructor(
 		notificationId,
-		createdAt,
-		createdBy,
+		emailData,
 		link,
+		metadata,
 		page,
 		recipient,
-		title
+		title,
+		type
 	) {
 		this.notificationId = notificationId;
-		this.createdAt = createdAt;
-		this.createdBy = createdBy;
+		this.emailData = emailData;
 		this.link = link;
+		this.metadata = metadata;
 		this.page = page;
 		this.recipient = recipient;
 		this.title = title;
+		this.type = type;
 	}
 
 	async delete() {
@@ -26,6 +28,28 @@ export default class Notificaion {
 			.collection('notificationsNew')
 			.doc(this.notificationId)
 			.delete();
+	}
+
+	static async saveAll(notifications) {
+		const batch = firebase.firestore().batch();
+		for (const notification of notifications) {
+			const docRef = firebase.firestore().collection('notificationsNew').doc();
+			batch.set(docRef, {
+				emailData: notification.emailData,
+				link: notification.link,
+				metadata: {
+					createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+					createdBy: firebase.auth().currentUser.uid,
+					updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+					updatedBy: firebase.auth().currentUser.uid
+				},
+				page: notification.page,
+				recipient: { ...notification.recipient },
+				title: notification.title,
+				type: notification.type
+			});
+		}
+		await batch.commit();
 	}
 
 	static async deleteAll(notifications) {
@@ -52,9 +76,8 @@ export default class Notificaion {
 		return firebase
 			.firestore()
 			.collection('notificationsNew')
-			.where('createdBy', '==', userId)
-			.where('createdAt', '>=', ONE_MONTH_AGO_TIMESTAMP)
-			.orderBy('createdAt', 'desc');
+			.where('recipient.userId', '==', userId)
+			.where('metadata.createdAt', '>=', ONE_MONTH_AGO_TIMESTAMP);
 	}
 
 	static async send(data) {

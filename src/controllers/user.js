@@ -9,7 +9,7 @@ import Message from '../models/message';
 import User from '../models/user';
 let usersListener;
 
-export const subscribeUsers = () => {
+export const subscribeUserListener = () => {
 	return async (dispatch, getState) => {
 		try {
 			usersListener = User.getListener().onSnapshot((snapshot) => {

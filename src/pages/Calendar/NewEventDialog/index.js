@@ -27,8 +27,6 @@ import moment from 'moment';
 import { getReadableTitle } from '../../../controllers/event';
 import { StyledTitle } from './styled-components';
 import * as eventController from '../../../controllers/event';
-import * as notificationController from '../../../controllers/notification';
-import { NEW_EVENT } from '../../../utils/notification-types';
 
 const NewEventDialog = (props) => {
 	const dispatch = useDispatch();
@@ -79,38 +77,13 @@ const NewEventDialog = (props) => {
 
 	const submitHandler = async (values) => {
 		setLoading(true);
-		const event = await dispatch(eventController.addEvent(values, notifyUsers));
+		const result = await dispatch(
+			eventController.addEvent(values, notifyUsers)
+		);
 		setLoading(false);
-		if (event) {
+		if (result) {
 			formik.setValues(initialValues);
 			close();
-			const recipients = users.filter(
-				(user) =>
-					event.subscribers.includes(user.userId) ||
-					notifyUsers.includes(user.userId)
-			);
-			if (recipients.length > 0) {
-				const readableTitle = getReadableTitle(
-					{
-						details: event.details,
-						type: event.type,
-						user: event.user
-					},
-					users
-				);
-				try {
-					await notificationController.sendNotification({
-						type: NEW_EVENT,
-						recipients: recipients,
-						eventId: event.eventId,
-						title: readableTitle,
-						start: event.start.getTime(),
-						end: event.end.getTime(),
-						allDay: event.allDay
-					});
-					// eslint-disable-next-line no-empty
-				} catch (error) {}
-			}
 		}
 	};
 

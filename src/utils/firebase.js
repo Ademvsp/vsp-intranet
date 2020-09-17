@@ -4,6 +4,8 @@ import 'firebase/firestore';
 import 'firebase/functions';
 import 'firebase/storage';
 
+const region = process.env.REACT_APP_FIREBASE_FUNCTIONS_REGION;
+
 const config = {
 	apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
 	authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -20,3 +22,12 @@ app.functions();
 app.app().functions('australia-southeast1');
 
 export default app;
+
+export const getServerTimeInMilliseconds = async () => {
+	let functionRef = app
+		.app()
+		.functions(region)
+		.httpsCallable('getServerTimeInMilliseconds');
+	let result = await functionRef();
+	return result.data;
+};
