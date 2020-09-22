@@ -1,7 +1,7 @@
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
 
 export default class Event {
-	constructor(
+	constructor({
 		eventId,
 		allDay,
 		details,
@@ -12,7 +12,7 @@ export default class Event {
 		subscribers,
 		type,
 		user
-	) {
+	}) {
 		this.eventId = eventId;
 		this.allDay = allDay;
 		this.details = details;
@@ -40,18 +40,13 @@ export default class Event {
 			updatedAt: doc.data().metadata.updatedAt.toDate()
 		};
 
-		return new Event(
-			doc.id,
-			doc.data().allDay,
-			doc.data().details,
-			doc.data().end.toDate(),
-			doc.data().locations,
-			metadata,
-			doc.data().start.toDate(),
-			doc.data().subscribers,
-			doc.data().type,
-			doc.data().user
-		);
+		return new Event({
+			...doc.data(),
+			eventId: doc.id,
+			metadata: metadata,
+			start: doc.data().start.toDate(),
+			end: doc.data().end.toDate()
+		});
 	}
 
 	async save() {

@@ -19,11 +19,10 @@ export const subscribePostsCounterListener = () => {
 		try {
 			postsCounterListener = Counter.getListener('posts').onSnapshot(
 				(snapshot) => {
-					const postsCounter = new Counter(
-						snapshot.id,
-						snapshot.data().count,
-						snapshot.data().documents
-					);
+					const postsCounter = new Counter({
+						...snapshot.data(),
+						collection: snapshot.id
+					});
 					dispatch({
 						type: SET_POSTS_COUNTER,
 						postsCounter

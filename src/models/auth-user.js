@@ -2,7 +2,7 @@ import firebase from '../utils/firebase';
 const region = process.env.REACT_APP_FIREBASE_FUNCTIONS_REGION;
 
 export default class AuthUser {
-	constructor(
+	constructor({
 		userId,
 		email,
 		firstName,
@@ -12,7 +12,7 @@ export default class AuthUser {
 		metadata,
 		profilePicture,
 		settings
-	) {
+	}) {
 		this.userId = userId;
 		this.email = email;
 		this.firstName = firstName;
@@ -72,17 +72,11 @@ export default class AuthUser {
 				: null
 		};
 
-		return new AuthUser(
-			doc.id,
-			doc.data().email,
-			doc.data().firstName,
-			doc.data().lastName,
-			doc.data().location,
-			doc.data().manager,
-			metadata,
-			doc.data().profilePicture,
-			doc.data().settings
-		);
+		return new AuthUser({
+			...doc.data(),
+			userId: doc.id,
+			metadata: metadata
+		});
 	}
 
 	static getServerTimestamp() {

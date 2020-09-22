@@ -1,7 +1,7 @@
 import firebase from '../utils/firebase';
 
 export default class Counter {
-	constructor(collection, count, documents) {
+	constructor({ collection, count, documents }) {
 		this.collection = collection;
 		this.count = count;
 		this.documents = documents;
@@ -13,7 +13,7 @@ export default class Counter {
 			.collection('counters')
 			.doc(collection)
 			.get();
-		return new Counter(doc.id, doc.data().count, doc.data().documents);
+		return new Counter({ ...doc.data(), collection: doc.id });
 	}
 
 	static getListener(collection) {

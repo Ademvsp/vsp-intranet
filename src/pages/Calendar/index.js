@@ -28,6 +28,7 @@ const Calendar = (props) => {
 	const location = useLocation();
 	const { events } = useSelector((state) => state.dataState);
 	const { authUser } = useSelector((state) => state.authState);
+	const [newEventPrefillData, setNewEventPrefillData] = useState();
 	const [showAddEventDialog, setShowAddEventDialog] = useState(false);
 	const [filteredEvents, setFilteredEvents] = useState();
 	const [selectedLocations, setSelectedLocations] = useState([
@@ -81,6 +82,11 @@ const Calendar = (props) => {
 		asyncFunction();
 	}, [location.pathname, location.search, history, authUser.userId]);
 
+	const addEventClickHandler = () => {
+		setNewEventPrefillData(null);
+		setShowAddEventDialog(true);
+	};
+
 	const closeDialogHandler = () => {
 		setSelectedEvent(null);
 		setShowEditEventDialog(false);
@@ -107,25 +113,36 @@ const Calendar = (props) => {
 				setSelectedEventTypes
 			}}
 		>
+			{showAddEventDialog && (
+				<NewEventDialog
+					open={showAddEventDialog}
+					close={() => setShowAddEventDialog(false)}
+					newEventPrefillData={newEventPrefillData}
+				/>
+			)}
+			{selectedEvent && (
+				<Fragment>
+					<ViewEventDialog
+						open={showViewEventDialog}
+						close={closeDialogHandler}
+						event={selectedEvent}
+					/>
+					<EditEventDialog
+						open={showEditEventDialog}
+						close={closeDialogHandler}
+						event={selectedEvent}
+					/>
+				</Fragment>
+			)}
 			<PageContainer width={100}>
-				{selectedEvent && (
-					<Fragment>
-						<ViewEventDialog
-							open={showViewEventDialog}
-							close={closeDialogHandler}
-							event={selectedEvent}
-						/>
-						<EditEventDialog
-							open={showEditEventDialog}
-							close={closeDialogHandler}
-							event={selectedEvent}
-						/>
-					</Fragment>
-				)}
 				<Grid container direction='row' spacing={1} justify='center'>
 					<Grid item>
 						<StyledCalendarContainer elevation={2}>
-							<CalendarContainer events={filteredEvents} />
+							<CalendarContainer
+								events={filteredEvents}
+								setShowAddEventDialog={setShowAddEventDialog}
+								setNewEventPrefillData={setNewEventPrefillData}
+							/>
 						</StyledCalendarContainer>
 					</Grid>
 					<Grid item>
@@ -143,7 +160,7 @@ const Calendar = (props) => {
 												color='primary'
 												startIcon={<AddIcon />}
 												size='large'
-												onClick={() => setShowAddEventDialog(true)}
+												onClick={addEventClickHandler}
 											>
 												Add event
 											</StyledButton>
@@ -155,10 +172,6 @@ const Calendar = (props) => {
 										skeleton
 									)
 								}
-							/>
-							<NewEventDialog
-								open={showAddEventDialog}
-								close={() => setShowAddEventDialog(false)}
 							/>
 							<Panel />
 						</StyledSidePanelContainer>

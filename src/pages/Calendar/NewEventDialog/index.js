@@ -35,16 +35,21 @@ const NewEventDialog = (props) => {
 	const { users } = useSelector((state) => state.dataState);
 	const [notifyUsers, setNotifyUsers] = useState([]);
 	const [loading, setLoading] = useState();
-	const { open, close } = props;
+	const { open, close, newEventPrefillData } = props;
 
 	const initialValues = {
 		type: eventTypes[0],
 		details: '',
-		start: moment(new Date()).startOf('day').add(8, 'hours').toDate(),
-		end: moment(new Date()).startOf('day').add(9, 'hours').toDate(),
+		start: newEventPrefillData
+			? newEventPrefillData.start
+			: moment(new Date()).startOf('day').add(8, 'hours').toDate(),
+		end: newEventPrefillData
+			? newEventPrefillData.end
+			: moment(new Date()).startOf('day').add(9, 'hours').toDate(),
 		allDay: false,
 		allCalendars: false
 	};
+
 	const initialErrors = {
 		type: true,
 		details: true,

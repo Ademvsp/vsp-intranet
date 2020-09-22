@@ -40,17 +40,10 @@ export const verifyAuth = () => {
 					authUserListener = AuthUser.getAuthListener(
 						firebaseAuthUser.uid
 					).onSnapshot(async (snapshot) => {
-						const authUser = new AuthUser(
-							snapshot.id,
-							snapshot.data().email,
-							snapshot.data().firstName,
-							snapshot.data().lastName,
-							snapshot.data().location,
-							snapshot.data().manager,
-							snapshot.data().metadata,
-							snapshot.data().profilePicture,
-							snapshot.data().settings
-						);
+						const authUser = new AuthUser({
+							...snapshot.data(),
+							userId: snapshot.id
+						});
 						if (authUser.settings.forceLogout) {
 							dispatch(logout());
 						} else {
@@ -205,17 +198,7 @@ export const updateSettings = (settings) => {
 	return async (dispatch, getState) => {
 		try {
 			const { authUser } = getState().authState;
-			const newAuthUser = new AuthUser(
-				authUser.userId,
-				authUser.email,
-				authUser.firstName,
-				authUser.lastName,
-				authUser.location,
-				authUser.manager,
-				authUser.metadata,
-				authUser.profilePicture,
-				settings
-			);
+			const newAuthUser = new AuthUser({ ...authUser, settings });
 			await newAuthUser.save();
 		} catch (error) {
 			const message = new Message(
@@ -240,17 +223,10 @@ export const uploadPicture = (file) => {
 				file,
 				200
 			);
-			const newAuthUser = new AuthUser(
-				authUser.userId,
-				authUser.email,
-				authUser.firstName,
-				authUser.lastName,
-				authUser.location,
-				authUser.manager,
-				authUser.metadata,
-				profilePicture,
-				authUser.settings
-			);
+			const newAuthUser = new AuthUser({
+				...authUser,
+				profilePicture: profilePicture
+			});
 			await newAuthUser.save();
 		} catch (error) {
 			const message = new Message(
@@ -271,17 +247,10 @@ export const removePicture = () => {
 		try {
 			const authUser = getState().authState.authUser;
 			await fileUtils.removeAll(`users/${authUser.userId}/profilePicture`);
-			const newAuthUser = new AuthUser(
-				authUser.userId,
-				authUser.email,
-				authUser.firstName,
-				authUser.lastName,
-				authUser.location,
-				authUser.manager,
-				authUser.metadata,
-				null,
-				authUser.settings
-			);
+			const newAuthUser = new AuthUser({
+				...authUser,
+				profilePicture: ''
+			});
 			await newAuthUser.save();
 		} catch (error) {
 			const message = new Message(

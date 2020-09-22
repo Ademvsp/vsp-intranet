@@ -15,9 +15,11 @@ import { DIALOG, SILENT, SNACKBAR } from './constants';
 const MessageHandler = (props) => {
 	const dispatch = useDispatch();
 	const { message } = useSelector((state) => state.messageState);
+
 	const messageClearHandler = () => {
 		dispatch(messageController.clearMessage());
 	};
+
 	let messageComponent;
 	if (message) {
 		const { title, body, feedback, options } = message;

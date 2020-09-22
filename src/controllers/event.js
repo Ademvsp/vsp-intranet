@@ -28,18 +28,13 @@ export const subscribeEventsListener = (start, end) => {
 						createdAt: doc.data().metadata.createdAt.toDate(),
 						updatedAt: doc.data().metadata.updatedAt.toDate()
 					};
-					return new Event(
-						doc.id,
-						doc.data().allDay,
-						doc.data().details,
-						doc.data().end.toDate(),
-						doc.data().locations,
-						metadata,
-						doc.data().start.toDate(),
-						doc.data().subscribers,
-						doc.data().type,
-						doc.data().user
-					);
+					return new Event({
+						...doc.data(),
+						eventId: doc.id,
+						metadata: metadata,
+						start: doc.data().start.toDate(),
+						end: doc.data().end.toDate()
+					});
 				});
 				dispatch({
 					type: SET_EVENTS,
@@ -96,18 +91,18 @@ export const addEvent = (values, notifyUsers) => {
 					.toDate();
 			}
 			const subscribers = [authUser.userId];
-			newEvent = new Event(
-				null,
-				allDay,
-				details,
-				endTransformed,
-				locations,
-				null,
-				startTransformed,
-				subscribers,
-				type.eventTypeId,
-				authUser.userId
-			);
+			newEvent = new Event({
+				eventId: null,
+				allDay: allDay,
+				details: details,
+				end: endTransformed,
+				locations: locations,
+				metadata: null,
+				start: startTransformed,
+				subscribers: subscribers,
+				type: type.eventTypeId,
+				user: authUser.userId
+			});
 			await newEvent.save();
 			const message = new Message(
 				'Staff Calendar',
@@ -222,19 +217,16 @@ export const editEvent = (event, values, notifyUsers) => {
 					})
 					.toDate();
 			}
-
-			newEvent = new Event(
-				event.eventId,
-				allDay,
-				details,
-				endTransformed,
-				locations,
-				event.metadata,
-				startTransformed,
-				event.subscribers,
-				type.eventTypeId,
-				event.user
-			);
+			newEvent = new Event({
+				...event,
+				allDay: allDay,
+				details: details,
+				end: endTransformed,
+				locations: locations,
+				start: startTransformed,
+				type: type.eventTypeId
+			});
+			console.log('newEvent', newEvent);
 			await newEvent.save();
 			const message = new Message(
 				'Staff Calendar',
@@ -251,9 +243,10 @@ export const editEvent = (event, values, notifyUsers) => {
 				message
 			});
 		} catch (error) {
+			console.log('error', error);
 			const message = new Message(
 				'Staff Calendar',
-				'Failed to add event',
+				'Failed to edit event',
 				DIALOG
 			);
 			dispatch({

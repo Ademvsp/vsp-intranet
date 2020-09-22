@@ -8,6 +8,14 @@ import { Skeleton } from '@material-ui/lab';
 import { Grid } from '@material-ui/core';
 import colors from '../../../utils/colors';
 import { useHistory } from 'react-router-dom';
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.scss';
+import Message from '../../../models/message';
+import * as messageController from '../../../controllers/message';
+import {
+	SNACKBAR,
+	SNACKBAR_SEVERITY,
+	SNACKBAR_VARIANTS
+} from '../../../utils/constants';
 const DragAndDropCalendar = withDragAndDrop(BigCalendar);
 moment.locale('en-au', {
 	week: { dow: 1 }
@@ -18,6 +26,7 @@ const CalendarContainer = (props) => {
 	const history = useHistory();
 	const [transformedEvents, setTransformedEvents] = useState();
 	const { locations, users } = useSelector((state) => state.dataState);
+	const { authUser } = useSelector((state) => state.authState);
 	const dispatch = useDispatch();
 	const initalRange = {
 		startOfMonth: moment(new Date()).startOf('month').toDate(),
@@ -25,6 +34,7 @@ const CalendarContainer = (props) => {
 		end: moment(new Date()).endOf('month').add(1, 'month').toDate()
 	};
 	const [range, setRange] = useState(initalRange);
+	const { setNewEventPrefillData, setShowAddEventDialog } = props;
 
 	useEffect(() => {
 		if (props.events) {
@@ -47,6 +57,12 @@ const CalendarContainer = (props) => {
 			setTransformedEvents(newTransformedEvents);
 		}
 	}, [props.events, users]);
+	useEffect(() => {
+		dispatch(eventController.subscribeEventsListener(range.start, range.end));
+		return () => {
+			eventController.unsubscribeEventsListener();
+		};
+	}, [range, dispatch]);
 
 	const navigateChangeHandler = (event) => {
 		const startOfMonth = moment(event).startOf('month').toDate();
@@ -56,13 +72,6 @@ const CalendarContainer = (props) => {
 			setRange({ startOfMonth, start, end });
 		}
 	};
-
-	useEffect(() => {
-		dispatch(eventController.subscribeEventsListener(range.start, range.end));
-		return () => {
-			eventController.unsubscribeEventsListener();
-		};
-	}, [range, dispatch]);
 
 	const eventPropGetterHandler = (event) => {
 		const eventLocation = locations.find(
@@ -78,6 +87,87 @@ const CalendarContainer = (props) => {
 			}
 		};
 	};
+
+	const permissionDeniedMessageHandler = () => {
+		const message = new Message(
+			'Staff Calendar',
+			// eslint-disable-next-line quotes
+			"You don't have permission to perform this action.",
+			SNACKBAR,
+			{
+				duration: 2000,
+				variant: SNACKBAR_VARIANTS.FILLED,
+				severity: SNACKBAR_SEVERITY.WARNING
+			}
+		);
+		dispatch(messageController.setMessage(message));
+	};
+
+	const eventDropHandler = ({ event, start, end }) => {
+		if (event.user === authUser.userId) {
+			const newStart = moment(start);
+			const newEnd = moment(end);
+			const startTransformed = moment(event.start)
+				.set('year', newStart.get('year'))
+				.set('month', newStart.get('month'))
+				.set('day', newStart.get('day'))
+				.toDate();
+			const endTransformed = moment(event.end)
+				.set('year', newEnd.get('year'))
+				.set('month', newEnd.get('month'))
+				.set('day', newEnd.get('day'))
+				.toDate();
+			const values = {
+				allDay: event.allDay,
+				details: event.details,
+				end: endTransformed,
+				start: startTransformed,
+				type: { eventTypeId: event.type },
+				allCalendars: locations.every((location) =>
+					event.locations.includes(location.locationId)
+				)
+			};
+			dispatch(eventController.editEvent(event, values, []));
+		} else {
+			permissionDeniedMessageHandler();
+		}
+	};
+
+	const eventResizeHandler = ({ event, start, end }) => {
+		if (event.user === authUser.userId) {
+			const newStart = moment(start);
+			const newEnd = moment(end).clone().add(moment.duration(-1, 'day'));
+			const startTransformed = moment(event.start)
+				.set('year', newStart.get('year'))
+				.set('month', newStart.get('month'))
+				.set('day', newStart.get('day'))
+				.toDate();
+			const endTransformed = moment(event.end)
+				.set('year', newEnd.get('year'))
+				.set('month', newEnd.get('month'))
+				.set('day', newEnd.get('day'))
+				.toDate();
+			const values = {
+				allDay: event.allDay,
+				details: event.details,
+				end: endTransformed,
+				start: startTransformed,
+				type: { eventTypeId: event.type },
+				allCalendars: locations.every((location) =>
+					event.locations.includes(location.locationId)
+				)
+			};
+			dispatch(eventController.editEvent(event, values, []));
+		} else {
+			permissionDeniedMessageHandler();
+		}
+	};
+
+	const selectSlotHandler = (event) => {
+		setNewEventPrefillData({ start: event.start, end: event.end });
+		setShowAddEventDialog(true);
+	};
+
 	if (!transformedEvents) {
 		return (
 			<Grid container direction='column'>
@@ -107,11 +197,15 @@ const CalendarContainer = (props) => {
 			selectable={true}
 			popup={true}
 			showMultiDayTimes={true}
+			drilldownView='agenda'
 			longPressThreshold={50}
 			eventPropGetter={eventPropGetterHandler}
 			onSelectEvent={(event) =>
 				history.push(`/calendar/event?eventId=${event.eventId}`)
 			}
+			onSelectSlot={selectSlotHandler}
+			onEventDrop={eventDropHandler}
+			onEventResize={eventResizeHandler}
 		/>
 	);
 };
