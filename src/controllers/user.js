@@ -22,23 +22,14 @@ export const subscribeUserListener = () => {
 					});
 				}
 				const users = snapshot.docs.map((doc) => {
-					const location = locations.find(
+					const locationPopulated = locations.find(
 						(location) => location.locationId === doc.data().location
 					);
-					return new User(
-						doc.id,
-						doc.data().active,
-						doc.data().email,
-						doc.data().extension,
-						doc.data().firstName,
-						doc.data().lastName,
-						location,
-						doc.data().manager,
-						doc.data().phone,
-						doc.data().profilePicture,
-						doc.data().settings,
-						doc.data().title
-					);
+					return new User({
+						...doc.data(),
+						userId: doc.id,
+						location: locationPopulated
+					});
 				});
 				actions.push({
 					type: SET_USERS,
@@ -51,7 +42,11 @@ export const subscribeUserListener = () => {
 				dispatch(actions);
 			});
 		} catch (error) {
-			const message = new Message('User', 'Users failed to retrieve', SILENT);
+			const message = new Message({
+				title: 'User',
+				body: 'Users failed to retrieve',
+				feedback: SILENT
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message

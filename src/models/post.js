@@ -1,7 +1,7 @@
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
 
 export default class Post {
-	constructor(
+	constructor({
 		postId,
 		attachments,
 		body,
@@ -10,7 +10,7 @@ export default class Post {
 		subscribers,
 		title,
 		user
-	) {
+	}) {
 		this.postId = postId;
 		this.attachments = attachments;
 		this.body = body;
@@ -104,16 +104,11 @@ export default class Post {
 			createdAt: doc.data().metadata.createdAt.toDate(),
 			updatedAt: doc.data().metadata.updatedAt.toDate()
 		};
-		return new Post(
-			doc.id,
-			doc.data().attachments,
-			doc.data().body,
-			doc.data().comments,
-			metadata,
-			doc.data().subscribers,
-			doc.data().title,
-			doc.data().user
-		);
+		return new Post({
+			...doc.data(),
+			postId: doc.id,
+			metadata: metadata
+		});
 	}
 
 	static async getAll() {

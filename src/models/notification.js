@@ -2,7 +2,7 @@ import firebase from '../utils/firebase';
 const region = process.env.REACT_APP_FIREBASE_FUNCTIONS_REGION;
 
 export default class Notification {
-	constructor(
+	constructor({
 		notificationId,
 		emailData,
 		link,
@@ -11,7 +11,7 @@ export default class Notification {
 		recipient,
 		title,
 		type
-	) {
+	}) {
 		this.notificationId = notificationId;
 		this.emailData = emailData;
 		this.link = link;

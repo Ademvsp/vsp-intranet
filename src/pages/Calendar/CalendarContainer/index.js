@@ -89,17 +89,17 @@ const CalendarContainer = (props) => {
 	};
 
 	const permissionDeniedMessageHandler = () => {
-		const message = new Message(
-			'Staff Calendar',
+		const message = new Message({
+			title: 'Staff Calendar',
 			// eslint-disable-next-line quotes
-			"You don't have permission to perform this action.",
-			SNACKBAR,
-			{
+			body: "You don't have permission to perform this action.",
+			feedback: SNACKBAR,
+			options: {
 				duration: 2000,
 				variant: SNACKBAR_VARIANTS.FILLED,
 				severity: SNACKBAR_SEVERITY.WARNING
 			}
-		);
+		});
 		dispatch(messageController.setMessage(message));
 	};
 

@@ -42,11 +42,11 @@ export const subscribeEventsListener = (start, end) => {
 				});
 			});
 		} catch (error) {
-			const message = new Message(
-				'Staff Calendar',
-				'Failed to retrieve events',
-				DIALOG
-			);
+			const message = new Message({
+				title: 'Staff Calendar',
+				body: 'Failed to retrieve events',
+				feedback: DIALOG
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -104,26 +104,26 @@ export const addEvent = (values, notifyUsers) => {
 				user: authUser.userId
 			});
 			await newEvent.save();
-			const message = new Message(
-				'Staff Calendar',
-				'Event added successfully',
-				SNACKBAR,
-				{
+			const message = new Message({
+				title: 'Staff Calendar',
+				body: 'Event added successfully',
+				feedback: SNACKBAR,
+				options: {
 					duration: 3000,
 					variant: SNACKBAR_VARIANTS.FILLED,
 					severity: SNACKBAR_SEVERITY.SUCCESS
 				}
-			);
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message
 			});
 		} catch (error) {
-			const message = new Message(
-				'Staff Calendar',
-				'Failed to add event',
-				DIALOG
-			);
+			const message = new Message({
+				title: 'Staff Calendar',
+				body: 'Failed to add event',
+				feedback: DIALOG
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -162,16 +162,16 @@ export const addEvent = (values, notifyUsers) => {
 						lastName: recipient.lastName,
 						location: recipient.location.locationId
 					};
-					const notification = new Notification(
-						null,
-						emailData,
-						`/calendar/event?eventId=${newEvent.eventId}`,
-						null,
-						'Staff Calendar',
-						transformedRecipient,
-						`Staff Calendar "${readableTitle}" created by ${senderFullName}`,
-						NEW_EVENT
-					);
+					const notification = new Notification({
+						notificationId: null,
+						emailData: emailData,
+						link: `/calendar/event?eventId=${newEvent.eventId}`,
+						metadata: null,
+						page: 'Staff Calendar',
+						recipient: transformedRecipient,
+						title: `Staff Calendar "${readableTitle}" created by ${senderFullName}`,
+						type: NEW_EVENT
+					});
 					notifications.push(notification);
 				}
 				await Notification.saveAll(notifications);
@@ -228,27 +228,27 @@ export const editEvent = (event, values, notifyUsers) => {
 			});
 			console.log('newEvent', newEvent);
 			await newEvent.save();
-			const message = new Message(
-				'Staff Calendar',
-				'Event updated successfully',
-				SNACKBAR,
-				{
+			const message = new Message({
+				title: 'Staff Calendar',
+				body: 'Event updated successfully',
+				feedback: SNACKBAR,
+				options: {
 					duration: 3000,
 					variant: SNACKBAR_VARIANTS.FILLED,
 					severity: SNACKBAR_SEVERITY.SUCCESS
 				}
-			);
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message
 			});
 		} catch (error) {
 			console.log('error', error);
-			const message = new Message(
-				'Staff Calendar',
-				'Failed to edit event',
-				DIALOG
-			);
+			const message = new Message({
+				title: 'Staff Calendar',
+				body: 'Failed to edit event',
+				feedback: DIALOG
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -287,16 +287,16 @@ export const editEvent = (event, values, notifyUsers) => {
 						lastName: recipient.lastName,
 						location: recipient.location.locationId
 					};
-					const notification = new Notification(
-						null,
-						emailData,
-						`/calendar/event?eventId=${newEvent.eventId}`,
-						null,
-						'Staff Calendar',
-						transformedRecipient,
-						`Staff Calendar "${readableTitle}" updated by ${senderFullName}`,
-						EDIT_EVENT
-					);
+					const notification = new Notification({
+						notificationId: null,
+						emailData: emailData,
+						link: `/calendar/event?eventId=${newEvent.eventId}`,
+						metadata: null,
+						page: 'Staff Calendar',
+						recipient: transformedRecipient,
+						title: `Staff Calendar "${readableTitle}" updated by ${senderFullName}`,
+						type: EDIT_EVENT
+					});
 					notifications.push(notification);
 				}
 				await Notification.saveAll(notifications);
@@ -314,26 +314,26 @@ export const deleteEvent = (event, notifyUsers) => {
 		const { users } = getState().dataState;
 		try {
 			await event.delete();
-			const message = new Message(
-				'Staff Calendar',
-				'Event deleted successfully',
-				SNACKBAR,
-				{
+			const message = new Message({
+				title: 'Staff Calendar',
+				body: 'Event deleted successfully',
+				feedback: SNACKBAR,
+				optoins: {
 					duration: 3000,
 					variant: SNACKBAR_VARIANTS.FILLED,
 					severity: SNACKBAR_SEVERITY.SUCCESS
 				}
-			);
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message
 			});
 		} catch (error) {
-			const message = new Message(
-				'Staff Calendar',
-				'Failed to delete event',
-				DIALOG
-			);
+			const message = new Message({
+				title: 'Staff Calendar',
+				body: 'Failed to delete event',
+				feedback: DIALOG
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -372,16 +372,16 @@ export const deleteEvent = (event, notifyUsers) => {
 						lastName: recipient.lastName,
 						location: recipient.location.locationId
 					};
-					const notification = new Notification(
-						null,
-						emailData,
-						'/calendar',
-						null,
-						'Staff Calendar',
-						transformedRecipient,
-						`Staff Calendar "${readableTitle}" deleted by ${senderFullName}`,
-						DELETE_EVENT
-					);
+					const notification = new Notification({
+						notificationId: null,
+						emailData: emailData,
+						link: '/calendar',
+						metadata: null,
+						page: 'Staff Calendar',
+						recipient: transformedRecipient,
+						title: `Staff Calendar "${readableTitle}" deleted by ${senderFullName}`,
+						type: DELETE_EVENT
+					});
 					notifications.push(notification);
 				}
 				await Notification.saveAll(notifications);

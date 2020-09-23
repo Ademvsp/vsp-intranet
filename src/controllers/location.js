@@ -12,11 +12,11 @@ export const getLocations = () => {
 				locations
 			});
 		} catch (error) {
-			const message = new Message(
-				'Locations',
-				'Failed to retrieve locations',
-				DIALOG
-			);
+			const message = new Message({
+				title: 'Locations',
+				body: 'Failed to retrieve locations',
+				feedback: DIALOG
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message

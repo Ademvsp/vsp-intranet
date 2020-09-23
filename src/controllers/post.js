@@ -30,11 +30,11 @@ export const subscribePostsCounterListener = () => {
 				}
 			);
 		} catch (error) {
-			const message = new Message(
-				'News Feed',
-				'Failed to retrieve news feed',
-				DIALOG
-			);
+			const message = new Message({
+				title: 'News Feed',
+				body: 'Failed to retrieve news feed',
+				feedback: DIALOG
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -54,16 +54,16 @@ export const addPost = (values, attachments, notifyUsers) => {
 		const { users } = getState().dataState;
 		let newPost;
 		try {
-			newPost = new Post(
-				null,
-				[],
-				body.trim(),
-				[],
-				null,
-				[authUser.userId],
-				title.trim(),
-				authUser.userId
-			);
+			newPost = new Post({
+				postId: null,
+				attachments: [],
+				body: body.trim(),
+				comments: [],
+				metadata: null,
+				subscribers: [authUser.userId],
+				title: title.trim(),
+				user: authUser.userId
+			});
 			await newPost.save();
 			if (attachments.length > 0) {
 				const uploadedAttachments = await dispatch(
@@ -77,22 +77,26 @@ export const addPost = (values, attachments, notifyUsers) => {
 				newPost.attachments = uploadedAttachments;
 				await newPost.save();
 			}
-			const message = new Message(
-				'News Feed',
-				'Post created successfully',
-				SNACKBAR,
-				{
+			const message = new Message({
+				title: 'News Feed',
+				body: 'Post created successfully',
+				feedback: SNACKBAR,
+				options: {
 					duration: 3000,
 					variant: SNACKBAR_VARIANTS.FILLED,
 					severity: SNACKBAR_SEVERITY.INFO
 				}
-			);
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message
 			});
 		} catch (error) {
-			const message = new Message('News Feed', 'Post failed to post', DIALOG);
+			const message = new Message({
+				title: 'News Feed',
+				body: 'Post failed to post',
+				feedback: DIALOG
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -122,16 +126,16 @@ export const addPost = (values, attachments, notifyUsers) => {
 						lastName: recipient.lastName,
 						location: recipient.location.locationId
 					};
-					const notification = new Notification(
-						null,
-						emailData,
-						`/newsfeed/post?postId=${newPost.postId}`,
-						null,
-						'News Feed',
-						transformedRecipient,
-						`News Feed "${title}" New post from ${senderFullName}`,
-						NEW_POST
-					);
+					const notification = new Notification({
+						notificationId: null,
+						emailData: emailData,
+						link: `/newsfeed/post?postId=${newPost.postId}`,
+						metadata: null,
+						page: 'News Feed',
+						recipient: transformedRecipient,
+						title: `News Feed "${title}" New post from ${senderFullName}`,
+						type: NEW_POST
+					});
 					notifications.push(notification);
 				}
 				await Notification.saveAll(notifications);
@@ -163,11 +167,11 @@ export const addComment = (post, body, attachments, notifyUsers) => {
 			}
 			await post.addComment(body.trim(), uploadedAttachments, serverTime);
 		} catch (error) {
-			const message = new Message(
-				'News Feed',
-				'Comment failed to post',
-				DIALOG
-			);
+			const message = new Message({
+				title: 'News Feed',
+				body: 'Comment failed to post',
+				feedback: DIALOG
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -197,16 +201,16 @@ export const addComment = (post, body, attachments, notifyUsers) => {
 						lastName: recipient.lastName,
 						location: recipient.location.locationId
 					};
-					const notification = new Notification(
-						null,
-						emailData,
-						`/newsfeed/post?postId=${post.postId}`,
-						null,
-						'News Feed',
-						transformedRecipient,
-						`News Feed "${post.title}" New comment from ${senderFullName}`,
-						NEW_COMMENT
-					);
+					const notification = new Notification({
+						notificationId: null,
+						emailData: emailData,
+						link: `/newsfeed/post?postId=${post.postId}`,
+						metadata: null,
+						page: 'News Feed',
+						recipient: transformedRecipient,
+						title: `News Feed "${post.title}" New comment from ${senderFullName}`,
+						type: NEW_COMMENT
+					});
 					notifications.push(notification);
 				}
 				await Notification.saveAll(notifications);
@@ -223,11 +227,11 @@ export const toggleSubscribePost = (post) => {
 		try {
 			await post.toggleSubscribePost();
 		} catch (error) {
-			const message = new Message(
-				'News Feed',
-				'Failed to subscribe/unsubscribe to post',
-				DIALOG
-			);
+			const message = new Message({
+				title: 'News Feed',
+				body: 'Failed to subscribe/unsubscribe to post',
+				feedback: DIALOG
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -244,16 +248,10 @@ export const searchPosts = (values) => {
 			posts.forEach((doc) => {
 				const value = values.value.trim().toLowerCase();
 				const userId = values.user ? values.user.userId : null;
-				const post = new Post(
-					doc.id,
-					doc.data().attachments,
-					doc.data().body,
-					doc.data().comments,
-					doc.data().metadata,
-					doc.data().subscribers,
-					doc.data().title,
-					doc.data().user
-				);
+				const post = new Post({
+					...doc.data(),
+					postId: doc.id
+				});
 				if (getSearchMatch(post, value, userId)) {
 					results.push(post.postId);
 				}
@@ -263,7 +261,11 @@ export const searchPosts = (values) => {
 			}
 			return results;
 		} catch (error) {
-			const message = new Message('News Feed', 'Search failed', DIALOG);
+			const message = new Message({
+				title: 'News Feed',
+				body: 'Search failed',
+				feedback: DIALOG
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message

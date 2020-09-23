@@ -1,7 +1,7 @@
 import firebase from '../utils/firebase';
 
 export default class Location {
-	constructor(
+	constructor({
 		locationId,
 		address,
 		branch,
@@ -10,7 +10,7 @@ export default class Location {
 		phone,
 		state,
 		timezone
-	) {
+	}) {
 		this.locationId = locationId;
 		this.address = address;
 		this.branch = branch;
@@ -28,16 +28,7 @@ export default class Location {
 			.orderBy('state', 'asc')
 			.get();
 		const locations = collection.docs.map((doc) => {
-			return new Location(
-				doc.id,
-				doc.data().address,
-				doc.data().branch,
-				doc.data().colors,
-				doc.data().map,
-				doc.data().phone,
-				doc.data().state,
-				doc.data().timezone
-			);
+			return new Location({ ...doc.data(), locationId: doc.id });
 		});
 		return locations;
 	}

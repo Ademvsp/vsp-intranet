@@ -65,11 +65,11 @@ export const upload = (files, collection, collectionId, folder) => {
 			dispatch({ type: FINISH_UPLOAD });
 			return uploadedFiles;
 		} catch (error) {
-			const message = new Message(
-				'Upload Files',
-				'Attachments failed to upload',
-				DIALOG
-			);
+			const message = new Message({
+				title: 'Upload Files',
+				body: 'Attachments failed to upload',
+				feedback: DIALOG
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message

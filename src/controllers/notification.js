@@ -30,16 +30,16 @@ export const subscribeNotificationsListener = () => {
 							change.doc.data().metadata.createdAt.seconds;
 						const TWO_MINUTES_SECONDS = 120;
 						if (change.type === 'added' && SECONDS_AGO <= TWO_MINUTES_SECONDS) {
-							const message = new Message(
-								change.doc.data().page,
-								change.doc.data().title,
-								SNACKBAR,
-								{
+							const message = new Message({
+								title: change.doc.data().page,
+								body: change.doc.data().title,
+								feedback: SNACKBAR,
+								options: {
 									duration: 5000,
 									variant: SNACKBAR_VARIANTS.FILLED,
 									severity: SNACKBAR_SEVERITY.INFO
 								}
-							);
+							});
 							actions.push({
 								type: SET_MESSAGE,
 								message
@@ -55,16 +55,11 @@ export const subscribeNotificationsListener = () => {
 						createdAt: doc.data().metadata.createdAt.toDate(),
 						updatedAt: doc.data().metadata.updatedAt.toDate()
 					};
-					return new Notification(
-						doc.id,
-						doc.data().data,
-						doc.data().link,
-						metadata,
-						doc.data().page,
-						doc.data().recipient,
-						doc.data().title,
-						doc.data().type
-					);
+					return new Notification({
+						...doc.data(),
+						notificationId: doc.id,
+						metadata: metadata
+					});
 				});
 				notifications.sort((a, b) =>
 					a.metadata.createdAt < b.metadata.createdAt ? 1 : -1
@@ -86,11 +81,11 @@ export const clearNotification = (notification) => {
 		try {
 			await notification.delete();
 		} catch (error) {
-			const message = new Message(
-				'Notifications',
-				'Notification failed to clear',
-				DIALOG
-			);
+			const message = new Message({
+				title: 'Notifications',
+				body: 'Notification failed to clear',
+				feedback: DIALOG
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -105,11 +100,11 @@ export const clearNotifications = () => {
 			const notifications = getState().notificationState.notifications;
 			await Notification.deleteAll(notifications);
 		} catch (error) {
-			const message = new Message(
-				'Notifications',
-				'Notifications failed to clear',
-				DIALOG
-			);
+			const message = new Message({
+				title: 'Notifications',
+				body: 'Notifications failed to clear',
+				feedback: DIALOG
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message

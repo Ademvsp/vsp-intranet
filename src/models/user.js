@@ -1,7 +1,7 @@
 import firebase from '../utils/firebase';
 
 export default class User {
-	constructor(
+	constructor({
 		userId,
 		active,
 		email,
@@ -14,7 +14,7 @@ export default class User {
 		profilePicture,
 		settings,
 		title
-	) {
+	}) {
 		this.userId = userId;
 		this.active = active;
 		this.email = email;

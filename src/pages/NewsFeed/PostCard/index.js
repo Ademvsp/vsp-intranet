@@ -47,16 +47,10 @@ const PostCard = (props) => {
 		let postListener;
 		const asyncFunction = async () => {
 			postListener = postContoller.getListener(postId).onSnapshot((doc) => {
-				const newPost = new Post(
-					doc.id,
-					doc.data().attachments,
-					doc.data().body,
-					doc.data().comments,
-					doc.data().metadata,
-					doc.data().subscribers,
-					doc.data().title,
-					doc.data().user
-				);
+				const newPost = new Post({
+					...doc.data(),
+					postId: doc.id
+				});
 				setPost(newPost);
 			});
 		};

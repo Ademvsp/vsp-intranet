@@ -54,16 +54,16 @@ export const verifyAuth = () => {
 								}
 							];
 							if (!getState().authState.touched) {
-								const message = new Message(
-									'Login Success',
-									`Welcome back ${authUser.firstName}`,
-									SNACKBAR,
-									{
+								const message = new Message({
+									title: 'Login Success',
+									body: `Welcome back ${authUser.firstName}`,
+									feedback: SNACKBAR,
+									options: {
 										duration: 3000,
 										variant: SNACKBAR_VARIANTS.FILLED,
 										severity: SNACKBAR_SEVERITY.INFO
 									}
-								);
+								});
 								actions.push(
 									{
 										type: SET_AUTH_TOUCHED
@@ -115,11 +115,11 @@ export const getPhoneNumber = (email) => {
 		try {
 			return AuthUser.getPhoneNumber(email);
 		} catch (error) {
-			const message = new Message(
-				'Invalid Credentials',
-				'Email address is invalid',
-				DIALOG
-			);
+			const message = new Message({
+				title: 'Invalid Credentials',
+				body: 'Email address is invalid',
+				feedback: DIALOG
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -134,11 +134,11 @@ export const signInWithPhoneNumber = (phoneNumber, appVerifier) => {
 		try {
 			return AuthUser.signInWithPhoneNumber(phoneNumber, appVerifier);
 		} catch (error) {
-			const message = new Message(
-				'Invalid Credentials',
-				'Email address is invalid',
-				DIALOG
-			);
+			const message = new Message({
+				title: 'Invalid Credentials',
+				body: 'Email address is invalid',
+				feedback: DIALOG
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -160,11 +160,11 @@ export const confirmVerificationCode = (
 			);
 			return true;
 		} catch (error) {
-			const message = new Message(
-				'Invalid Credentials',
-				'Verification code is invalid',
-				DIALOG
-			);
+			const message = new Message({
+				title: 'Invalid Credentials',
+				body: 'Verification code is invalid',
+				feedback: DIALOG
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -180,11 +180,11 @@ export const loginWithPassword = (email, password) => {
 			await AuthUser.signInWithEmailAndPassword(email, password);
 			return true;
 		} catch (error) {
-			const message = new Message(
-				'Invalid Credentials',
-				'Incorrect email or password',
-				DIALOG
-			);
+			const message = new Message({
+				title: 'Invalid Credentials',
+				body: 'Incorrect email or password',
+				feedback: DIALOG
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -201,11 +201,11 @@ export const updateSettings = (settings) => {
 			const newAuthUser = new AuthUser({ ...authUser, settings });
 			await newAuthUser.save();
 		} catch (error) {
-			const message = new Message(
-				'Update Settings',
-				'Settings failed to update',
-				DIALOG
-			);
+			const message = new Message({
+				title: 'Update Settings',
+				body: 'Settings failed to update',
+				feedback: DIALOG
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -229,11 +229,11 @@ export const uploadPicture = (file) => {
 			});
 			await newAuthUser.save();
 		} catch (error) {
-			const message = new Message(
-				'Profile Picture',
-				'Profile picture failed to upload',
-				DIALOG
-			);
+			const message = new Message({
+				title: 'Profile Picture',
+				body: 'Profile picture failed to upload',
+				feedback: DIALOG
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message
@@ -253,11 +253,11 @@ export const removePicture = () => {
 			});
 			await newAuthUser.save();
 		} catch (error) {
-			const message = new Message(
-				'Profile Picture',
-				'Profile picture failed to remove',
-				DIALOG
-			);
+			const message = new Message({
+				title: 'Profile Picture',
+				body: 'Profile picture failed to remove',
+				feedback: DIALOG
+			});
 			dispatch({
 				type: SET_MESSAGE,
 				message
