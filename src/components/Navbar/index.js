@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { AppBar, IconButton } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import NavbarAvatar from '../NavbarAvatar';
@@ -10,9 +10,11 @@ import {
 } from './styled-components';
 import NotificationsPopover from '../NotificationsPopover';
 import { useHistory } from 'react-router-dom';
+import { SideDrawerContext } from '../AppContainer';
 
 const Navbar = (props) => {
 	const history = useHistory();
+	const { setDrawerOpen } = useContext(SideDrawerContext);
 	const { authUser } = useSelector((state) => state.authState);
 
 	return (
@@ -25,7 +27,7 @@ const Navbar = (props) => {
 					<IconButton
 						edge='start'
 						color='inherit'
-						onClick={() => props.setDrawerOpen(true)}
+						onClick={() => setDrawerOpen(true)}
 					>
 						<StyledMenuIcon />
 					</IconButton>

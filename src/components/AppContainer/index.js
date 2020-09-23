@@ -1,19 +1,21 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, createContext } from 'react';
 import Navbar from '../Navbar/index';
 import SideDrawer from '../SideDrawer/index';
 import { StyledContainer } from './styled-components';
+
+export const SideDrawerContext = createContext();
 
 const AppContainer = (props) => {
 	const [drawerOpen, setDrawerOpen] = useState(false);
 
 	return (
-		<Fragment>
-			<Navbar setDrawerOpen={setDrawerOpen} />
-			<SideDrawer drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />
+		<SideDrawerContext.Provider value={{ drawerOpen, setDrawerOpen }}>
+			<Navbar />
+			<SideDrawer />
 			<StyledContainer disableGutters={true} maxWidth={false}>
 				{props.children}
 			</StyledContainer>
-		</Fragment>
+		</SideDrawerContext.Provider>
 	);
 };
 

@@ -1,17 +1,18 @@
-import React from 'react';
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
-import SideDrawerItems from '../SideDrawerItems';
+import React, { useContext } from 'react';
+import SideDrawerItems from './SideDrawerItems';
+import { Drawer } from '@material-ui/core';
+import { SideDrawerContext } from '../AppContainer';
 
 const SideDawer = (props) => {
+	const { drawerOpen, setDrawerOpen } = useContext(SideDrawerContext);
 	return (
-		<SwipeableDrawer
+		<Drawer
 			anchor={'left'}
-			open={props.drawerOpen}
-			onClose={() => props.setDrawerOpen(false)}
-			onOpen={() => props.setDrawerOpen(true)}
+			open={drawerOpen}
+			onClose={() => setDrawerOpen(false)}
 		>
-			<SideDrawerItems {...props} />
-		</SwipeableDrawer>
+			<SideDrawerItems />
+		</Drawer>
 	);
 };
 

@@ -2,21 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as eventController from '../../../controllers/event';
 import moment from 'moment';
-import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import { Skeleton } from '@material-ui/lab';
 import { Grid } from '@material-ui/core';
 import colors from '../../../utils/colors';
 import { useHistory } from 'react-router-dom';
-import 'react-big-calendar/lib/addons/dragAndDrop/styles.scss';
-import Message from '../../../models/message';
-import * as messageController from '../../../controllers/message';
-import {
-	SNACKBAR,
-	SNACKBAR_SEVERITY,
-	SNACKBAR_VARIANTS
-} from '../../../utils/constants';
-const DragAndDropCalendar = withDragAndDrop(BigCalendar);
 moment.locale('en-au', {
 	week: { dow: 1 }
 });
@@ -26,7 +16,6 @@ const CalendarContainer = (props) => {
 	const history = useHistory();
 	const [transformedEvents, setTransformedEvents] = useState();
 	const { locations, users } = useSelector((state) => state.dataState);
-	const { authUser } = useSelector((state) => state.authState);
 	const dispatch = useDispatch();
 	const initalRange = {
 		startOfMonth: moment(new Date()).startOf('month').toDate(),
@@ -88,81 +77,6 @@ const CalendarContainer = (props) => {
 		};
 	};
 
-	const permissionDeniedMessageHandler = () => {
-		const message = new Message({
-			title: 'Staff Calendar',
-			// eslint-disable-next-line quotes
-			body: "You don't have permission to perform this action.",
-			feedback: SNACKBAR,
-			options: {
-				duration: 2000,
-				variant: SNACKBAR_VARIANTS.FILLED,
-				severity: SNACKBAR_SEVERITY.WARNING
-			}
-		});
-		dispatch(messageController.setMessage(message));
-	};
-
-	const eventDropHandler = ({ event, start, end }) => {
-		if (event.user === authUser.userId) {
-			const newStart = moment(start);
-			const newEnd = moment(end);
-			const startTransformed = moment(event.start)
-				.set('year', newStart.get('year'))
-				.set('month', newStart.get('month'))
-				.set('day', newStart.get('day'))
-				.toDate();
-			const endTransformed = moment(event.end)
-				.set('year', newEnd.get('year'))
-				.set('month', newEnd.get('month'))
-				.set('day', newEnd.get('day'))
-				.toDate();
-			const values = {
-				allDay: event.allDay,
-				details: event.details,
-				end: endTransformed,
-				start: startTransformed,
-				type: { eventTypeId: event.type },
-				allCalendars: locations.every((location) =>
-					event.locations.includes(location.locationId)
-				)
-			};
-			dispatch(eventController.editEvent(event, values, []));
-		} else {
-			permissionDeniedMessageHandler();
-		}
-	};
-
-	const eventResizeHandler = ({ event, start, end }) => {
-		if (event.user === authUser.userId) {
-			const newStart = moment(start);
-			const newEnd = moment(end).clone().add(moment.duration(-1, 'day'));
-			const startTransformed = moment(event.start)
-				.set('year', newStart.get('year'))
-				.set('month', newStart.get('month'))
-				.set('day', newStart.get('day'))
-				.toDate();
-			const endTransformed = moment(event.end)
-				.set('year', newEnd.get('year'))
-				.set('month', newEnd.get('month'))
-				.set('day', newEnd.get('day'))
-				.toDate();
-			const values = {
-				allDay: event.allDay,
-				details: event.details,
-				end: endTransformed,
-				start: startTransformed,
-				type: { eventTypeId: event.type },
-				allCalendars: locations.every((location) =>
-					event.locations.includes(location.locationId)
-				)
-			};
-			dispatch(eventController.editEvent(event, values, []));
-		} else {
-			permissionDeniedMessageHandler();
-		}
-	};
-
 	const selectSlotHandler = (event) => {
 		setNewEventPrefillData({ start: event.start, end: event.end });
 		setShowAddEventDialog(true);
@@ -190,7 +104,7 @@ const CalendarContainer = (props) => {
 	}
 
 	return (
-		<DragAndDropCalendar
+		<BigCalendar
 			events={transformedEvents}
 			localizer={localizer}
 			onNavigate={navigateChangeHandler}
@@ -204,8 +118,6 @@ const CalendarContainer = (props) => {
 				history.push(`/calendar/event?eventId=${event.eventId}`)
 			}
 			onSelectSlot={selectSlotHandler}
-			onEventDrop={eventDropHandler}
-			onEventResize={eventResizeHandler}
 		/>
 	);
 };
