@@ -9,7 +9,6 @@ import {
 	StyledButton,
 	StyledCardActions
 } from './styled-components';
-import { StyledCard } from '../styled-components';
 import Post from '../../../models/post';
 import {
 	Comment as CommentIcon,
@@ -22,6 +21,7 @@ import AttachmentsContainer from '../../../components/AttachmentsContainer';
 import Avatar from '../../../components/Avatar';
 import scrollToComponent from 'react-scroll-to-component';
 import PostCardMenu from './PostCardMenu';
+import Card from '../../../components/Card';
 
 const PostCard = (props) => {
 	const scrollRef = useRef();
@@ -62,7 +62,7 @@ const PostCard = (props) => {
 
 	if (!post) {
 		return (
-			<StyledCard elevation={2}>
+			<Card elevation={2}>
 				<StyledCardHeader
 					skeleton={true}
 					avatar={
@@ -85,7 +85,7 @@ const PostCard = (props) => {
 					<Skeleton animation='pulse' height={10} width='20%' />
 					<Skeleton animation='pulse' height={15} width='10%' />
 				</StyledCardActions>
-			</StyledCard>
+			</Card>
 		);
 	}
 
@@ -105,7 +105,7 @@ const PostCard = (props) => {
 	const user = users.find((user) => user.userId === post.user);
 
 	return (
-		<StyledCard ref={scrollRef} elevation={2}>
+		<Card ref={scrollRef} elevation={2}>
 			<StyledCardHeader
 				avatar={<Avatar user={user} clickable={true} contactCard={true} />}
 				title={post.title}
@@ -139,7 +139,7 @@ const PostCard = (props) => {
 					comments={[...post.comments].reverse()}
 				/>
 			</Collapse>
-		</StyledCard>
+		</Card>
 	);
 };
 

@@ -17,7 +17,9 @@ import {
 	ListAlt as ListAltIcon,
 	ShoppingCart as ShoppingCartIcon,
 	DirectionsWalk as DirectionsWalkIcon,
-	Receipt as ReceiptIcon
+	Receipt as ReceiptIcon,
+	PermMedia as PermMediaIcon,
+	DateRange as DateRangeIcon
 } from '@material-ui/icons';
 import SideDrawerItem from './SideDrawerItem';
 
@@ -32,7 +34,7 @@ const SideDrawerItems = (props) => {
 				/>
 				<SideDrawerItem Icon={RssFeedIcon} text='News Feed' link='/newsfeed' />
 				<SideDrawerItem
-					Icon={EventIcon}
+					Icon={DateRangeIcon}
 					text='Calendar'
 					subItems={[
 						<SideDrawerItem
@@ -67,7 +69,7 @@ const SideDrawerItems = (props) => {
 					subItems={[
 						<SideDrawerItem
 							key='0'
-							Icon={CloudDownloadIcon}
+							Icon={PermMediaIcon}
 							text='File Explorer'
 							link='/calendar'
 							subItem={true}

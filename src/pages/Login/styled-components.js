@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-import { Card, CardContent, Stepper } from '@material-ui/core';
+import { CardContent, Stepper } from '@material-ui/core';
+import Card from '../../components/Card';
 
 export const StyledChildContainer = styled.div`
 	margin: 10px;
@@ -7,7 +8,6 @@ export const StyledChildContainer = styled.div`
 
 export const StyledCard = styled(Card)`
 	width: 400px;
-	height: 150px;
 `;
 
 export const StyledContainer = styled.div`

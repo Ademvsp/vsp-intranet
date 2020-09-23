@@ -1,9 +1,9 @@
 import styled from 'styled-components';
-import { Card } from '@material-ui/core';
+import { Card as MaterialCard } from '@material-ui/core';
 import colors from '../../utils/colors';
-import { StyledCard } from '../../utils/styled-components';
+import Card from '../../components/Card';
 
-export const StyledCalendarContainer = styled(Card)`
+export const StyledCalendarContainer = styled(MaterialCard)`
 	padding: 16px;
 	width: ${(window.innerHeight - 200) * 1.5}px;
 	height: ${window.innerHeight - 200}px;
@@ -19,6 +19,6 @@ export const StyledCalendarContainer = styled(Card)`
 	}
 `;
 
-export const StyledSidePanelContainer = styled(StyledCard)`
+export const StyledSidePanelContainer = styled(Card)`
 	height: ${window.innerHeight - 200}px;
 `;

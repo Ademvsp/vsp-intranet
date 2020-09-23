@@ -11,7 +11,7 @@ import * as postController from '../../../../controllers/post';
 import { useDispatch, useSelector } from 'react-redux';
 import { Autocomplete } from '@material-ui/lab';
 import { useHistory } from 'react-router-dom';
-import { StyledDialog } from '../../../../utils/styled-components';
+import Dialog from '../../../../components/Dialog';
 
 const SearchPostDialog = (props) => {
 	const history = useHistory();
@@ -63,7 +63,7 @@ const SearchPostDialog = (props) => {
 	});
 
 	return (
-		<StyledDialog
+		<Dialog
 			open={searchPostDialogOpen}
 			onClose={dialogCloseHandler}
 			width={400}
@@ -108,7 +108,7 @@ const SearchPostDialog = (props) => {
 					Search
 				</Button>
 			</DialogActions>
-		</StyledDialog>
+		</Dialog>
 	);
 };
 

@@ -15,7 +15,6 @@ import ActionsBar from '../../../components/ActionsBar';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import eventTypes from '../../../utils/event-types';
-import { StyledDialog, GridFlexGrow } from '../../../utils/styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import {
 	DateTimePicker,
@@ -27,6 +26,7 @@ import moment from 'moment';
 import { getReadableTitle } from '../../../controllers/event';
 import { StyledTitle } from './styled-components';
 import * as eventController from '../../../controllers/event';
+import Dialog from '../../../components/Dialog';
 
 const NewEventDialog = (props) => {
 	const dispatch = useDispatch();
@@ -147,7 +147,7 @@ const NewEventDialog = (props) => {
 	}
 
 	return (
-		<StyledDialog open={open} onClose={closeHandler} width={500}>
+		<Dialog open={open} onClose={closeHandler} width={500}>
 			<DialogTitle>
 				<StyledTitle>{`Title Preview: ${readableTitle}`}</StyledTitle>
 			</DialogTitle>
@@ -189,7 +189,7 @@ const NewEventDialog = (props) => {
 						justify='space-between'
 						spacing={2}
 					>
-						<GridFlexGrow item>
+						<Grid item style={{ flexGrow: 1 }}>
 							<MuiPickersUtilsProvider utils={MomentUtils}>
 								<StartPicker
 									label='Start'
@@ -202,8 +202,8 @@ const NewEventDialog = (props) => {
 									fullWidth={true}
 								/>
 							</MuiPickersUtilsProvider>
-						</GridFlexGrow>
-						<GridFlexGrow item>
+						</Grid>
+						<Grid item style={{ flexGrow: 1 }}>
 							<MuiPickersUtilsProvider utils={MomentUtils}>
 								<EndPicker
 									label='End'
@@ -217,7 +217,7 @@ const NewEventDialog = (props) => {
 									minDate={formik.values.start}
 								/>
 							</MuiPickersUtilsProvider>
-						</GridFlexGrow>
+						</Grid>
 					</Grid>
 					<Grid item>
 						<FormGroup row>
@@ -273,7 +273,7 @@ const NewEventDialog = (props) => {
 					actionButtonText='Create'
 				/>
 			</DialogActions>
-		</StyledDialog>
+		</Dialog>
 	);
 };
 

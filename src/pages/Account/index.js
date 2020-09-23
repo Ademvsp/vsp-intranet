@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyledCard } from './styled-components';
+import Card from '../../components/Card';
 import { CardContent } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import Avatar from './AccountAvatar';
@@ -12,13 +12,13 @@ const Account = (props) => {
 
 	return (
 		<PageContainer width={20}>
-			<StyledCard>
+			<Card>
 				<CardContent>
 					<Avatar authUser={authUser} />
 					<Settings authUser={authUser} />
 					<Logout />
 				</CardContent>
-			</StyledCard>
+			</Card>
 		</PageContainer>
 	);
 };

@@ -13,8 +13,8 @@ import BalloonEditorWrapper from '../../../../components/BalloonEditorWrapper';
 import * as postController from '../../../../controllers/post';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { StyledDialog } from '../../../../utils/styled-components';
 import { useHistory } from 'react-router-dom';
+import Dialog from '../../../../components/Dialog';
 const NewPostDialog = (props) => {
 	const dispatch = useDispatch();
 	const {
@@ -68,11 +68,7 @@ const NewPostDialog = (props) => {
 	});
 
 	return (
-		<StyledDialog
-			width={500}
-			open={newPostDialogOpen}
-			onClose={dialogCloseHandler}
-		>
+		<Dialog width={500} open={newPostDialogOpen} onClose={dialogCloseHandler}>
 			<DialogContent>
 				<Grid container direction='column' spacing={1}>
 					<Grid
@@ -133,7 +129,7 @@ const NewPostDialog = (props) => {
 					</Grid>
 				</Grid>
 			</DialogContent>
-		</StyledDialog>
+		</Dialog>
 	);
 };
 

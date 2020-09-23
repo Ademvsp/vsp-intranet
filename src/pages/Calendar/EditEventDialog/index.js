@@ -15,7 +15,6 @@ import ActionsBar from '../../../components/ActionsBar';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import eventTypes from '../../../utils/event-types';
-import { StyledDialog, GridFlexGrow } from '../../../utils/styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import {
 	DateTimePicker,
@@ -28,6 +27,7 @@ import { getReadableTitle } from '../../../controllers/event';
 import { StyledTitle } from './styled-components';
 import * as eventController from '../../../controllers/event';
 import ConfirmDialog from '../../../components/ConfirmDialog';
+import Dialog from '../../../components/Dialog';
 
 const EditEventDialog = (props) => {
 	const dispatch = useDispatch();
@@ -159,7 +159,7 @@ const EditEventDialog = (props) => {
 				title='Staff Calendar'
 				message='Are you sure you want to delete this event?'
 			/>
-			<StyledDialog open={open} onClose={closeHandler} width={500}>
+			<Dialog open={open} onClose={closeHandler} width={500}>
 				<DialogTitle>
 					<StyledTitle>{`Title Preview: ${readableTitle}`}</StyledTitle>
 				</DialogTitle>
@@ -201,7 +201,7 @@ const EditEventDialog = (props) => {
 							justify='space-between'
 							spacing={2}
 						>
-							<GridFlexGrow item>
+							<Grid item style={{ flexGrow: 1 }}>
 								<MuiPickersUtilsProvider utils={MomentUtils}>
 									<StartPicker
 										label='Start'
@@ -214,8 +214,8 @@ const EditEventDialog = (props) => {
 										fullWidth={true}
 									/>
 								</MuiPickersUtilsProvider>
-							</GridFlexGrow>
-							<GridFlexGrow item>
+							</Grid>
+							<Grid item style={{ flexGrow: 1 }}>
 								<MuiPickersUtilsProvider utils={MomentUtils}>
 									<EndPicker
 										label='End'
@@ -229,7 +229,7 @@ const EditEventDialog = (props) => {
 										minDate={formik.values.start}
 									/>
 								</MuiPickersUtilsProvider>
-							</GridFlexGrow>
+							</Grid>
 						</Grid>
 						<Grid item>
 							<FormGroup row>
@@ -292,7 +292,7 @@ const EditEventDialog = (props) => {
 						]}
 					/>
 				</DialogActions>
-			</StyledDialog>
+			</Dialog>
 		</Fragment>
 	);
 };

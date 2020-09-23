@@ -8,9 +8,10 @@ import {
 	DialogContent
 } from '@material-ui/core/';
 import { Alert, AlertTitle } from '@material-ui/lab';
-import { StyledSnackbar, StyledDialog } from './styled-components';
 import * as messageController from '../controllers/message';
 import { DIALOG, SILENT, SNACKBAR } from './constants';
+import Dialog from '../components/Dialog';
+import Snackbar from '../components/Snackbar';
 
 const MessageHandler = (props) => {
 	const dispatch = useDispatch();
@@ -26,10 +27,7 @@ const MessageHandler = (props) => {
 		switch (feedback) {
 			case DIALOG:
 				messageComponent = (
-					<StyledDialog
-						open={feedback === DIALOG}
-						onClose={messageClearHandler}
-					>
+					<Dialog open={feedback === DIALOG} onClose={messageClearHandler}>
 						<DialogTitle>{title}</DialogTitle>
 						<DialogContent>
 							<DialogContentText>{body}</DialogContentText>
@@ -43,12 +41,12 @@ const MessageHandler = (props) => {
 								Close
 							</Button>
 						</DialogActions>
-					</StyledDialog>
+					</Dialog>
 				);
 				break;
 			case SNACKBAR:
 				messageComponent = (
-					<StyledSnackbar
+					<Snackbar
 						open={feedback === SNACKBAR}
 						autoHideDuration={options.duration}
 						onClose={messageClearHandler}
@@ -64,7 +62,7 @@ const MessageHandler = (props) => {
 							<AlertTitle>{title}</AlertTitle>
 							{body}
 						</Alert>
-					</StyledSnackbar>
+					</Snackbar>
 				);
 				break;
 			case SILENT:

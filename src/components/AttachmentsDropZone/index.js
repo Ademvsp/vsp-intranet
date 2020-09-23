@@ -13,7 +13,7 @@ import {
 import { StyledContainer, StyledList } from './styled-components';
 import { Delete as DeleteIcon } from '@material-ui/icons';
 import fileSizeTranformer from '../../utils/filesize-tranformer';
-import { StyledDialog } from '../../utils/styled-components';
+import Dialog from '../Dialog';
 
 const AttachmentsDropzone = (props) => {
 	const { dropzoneOpen, setDropzoneOpen, attachments, setAttachments } = props;
@@ -67,7 +67,7 @@ const AttachmentsDropzone = (props) => {
 	};
 
 	return (
-		<StyledDialog width={600} open={dropzoneOpen} onClose={closeHandler}>
+		<Dialog width={600} open={dropzoneOpen} onClose={closeHandler}>
 			<DialogContent>
 				<StyledContainer {...getRootProps({ isDragActive })}>
 					<input {...getInputProps()} />
@@ -110,7 +110,7 @@ const AttachmentsDropzone = (props) => {
 					Confirm
 				</Button>
 			</DialogActions>
-		</StyledDialog>
+		</Dialog>
 	);
 };
 

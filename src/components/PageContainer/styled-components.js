@@ -4,7 +4,7 @@ import { Container } from '@material-ui/core';
 export const StyledPageContainer = styled(Container)`
 	display: flex;
 	flex-direction: column;
-	align-items: center;
+	align-items: stretch;
 	width: ${(props) => (props.width ? props.width : '50')}%;
 	@media (max-width: 767px) {
 		width: 100%;

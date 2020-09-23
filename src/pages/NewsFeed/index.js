@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as postController from '../../controllers/post';
 import { Pagination } from '@material-ui/lab';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress, Grid } from '@material-ui/core';
 import PostCard from './PostCard';
 import { useParams, useHistory, useLocation } from 'react-router-dom';
 import NewPost from './NewPost';
@@ -92,34 +92,43 @@ const NewsFeed = (props) => {
 
 	return (
 		<PageContainer width={35}>
-			<NewPost
-				searchResults={searchResults}
-				setSearchResults={setSearchResults}
-			/>
-			{postIds.map((postId) => {
-				let scroll = false;
-				if (activePostId === postId) {
-					scroll = true;
-				}
-				return (
-					<PostCard
-						key={postId}
-						postId={postId}
-						setActivePostId={setActivePostId}
-						scroll={scroll}
+			<Grid container direction='column' spacing={2}>
+				<Grid item>
+					<NewPost
+						searchResults={searchResults}
+						setSearchResults={setSearchResults}
 					/>
-				);
-			})}
-			<Pagination
-				color='primary'
-				count={count}
-				page={page}
-				onChange={(_event, value) =>
-					history.push(`/newsfeed/page/${value.toString()}`)
-				}
-				showFirstButton={true}
-				showLastButton={true}
-			/>
+				</Grid>
+				<Grid item container direction='column' spacing={2}>
+					{postIds.map((postId) => {
+						let scroll = false;
+						if (activePostId === postId) {
+							scroll = true;
+						}
+						return (
+							<Grid item key={postId}>
+								<PostCard
+									postId={postId}
+									setActivePostId={setActivePostId}
+									scroll={scroll}
+								/>
+							</Grid>
+						);
+					})}
+					<Grid item container direction='row' justify='center'>
+						<Pagination
+							color='primary'
+							count={count}
+							page={page}
+							onChange={(_event, value) =>
+								history.push(`/newsfeed/page/${value.toString()}`)
+							}
+							showFirstButton={true}
+							showLastButton={true}
+						/>
+					</Grid>
+				</Grid>
+			</Grid>
 		</PageContainer>
 	);
 };

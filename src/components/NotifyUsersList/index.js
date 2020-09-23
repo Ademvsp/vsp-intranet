@@ -19,7 +19,7 @@ import {
 } from './styled-components';
 import { AvatarGroup } from '@material-ui/lab';
 import Avatar from '../Avatar';
-import { StyledDialog } from '../../utils/styled-components';
+import Dialog from '../Dialog';
 
 const NotifyUsersList = (props) => {
 	const {
@@ -75,7 +75,7 @@ const NotifyUsersList = (props) => {
 	const mobile = useMediaQuery('(max-width: 767px)');
 
 	return (
-		<StyledDialog open={notifyUsersOpen} onClose={closeHandler} width={400}>
+		<Dialog open={notifyUsersOpen} onClose={closeHandler} width={400}>
 			<StyledDialogTitle>
 				<List dense={true}>
 					<StyledTitleListItem>
@@ -148,7 +148,7 @@ const NotifyUsersList = (props) => {
 					Confirm
 				</Button>
 			</DialogActions>
-		</StyledDialog>
+		</Dialog>
 	);
 };
 

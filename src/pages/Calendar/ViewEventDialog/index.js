@@ -10,13 +10,13 @@ import {
 	Tooltip
 } from '@material-ui/core';
 import eventTypes from '../../../utils/event-types';
-import { StyledDialog, GridFlexGrow } from '../../../utils/styled-components';
 import { useSelector } from 'react-redux';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import moment from 'moment';
 import MomentUtils from '@date-io/moment';
 import { getReadableTitle } from '../../../controllers/event';
 import { StyledTitle } from './styled-components';
+import Dialog from '../../../components/Dialog';
 
 const ViewEventDialog = (props) => {
 	const detailsFieldRef = useRef();
@@ -48,7 +48,7 @@ const ViewEventDialog = (props) => {
 	}
 
 	return (
-		<StyledDialog open={open} onClose={() => close()} width={500}>
+		<Dialog open={open} onClose={() => close()} width={500}>
 			<DialogTitle>
 				<StyledTitle>{readableTitle}</StyledTitle>
 			</DialogTitle>
@@ -80,7 +80,7 @@ const ViewEventDialog = (props) => {
 						justify='space-between'
 						spacing={2}
 					>
-						<GridFlexGrow item>
+						<Grid item style={{ flexGrow: 1 }}>
 							<MuiPickersUtilsProvider utils={MomentUtils}>
 								<TextField
 									label='Start'
@@ -89,8 +89,8 @@ const ViewEventDialog = (props) => {
 									readOnly={true}
 								/>
 							</MuiPickersUtilsProvider>
-						</GridFlexGrow>
-						<GridFlexGrow item>
+						</Grid>
+						<Grid item style={{ flexGrow: 1 }}>
 							<MuiPickersUtilsProvider utils={MomentUtils}>
 								<TextField
 									label='End'
@@ -99,7 +99,7 @@ const ViewEventDialog = (props) => {
 									readOnly={true}
 								/>
 							</MuiPickersUtilsProvider>
-						</GridFlexGrow>
+						</Grid>
 					</Grid>
 					<Grid item>
 						<FormGroup row>
@@ -134,7 +134,7 @@ const ViewEventDialog = (props) => {
 					</Grid>
 				</Grid>
 			</DialogContent>
-		</StyledDialog>
+		</Dialog>
 	);
 };
 
