@@ -226,7 +226,6 @@ export const editEvent = (event, values, notifyUsers) => {
 				start: startTransformed,
 				type: type.eventTypeId
 			});
-			console.log('newEvent', newEvent);
 			await newEvent.save();
 			const message = new Message({
 				title: 'Staff Calendar',
@@ -243,7 +242,6 @@ export const editEvent = (event, values, notifyUsers) => {
 				message
 			});
 		} catch (error) {
-			console.log('error', error);
 			const message = new Message({
 				title: 'Staff Calendar',
 				body: 'Failed to edit event',

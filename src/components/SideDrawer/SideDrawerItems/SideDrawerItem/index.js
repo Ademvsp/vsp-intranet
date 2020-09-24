@@ -4,7 +4,7 @@ import {
 	ListItemIcon,
 	ListItemText
 } from '@material-ui/core';
-import React, { Fragment, useState, useContext } from 'react';
+import React, { Fragment, useContext } from 'react';
 import {
 	ExpandLess as ExpandLessIcon,
 	ExpandMore as ExpandMoreIcon
@@ -12,17 +12,29 @@ import {
 import { useHistory } from 'react-router-dom';
 import { withTheme } from '@material-ui/core/styles';
 import { SideDrawerContext } from '../../../AppContainer';
+import { useDispatch, useSelector } from 'react-redux';
+import * as authController from '../../../../controllers/auth';
 
 const SideDrawerItem = withTheme((props) => {
+	const { Icon, text, link, subItems, subItem } = props;
+	const dispatch = useDispatch();
+	const { authUser } = useSelector((state) => state.authState);
 	const history = useHistory();
 	const { setDrawerOpen } = useContext(SideDrawerContext);
-	const [expand, setExpand] = useState(false);
+	const expand = !!authUser.settings.expandSideDrawerItems[
+		text.split(' ').join('').toLowerCase()
+	];
 	const ExpandIcon = expand ? ExpandLessIcon : ExpandMoreIcon;
-	const { Icon, text, link, subItems, subItem } = props;
 
 	const listItemClickHandler = () => {
 		if (subItems) {
-			setExpand((prevState) => !prevState);
+			const settings = {
+				...authUser.settings
+			};
+			settings.expandSideDrawerItems[
+				text.split(' ').join('').toLowerCase()
+			] = !expand;
+			dispatch(authController.updateSettings(settings));
 		} else {
 			history.push(link);
 			setDrawerOpen(false);

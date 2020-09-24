@@ -49,8 +49,6 @@ const StaffDirectory = (props) => {
 	if (!groupedUsers) {
 		return <CircularProgress />;
 	}
-
-	console.log('users', groupedUsers);
 	return (
 		<PageContainer width={50}>
 			<Grid container direction='column' spacing={2}>
