@@ -12,6 +12,7 @@ import Login from './pages/Login';
 import Account from './pages/Account';
 import NewsFeed from './pages/NewsFeed';
 import Calendar from './pages/Calendar';
+import StaffDirectory from './pages/StaffDirectory';
 
 const App = (props) => {
 	const dispatch = useDispatch();
@@ -77,6 +78,9 @@ const App = (props) => {
 					</Route>
 					<Route path='/calendar'>
 						<Calendar />
+					</Route>
+					<Route path='/directory'>
+						<StaffDirectory />
 					</Route>
 					<Redirect from='/login' to='/' />
 					<Redirect from='/newsfeed' to='/newsfeed/page/1' />

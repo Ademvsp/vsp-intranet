@@ -114,7 +114,7 @@ const SideDrawerItems = (props) => {
 						<SideDrawerItem
 							key='2'
 							Icon={ReceiptIcon}
-							text='Expenses'
+							text='Expenses Claim'
 							link='/calendar'
 							subItem={true}
 						/>

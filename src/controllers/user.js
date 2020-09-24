@@ -3,15 +3,42 @@ import {
 	SET_MESSAGE,
 	SET_USERS,
 	SET_ACTIVE_USERS,
-	SET_USERS_TOUCHED
+	SET_USERS_TOUCHED,
+	SET_USERS_COUNTER,
+	SET_ACTIVE_USERS_COUNTER
 } from '../utils/actions';
 import Message from '../models/message';
 import User from '../models/user';
-let usersListener;
+import Counter from '../models/counter';
+let usersListener, usersCounterListener, activeUsersCounterListener;
 
 export const subscribeUserListener = () => {
 	return async (dispatch, getState) => {
 		try {
+			usersCounterListener = Counter.getListener('users').onSnapshot(
+				(snapshot) => {
+					const usersCounter = new Counter({
+						...snapshot.data(),
+						collection: snapshot.id
+					});
+					dispatch({
+						type: SET_USERS_COUNTER,
+						usersCounter
+					});
+				}
+			);
+			activeUsersCounterListener = Counter.getListener(
+				'activeUsers'
+			).onSnapshot((snapshot) => {
+				const activeUsersCounter = new Counter({
+					...snapshot.data(),
+					collection: snapshot.id
+				});
+				dispatch({
+					type: SET_ACTIVE_USERS_COUNTER,
+					activeUsersCounter
+				});
+			});
 			usersListener = User.getListener().onSnapshot((snapshot) => {
 				const touched = getState().dataState.usersTouched;
 				const locations = getState().dataState.locations;
@@ -58,5 +85,11 @@ export const subscribeUserListener = () => {
 export const unsubscribeUsersListener = () => {
 	if (usersListener) {
 		usersListener();
+	}
+	if (usersCounterListener) {
+		usersCounterListener();
+	}
+	if (activeUsersCounterListener) {
+		activeUsersCounterListener();
 	}
 };

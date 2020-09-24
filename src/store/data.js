@@ -4,12 +4,16 @@ import {
 	SET_USERS_TOUCHED,
 	SET_POSTS_COUNTER,
 	SET_EVENTS,
-	SET_LOCATIONS
+	SET_LOCATIONS,
+	SET_USERS_COUNTER,
+	SET_ACTIVE_USERS_COUNTER
 } from '../utils/actions';
 
 const initialState = {
 	users: null,
 	activeUsers: null,
+	usersCounter: null,
+	activeUsersCounter: null,
 	usersTouched: false,
 	postsCounter: null,
 	events: null,
@@ -37,6 +41,16 @@ export default (state = initialState, action) => {
 			return {
 				...state,
 				postsCounter: action.postsCounter
+			};
+		case SET_USERS_COUNTER:
+			return {
+				...state,
+				userCounter: action.userCounter
+			};
+		case SET_ACTIVE_USERS_COUNTER:
+			return {
+				...state,
+				activeUsersCounter: action.activeUsersCounter
 			};
 		case SET_EVENTS:
 			return {
