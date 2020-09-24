@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as postController from '../../controllers/post';
 import { Pagination } from '@material-ui/lab';
-import { CircularProgress, Grid } from '@material-ui/core';
+import { CircularProgress, Container, Grid } from '@material-ui/core';
 import PostCard from './PostCard';
 import { useParams, useHistory, useLocation } from 'react-router-dom';
 import NewPost from './NewPost';
 import queryString from 'query-string';
-import PageContainer from '../../components/PageContainer';
 
 const NewsFeed = (props) => {
 	const params = useParams();
@@ -91,7 +90,7 @@ const NewsFeed = (props) => {
 	const count = Math.ceil(dataSource.length / MAX_PER_PAGE);
 
 	return (
-		<PageContainer width={35}>
+		<Container disableGutters maxWidth='sm'>
 			<Grid container direction='column' spacing={2}>
 				<Grid item>
 					<NewPost
@@ -129,7 +128,7 @@ const NewsFeed = (props) => {
 					</Grid>
 				</Grid>
 			</Grid>
-		</PageContainer>
+		</Container>
 	);
 };
 

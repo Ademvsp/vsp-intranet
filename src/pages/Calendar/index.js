@@ -1,12 +1,10 @@
 import React, { createContext, useState, useEffect, Fragment } from 'react';
-import PageContainer from '../../components/PageContainer';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Grid, CardHeader, List } from '@material-ui/core';
+import { Grid, CardHeader, List, Container, Button } from '@material-ui/core';
 import Panel from './SidePanel';
 import CalendarContainer from './CalendarContainer';
 import { useSelector } from 'react-redux';
 import eventTypes from '../../utils/event-types';
-import { StyledButton } from './SidePanel/styled-components';
 import { Add as AddIcon } from '@material-ui/icons';
 import NewEventDialog from './NewEventDialog';
 import {
@@ -134,7 +132,7 @@ const Calendar = (props) => {
 					/>
 				</Fragment>
 			)}
-			<PageContainer width={100}>
+			<Container disableGutters maxWidth='xl'>
 				<Grid container direction='row' spacing={1} justify='center'>
 					<Grid item>
 						<StyledCalendarContainer elevation={2}>
@@ -155,7 +153,8 @@ const Calendar = (props) => {
 								title={
 									filteredEvents ? (
 										<Fragment>
-											<StyledButton
+											<Button
+												fullWidth
 												variant='contained'
 												color='primary'
 												startIcon={<AddIcon />}
@@ -163,7 +162,7 @@ const Calendar = (props) => {
 												onClick={addEventClickHandler}
 											>
 												Add event
-											</StyledButton>
+											</Button>
 											<List>
 												<WorkFromHomeSwitch />
 											</List>
@@ -177,7 +176,7 @@ const Calendar = (props) => {
 						</StyledSidePanelContainer>
 					</Grid>
 				</Grid>
-			</PageContainer>
+			</Container>
 		</EventContext.Provider>
 	);
 };

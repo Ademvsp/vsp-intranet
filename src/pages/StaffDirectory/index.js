@@ -2,13 +2,13 @@ import {
 	CardContent,
 	CardHeader,
 	CircularProgress,
+	Container,
 	Grid,
 	Typography
 } from '@material-ui/core';
 import React, { useState, useEffect, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import Card from '../../components/Card';
-import PageContainer from '../../components/PageContainer';
 import ContactCard from './ContactCard';
 import { StyledLink } from './styled-components';
 
@@ -52,7 +52,7 @@ const StaffDirectory = (props) => {
 		return <CircularProgress />;
 	}
 	return (
-		<PageContainer width={50}>
+		<Container disableGutters maxWidth='md'>
 			<Grid container direction='column' spacing={2}>
 				{groupedUsers.map((group) => (
 					<Grid item key={group.location.locationId}>
@@ -88,7 +88,7 @@ const StaffDirectory = (props) => {
 					</Grid>
 				))}
 			</Grid>
-		</PageContainer>
+		</Container>
 	);
 };
 

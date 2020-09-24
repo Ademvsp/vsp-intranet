@@ -117,7 +117,7 @@ export const sendNotification = async (data) => {
 	await Notification.send(data);
 };
 
-export const unsubscribeNotificationsListenerListener = () => {
+export const unsubscribeNotificationsListener = () => {
 	if (notificationsListener) {
 		notificationsListener();
 	}

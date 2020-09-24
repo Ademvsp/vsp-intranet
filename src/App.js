@@ -13,6 +13,7 @@ import Account from './pages/Account';
 import NewsFeed from './pages/NewsFeed';
 import Calendar from './pages/Calendar';
 import StaffDirectory from './pages/StaffDirectory';
+import Projects from './pages/Projects';
 
 const App = (props) => {
 	const dispatch = useDispatch();
@@ -48,7 +49,7 @@ const App = (props) => {
 	useEffect(() => {
 		return () => {
 			authController.unsubscribeAuthUserListener();
-			notificationController.unsubscribeNotificationsListenerListener();
+			notificationController.unsubscribeNotificationsListener();
 			userController.unsubscribeUsersListener();
 		};
 	}, []);
@@ -81,6 +82,9 @@ const App = (props) => {
 					</Route>
 					<Route path='/directory'>
 						<StaffDirectory />
+					</Route>
+					<Route path='/projects'>
+						<Projects />
 					</Route>
 					<Redirect from='/login' to='/' />
 					<Redirect from='/newsfeed' to='/newsfeed/page/1' />

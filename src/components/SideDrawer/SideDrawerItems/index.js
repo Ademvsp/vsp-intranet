@@ -8,9 +8,9 @@ import {
 	School as SchoolIcon,
 	ContactPhone as ContactPhoneIcon,
 	AttachMoney as AttachMoneyIcon,
-	CloudDownload as CloudDownloadIcon,
-	Money as MoneyIcon,
-	Description as DescriptionIcon,
+	// CloudDownload as CloudDownloadIcon,
+	// Money as MoneyIcon,
+	// Description as DescriptionIcon,
 	Dialpad as DialpadIcon,
 	LocalOffer as LocalOfficeIcon,
 	Language as LanguageIcon,
@@ -18,14 +18,14 @@ import {
 	ShoppingCart as ShoppingCartIcon,
 	DirectionsWalk as DirectionsWalkIcon,
 	Receipt as ReceiptIcon,
-	PermMedia as PermMediaIcon,
+	// PermMedia as PermMediaIcon,
 	DateRange as DateRangeIcon
 } from '@material-ui/icons';
 import SideDrawerItem from './SideDrawerItem';
 
 const SideDrawerItems = (props) => {
 	return (
-		<StyledListContainer>
+		<StyledListContainer disableGutters>
 			<List>
 				<SideDrawerItem
 					Icon={DashboardIcon}
@@ -63,7 +63,7 @@ const SideDrawerItems = (props) => {
 					text='Projects'
 					link='/projects'
 				/>
-				<SideDrawerItem
+				{/* <SideDrawerItem
 					Icon={CloudDownloadIcon}
 					text='Fileshare'
 					subItems={[
@@ -89,7 +89,7 @@ const SideDrawerItems = (props) => {
 							subItem={true}
 						/>
 					]}
-				/>
+				/> */}
 				<SideDrawerItem Icon={DialpadIcon} text='Calculators' link='/' />
 				<SideDrawerItem Icon={LocalOfficeIcon} text='Promotions' link='/' />
 				<SideDrawerItem Icon={LanguageIcon} text='Links' link='/' />

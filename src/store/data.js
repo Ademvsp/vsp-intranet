@@ -45,7 +45,7 @@ export default (state = initialState, action) => {
 		case SET_USERS_COUNTER:
 			return {
 				...state,
-				userCounter: action.userCounter
+				usersCounter: action.usersCounter
 			};
 		case SET_ACTIVE_USERS_COUNTER:
 			return {

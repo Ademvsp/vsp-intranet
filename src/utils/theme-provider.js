@@ -20,6 +20,23 @@ const ThemeProvider = (props) => {
 			type: type,
 			primary: colors.primary,
 			secondary: colors.secondary
+		},
+		overrides: {
+			MuiPaper: {
+				rounded: {
+					borderRadius: '8px'
+				}
+			},
+			MuiButton: {
+				root: {
+					borderRadius: '32px'
+				}
+			},
+			MuiButtonBase: {
+				root: {
+					borderRadius: '32px'
+				}
+			}
 		}
 	});
 
