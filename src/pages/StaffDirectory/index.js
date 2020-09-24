@@ -2,13 +2,15 @@ import {
 	CardContent,
 	CardHeader,
 	CircularProgress,
-	Grid
+	Grid,
+	Typography
 } from '@material-ui/core';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import Card from '../../components/Card';
 import PageContainer from '../../components/PageContainer';
 import ContactCard from './ContactCard';
+import { StyledLink } from './styled-components';
 
 const StaffDirectory = (props) => {
 	const [groupedUsers, setGroupedUsers] = useState();
@@ -54,9 +56,19 @@ const StaffDirectory = (props) => {
 			<Grid container direction='column' spacing={2}>
 				{groupedUsers.map((group) => (
 					<Grid item key={group.location.locationId}>
-						<Card>
+						<Card headerPadding='16px 16px 0 16px'>
 							<CardHeader
 								title={`${group.location.state} - ${group.location.branch}`}
+								subheader={
+									<Fragment>
+										<Typography>{`${group.location.address}`}</Typography>
+										<Typography>
+											<StyledLink
+												href={`tel:${group.location.phone}`}
+											>{`${group.location.phone}`}</StyledLink>
+										</Typography>
+									</Fragment>
+								}
 							/>
 							<CardContent>
 								<Grid
