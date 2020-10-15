@@ -9,13 +9,30 @@ import Message from '../models/message';
 import Event from '../models/event';
 import Notification from '../models/notification';
 import { eventTypeNames } from '../utils/event-types';
-import moment from 'moment-timezone';
+import { format } from 'date-fns-tz';
+import { set } from 'date-fns';
 import {
 	DELETE_EVENT,
 	EDIT_EVENT,
 	NEW_EVENT
 } from '../utils/notification-types';
+import { MILLISECONDS, millisecondsToDate } from '../utils/date';
 let eventsListener;
+
+const transformDate = (date, allDay, timezone) => {
+	let transformedDate = millisecondsToDate(
+		format(date, MILLISECONDS, {
+			timeZone: timezone
+		})
+	);
+	if (allDay) {
+		transformedDate = set(new Date(transformedDate), {
+			hours: 12,
+			minutes: 0
+		});
+	}
+	return transformedDate;
+};
 
 export const subscribeEventsListener = (start, end) => {
 	return async (dispatch, _getState) => {
@@ -71,25 +88,13 @@ export const addEvent = (values, notifyUsers) => {
 			if (allCalendars) {
 				locations = dataStateLocations.map((location) => location.locationId);
 			}
+			let startTransformed = transformDate(
+				start,
+				allDay,
+				userLocation.timezone
+			);
+			let endTransformed = transformDate(end, allDay, userLocation.timezone);
 
-			let startTransformed = moment.tz(start, userLocation.timezone).toDate();
-			let endTransformed = moment.tz(end, userLocation.timezone).toDate();
-			if (allDay) {
-				startTransformed = moment
-					.tz(start, userLocation.timezone)
-					.set({
-						hour: 12,
-						minutes: 0
-					})
-					.toDate();
-				endTransformed = moment
-					.tz(end, userLocation.timezone)
-					.set({
-						hour: 12,
-						minutes: 0
-					})
-					.toDate();
-			}
 			const subscribers = [authUser.userId];
 			newEvent = new Event({
 				eventId: null,
@@ -119,6 +124,7 @@ export const addEvent = (values, notifyUsers) => {
 				message
 			});
 		} catch (error) {
+			console.log(error);
 			const message = new Message({
 				title: 'Staff Calendar',
 				body: 'Failed to add event',
@@ -198,25 +204,13 @@ export const editEvent = (event, values, notifyUsers) => {
 			if (allCalendars) {
 				locations = dataStateLocations.map((location) => location.locationId);
 			}
+			let startTransformed = transformDate(
+				start,
+				allDay,
+				userLocation.timezone
+			);
+			let endTransformed = transformDate(end, allDay, userLocation.timezone);
 
-			let startTransformed = moment.tz(start, userLocation.timezone).toDate();
-			let endTransformed = moment.tz(end, userLocation.timezone).toDate();
-			if (allDay) {
-				startTransformed = moment
-					.tz(start, userLocation.timezone)
-					.set({
-						hour: 12,
-						minutes: 0
-					})
-					.toDate();
-				endTransformed = moment
-					.tz(end, userLocation.timezone)
-					.set({
-						hour: 12,
-						minutes: 0
-					})
-					.toDate();
-			}
 			newEvent = new Event({
 				...event,
 				allDay: allDay,
@@ -316,7 +310,7 @@ export const deleteEvent = (event, notifyUsers) => {
 				title: 'Staff Calendar',
 				body: 'Event deleted successfully',
 				feedback: SNACKBAR,
-				optoins: {
+				options: {
 					duration: 3000,
 					variant: SNACKBAR_VARIANTS.FILLED,
 					severity: SNACKBAR_SEVERITY.SUCCESS

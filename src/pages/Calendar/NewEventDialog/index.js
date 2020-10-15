@@ -21,12 +21,13 @@ import {
 	DatePicker,
 	MuiPickersUtilsProvider
 } from '@material-ui/pickers';
-import MomentUtils from '@date-io/moment';
-import moment from 'moment';
+import DateFnsUtils from '@date-io/date-fns';
+import { isAfter, set, addHours } from 'date-fns';
 import { getReadableTitle } from '../../../controllers/event';
 import { StyledTitle } from './styled-components';
 import * as eventController from '../../../controllers/event';
 import Dialog from '../../../components/Dialog';
+import { LONG_DATE, LONG_DATE_TIME } from '../../../utils/date';
 
 const NewEventDialog = (props) => {
 	const dispatch = useDispatch();
@@ -42,10 +43,10 @@ const NewEventDialog = (props) => {
 		details: '',
 		start: newEventPrefillData
 			? newEventPrefillData.start
-			: moment(new Date()).startOf('day').add(8, 'hours').toDate(),
+			: set(new Date(), { hours: 8, minutes: 0 }),
 		end: newEventPrefillData
 			? newEventPrefillData.end
-			: moment(new Date()).startOf('day').add(9, 'hours').toDate(),
+			: set(new Date(), { hours: 9, minutes: 0 }),
 		allDay: false,
 		allCalendars: false
 	};
@@ -123,8 +124,8 @@ const NewEventDialog = (props) => {
 	}, [type, setFieldValue]);
 	//Add 1 hour if end date is set to less than start date
 	useEffect(() => {
-		if (moment(start).isAfter(moment(end))) {
-			setFieldValue('end', moment(start).add(1, 'hour').toDate());
+		if (isAfter(start, end)) {
+			setFieldValue('end', addHours(start, 1));
 		}
 	}, [start, end, setFieldValue]);
 
@@ -139,11 +140,11 @@ const NewEventDialog = (props) => {
 
 	let StartPicker = DateTimePicker;
 	let EndPicker = DateTimePicker;
-	let dateFormat = 'ddd, D MMM YYYY, h:mm a';
+	let dateFormat = LONG_DATE_TIME;
 	if (formik.values.allDay) {
 		StartPicker = DatePicker;
 		EndPicker = DatePicker;
-		dateFormat = 'ddd, D MMM YYYY';
+		dateFormat = LONG_DATE;
 	}
 
 	return (
@@ -190,7 +191,7 @@ const NewEventDialog = (props) => {
 						spacing={2}
 					>
 						<Grid item style={{ flexGrow: 1 }}>
-							<MuiPickersUtilsProvider utils={MomentUtils}>
+							<MuiPickersUtilsProvider utils={DateFnsUtils}>
 								<StartPicker
 									label='Start'
 									value={formik.values.start}
@@ -204,7 +205,7 @@ const NewEventDialog = (props) => {
 							</MuiPickersUtilsProvider>
 						</Grid>
 						<Grid item style={{ flexGrow: 1 }}>
-							<MuiPickersUtilsProvider utils={MomentUtils}>
+							<MuiPickersUtilsProvider utils={DateFnsUtils}>
 								<EndPicker
 									label='End'
 									value={formik.values.end}

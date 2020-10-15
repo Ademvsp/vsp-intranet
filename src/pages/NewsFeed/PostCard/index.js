@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Collapse, Typography, IconButton } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import * as postContoller from '../../../controllers/post';
-import moment from 'moment';
+import { format } from 'date-fns';
 import {
 	StyledCardHeader,
 	StyledCardContent,
@@ -22,6 +22,7 @@ import Avatar from '../../../components/Avatar';
 import scrollToComponent from 'react-scroll-to-component';
 import PostCardMenu from './PostCardMenu';
 import Card from '../../../components/Card';
+import { LONG_DATE_TIME } from '../../../utils/date';
 
 const PostCard = (props) => {
 	const scrollRef = useRef();
@@ -103,6 +104,7 @@ const PostCard = (props) => {
 	}
 
 	const user = users.find((user) => user.userId === post.user);
+	const postDate = post.metadata.createdAt.toDate();
 
 	return (
 		<Card ref={scrollRef} elevation={2}>
@@ -121,7 +123,7 @@ const PostCard = (props) => {
 			</StyledCardContent>
 			<StyledCardActions>
 				<Typography color='secondary' component='span' variant='body2'>
-					{moment(post.metadata.createdAt.toDate()).format('llll')}
+					{format(postDate, LONG_DATE_TIME)}
 				</Typography>
 				<StyledButton
 					size='small'

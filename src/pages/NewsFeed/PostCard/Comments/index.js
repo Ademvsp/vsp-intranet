@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
 import { List, Divider, Button } from '@material-ui/core';
 import Comment from './Comment';
-import moment from 'moment';
 import NewComment from './NewComment';
 import {
 	StyledNewCommentContainer,
@@ -31,7 +30,7 @@ const Comments = (props) => {
 				{comments.map((comment, index) => {
 					return (
 						<Fragment
-							key={moment(comment.metadata.createdAt.toDate()).format('x')}
+							key={comment.metadata.createdAt.toDate().getTime().toString()}
 						>
 							{index > 0 ? <Divider variant='middle' light={true} /> : null}
 							<Comment comment={comment} />

@@ -1,46 +1,24 @@
 import {
 	CircularProgress,
 	Container,
-	Paper,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TablePagination,
-	TableRow
+	Paper
+	// Table,
+	// TableBody,
+	// TableCell,
+	// TableContainer,
+	// TableHead,
+	// TablePagination,
+	// TableRow
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import * as projectsController from '../../controllers/project';
 import Project from '../../models/project';
-const columns = [
-	{
-		id: 'name',
-		label: 'Name'
-	},
-	{
-		id: 'customer',
-		label: 'Customer'
-	},
-	{
-		id: 'vendors',
-		label: 'Vendors'
-	},
-	{
-		id: 'status',
-		label: 'Status'
-	},
-	{
-		id: 'value',
-		label: 'Estimated Value'
-	}
-];
-const rowsPerPageOptions = [5, 10, 25, 100];
+import { XGrid } from '@material-ui/x-grid';
+import projectStatusTypes from '../../utils/project-status-types';
+import columnSchema from './column-schema';
 
 const Projects = (props) => {
-	const [page, setPage] = useState(1);
-	const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
 	const { authUser } = useSelector((state) => state.authState);
 	const { users, usersCounter } = useSelector((state) => state.dataState);
 	const [projects, setProjects] = useState();
@@ -75,19 +53,30 @@ const Projects = (props) => {
 		};
 	}, [authUser.userId, users, usersCounter]);
 
-	console.log('projects', projects);
 	if (!projects) {
 		return <CircularProgress />;
 	}
 
-	const start = page * rowsPerPage;
-	const end = start + rowsPerPage;
-	const rows = projects.slice(start, end);
-
 	return (
 		<Container disableGutters maxWidth='lg'>
-			<Paper elevation={6}>
-				<TableContainer>
+			<Paper elevation={6} style={{ height: 500, width: '100%' }}>
+				<XGrid
+					columns={columnSchema}
+					rows={projects.map((project) => {
+						const status = projectStatusTypes.find(
+							(projectStatusType) =>
+								projectStatusType.statusId === project.status
+						);
+						console.log(status);
+						return {
+							...project,
+							id: project.projectId,
+							status: status.name
+						};
+					})}
+				/>
+
+				{/* <TableContainer>
 					<Table stickyHeader>
 						<TableHead>
 							<TableRow>
@@ -124,7 +113,7 @@ const Projects = (props) => {
 						setRowsPerPage(+event.target.value);
 						setPage(0);
 					}}
-				/>
+				/> */}
 			</Paper>
 		</Container>
 	);

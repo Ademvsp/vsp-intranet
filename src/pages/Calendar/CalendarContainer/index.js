@@ -1,16 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as eventController from '../../../controllers/event';
-import moment from 'moment';
-import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
+import { Calendar as BigCalendar, dateFnsLocalizer } from 'react-big-calendar';
+import {
+	format,
+	parse,
+	startOfWeek,
+	getDay,
+	startOfMonth,
+	sub,
+	add
+} from 'date-fns';
 import { Skeleton } from '@material-ui/lab';
 import { Grid } from '@material-ui/core';
 import colors from '../../../utils/colors';
 import { useHistory } from 'react-router-dom';
-moment.locale('en-au', {
-	week: { dow: 1 }
+
+const locales = {
+	'en-AU': import('date-fns/locale/en-AU')
+};
+const localizer = dateFnsLocalizer({
+	format,
+	parse,
+	startOfWeek,
+	getDay,
+	locales
 });
-const localizer = momentLocalizer(moment);
 
 const CalendarContainer = (props) => {
 	const history = useHistory();
@@ -18,9 +33,9 @@ const CalendarContainer = (props) => {
 	const { locations, users } = useSelector((state) => state.dataState);
 	const dispatch = useDispatch();
 	const initalRange = {
-		startOfMonth: moment(new Date()).startOf('month').toDate(),
-		start: moment(new Date()).startOf('month').subtract(1, 'month').toDate(),
-		end: moment(new Date()).endOf('month').add(1, 'month').toDate()
+		startOfMonth: startOfMonth(new Date()),
+		start: sub(startOfMonth(new Date()), { months: 1 }),
+		end: add(startOfMonth(new Date()), { months: 1 })
 	};
 	const [range, setRange] = useState(initalRange);
 	const { setNewEventPrefillData, setShowAddEventDialog } = props;
@@ -54,10 +69,10 @@ const CalendarContainer = (props) => {
 	}, [range, dispatch]);
 
 	const navigateChangeHandler = (event) => {
-		const startOfMonth = moment(event).startOf('month').toDate();
-		const start = moment(startOfMonth).subtract(1, 'month').toDate();
-		const end = moment(startOfMonth).add(1, 'month').toDate();
-		if (startOfMonth.valueOf() !== range.startOfMonth.valueOf()) {
+		const startOfEventMonth = startOfMonth(event);
+		const start = sub(startOfEventMonth, { months: 1 });
+		const end = add(startOfEventMonth, { months: 1 });
+		if (startOfEventMonth.valueOf() !== range.startOfMonth.valueOf()) {
 			setRange({ startOfMonth, start, end });
 		}
 	};

@@ -5,7 +5,8 @@ import {
 	ListItemSecondaryAction,
 	IconButton
 } from '@material-ui/core';
-import moment from 'moment';
+import { LONG_DATE_TIME } from '../../../utils/date';
+import { format } from 'date-fns';
 import { StyledListItem } from './styled-components';
 import { useHistory } from 'react-router-dom';
 import { Delete as DeleteIcon } from '@material-ui/icons';
@@ -39,7 +40,7 @@ const NotificationItem = (props) => {
 							{title}
 						</Typography>
 						<br />
-						{moment(metadata.createdAt).format('llll')}
+						{format(metadata.createdAt, LONG_DATE_TIME)}
 					</Fragment>
 				}
 			/>

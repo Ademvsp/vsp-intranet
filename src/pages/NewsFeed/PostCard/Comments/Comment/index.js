@@ -1,15 +1,17 @@
 import React from 'react';
 import { ListItemAvatar, ListItemText } from '@material-ui/core';
-import moment from 'moment';
+import { format } from 'date-fns';
 import { StyledListHeader, StyledListItem } from './styled-components';
 import InnerHtml from '../../../../../components/InnerHtml';
 import AttachmentsContainer from '../../../../../components/AttachmentsContainer';
 import Avatar from '../../../../../components/Avatar';
 import { useSelector } from 'react-redux';
+import { LONG_DATE_TIME } from '../../../../../utils/date';
 
 const Comment = (props) => {
 	const { users } = useSelector((state) => state.dataState);
 	const { comment } = props;
+	const commentDate = comment.metadata.createdAt.toDate();
 
 	const user = users.find((user) => user.userId === comment.user);
 
@@ -21,9 +23,7 @@ const Comment = (props) => {
 				</ListItemAvatar>
 				<ListItemText
 					primary={`${user.firstName} ${user.lastName}`}
-					secondary={`${moment(comment.metadata.createdAt.toDate()).format(
-						'llll'
-					)}`}
+					secondary={format(commentDate, LONG_DATE_TIME)}
 				/>
 			</StyledListHeader>
 			<InnerHtml html={comment.body} />

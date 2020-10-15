@@ -7,19 +7,28 @@ import {
 	ListItemText
 } from '@material-ui/core';
 import Avatar from '../../../../components/Avatar';
-import moment from 'moment';
+import { startOfDay, endOfDay } from 'date-fns';
 
-const AnnualLeaveListItem = (props) => {
+const LeaveListItem = (props) => {
 	const { activeUsers, events } = useSelector((state) => state.dataState);
 	const [annualLeaveUsers, setAnnualLeaveUsers] = useState();
 	const { eventTypeId } = props;
 	useEffect(() => {
 		const todayEvents = events.filter((event) => {
-			const todayMatch = moment(new Date()).isBetween(
-				moment(event.start).startOf('day'),
-				moment(event.end).endOf('day')
-			);
+			console.log('new Date()', new Date());
+			console.log('event.start', startOfDay(event.start));
+			console.log('event.end', endOfDay(event.end));
+			const todayMatch =
+				new Date() >= startOfDay(event.start) &&
+				new Date() <= endOfDay(event.end);
+			console.log(todayMatch);
+			// 	isWithinInterval(new Date(), {
+			// 	start: startOfDay(event.start),
+			// 	end: startOfDay(event.end)
+			// });
 			const typeMatch = event.type === eventTypeId;
+			console.log(eventTypeId);
+			console.log(event.type);
 			return todayMatch && typeMatch;
 		});
 
@@ -51,4 +60,4 @@ const AnnualLeaveListItem = (props) => {
 	});
 };
 
-export default AnnualLeaveListItem;
+export default LeaveListItem;

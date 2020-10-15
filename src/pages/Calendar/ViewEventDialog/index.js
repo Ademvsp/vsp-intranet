@@ -12,11 +12,12 @@ import {
 import eventTypes from '../../../utils/event-types';
 import { useSelector } from 'react-redux';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import moment from 'moment';
-import MomentUtils from '@date-io/moment';
+import DateFnsUtils from '@date-io/date-fns';
+import { format } from 'date-fns';
 import { getReadableTitle } from '../../../controllers/event';
 import { StyledTitle } from './styled-components';
 import Dialog from '../../../components/Dialog';
+import { LONG_DATE_TIME, LONG_DATE } from '../../../utils/date';
 
 const ViewEventDialog = (props) => {
 	const detailsFieldRef = useRef();
@@ -42,9 +43,9 @@ const ViewEventDialog = (props) => {
 		},
 		users
 	);
-	let dateFormat = 'ddd, D MMM YYYY, h:mm a';
+	let dateFormat = LONG_DATE_TIME;
 	if (initialValues.allDay) {
-		dateFormat = 'ddd, D MMM YYYY';
+		dateFormat = LONG_DATE;
 	}
 
 	return (
@@ -81,20 +82,20 @@ const ViewEventDialog = (props) => {
 						spacing={2}
 					>
 						<Grid item style={{ flexGrow: 1 }}>
-							<MuiPickersUtilsProvider utils={MomentUtils}>
+							<MuiPickersUtilsProvider utils={DateFnsUtils}>
 								<TextField
 									label='Start'
-									value={moment(initialValues.start).format(dateFormat)}
+									value={format(initialValues.start, dateFormat)}
 									fullWidth={true}
 									readOnly={true}
 								/>
 							</MuiPickersUtilsProvider>
 						</Grid>
 						<Grid item style={{ flexGrow: 1 }}>
-							<MuiPickersUtilsProvider utils={MomentUtils}>
+							<MuiPickersUtilsProvider utils={DateFnsUtils}>
 								<TextField
 									label='End'
-									value={moment(initialValues.end).format(dateFormat)}
+									value={format(initialValues.end, dateFormat)}
 									fullWidth={true}
 									readOnly={true}
 								/>
