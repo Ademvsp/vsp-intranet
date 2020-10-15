@@ -1,16 +1,13 @@
 import React, { createContext, useState, useEffect, Fragment } from 'react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Grid, CardHeader, List, Container, Button } from '@material-ui/core';
-import Panel from './SidePanel';
+import { Grid, Container, Button, CardContent } from '@material-ui/core';
+import ExpandableItems from './ExpandableItems';
 import CalendarContainer from './CalendarContainer';
 import { useSelector } from 'react-redux';
 import eventTypes from '../../utils/event-types';
 import { Add as AddIcon } from '@material-ui/icons';
 import NewEventDialog from './NewEventDialog';
-import {
-	StyledCalendarContainer,
-	StyledSidePanelContainer
-} from './styled-components';
+import { StyledCalendarCard, StyledSidePanelCard } from './styled-components';
 import WorkFromHomeSwitch from './WorkFromHomeSwitch';
 import { Skeleton } from '@material-ui/lab';
 import { useLocation, useHistory } from 'react-router-dom';
@@ -135,45 +132,45 @@ const Calendar = (props) => {
 			<Container disableGutters maxWidth='xl'>
 				<Grid container direction='row' spacing={1} justify='center'>
 					<Grid item>
-						<StyledCalendarContainer elevation={2}>
+						<StyledCalendarCard elevation={2}>
 							<CalendarContainer
 								events={filteredEvents}
 								setShowAddEventDialog={setShowAddEventDialog}
 								setNewEventPrefillData={setNewEventPrefillData}
 							/>
-						</StyledCalendarContainer>
+						</StyledCalendarCard>
 					</Grid>
 					<Grid item>
-						<StyledSidePanelContainer
-							headerPadding='16px 16px 0 16px'
-							contentPadding='0 16px'
-							elevation={2}
-						>
-							<CardHeader
-								title={
-									filteredEvents ? (
+						<StyledSidePanelCard elevation={2}>
+							<CardContent>
+								<Grid container direction='column' spacing={1}>
+									{filteredEvents ? (
 										<Fragment>
-											<Button
-												fullWidth
-												variant='contained'
-												color='primary'
-												startIcon={<AddIcon />}
-												size='large'
-												onClick={addEventClickHandler}
-											>
-												Add event
-											</Button>
-											<List>
+											<Grid item>
+												<Button
+													fullWidth
+													variant='contained'
+													color='primary'
+													startIcon={<AddIcon />}
+													size='large'
+													onClick={addEventClickHandler}
+												>
+													Add event
+												</Button>
+											</Grid>
+											<Grid item>
 												<WorkFromHomeSwitch />
-											</List>
+											</Grid>
 										</Fragment>
 									) : (
 										skeleton
-									)
-								}
-							/>
-							<Panel />
-						</StyledSidePanelContainer>
+									)}
+									<Grid item>
+										<ExpandableItems />
+									</Grid>
+								</Grid>
+							</CardContent>
+						</StyledSidePanelCard>
 					</Grid>
 				</Grid>
 			</Container>

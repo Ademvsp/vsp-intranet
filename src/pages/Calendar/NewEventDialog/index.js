@@ -195,9 +195,7 @@ const NewEventDialog = (props) => {
 								<StartPicker
 									label='Start'
 									value={formik.values.start}
-									onChange={(value) =>
-										formik.setFieldValue('start', value.toDate())
-									}
+									onChange={(value) => formik.setFieldValue('start', value)}
 									onBlur={formik.handleBlur('start')}
 									format={dateFormat}
 									fullWidth={true}
@@ -209,9 +207,7 @@ const NewEventDialog = (props) => {
 								<EndPicker
 									label='End'
 									value={formik.values.end}
-									onChange={(value) =>
-										formik.setFieldValue('end', value.toDate())
-									}
+									onChange={(value) => formik.setFieldValue('end', value)}
 									onBlur={formik.handleBlur('end')}
 									format={dateFormat}
 									fullWidth={true}

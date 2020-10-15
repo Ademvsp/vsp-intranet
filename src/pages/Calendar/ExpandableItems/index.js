@@ -1,6 +1,6 @@
 import React, { useState, Fragment } from 'react';
-import { List, ListItem, ListItemText, Collapse } from '@material-ui/core';
-import { StyledPanelContainer } from './styled-components';
+import { ListItem, ListItemText, Collapse } from '@material-ui/core';
+import { StyledList } from './styled-components';
 import {
 	ExpandLess as ExpandLessIcon,
 	ExpandMore as ExpandMoreIcon
@@ -13,7 +13,7 @@ import LeaveListItem from './LeaveListItem';
 import { eventTypeNames } from '../../../utils/event-types';
 import SkeletonContainer from './SkeletonContainer';
 
-const Panel = (props) => {
+const ExpandableItems = (props) => {
 	const initialPanelItems = [
 		{
 			name: 'Calendars',
@@ -73,32 +73,28 @@ const Panel = (props) => {
 		});
 	};
 
-	return (
-		<StyledPanelContainer>
-			{!events ? (
-				<SkeletonContainer />
-			) : (
-				<List>
-					{panelItems.map((panelItem, index) => {
-						const ExpandedIcon = panelItem.expanded
-							? ExpandLessIcon
-							: ExpandMoreIcon;
-						return (
-							<Fragment key={panelItem.name}>
-								<ListItem button onClick={expandClickHandler.bind(this, index)}>
-									<ListItemText primary={panelItem.name}></ListItemText>
-									{<ExpandedIcon />}
-								</ListItem>
-								<Collapse in={panelItem.expanded} timeout='auto'>
-									{panelItem.component}
-								</Collapse>
-							</Fragment>
-						);
-					})}
-				</List>
-			)}
-		</StyledPanelContainer>
+	return !events ? (
+		<SkeletonContainer />
+	) : (
+		<StyledList>
+			{panelItems.map((panelItem, index) => {
+				const ExpandedIcon = panelItem.expanded
+					? ExpandLessIcon
+					: ExpandMoreIcon;
+				return (
+					<Fragment key={panelItem.name}>
+						<ListItem button onClick={expandClickHandler.bind(this, index)}>
+							<ListItemText primary={panelItem.name}></ListItemText>
+							{<ExpandedIcon />}
+						</ListItem>
+						<Collapse in={panelItem.expanded} timeout='auto'>
+							{panelItem.component}
+						</Collapse>
+					</Fragment>
+				);
+			})}
+		</StyledList>
 	);
 };
 
-export default Panel;
+export default ExpandableItems;

@@ -3,7 +3,8 @@ import {
 	ListItem,
 	ListItemText,
 	ListItemSecondaryAction,
-	Switch
+	Switch,
+	List
 } from '@material-ui/core';
 import * as authUserController from '../../../controllers/auth';
 import { useSelector, useDispatch } from 'react-redux';
@@ -17,21 +18,23 @@ const WorkFromHomeSwitch = (props) => {
 	};
 
 	return (
-		<ListItem>
-			<ListItemText primary='Work from Home' />
-			<ListItemSecondaryAction>
-				<Switch
-					color='primary'
-					checked={authUser.settings.workFromHome}
-					onChange={() =>
-						switchChangeHandler({
-							...authUser.settings,
-							workFromHome: !authUser.settings.workFromHome
-						})
-					}
-				/>
-			</ListItemSecondaryAction>
-		</ListItem>
+		<List>
+			<ListItem>
+				<ListItemText primary='Work from Home' />
+				<ListItemSecondaryAction>
+					<Switch
+						color='primary'
+						checked={authUser.settings.workFromHome}
+						onChange={() =>
+							switchChangeHandler({
+								...authUser.settings,
+								workFromHome: !authUser.settings.workFromHome
+							})
+						}
+					/>
+				</ListItemSecondaryAction>
+			</ListItem>
+		</List>
 	);
 };
 

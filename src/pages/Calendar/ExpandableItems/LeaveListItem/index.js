@@ -11,41 +11,33 @@ import { startOfDay, endOfDay } from 'date-fns';
 
 const LeaveListItem = (props) => {
 	const { activeUsers, events } = useSelector((state) => state.dataState);
-	const [annualLeaveUsers, setAnnualLeaveUsers] = useState();
+	const [leaveUsers, setLeaveUsers] = useState();
 	const { eventTypeId } = props;
 	useEffect(() => {
 		const todayEvents = events.filter((event) => {
-			console.log('new Date()', new Date());
-			console.log('event.start', startOfDay(event.start));
-			console.log('event.end', endOfDay(event.end));
 			const todayMatch =
 				new Date() >= startOfDay(event.start) &&
 				new Date() <= endOfDay(event.end);
-			console.log(todayMatch);
-			// 	isWithinInterval(new Date(), {
-			// 	start: startOfDay(event.start),
-			// 	end: startOfDay(event.end)
-			// });
 			const typeMatch = event.type === eventTypeId;
-			console.log(eventTypeId);
-			console.log(event.type);
 			return todayMatch && typeMatch;
 		});
 
-		const eventUsers = todayEvents.map((todayEvent) => todayEvent.createdBy);
+		const eventUsers = todayEvents.map(
+			(todayEvent) => todayEvent.metadata.createdBy
+		);
 
-		const newAnnualLeaveUsers = activeUsers.filter((activeUser) =>
+		const newLeaveUsers = activeUsers.filter((activeUser) =>
 			eventUsers.includes(activeUser.userId)
 		);
 
-		setAnnualLeaveUsers(newAnnualLeaveUsers);
+		setLeaveUsers(newLeaveUsers);
 	}, [events, activeUsers, eventTypeId]);
 
-	if (!annualLeaveUsers) {
+	if (!leaveUsers) {
 		return <CircularProgress />;
 	}
 
-	return annualLeaveUsers.map((annualLeaveUser) => {
+	return leaveUsers.map((annualLeaveUser) => {
 		return (
 			<ListItem key={annualLeaveUser.userId}>
 				<ListItemAvatar>
