@@ -83,6 +83,9 @@ const App = (props) => {
 					<Route path='/directory'>
 						<StaffDirectory />
 					</Route>
+					<Route path='/projects/:projectId'>
+						<Projects />
+					</Route>
 					<Route path='/projects'>
 						<Projects />
 					</Route>

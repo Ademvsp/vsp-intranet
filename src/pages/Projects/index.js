@@ -1,27 +1,35 @@
+/* eslint-disable react/display-name */
 import {
-	CircularProgress,
 	Container,
-	Paper
-	// Table,
-	// TableBody,
-	// TableCell,
-	// TableContainer,
-	// TableHead,
-	// TablePagination,
-	// TableRow
+	Button,
+	Dialog,
+	DialogContent,
+	Typography
 } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import * as projectsController from '../../controllers/project';
 import Project from '../../models/project';
-import { XGrid } from '@material-ui/x-grid';
+import MaterialTable from 'material-table';
 import projectStatusTypes from '../../utils/project-status-types';
 import columnSchema from './column-schema';
+import tableColumns from './table-icons';
+import AddIcon from '@material-ui/icons/Add';
+import { useHistory, useParams } from 'react-router-dom';
 
 const Projects = (props) => {
+	const history = useHistory();
+	const { push, location } = history;
+	const params = useParams();
 	const { authUser } = useSelector((state) => state.authState);
 	const { users, usersCounter } = useSelector((state) => state.dataState);
 	const [projects, setProjects] = useState();
+	const [showNewProjectDialog, setShowNewProjectDialog] = useState(false);
+
+	console.log(location.pathname);
+	useEffect(() => {
+		console.log(params);
+	}, [params]);
 
 	useEffect(() => {
 		let projectsListener;
@@ -53,69 +61,75 @@ const Projects = (props) => {
 		};
 	}, [authUser.userId, users, usersCounter]);
 
-	if (!projects) {
-		return <CircularProgress />;
+	// if (!projects) {
+	// 	return <CircularProgress />;
+	// }
+
+	const newProjectOpenHandler = () => {
+		setShowNewProjectDialog(true);
+	};
+
+	const newProjectCloseHandler = () => {
+		setShowNewProjectDialog(false);
+	};
+
+	const rowClickHandler = (event, rowData) => {
+		push(`/projects/${rowData.projectId}`);
+	};
+
+	let data = [];
+	if (projects) {
+		data = projects.map((project) => {
+			const status = projectStatusTypes.find(
+				(projectStatusType) => projectStatusType.statusId === project.status
+			);
+			const vendors = project.vendors.join(', ');
+			return {
+				...project,
+				createdAt: project.metadata.createdAt.toDate(),
+				vendors: vendors,
+				status: status
+			};
+		});
 	}
 
 	return (
-		<Container disableGutters maxWidth='lg'>
-			<Paper elevation={6} style={{ height: 500, width: '100%' }}>
-				<XGrid
+		<Fragment>
+			<Dialog open={showNewProjectDialog} onClose={newProjectCloseHandler}>
+				<DialogContent>
+					<Typography>Hello</Typography>
+				</DialogContent>
+			</Dialog>
+			<Container disableGutters maxWidth='lg' style={{ height: 500 }}>
+				<MaterialTable
+					isLoading={!projects}
+					icons={tableColumns}
+					title={
+						<Button variant='contained' color='primary' fullWidth>
+							Add Project
+						</Button>
+					}
 					columns={columnSchema}
-					rows={projects.map((project) => {
-						const status = projectStatusTypes.find(
-							(projectStatusType) =>
-								projectStatusType.statusId === project.status
-						);
-						console.log(status);
-						return {
-							...project,
-							id: project.projectId,
-							status: status.name
-						};
-					})}
-				/>
-
-				{/* <TableContainer>
-					<Table stickyHeader>
-						<TableHead>
-							<TableRow>
-								{columns.map((column) => (
-									<TableCell key={column.id}>{column.label}</TableCell>
-								))}
-							</TableRow>
-						</TableHead>
-						<TableBody>
-							{rows.map((project) => (
-								<TableRow
-									key={project.projectId}
-									hover
-									style={{ cursor: 'pointer' }}
-								>
-									<TableCell>{project.name}</TableCell>
-									<TableCell>{project.customer}</TableCell>
-									<TableCell>{project.vendors.join(', ')}</TableCell>
-									<TableCell>{project.status}</TableCell>
-									<TableCell align='right'>{project.value}</TableCell>
-								</TableRow>
-							))}
-						</TableBody>
-					</Table>
-				</TableContainer>
-				<TablePagination
-					rowsPerPageOptions={rowsPerPageOptions}
-					component='div'
-					count={projects.length}
-					rowsPerPage={rowsPerPage}
-					page={page}
-					onChangePage={(event, newPage) => setPage(newPage)}
-					onChangeRowsPerPage={(event) => {
-						setRowsPerPage(+event.target.value);
-						setPage(0);
+					data={data}
+					options={{
+						paginationType: 'normal',
+						minBodyHeight: window.innerHeight / 1.5,
+						maxBodyHeight: window.innerHeight / 1.5,
+						pageSize: 10,
+						pageSizeOptions: [10, 20, 50, 100]
 					}}
-				/> */}
-			</Paper>
-		</Container>
+					actions={[
+						{
+							icon: AddIcon,
+							tooltip: 'Add Project',
+							isFreeAction: true,
+							onClick: newProjectOpenHandler
+						}
+					]}
+					onRowClick={rowClickHandler}
+				/>
+			</Container>
+		</Fragment>
 	);
 };
 

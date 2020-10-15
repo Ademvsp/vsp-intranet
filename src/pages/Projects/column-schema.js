@@ -1,32 +1,44 @@
+/* eslint-disable react/display-name */
+import React from 'react';
+import ProjectStatusChip from '../../components/ProjectStatusChip';
+
 const columnSchema = [
 	{
-		field: 'id',
-		hide: true
+		field: 'projectId',
+		title: 'Project ID',
+		type: 'string',
+		hidden: true
+	},
+	{
+		field: 'createdAt',
+		title: 'Date',
+		type: 'date'
 	},
 	{
 		field: 'name',
-		headerName: 'Name',
+		title: 'Name',
 		type: 'string'
 	},
 	{
 		field: 'customer',
-		headerName: 'Customer',
+		title: 'Customer',
 		type: 'string'
 	},
 	{
 		field: 'vendors',
-		headerName: 'Vendors',
+		title: 'Vendors',
 		type: 'string'
 	},
 	{
-		field: 'status',
-		headerName: 'Status',
-		type: 'string'
+		field: 'status.name',
+		title: 'Status',
+		type: 'string',
+		render: (rowData) => <ProjectStatusChip status={rowData.status} />
 	},
 	{
 		field: 'value',
-		headerName: 'Estimated Value',
-		type: 'number'
+		title: 'Estimated Value',
+		type: 'currency'
 	}
 ];
 
