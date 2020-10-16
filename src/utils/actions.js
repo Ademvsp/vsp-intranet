@@ -1,3 +1,7 @@
+export const CREATE = 'CREATE';
+export const READ = 'READ';
+export const UPDATE = 'UPDATE';
+export const DELETE = 'DELETE';
 export const SET_AUTH_USER = 'SET_AUTH_USER';
 export const SET_AUTH_TOUCHED = 'SET_AUTH_TOUCHED';
 export const LOGOUT = 'LOGOUT';

@@ -14,19 +14,18 @@ import MaterialTable from 'material-table';
 import projectStatusTypes from '../../utils/project-status-types';
 import columnSchema from './column-schema';
 import tableColumns from './table-icons';
-import AddIcon from '@material-ui/icons/Add';
 import { useHistory, useParams } from 'react-router-dom';
+import { CREATE, UPDATE } from '../../utils/actions';
 
 const Projects = (props) => {
-	const history = useHistory();
-	const { push, location } = history;
+	const { push } = useHistory();
 	const params = useParams();
+	const { action } = props;
 	const { authUser } = useSelector((state) => state.authState);
 	const { users, usersCounter } = useSelector((state) => state.dataState);
 	const [projects, setProjects] = useState();
-	const [showNewProjectDialog, setShowNewProjectDialog] = useState(false);
+	const [selectedProject, setSelectedProject] = useState();
 
-	console.log(location.pathname);
 	useEffect(() => {
 		console.log(params);
 	}, [params]);
@@ -61,21 +60,24 @@ const Projects = (props) => {
 		};
 	}, [authUser.userId, users, usersCounter]);
 
-	// if (!projects) {
-	// 	return <CircularProgress />;
-	// }
+	useEffect(() => {
+		if (projects) {
+			if (action === UPDATE) {
+				const newSelectedProject = projects.find(
+					(project) => project.projectId === params.projectId
+				);
+				if (newSelectedProject) {
+					setSelectedProject(newSelectedProject);
+				} else {
+					push('/projects');
+				}
+			}
+		}
+	}, [action, projects, params, push]);
 
-	const newProjectOpenHandler = () => {
-		setShowNewProjectDialog(true);
-	};
-
-	const newProjectCloseHandler = () => {
-		setShowNewProjectDialog(false);
-	};
-
-	const rowClickHandler = (event, rowData) => {
-		push(`/projects/${rowData.projectId}`);
-	};
+	// const rowClickHandler = (event, rowData) =>
+	// 	push(`/projects/${rowData.projectId}`);
+	// };
 
 	let data = [];
 	if (projects) {
@@ -95,7 +97,7 @@ const Projects = (props) => {
 
 	return (
 		<Fragment>
-			<Dialog open={showNewProjectDialog} onClose={newProjectCloseHandler}>
+			<Dialog open={action === CREATE} onClose={() => push('/projects')}>
 				<DialogContent>
 					<Typography>Hello</Typography>
 				</DialogContent>
@@ -105,7 +107,12 @@ const Projects = (props) => {
 					isLoading={!projects}
 					icons={tableColumns}
 					title={
-						<Button variant='contained' color='primary' fullWidth>
+						<Button
+							variant='contained'
+							color='primary'
+							fullWidth
+							onClick={() => push('/projects/create')}
+						>
 							Add Project
 						</Button>
 					}
@@ -118,15 +125,9 @@ const Projects = (props) => {
 						pageSize: 10,
 						pageSizeOptions: [10, 20, 50, 100]
 					}}
-					actions={[
-						{
-							icon: AddIcon,
-							tooltip: 'Add Project',
-							isFreeAction: true,
-							onClick: newProjectOpenHandler
-						}
-					]}
-					onRowClick={rowClickHandler}
+					onRowClick={(event, rowData) =>
+						push(`/projects/${rowData.projectId}`)
+					}
 				/>
 			</Container>
 		</Fragment>

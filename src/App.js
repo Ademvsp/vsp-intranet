@@ -14,6 +14,7 @@ import NewsFeed from './pages/NewsFeed';
 import Calendar from './pages/Calendar';
 import StaffDirectory from './pages/StaffDirectory';
 import Projects from './pages/Projects';
+import { CREATE, READ, UPDATE } from './utils/actions';
 
 const App = (props) => {
 	const dispatch = useDispatch();
@@ -83,11 +84,14 @@ const App = (props) => {
 					<Route path='/directory'>
 						<StaffDirectory />
 					</Route>
+					<Route path='/projects/create' exact>
+						<Projects action={CREATE} />
+					</Route>
 					<Route path='/projects/:projectId'>
-						<Projects />
+						<Projects action={UPDATE} />
 					</Route>
 					<Route path='/projects'>
-						<Projects />
+						<Projects action={READ} />
 					</Route>
 					<Redirect from='/login' to='/' />
 					<Redirect from='/newsfeed' to='/newsfeed/page/1' />

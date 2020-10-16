@@ -14,9 +14,3 @@ export const SNACKBAR_SEVERITY = {
 	INFO: 'info',
 	SUCCESS: 'success'
 };
-export const ACTIONS = {
-	CREATE: 'create',
-	READ: 'read',
-	UPDATE: 'update',
-	DELETE: 'delete'
-};
