@@ -14,7 +14,7 @@ const WorkFromHomeListItem = (props) => {
 
 	useEffect(() => {
 		const newWorkFromHomeUsers = activeUsers.filter(
-			(activeUser) => activeUser.settings.workFromHome
+			(activeUser) => activeUser.workFromHome
 		);
 		setWorkFromHomeUsers(newWorkFromHomeUsers);
 	}, [activeUsers]);

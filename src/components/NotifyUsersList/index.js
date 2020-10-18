@@ -7,7 +7,8 @@ import {
 	ListItemSecondaryAction,
 	Checkbox,
 	DialogActions,
-	useMediaQuery
+	useMediaQuery,
+	Dialog
 } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import {
@@ -19,7 +20,6 @@ import {
 } from './styled-components';
 import { AvatarGroup } from '@material-ui/lab';
 import Avatar from '../Avatar';
-import Dialog from '../Dialog';
 
 const NotifyUsersList = (props) => {
 	const {
@@ -75,7 +75,12 @@ const NotifyUsersList = (props) => {
 	const mobile = useMediaQuery('(max-width: 767px)');
 
 	return (
-		<Dialog open={notifyUsersOpen} onClose={closeHandler} width={400}>
+		<Dialog
+			open={notifyUsersOpen}
+			onClose={closeHandler}
+			fullWidth
+			maxWidth='sm'
+		>
 			<StyledDialogTitle>
 				<List dense={true}>
 					<StyledTitleListItem>

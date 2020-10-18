@@ -5,7 +5,8 @@ import {
 	ListItemAvatar,
 	Typography,
 	TextField,
-	DialogContent
+	DialogContent,
+	Dialog
 } from '@material-ui/core';
 import Avatar from '../../../../components/Avatar';
 import ActionsBar from '../../../../components/ActionsBar';
@@ -14,7 +15,6 @@ import * as postController from '../../../../controllers/post';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
-import Dialog from '../../../../components/Dialog';
 const NewPostDialog = (props) => {
 	const dispatch = useDispatch();
 	const {
@@ -68,7 +68,12 @@ const NewPostDialog = (props) => {
 	});
 
 	return (
-		<Dialog width={500} open={newPostDialogOpen} onClose={dialogCloseHandler}>
+		<Dialog
+			open={newPostDialogOpen}
+			onClose={dialogCloseHandler}
+			fullWidth
+			maxWidth='sm'
+		>
 			<DialogContent>
 				<Grid container direction='column' spacing={1}>
 					<Grid

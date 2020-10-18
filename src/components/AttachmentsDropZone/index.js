@@ -8,12 +8,12 @@ import {
 	IconButton,
 	ListItemText,
 	Button,
-	DialogContent
+	DialogContent,
+	Dialog
 } from '@material-ui/core';
 import { StyledContainer, StyledList } from './styled-components';
 import { Delete as DeleteIcon } from '@material-ui/icons';
 import fileSizeTranformer from '../../utils/filesize-tranformer';
-import Dialog from '../Dialog';
 
 const AttachmentsDropzone = (props) => {
 	const { dropzoneOpen, setDropzoneOpen, attachments, setAttachments } = props;
@@ -67,7 +67,7 @@ const AttachmentsDropzone = (props) => {
 	};
 
 	return (
-		<Dialog width={600} open={dropzoneOpen} onClose={closeHandler}>
+		<Dialog open={dropzoneOpen} onClose={closeHandler} fullWidth maxWidth='sm'>
 			<DialogContent>
 				<StyledContainer {...getRootProps({ isDragActive })}>
 					<input {...getInputProps()} />

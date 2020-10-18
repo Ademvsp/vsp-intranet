@@ -5,12 +5,12 @@ import {
 	DialogContentText,
 	DialogTitle,
 	Button,
-	DialogContent
+	DialogContent,
+	Dialog
 } from '@material-ui/core/';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import * as messageController from '../controllers/message';
 import { DIALOG, SILENT, SNACKBAR } from './constants';
-import Dialog from '../components/Dialog';
 import Snackbar from '../components/Snackbar';
 
 const MessageHandler = (props) => {
@@ -27,7 +27,12 @@ const MessageHandler = (props) => {
 		switch (feedback) {
 			case DIALOG:
 				messageComponent = (
-					<Dialog open={feedback === DIALOG} onClose={messageClearHandler}>
+					<Dialog
+						open={feedback === DIALOG}
+						onClose={messageClearHandler}
+						fullWidth
+						maxWidth='xs'
+					>
 						<DialogTitle>{title}</DialogTitle>
 						<DialogContent>
 							<DialogContentText>{body}</DialogContentText>

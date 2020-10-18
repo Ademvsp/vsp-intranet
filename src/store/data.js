@@ -3,10 +3,11 @@ import {
 	SET_ACTIVE_USERS,
 	SET_USERS_TOUCHED,
 	SET_POSTS_COUNTER,
-	SET_EVENTS,
 	SET_LOCATIONS,
 	SET_USERS_COUNTER,
-	SET_ACTIVE_USERS_COUNTER
+	SET_ACTIVE_USERS_COUNTER,
+	SET_CUSTOMERS,
+	SET_VENDORS
 } from '../utils/actions';
 
 const initialState = {
@@ -16,8 +17,9 @@ const initialState = {
 	activeUsersCounter: null,
 	usersTouched: false,
 	postsCounter: null,
-	events: null,
-	locations: null
+	locations: null,
+	customers: null,
+	vendors: null
 };
 
 export default (state = initialState, action) => {
@@ -52,15 +54,20 @@ export default (state = initialState, action) => {
 				...state,
 				activeUsersCounter: action.activeUsersCounter
 			};
-		case SET_EVENTS:
-			return {
-				...state,
-				events: action.events
-			};
 		case SET_LOCATIONS:
 			return {
 				...state,
 				locations: action.locations
+			};
+		case SET_CUSTOMERS:
+			return {
+				...state,
+				customers: action.customers
+			};
+		case SET_VENDORS:
+			return {
+				...state,
+				vendors: action.vendors
 			};
 		default:
 			return state;

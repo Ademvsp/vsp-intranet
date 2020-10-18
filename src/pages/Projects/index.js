@@ -1,11 +1,5 @@
 /* eslint-disable react/display-name */
-import {
-	Container,
-	Button,
-	Dialog,
-	DialogContent,
-	Typography
-} from '@material-ui/core';
+import { Container, Button } from '@material-ui/core';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import * as projectsController from '../../controllers/project';
@@ -13,9 +7,10 @@ import Project from '../../models/project';
 import MaterialTable from 'material-table';
 import projectStatusTypes from '../../utils/project-status-types';
 import columnSchema from './column-schema';
-import tableColumns from './table-icons';
+import tableColumns from '../Calendar/table-icons';
 import { useHistory, useParams } from 'react-router-dom';
 import { CREATE, UPDATE } from '../../utils/actions';
+import NewProjectDialog from './NewProjectDialog';
 
 const Projects = (props) => {
 	const { push } = useHistory();
@@ -97,11 +92,11 @@ const Projects = (props) => {
 
 	return (
 		<Fragment>
-			<Dialog open={action === CREATE} onClose={() => push('/projects')}>
-				<DialogContent>
-					<Typography>Hello</Typography>
-				</DialogContent>
-			</Dialog>
+			<NewProjectDialog
+				open={action === CREATE}
+				close={() => push('/projects')}
+				projects={projects}
+			/>
 			<Container disableGutters maxWidth='lg' style={{ height: 500 }}>
 				<MaterialTable
 					isLoading={!projects}

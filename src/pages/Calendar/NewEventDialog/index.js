@@ -9,7 +9,8 @@ import {
 	FormGroup,
 	FormControlLabel,
 	Checkbox,
-	Tooltip
+	Tooltip,
+	Dialog
 } from '@material-ui/core';
 import ActionsBar from '../../../components/ActionsBar';
 import { useFormik } from 'formik';
@@ -26,7 +27,6 @@ import { isAfter, set, addHours } from 'date-fns';
 import { getReadableTitle } from '../../../controllers/event';
 import { StyledTitle } from './styled-components';
 import * as eventController from '../../../controllers/event';
-import Dialog from '../../../components/Dialog';
 import { LONG_DATE, LONG_DATE_TIME } from '../../../utils/date';
 
 const NewEventDialog = (props) => {
@@ -148,7 +148,7 @@ const NewEventDialog = (props) => {
 	}
 
 	return (
-		<Dialog open={open} onClose={closeHandler} width={500}>
+		<Dialog open={open} onClose={closeHandler} fullWidth maxWidth='sm'>
 			<DialogTitle>
 				<StyledTitle>{`Title Preview: ${readableTitle}`}</StyledTitle>
 			</DialogTitle>

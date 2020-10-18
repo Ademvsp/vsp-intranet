@@ -7,7 +7,8 @@ import {
 	FormGroup,
 	FormControlLabel,
 	Checkbox,
-	Tooltip
+	Tooltip,
+	Dialog
 } from '@material-ui/core';
 import eventTypes from '../../../utils/event-types';
 import { useSelector } from 'react-redux';
@@ -16,7 +17,6 @@ import DateFnsUtils from '@date-io/date-fns';
 import { format } from 'date-fns';
 import { getReadableTitle } from '../../../controllers/event';
 import { StyledTitle } from './styled-components';
-import Dialog from '../../../components/Dialog';
 import { LONG_DATE_TIME, LONG_DATE } from '../../../utils/date';
 
 const ViewEventDialog = (props) => {
@@ -49,7 +49,7 @@ const ViewEventDialog = (props) => {
 	}
 
 	return (
-		<Dialog open={open} onClose={() => close()} width={500}>
+		<Dialog open={open} onClose={() => close()} fullWidth maxWidth='sm'>
 			<DialogTitle>
 				<StyledTitle>{readableTitle}</StyledTitle>
 			</DialogTitle>

@@ -3,7 +3,8 @@ import {
 	DialogActions,
 	TextField,
 	Button,
-	DialogContent
+	DialogContent,
+	Dialog
 } from '@material-ui/core';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -11,7 +12,6 @@ import * as postController from '../../../../controllers/post';
 import { useDispatch, useSelector } from 'react-redux';
 import { Autocomplete } from '@material-ui/lab';
 import { useHistory } from 'react-router-dom';
-import Dialog from '../../../../components/Dialog';
 
 const SearchPostDialog = (props) => {
 	const history = useHistory();
@@ -66,7 +66,8 @@ const SearchPostDialog = (props) => {
 		<Dialog
 			open={searchPostDialogOpen}
 			onClose={dialogCloseHandler}
-			width={400}
+			fullWidth
+			maxWidth='xs'
 		>
 			<DialogContent>
 				<TextField

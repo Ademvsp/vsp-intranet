@@ -36,6 +36,11 @@ const ThemeProvider = (props) => {
 				root: {
 					borderRadius: '32px'
 				}
+			},
+			MuiDialogContent: {
+				root: {
+					overflowY: 'hidden'
+				}
 			}
 		}
 	});

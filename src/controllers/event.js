@@ -4,7 +4,7 @@ import {
 	SNACKBAR_VARIANTS,
 	SNACKBAR_SEVERITY
 } from '../utils/constants';
-import { SET_MESSAGE, SET_EVENTS } from '../utils/actions';
+import { SET_MESSAGE } from '../utils/actions';
 import Message from '../models/message';
 import Event from '../models/event';
 import Notification from '../models/notification';
@@ -18,6 +18,45 @@ import {
 } from '../utils/notification-types';
 import { MILLISECONDS, millisecondsToDate } from '../utils/date';
 let eventsListener;
+
+export const getReadableTitle = (data, users) => {
+	const { details, user, type } = data;
+	const eventUser = users.find((u) => u.userId === user);
+	const eventUserName = `${eventUser.firstName} ${eventUser.lastName}`;
+	const {
+		GENERAL,
+		MEETING,
+		ON_SITE,
+		TRAINING,
+		OUT_OF_OFFICE,
+		SICK_LEAVE,
+		ANNUAL_LEAVE,
+		OTHER_LEAVE,
+		PUBLIC_HOLIDAY
+	} = eventTypeNames;
+	switch (type) {
+		case GENERAL.toLowerCase():
+			return details;
+		case MEETING.toLowerCase():
+			return `${eventUserName} in a Meeting${details ? ` (${details})` : ''}`;
+		case ON_SITE.toLowerCase():
+			return `${eventUserName} On Site${details ? ` (${details})` : ''}`;
+		case TRAINING.toLowerCase():
+			return `${eventUserName} in Training${details ? ` (${details})` : ''}`;
+		case OUT_OF_OFFICE.toLowerCase():
+			return `${eventUserName} Out of Office${details ? ` (${details})` : ''}`;
+		case SICK_LEAVE.toLowerCase():
+			return `${eventUserName} on Sick Leave`;
+		case ANNUAL_LEAVE.toLowerCase():
+			return `${eventUserName} on Annual Leave`;
+		case OTHER_LEAVE.toLowerCase():
+			return `${eventUserName} on Other Leave${details ? ` (${details})` : ''}`;
+		case PUBLIC_HOLIDAY.toLowerCase():
+			return `${details} Public Holiday`;
+		default:
+			return details;
+	}
+};
 
 const transformDate = (date, allDay, timezone) => {
 	let transformedDate = millisecondsToDate(
@@ -34,43 +73,8 @@ const transformDate = (date, allDay, timezone) => {
 	return transformedDate;
 };
 
-export const subscribeEventsListener = (start, end) => {
-	return async (dispatch, _getState) => {
-		try {
-			unsubscribeEventsListener();
-			eventsListener = Event.getListener(start, end).onSnapshot((snapshot) => {
-				const events = snapshot.docs.map((doc) => {
-					const metadata = {
-						...doc.data().metadata,
-						createdAt: doc.data().metadata.createdAt.toDate(),
-						updatedAt: doc.data().metadata.updatedAt.toDate()
-					};
-					return new Event({
-						...doc.data(),
-						eventId: doc.id,
-						metadata: metadata,
-						start: doc.data().start.toDate(),
-						end: doc.data().end.toDate()
-					});
-				});
-				dispatch({
-					type: SET_EVENTS,
-					events
-				});
-			});
-		} catch (error) {
-			const message = new Message({
-				title: 'Staff Calendar',
-				body: 'Failed to retrieve events',
-				feedback: DIALOG
-			});
-			dispatch({
-				type: SET_MESSAGE,
-				message
-			});
-			return false;
-		}
-	};
+export const getListener = (start, end) => {
+	return Event.getListener(start, end);
 };
 
 export const addEvent = (values, notifyUsers) => {
@@ -383,49 +387,4 @@ export const deleteEvent = (event, notifyUsers) => {
 			return true;
 		}
 	};
-};
-
-export const getReadableTitle = (data, users) => {
-	const { details, user, type } = data;
-	const eventUser = users.find((u) => u.userId === user);
-	const eventUserName = `${eventUser.firstName} ${eventUser.lastName}`;
-	const {
-		GENERAL,
-		MEETING,
-		ON_SITE,
-		TRAINING,
-		OUT_OF_OFFICE,
-		SICK_LEAVE,
-		ANNUAL_LEAVE,
-		OTHER_LEAVE,
-		PUBLIC_HOLIDAY
-	} = eventTypeNames;
-	switch (type) {
-		case GENERAL.toLowerCase():
-			return details;
-		case MEETING.toLowerCase():
-			return `${eventUserName} in a Meeting${details ? ` (${details})` : ''}`;
-		case ON_SITE.toLowerCase():
-			return `${eventUserName} On Site${details ? ` (${details})` : ''}`;
-		case TRAINING.toLowerCase():
-			return `${eventUserName} in Training${details ? ` (${details})` : ''}`;
-		case OUT_OF_OFFICE.toLowerCase():
-			return `${eventUserName} Out of Office${details ? ` (${details})` : ''}`;
-		case SICK_LEAVE.toLowerCase():
-			return `${eventUserName} on Sick Leave`;
-		case ANNUAL_LEAVE.toLowerCase():
-			return `${eventUserName} on Annual Leave`;
-		case OTHER_LEAVE.toLowerCase():
-			return `${eventUserName} on Other Leave${details ? ` (${details})` : ''}`;
-		case PUBLIC_HOLIDAY.toLowerCase():
-			return `${details} Public Holiday`;
-		default:
-			return details;
-	}
-};
-
-export const unsubscribeEventsListener = () => {
-	if (eventsListener) {
-		eventsListener();
-	}
 };

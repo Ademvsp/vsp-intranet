@@ -52,10 +52,12 @@ export const subscribeUserListener = () => {
 					const locationPopulated = locations.find(
 						(location) => location.locationId === doc.data().location
 					);
+					const workFromHome = doc.data().settings.workFromHome;
 					return new User({
 						...doc.data(),
 						userId: doc.id,
-						location: locationPopulated
+						location: locationPopulated,
+						workFromHome: workFromHome
 					});
 				});
 				actions.push({

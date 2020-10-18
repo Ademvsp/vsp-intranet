@@ -31,14 +31,14 @@ const CalendarContainer = (props) => {
 	const history = useHistory();
 	const [transformedEvents, setTransformedEvents] = useState();
 	const { locations, users } = useSelector((state) => state.dataState);
-	const dispatch = useDispatch();
-	const initalRange = {
-		startOfMonth: startOfMonth(new Date()),
-		start: sub(startOfMonth(new Date()), { months: 1 }),
-		end: add(startOfMonth(new Date()), { months: 1 })
-	};
-	const [range, setRange] = useState(initalRange);
-	const { setNewEventPrefillData, setShowAddEventDialog } = props;
+	// const dispatch = useDispatch();
+	// const [range, setRange] = useState(initalRange);
+	const {
+		setNewEventPrefillData,
+		setShowAddEventDialog,
+		range,
+		setRange
+	} = props;
 
 	useEffect(() => {
 		if (props.events) {
@@ -61,12 +61,13 @@ const CalendarContainer = (props) => {
 			setTransformedEvents(newTransformedEvents);
 		}
 	}, [props.events, users]);
-	useEffect(() => {
-		dispatch(eventController.subscribeEventsListener(range.start, range.end));
-		return () => {
-			eventController.unsubscribeEventsListener();
-		};
-	}, [range, dispatch]);
+
+	// useEffect(() => {
+	// 	dispatch(eventController.subscribeEventsListener(range.start, range.end));
+	// 	return () => {
+	// 		eventController.unsubscribeEventsListener();
+	// 	};
+	// }, [range, dispatch]);
 
 	const navigateChangeHandler = (event) => {
 		const startOfEventMonth = startOfMonth(event);

@@ -3,7 +3,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Grid, Container, Button, CardContent } from '@material-ui/core';
 import ExpandableItems from './ExpandableItems';
 import CalendarContainer from './CalendarContainer';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import eventTypes from '../../utils/event-types';
 import { Add as AddIcon } from '@material-ui/icons';
 import NewEventDialog from './NewEventDialog';
@@ -15,14 +15,29 @@ import queryString from 'query-string';
 import ViewEventDialog from './ViewEventDialog';
 import EditEventDialog from './EditEventDialog';
 import Event from '../../models/event';
+import {
+	format,
+	parse,
+	startOfWeek,
+	getDay,
+	startOfMonth,
+	sub,
+	add
+} from 'date-fns';
 
 export const EventContext = createContext();
 
 const Calendar = (props) => {
+	const initalRange = {
+		startOfMonth: startOfMonth(new Date()),
+		start: sub(startOfMonth(new Date()), { months: 1 }),
+		end: add(startOfMonth(new Date()), { months: 1 })
+	};
+	const dispatch = useDispatch();
 	const history = useHistory();
 	const location = useLocation();
-	const { events } = useSelector((state) => state.dataState);
 	const { authUser } = useSelector((state) => state.authState);
+	const [events, setEvents] = useState();
 	const [newEventPrefillData, setNewEventPrefillData] = useState();
 	const [showAddEventDialog, setShowAddEventDialog] = useState(false);
 	const [filteredEvents, setFilteredEvents] = useState();
@@ -35,6 +50,35 @@ const Calendar = (props) => {
 	const [showViewEventDialog, setShowViewEventDialog] = useState(false);
 	const [showEditEventDialog, setShowEditEventDialog] = useState(false);
 	const [selectedEvent, setSelectedEvent] = useState();
+	const [range, setRange] = useState(initalRange);
+
+	useEffect(() => {
+		let eventsListener;
+		eventsListener = Event.getListener(range.start, range.end).onSnapshot(
+			(snapshot) => {
+				const newEvents = snapshot.docs.map((doc) => {
+					const metadata = {
+						...doc.data().metadata,
+						createdAt: doc.data().metadata.createdAt.toDate(),
+						updatedAt: doc.data().metadata.updatedAt.toDate()
+					};
+					return new Event({
+						...doc.data(),
+						eventId: doc.id,
+						metadata: metadata,
+						start: doc.data().start.toDate(),
+						end: doc.data().end.toDate()
+					});
+				});
+				setEvents(newEvents);
+			}
+		);
+		return () => {
+			if (eventsListener) {
+				eventsListener();
+			}
+		};
+	}, [range]);
 
 	useEffect(() => {
 		if (events) {
@@ -137,6 +181,8 @@ const Calendar = (props) => {
 								events={filteredEvents}
 								setShowAddEventDialog={setShowAddEventDialog}
 								setNewEventPrefillData={setNewEventPrefillData}
+								range={range}
+								setRange={setRange}
 							/>
 						</StyledCalendarCard>
 					</Grid>

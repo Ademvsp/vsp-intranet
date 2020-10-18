@@ -9,11 +9,10 @@ export default class User {
 		firstName,
 		lastName,
 		location,
-		manager,
 		phone,
 		profilePicture,
-		settings,
-		title
+		title,
+		workFromHome
 	}) {
 		this.userId = userId;
 		this.active = active;
@@ -22,11 +21,10 @@ export default class User {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.location = location;
-		this.manager = manager;
 		this.phone = phone;
 		this.profilePicture = profilePicture;
-		this.settings = settings;
 		this.title = title;
+		this.workFromHome = workFromHome;
 	}
 
 	static getListener() {
