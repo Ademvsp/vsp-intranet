@@ -1,6 +1,8 @@
 /* eslint-disable react/display-name */
 import React from 'react';
 import ProjectStatusChip from '../../components/ProjectStatusChip';
+import { SHORT_DATE } from '../../utils/date';
+import { format } from 'date-fns';
 
 const columnSchema = [
 	{
@@ -12,7 +14,8 @@ const columnSchema = [
 	{
 		field: 'createdAt',
 		title: 'Date',
-		type: 'date'
+		type: 'date',
+		render: (rowData) => format(rowData.createdAt, SHORT_DATE)
 	},
 	{
 		field: 'name',

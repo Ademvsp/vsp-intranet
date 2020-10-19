@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import * as eventController from '../../../controllers/event';
 import { Calendar as BigCalendar, dateFnsLocalizer } from 'react-big-calendar';
 import {

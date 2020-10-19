@@ -21,7 +21,7 @@
 		"firebase": "^7.19.1",
 		"formik": "^2.1.5",
 		"linkifyjs": "^2.1.9",
-		"material-table": "1.68.0",
+		"material-table": "1.67.0",
 		"query-string": "^6.13.1",
 		"react": "^16.13.1",
 		"react-big-calendar": "^0.27.0",

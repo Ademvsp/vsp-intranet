@@ -10,7 +10,6 @@ export const subscribeVendorListener = () => {
 		try {
 			unsubscribeVendorListener();
 			vendorsListener = Vendor.getListener().onSnapshot((snapshot) => {
-				console.log(snapshot);
 				const vendors = snapshot.docs.map(
 					(doc) => new Vendor({ vendorId: doc.id, name: doc.data().name })
 				);

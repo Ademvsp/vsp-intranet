@@ -17,7 +17,6 @@ import {
 	NEW_EVENT
 } from '../utils/notification-types';
 import { MILLISECONDS, millisecondsToDate } from '../utils/date';
-let eventsListener;
 
 export const getReadableTitle = (data, users) => {
 	const { details, user, type } = data;
@@ -128,7 +127,6 @@ export const addEvent = (values, notifyUsers) => {
 				message
 			});
 		} catch (error) {
-			console.log(error);
 			const message = new Message({
 				title: 'Staff Calendar',
 				body: 'Failed to add event',
@@ -176,7 +174,6 @@ export const addEvent = (values, notifyUsers) => {
 						notificationId: null,
 						emailData: emailData,
 						link: `/calendar/event?eventId=${newEvent.eventId}`,
-						metadata: null,
 						page: 'Staff Calendar',
 						recipient: transformedRecipient,
 						title: `Staff Calendar "${readableTitle}" created by ${senderFullName}`,
@@ -287,7 +284,6 @@ export const editEvent = (event, values, notifyUsers) => {
 						notificationId: null,
 						emailData: emailData,
 						link: `/calendar/event?eventId=${newEvent.eventId}`,
-						metadata: null,
 						page: 'Staff Calendar',
 						recipient: transformedRecipient,
 						title: `Staff Calendar "${readableTitle}" updated by ${senderFullName}`,
@@ -372,7 +368,6 @@ export const deleteEvent = (event, notifyUsers) => {
 						notificationId: null,
 						emailData: emailData,
 						link: '/calendar',
-						metadata: null,
 						page: 'Staff Calendar',
 						recipient: transformedRecipient,
 						title: `Staff Calendar "${readableTitle}" deleted by ${senderFullName}`,

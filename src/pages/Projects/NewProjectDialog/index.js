@@ -11,7 +11,7 @@ import {
 	ListItemText,
 	MenuItem,
 	TextField,
-	Tooltip
+	withTheme
 } from '@material-ui/core';
 import Autocomplete, {
 	createFilterOptions
@@ -34,7 +34,7 @@ import { LONG_DATE } from '../../../utils/date';
 import ActionsBar from '../../../components/ActionsBar';
 const filter = createFilterOptions();
 
-const NewProjectDialog = (props) => {
+const NewProjectDialog = withTheme((props) => {
 	const dispatch = useDispatch();
 	const { authUser } = useSelector((state) => state.authState);
 	const { customers, vendors, users } = useSelector((state) => state.dataState);
@@ -81,6 +81,7 @@ const NewProjectDialog = (props) => {
 		description: yup.string().label('Description').required(),
 		customer: yup
 			.object()
+			.typeError('Customer a required field')
 			.label('Customer')
 			.required()
 			.test(
@@ -129,9 +130,10 @@ const NewProjectDialog = (props) => {
 			),
 		reminder: yup
 			.date()
+			.typeError('Date is a required field')
 			.label('Reminder Date')
-			.required()
-			.min(startOfDay(new Date())),
+			.required('Date is required')
+			.min(startOfDay(new Date()), 'Date is required'),
 		value: yup.number().label('Value').required().min(0).max(10000000)
 	});
 
@@ -151,6 +153,7 @@ const NewProjectDialog = (props) => {
 		const result = await dispatch(
 			projectController.addProject(values, notifyUsers, attachments)
 		);
+		console.log(result);
 		setLoading(false);
 		if (result) {
 			formik.setValues(initialValues);
@@ -165,9 +168,13 @@ const NewProjectDialog = (props) => {
 		validationSchema: validationSchema
 	});
 
+	const { validateForm } = formik;
+
+	console.log(formik);
+
 	useEffect(() => {
-		formik.validateForm();
-	}, []);
+		validateForm();
+	}, [validateForm]);
 
 	const customerRenderInput = (params) => (
 		<TextField
@@ -179,6 +186,11 @@ const NewProjectDialog = (props) => {
 					? formik.errors.customer
 					: null
 			}
+			FormHelperTextProps={{
+				style: {
+					color: props.theme.palette.error.main
+				}
+			}}
 			InputProps={{
 				...params.InputProps,
 				endAdornment: (
@@ -237,6 +249,11 @@ const NewProjectDialog = (props) => {
 					? formik.errors.vendors
 					: null
 			}
+			FormHelperTextProps={{
+				style: {
+					color: props.theme.palette.error.main
+				}
+			}}
 			InputProps={{
 				...params.InputProps,
 				endAdornment: (
@@ -292,6 +309,11 @@ const NewProjectDialog = (props) => {
 					? formik.errors.owners
 					: null
 			}
+			FormHelperTextProps={{
+				style: {
+					color: props.theme.palette.error.main
+				}
+			}}
 		/>
 	);
 
@@ -312,7 +334,6 @@ const NewProjectDialog = (props) => {
 			</Grid>
 		);
 	};
-	console.log('formik', formik);
 
 	return (
 		<Dialog open={open} onClose={close} fullWidth maxWidth='sm'>
@@ -332,6 +353,11 @@ const NewProjectDialog = (props) => {
 									? formik.errors.name
 									: null
 							}
+							FormHelperTextProps={{
+								style: {
+									color: props.theme.palette.error.main
+								}
+							}}
 						/>
 					</Grid>
 					<Grid item>
@@ -349,6 +375,11 @@ const NewProjectDialog = (props) => {
 									? formik.errors.description
 									: null
 							}
+							FormHelperTextProps={{
+								style: {
+									color: props.theme.palette.error.main
+								}
+							}}
 						/>
 					</Grid>
 					<Grid item container spacing={2}>
@@ -435,6 +466,11 @@ const NewProjectDialog = (props) => {
 										? formik.errors.status
 										: null
 								}
+								FormHelperTextProps={{
+									style: {
+										color: props.theme.palette.error.main
+									}
+								}}
 							>
 								{projectStatusTypes.map((status) => (
 									<MenuItem key={status.statusId} value={status}>
@@ -460,6 +496,11 @@ const NewProjectDialog = (props) => {
 											? formik.errors.reminder
 											: null
 									}
+									FormHelperTextProps={{
+										style: {
+											color: props.theme.palette.error.main
+										}
+									}}
 								/>
 							</MuiPickersUtilsProvider>
 						</Grid>
@@ -476,6 +517,11 @@ const NewProjectDialog = (props) => {
 										? formik.errors.value
 										: null
 								}
+								FormHelperTextProps={{
+									style: {
+										color: props.theme.palette.error.main
+									}
+								}}
 								InputProps={{
 									startAdornment: (
 										<InputAdornment position='start'>$</InputAdornment>
@@ -508,6 +554,6 @@ const NewProjectDialog = (props) => {
 			</DialogActions>
 		</Dialog>
 	);
-};
+});
 
 export default NewProjectDialog;

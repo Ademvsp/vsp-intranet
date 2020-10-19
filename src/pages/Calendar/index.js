@@ -3,7 +3,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Grid, Container, Button, CardContent } from '@material-ui/core';
 import ExpandableItems from './ExpandableItems';
 import CalendarContainer from './CalendarContainer';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import eventTypes from '../../utils/event-types';
 import { Add as AddIcon } from '@material-ui/icons';
 import NewEventDialog from './NewEventDialog';
@@ -15,15 +15,7 @@ import queryString from 'query-string';
 import ViewEventDialog from './ViewEventDialog';
 import EditEventDialog from './EditEventDialog';
 import Event from '../../models/event';
-import {
-	format,
-	parse,
-	startOfWeek,
-	getDay,
-	startOfMonth,
-	sub,
-	add
-} from 'date-fns';
+import { startOfMonth, sub, add } from 'date-fns';
 
 export const EventContext = createContext();
 
@@ -33,7 +25,6 @@ const Calendar = (props) => {
 		start: sub(startOfMonth(new Date()), { months: 1 }),
 		end: add(startOfMonth(new Date()), { months: 1 })
 	};
-	const dispatch = useDispatch();
 	const history = useHistory();
 	const location = useLocation();
 	const { authUser } = useSelector((state) => state.authState);

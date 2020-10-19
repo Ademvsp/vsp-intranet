@@ -1,5 +1,6 @@
 import Message from '../models/message';
 import Project from '../models/project';
+import Notification from '../models/notification';
 import { SET_MESSAGE } from '../utils/actions';
 import {
 	DIALOG,
@@ -7,6 +8,7 @@ import {
 	SNACKBAR_SEVERITY,
 	SNACKBAR_VARIANTS
 } from '../utils/constants';
+import { toCurrency } from '../utils/data-transform';
 import * as fileUtils from '../utils/file-utils';
 import { NEW_PROJECT } from '../utils/notification-types';
 
@@ -22,11 +24,8 @@ export const addProject = (values, notifyUsers, attachments) => {
 			reminder,
 			value
 		} = values;
-		console.log(values);
-
-		// const { authUser } = getState().authState;
+		const { authUser } = getState().authState;
 		const { users } = getState().dataState;
-
 		let newProject;
 		try {
 			newProject = new Project({
@@ -71,7 +70,6 @@ export const addProject = (values, notifyUsers, attachments) => {
 				message
 			});
 		} catch (error) {
-			console.log(error);
 			const message = new Message({
 				title: 'Pojects',
 				body: 'Failed to add project',
@@ -81,7 +79,7 @@ export const addProject = (values, notifyUsers, attachments) => {
 				type: SET_MESSAGE,
 				message
 			});
-			return null;
+			return false;
 		}
 		//Send notification, do nothing if this fails so no error is thrown
 		try {
@@ -94,19 +92,17 @@ export const addProject = (values, notifyUsers, attachments) => {
 				const notifications = [];
 				for (const recipient of recipients) {
 					const senderFullName = `${authUser.firstName} ${authUser.lastName}`;
-					const readableTitle = getReadableTitle(
-						{
-							details: newEvent.details,
-							type: newEvent.type,
-							user: authUser.userId
-						},
-						users
-					);
 					const emailData = {
-						eventTitle: readableTitle,
-						start: newEvent.start.getTime(),
-						end: newEvent.end.getTime(),
-						allDay: newEvent.allDay
+						attachments: newProject.attachments,
+						name: newProject.name,
+						description: newProject.description,
+						customer: newProject.customer.name,
+						vendors: newProject.vendors.map((vendor) => vendor.name).join(', '),
+						owners: owners
+							.map((owner) => `${owner.firstName} ${owner.lastName}`)
+							.join(', '),
+						status: status.name,
+						value: toCurrency(newProject.value)
 					};
 					const transformedRecipient = {
 						userId: recipient.userId,
@@ -116,13 +112,11 @@ export const addProject = (values, notifyUsers, attachments) => {
 						location: recipient.location.locationId
 					};
 					const notification = new Notification({
-						notificationId: null,
 						emailData: emailData,
 						link: `/projects/${newProject.projectId}`,
-						metadata: null,
-						page: 'Staff Calendar',
+						page: 'Projects',
 						recipient: transformedRecipient,
-						title: `Staff Calendar "${readableTitle}" created by ${senderFullName}`,
+						title: `Project "${name.trim()}" created by ${senderFullName}`,
 						type: NEW_PROJECT
 					});
 					notifications.push(notification);
