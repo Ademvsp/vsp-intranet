@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import projectStatusTypes from '../../../utils/project-status-types';
 import * as customerController from '../../../controllers/customer';
 import * as vendorController from '../../../controllers/vendor';
+import * as projectController from '../../../controllers/project';
 import Customer from '../../../models/customer';
 import Vendor from '../../../models/vendor';
 import User from '../../../models/user';
@@ -39,6 +40,7 @@ const NewProjectDialog = (props) => {
 	const { customers, vendors, users } = useSelector((state) => state.dataState);
 	const { open, close, projects } = props;
 	const [notifyUsers, setNotifyUsers] = useState([]);
+	const [attachments, setAttachments] = useState([]);
 	const [loading, setLoading] = useState();
 	//Customer field
 	const [customersOpen, setCustomersOpen] = useState(false);
@@ -125,9 +127,9 @@ const NewProjectDialog = (props) => {
 			.test('isValidArrayElement', 'Status is not valid', (value) =>
 				projectStatusTypes.find((status) => status.statusId === value.statusId)
 			),
-		followUp: yup
+		reminder: yup
 			.date()
-			.label('Follow-up Date')
+			.label('Reminder Date')
 			.required()
 			.min(startOfDay(new Date())),
 		value: yup.number().label('Value').required().min(0).max(10000000)
@@ -140,14 +142,14 @@ const NewProjectDialog = (props) => {
 		vendors: [],
 		owners: [users.find((user) => user.userId === authUser.userId)],
 		status: projectStatusTypes[0],
-		followUp: null,
+		reminder: null,
 		value: 0
 	};
 
 	const submitHandler = async (values) => {
 		setLoading(true);
 		const result = await dispatch(
-			projectController.addProject(values, notifyUsers)
+			projectController.addProject(values, notifyUsers, attachments)
 		);
 		setLoading(false);
 		if (result) {
@@ -446,16 +448,16 @@ const NewProjectDialog = (props) => {
 						<Grid item xs={6}>
 							<MuiPickersUtilsProvider utils={DateFnsUtils}>
 								<DatePicker
-									label='Follow-up date'
-									value={formik.values.followUp}
-									onChange={(value) => formik.setFieldValue('followUp', value)}
-									onBlur={formik.handleBlur('followUp')}
+									label='Reminder date'
+									value={formik.values.reminder}
+									onChange={(value) => formik.setFieldValue('reminder', value)}
+									onBlur={formik.handleBlur('reminder')}
 									format={LONG_DATE}
 									fullWidth={true}
 									minDate={startOfDay(new Date())}
 									helperText={
-										formik.errors.followUp && formik.touched.followUp
-											? formik.errors.followUp
+										formik.errors.reminder && formik.touched.reminder
+											? formik.errors.reminder
 											: null
 									}
 								/>
@@ -492,7 +494,9 @@ const NewProjectDialog = (props) => {
 						setNotifyUsers: setNotifyUsers
 					}}
 					attachments={{
-						enabled: false
+						enabled: true,
+						attachments: attachments,
+						setAttachments: setAttachments
 					}}
 					buttonLoading={loading}
 					loading={loading}

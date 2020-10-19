@@ -22,10 +22,6 @@ const Projects = (props) => {
 	const [selectedProject, setSelectedProject] = useState();
 
 	useEffect(() => {
-		console.log(params);
-	}, [params]);
-
-	useEffect(() => {
 		let projectsListener;
 		if (usersCounter && users) {
 			if (users.length === usersCounter.count) {
@@ -80,10 +76,11 @@ const Projects = (props) => {
 			const status = projectStatusTypes.find(
 				(projectStatusType) => projectStatusType.statusId === project.status
 			);
-			const vendors = project.vendors.join(', ');
+			const vendors = project.vendors.map((vendor) => vendor.name).join(', ');
 			return {
 				...project,
 				createdAt: project.metadata.createdAt.toDate(),
+				customer: project.customer.name,
 				vendors: vendors,
 				status: status
 			};

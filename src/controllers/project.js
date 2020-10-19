@@ -7,6 +7,8 @@ import {
 	SNACKBAR_SEVERITY,
 	SNACKBAR_VARIANTS
 } from '../utils/constants';
+import * as fileUtils from '../utils/file-utils';
+import { NEW_PROJECT } from '../utils/notification-types';
 
 export const addProject = (values, notifyUsers, attachments) => {
 	return async (dispatch, getState) => {
@@ -20,25 +22,40 @@ export const addProject = (values, notifyUsers, attachments) => {
 			reminder,
 			value
 		} = values;
-		const { authUser } = getState().authState;
+		console.log(values);
+
+		// const { authUser } = getState().authState;
 		const { users } = getState().dataState;
+
 		let newProject;
 		try {
-			newProject = new Event({
+			newProject = new Project({
 				projectId: null,
 				attachments: [],
 				comments: [],
-				customer: customer.name.trim(),
+				customer: { ...customer },
 				description: description.trim(),
 				metadata: null,
 				name: name.trim(),
-				owners: owners.map((owner) => owners.userId),
+				owners: owners.map((owner) => owner.userId),
 				reminder: reminder,
 				status: status.statusId,
 				value: value,
-				vendors: vendors.map((vendor) => vendor.name)
+				vendors: vendors.map((vendor) => ({ ...vendor }))
 			});
 			await newProject.save();
+			if (attachments.length > 0) {
+				const uploadedAttachments = await dispatch(
+					fileUtils.upload(
+						attachments,
+						'projectsNew',
+						newProject.projectId,
+						newProject.metadata.createdAt.getTime().toString()
+					)
+				);
+				newProject.attachments = uploadedAttachments;
+				await newProject.save();
+			}
 			const message = new Message({
 				title: 'Projects',
 				body: 'Project added successfully',
@@ -70,7 +87,7 @@ export const addProject = (values, notifyUsers, attachments) => {
 		try {
 			const recipients = users.filter(
 				(user) =>
-					newProject.subscribers.includes(user.userId) ||
+					newProject.owners.includes(user.userId) ||
 					notifyUsers.includes(user.userId)
 			);
 			if (recipients.length > 0) {
@@ -101,12 +118,12 @@ export const addProject = (values, notifyUsers, attachments) => {
 					const notification = new Notification({
 						notificationId: null,
 						emailData: emailData,
-						link: `/calendar/event?eventId=${newEvent.eventId}`,
+						link: `/projects/${newProject.projectId}`,
 						metadata: null,
 						page: 'Staff Calendar',
 						recipient: transformedRecipient,
 						title: `Staff Calendar "${readableTitle}" created by ${senderFullName}`,
-						type: NEW_EVENT
+						type: NEW_PROJECT
 					});
 					notifications.push(notification);
 				}

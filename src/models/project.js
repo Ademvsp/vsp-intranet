@@ -1,4 +1,4 @@
-import firebase from '../utils/firebase';
+import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
 
 export default class Project {
 	constructor({
@@ -27,6 +27,58 @@ export default class Project {
 		this.status = status;
 		this.value = value;
 		this.vendors = vendors;
+	}
+
+	getDatabaseObject() {
+		return {
+			attachments: this.attachments,
+			comments: this.comments,
+			customer: this.customer,
+			description: this.description,
+			metadata: this.metadata,
+			name: this.name,
+			owners: this.owners,
+			reminder: this.reminder,
+			status: this.status,
+			value: this.value,
+			vendors: this.vendors
+		};
+	}
+
+	async save() {
+		const serverTime = await getServerTimeInMilliseconds();
+		if (this.projectId) {
+			this.metadata = {
+				...this.metadata,
+				updatedAt: new Date(serverTime),
+				updatedBy: firebase.auth().currentUser.uid
+			};
+			await firebase
+				.firestore()
+				.collection('projectsNew')
+				.doc(this.projectId)
+				.update(this.getDatabaseObject());
+		} else {
+			this.metadata = {
+				createdAt: new Date(serverTime),
+				createdBy: firebase.auth().currentUser.uid,
+				updatedAt: new Date(serverTime),
+				updatedBy: firebase.auth().currentUser.uid
+			};
+			const docRef = await firebase
+				.firestore()
+				.collection('projectsNew')
+				.add(this.getDatabaseObject());
+			this.projectId = docRef.id;
+			await firebase
+				.firestore()
+				.collection('counters')
+				.doc('projects')
+				.update({
+					count: firebase.firestore.FieldValue.increment(1),
+					documents: firebase.firestore.FieldValue.arrayUnion(this.projectId)
+				});
+		}
 	}
 
 	static getListener(userId) {
