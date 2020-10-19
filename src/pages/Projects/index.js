@@ -9,8 +9,9 @@ import projectStatusTypes from '../../utils/project-status-types';
 import columnSchema from './column-schema';
 import tableColumns from '../Calendar/table-icons';
 import { useHistory, useParams } from 'react-router-dom';
-import { CREATE, UPDATE } from '../../utils/actions';
+import { CREATE, READ, UPDATE } from '../../utils/actions';
 import NewProjectDialog from './NewProjectDialog';
+import EditProjectDialog from './EditProjectDialog';
 
 const Projects = (props) => {
 	const { push } = useHistory();
@@ -20,7 +21,6 @@ const Projects = (props) => {
 	const { users, usersCounter } = useSelector((state) => state.dataState);
 	const [projects, setProjects] = useState();
 	const [selectedProject, setSelectedProject] = useState();
-	const [once, setOnce] = useState(false);
 
 	useEffect(() => {
 		let projectsListener;
@@ -41,7 +41,6 @@ const Projects = (props) => {
 								owners: owners
 							});
 						});
-						console.log('newUpdate');
 						setProjects(newProjects);
 					});
 			}
@@ -55,7 +54,9 @@ const Projects = (props) => {
 
 	useEffect(() => {
 		if (projects) {
-			if (action === UPDATE) {
+			if (action === READ) {
+				setSelectedProject(null);
+			} else if (action === UPDATE) {
 				const newSelectedProject = projects.find(
 					(project) => project.projectId === params.projectId
 				);
@@ -88,25 +89,26 @@ const Projects = (props) => {
 			};
 		});
 	}
-	console.log(data.length);
-
-	useEffect(() => {
-		if (!once && projects) {
-			setTimeout(() => {
-				setOnce(true);
-				const newProjects = [projects[0], ...projects];
-				setProjects(newProjects);
-			}, 3000);
-		}
-	}, [projects, once]);
 
 	return (
 		<Fragment>
-			<NewProjectDialog
-				open={action === CREATE}
-				close={() => push('/projects')}
-				projects={projects}
-			/>
+			{projects && (
+				<NewProjectDialog
+					open={action === CREATE}
+					close={() => push('/projects')}
+					projectNames={projects.map((project) => project.name)}
+				/>
+			)}
+			{selectedProject && projects && (
+				<EditProjectDialog
+					open={!!selectedProject}
+					close={() => push('/projects')}
+					projectNames={projects
+						.map((project) => project.name)
+						.filter((projectName) => projectName !== selectedProject.name)}
+					project={selectedProject}
+				/>
+			)}
 			<Container disableGutters maxWidth='lg' style={{ height: 500 }}>
 				<MaterialTable
 					isLoading={!projects}

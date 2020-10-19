@@ -29,16 +29,15 @@ import Vendor from '../../../models/vendor';
 import User from '../../../models/user';
 import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
-import { startOfDay } from 'date-fns';
 import { LONG_DATE } from '../../../utils/date';
 import ActionsBar from '../../../components/ActionsBar';
 const filter = createFilterOptions();
 
-const NewProjectDialog = withTheme((props) => {
+const EditProjectDialog = withTheme((props) => {
 	const dispatch = useDispatch();
 	const { authUser } = useSelector((state) => state.authState);
 	const { customers, vendors, users } = useSelector((state) => state.dataState);
-	const { open, close, projectNames } = props;
+	const { open, close, projectNames, project } = props;
 	const [notifyUsers, setNotifyUsers] = useState([]);
 	const [attachments, setAttachments] = useState([]);
 	const [loading, setLoading] = useState();
@@ -80,30 +79,19 @@ const NewProjectDialog = withTheme((props) => {
 			.typeError('Customer a required field')
 			.label('Customer')
 			.required()
-			.test('isValidType', 'Customer is not valid', (value) => {
-				if (!customers) {
-					return false;
-				}
-				return (
-					value instanceof Customer &&
-					customers.find((customer) => customer.customerId === value.customerId)
-				);
-			}),
+			.test(
+				'isValidType',
+				'Customer is not valid',
+				(value) => value instanceof Customer
+			),
 		vendors: yup
 			.array()
 			.label('Vendors')
 			.required()
 			.min(1)
 			.test('isValidArrayElement', 'Vendors are not valid', (value) => {
-				if (!vendors) {
-					return false;
-				}
 				return value.every(
-					(selectedVendor) =>
-						selectedVendor instanceof Vendor &&
-						vendors.find(
-							(vendor) => vendor.vendorId === selectedVendor.vendorId
-						)
+					(selectedVendor) => selectedVendor instanceof Vendor
 				);
 			}),
 		owners: yup
@@ -132,20 +120,21 @@ const NewProjectDialog = withTheme((props) => {
 			.date()
 			.typeError('Date is a required field')
 			.label('Reminder Date')
-			.required()
-			.min(startOfDay(new Date())),
+			.required(),
 		value: yup.number().label('Value').required().min(0).max(10000000)
 	});
 
 	const initialValues = {
-		name: '',
-		description: '',
-		customer: null,
-		vendors: [],
-		owners: [users.find((user) => user.userId === authUser.userId)],
-		status: projectStatusTypes[0],
-		reminder: null,
-		value: 0
+		name: project.name,
+		description: project.description,
+		customer: new Customer({ ...project.customer }),
+		vendors: project.vendors.map((vendor) => new Vendor({ ...vendor })),
+		owners: project.owners,
+		status: projectStatusTypes.find(
+			(statusType) => statusType.statusId === project.status
+		),
+		reminder: new Date(project.reminder.toDate()),
+		value: project.value
 	};
 
 	const submitHandler = async (values) => {
@@ -334,7 +323,7 @@ const NewProjectDialog = withTheme((props) => {
 
 	return (
 		<Dialog open={open} onClose={close} fullWidth maxWidth='sm'>
-			<DialogTitle>New Project</DialogTitle>
+			<DialogTitle>Edit Project</DialogTitle>
 			<DialogContent>
 				<Grid container direction='column' spacing={1}>
 					<Grid item>
@@ -437,10 +426,13 @@ const NewProjectDialog = withTheme((props) => {
 								}
 								value={formik.values.owners}
 								onChange={(_event, value) => {
+									const fixedOwners = initialValues.owners.filter(
+										(owner) => owner.userId !== authUser.userId
+									);
 									const newValue = [
-										...initialValues.owners,
+										...fixedOwners,
 										...value.filter(
-											(option) => initialValues.owners.indexOf(option) === -1
+											(option) => fixedOwners.indexOf(option) === -1
 										)
 									];
 									formik.setFieldValue('owners', newValue, true);
@@ -487,7 +479,6 @@ const NewProjectDialog = withTheme((props) => {
 									onBlur={formik.handleBlur('reminder')}
 									format={LONG_DATE}
 									fullWidth={true}
-									minDate={startOfDay(new Date())}
 									helperText={
 										formik.errors.reminder && formik.touched.reminder
 											? formik.errors.reminder
@@ -553,4 +544,4 @@ const NewProjectDialog = withTheme((props) => {
 	);
 });
 
-export default NewProjectDialog;
+export default EditProjectDialog;
