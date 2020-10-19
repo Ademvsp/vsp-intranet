@@ -24,8 +24,6 @@ const AttachmentsDropzone = (props) => {
 			setFiles(attachments);
 		}
 	}, [dropzoneOpen, attachments]);
-	console.log(attachments);
-	console.log(files);
 
 	const onDrop = useCallback(
 		(acceptedFiles) => {

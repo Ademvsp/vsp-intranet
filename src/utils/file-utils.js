@@ -8,11 +8,37 @@ import {
 import Message from '../models/message';
 import { DIALOG } from './constants';
 
-export const upload = (files, collection, collectionId, folder) => {
+export const compareAndDelete = async ({
+	oldAttachments,
+	newAttachments,
+	collection,
+	collectionId,
+	folder
+}) => {
+	const promises = [];
+	for (const oldAttachment of oldAttachments) {
+		const keepAttachment = newAttachments.find((newAttachment) => {
+			const nameMatch = newAttachment.name === oldAttachment.name;
+			const linkMatch = newAttachment.link === oldAttachment.link;
+			return nameMatch && linkMatch;
+		});
+		if (!keepAttachment) {
+			promises.push(
+				firebase
+					.storage()
+					.ref(`${collection}/${collectionId}/${folder}/${oldAttachment.name}`)
+					.delete()
+			);
+		}
+	}
+	await Promise.all(promises);
+	return newAttachments;
+};
+
+export const upload = ({ files, collection, collectionId, folder }) => {
 	return async (dispatch, getState) => {
 		try {
 			const promises = [];
-			const uploadedFiles = [];
 			const filesProgress = files.map((file) => {
 				return {
 					name: file.name,
@@ -50,18 +76,17 @@ export const upload = (files, collection, collectionId, folder) => {
 							() => reject(),
 							async () => {
 								const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
-								uploadedFiles.push({
+								resolve({
 									link: downloadUrl,
 									name: file.name,
 									size: file.size
 								});
-								resolve();
 							}
 						);
 					})
 				);
 			}
-			await Promise.all(promises);
+			const uploadedFiles = await Promise.all(promises);
 			dispatch({ type: FINISH_UPLOAD });
 			return uploadedFiles;
 		} catch (error) {

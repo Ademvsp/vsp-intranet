@@ -218,11 +218,12 @@ export const uploadPicture = (file) => {
 	return async (dispatch, getState) => {
 		try {
 			const { authUser } = getState().authState;
-			const profilePicture = await pictureUtils.upload(
-				`users/${authUser.userId}/profilePicture`,
-				file,
-				200
-			);
+			const profilePicture = await pictureUtils.upload({
+				file: file,
+				collection: 'users',
+				collectionId: authUser.userId,
+				folder: 'profilePicture'
+			});
 			const newAuthUser = new AuthUser({
 				...authUser,
 				profilePicture: profilePicture

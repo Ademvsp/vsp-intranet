@@ -67,12 +67,12 @@ export const addPost = (values, attachments, notifyUsers) => {
 			await newPost.save();
 			if (attachments.length > 0) {
 				const uploadedAttachments = await dispatch(
-					fileUtils.upload(
-						attachments,
-						'posts',
-						newPost.postId,
-						newPost.metadata.createdAt.getTime().toString()
-					)
+					fileUtils.upload({
+						files: attachments,
+						collection: 'posts',
+						collectionId: newPost.postId,
+						folder: newPost.metadata.createdAt.getTime().toString()
+					})
 				);
 				newPost.attachments = uploadedAttachments;
 				await newPost.save();
@@ -156,12 +156,12 @@ export const addComment = (post, body, attachments, notifyUsers) => {
 			uploadedAttachments = [];
 			if (attachments.length > 0) {
 				uploadedAttachments = await dispatch(
-					fileUtils.upload(
-						attachments,
-						'posts',
-						post.postId,
-						serverTime.toString()
-					)
+					fileUtils.upload({
+						files: attachments,
+						collection: 'posts',
+						collectionId: post.postId,
+						folder: serverTime.toString()
+					})
 				);
 			}
 			await post.addComment(body.trim(), uploadedAttachments, serverTime);

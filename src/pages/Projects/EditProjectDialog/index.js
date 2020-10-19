@@ -137,10 +137,12 @@ const EditProjectDialog = withTheme((props) => {
 		value: project.value
 	};
 
+	const closeHandler = () => {};
+
 	const submitHandler = async (values) => {
 		setLoading(true);
 		const result = await dispatch(
-			projectController.addProject(values, notifyUsers, attachments)
+			projectController.editProject(project, values, notifyUsers, attachments)
 		);
 		setLoading(false);
 		if (result) {
@@ -322,7 +324,12 @@ const EditProjectDialog = withTheme((props) => {
 	};
 
 	return (
-		<Dialog open={open} onClose={close} fullWidth maxWidth='sm'>
+		<Dialog
+			open={open}
+			onClose={loading ? null : close}
+			fullWidth
+			maxWidth='sm'
+		>
 			<DialogTitle>Edit Project</DialogTitle>
 			<DialogContent>
 				<Grid container direction='column' spacing={1}>
@@ -537,7 +544,7 @@ const EditProjectDialog = withTheme((props) => {
 					isValid={formik.isValid}
 					onClick={formik.handleSubmit}
 					tooltipPlacement='top'
-					actionButtonText='Submit'
+					actionButtonText='Update'
 				/>
 			</DialogActions>
 		</Dialog>
