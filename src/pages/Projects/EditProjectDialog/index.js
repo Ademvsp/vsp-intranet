@@ -39,7 +39,7 @@ const EditProjectDialog = withTheme((props) => {
 	const { customers, vendors, users } = useSelector((state) => state.dataState);
 	const { open, close, projectNames, project } = props;
 	const [notifyUsers, setNotifyUsers] = useState([]);
-	const [attachments, setAttachments] = useState([]);
+	const [attachments, setAttachments] = useState(project.attachments);
 	const [loading, setLoading] = useState();
 	//Customer field
 	const [customersOpen, setCustomersOpen] = useState(false);
@@ -133,7 +133,7 @@ const EditProjectDialog = withTheme((props) => {
 		status: projectStatusTypes.find(
 			(statusType) => statusType.statusId === project.status
 		),
-		reminder: new Date(project.reminder.toDate()),
+		reminder: new Date(project.reminder),
 		value: project.value
 	};
 

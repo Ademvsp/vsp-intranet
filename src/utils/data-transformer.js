@@ -1,4 +1,13 @@
-export default (b) => {
+export const toCurrency = (value) => {
+	return value.toLocaleString('en-US', {
+		style: 'currency',
+		currency: 'USD',
+		minimumFractionDigits: 0,
+		maximumFractionDigits: 0
+	});
+};
+
+export const toReadableFilesize = (b) => {
 	const KB = 1024;
 	const MB = Math.pow(KB, 2);
 	const GB = Math.pow(KB, 3);

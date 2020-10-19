@@ -8,7 +8,7 @@ import {
 	SNACKBAR_SEVERITY,
 	SNACKBAR_VARIANTS
 } from '../utils/constants';
-import { toCurrency } from '../utils/data-transform';
+import { toCurrency } from '../utils/data-transformer';
 import * as fileUtils from '../utils/file-utils';
 import { NEW_PROJECT } from '../utils/notification-types';
 

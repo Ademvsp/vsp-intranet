@@ -35,10 +35,17 @@ const Projects = (props) => {
 								.owners.map((owner) =>
 									users.find((user) => user.userId === owner)
 								);
+							const metadata = {
+								...doc.data().metadata,
+								createdAt: doc.data().metadata.createdAt.toDate(),
+								updatedAt: doc.data().metadata.updatedAt.toDate()
+							};
 							return new Project({
 								...doc.data(),
 								projectId: doc.id,
-								owners: owners
+								owners: owners,
+								metadata: metadata,
+								reminder: doc.data().reminder.toDate()
 							});
 						});
 						setProjects(newProjects);
@@ -82,7 +89,7 @@ const Projects = (props) => {
 			const vendors = project.vendors.map((vendor) => vendor.name).join(', ');
 			return {
 				...project,
-				createdAt: project.metadata.createdAt.toDate(),
+				createdAt: project.metadata.createdAt,
 				customer: project.customer.name,
 				vendors: vendors,
 				status: status

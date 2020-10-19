@@ -13,7 +13,7 @@ import {
 } from '@material-ui/core';
 import { StyledContainer, StyledList } from './styled-components';
 import { Delete as DeleteIcon } from '@material-ui/icons';
-import fileSizeTranformer from '../../utils/filesize-tranformer';
+import { toReadableFilesize } from '../../utils/data-transformer';
 
 const AttachmentsDropzone = (props) => {
 	const { dropzoneOpen, setDropzoneOpen, attachments, setAttachments } = props;
@@ -24,6 +24,8 @@ const AttachmentsDropzone = (props) => {
 			setFiles(attachments);
 		}
 	}, [dropzoneOpen, attachments]);
+	console.log(attachments);
+	console.log(files);
 
 	const onDrop = useCallback(
 		(acceptedFiles) => {
@@ -66,6 +68,12 @@ const AttachmentsDropzone = (props) => {
 		setFiles(newFiles);
 	};
 
+	const attachmentClickHandler = (file) => {
+		if (file.link) {
+			window.open(file.link, '_blank', 'noreferrer');
+		}
+	};
+
 	return (
 		<Dialog open={dropzoneOpen} onClose={closeHandler} fullWidth maxWidth='sm'>
 			<DialogContent>
@@ -76,25 +84,24 @@ const AttachmentsDropzone = (props) => {
 				</StyledContainer>
 				{files.length > 0 ? (
 					<StyledList>
-						{files.map((file, index) => {
-							return (
-								<Fragment key={file.name}>
-									<ListItem>
-										<ListItemText
-											primary={file.name}
-											secondary={fileSizeTranformer(file.size)}
-										/>
-										<ListItemSecondaryAction>
-											<IconButton
-												onClick={deleteClickHandler.bind(this, index)}
-											>
-												<DeleteIcon />
-											</IconButton>
-										</ListItemSecondaryAction>
-									</ListItem>
-								</Fragment>
-							);
-						})}
+						{files.map((file, index) => (
+							<Fragment key={file.name}>
+								<ListItem
+									button={!!file.link}
+									onClick={attachmentClickHandler.bind(this, file)}
+								>
+									<ListItemText
+										primary={file.name}
+										secondary={file.size ? toReadableFilesize(file.size) : null}
+									/>
+									<ListItemSecondaryAction>
+										<IconButton onClick={deleteClickHandler.bind(this, index)}>
+											<DeleteIcon />
+										</IconButton>
+									</ListItemSecondaryAction>
+								</ListItem>
+							</Fragment>
+						))}
 					</StyledList>
 				) : null}
 			</DialogContent>
