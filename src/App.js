@@ -15,6 +15,7 @@ import Calendar from './pages/Calendar';
 import StaffDirectory from './pages/StaffDirectory';
 import Projects from './pages/Projects';
 import { READ, READ_PAGE, READ_POST, UPDATE } from './utils/actions';
+import Dashboard from './pages/Dashboard';
 
 const App = (props) => {
 	const dispatch = useDispatch();
@@ -69,6 +70,9 @@ const App = (props) => {
 		if (authState.authUser && dataState.users) {
 			children = (
 				<Switch>
+					<Route path='/dashboard'>
+						<Dashboard />
+					</Route>
 					<Route path='/account'>
 						<Account />
 					</Route>
@@ -78,6 +82,7 @@ const App = (props) => {
 					<Route path={'/newsfeed/:postId'}>
 						<NewsFeed action={READ_POST} />
 					</Route>
+					<Redirect from='/newsfeed' to='/newsfeed/page/1' />
 					<Route path='/calendar/:eventId'>
 						<Calendar action={UPDATE} />
 					</Route>
@@ -94,8 +99,7 @@ const App = (props) => {
 						<Projects action={READ} />
 					</Route>
 					<Redirect from='/login' to='/' />
-					<Redirect from='/newsfeed' to='/newsfeed/page/1' />
-					<Redirect from='/' to='/newsfeed' />
+					<Redirect from='/' to='/dashboard' />
 				</Switch>
 			);
 		}
