@@ -68,18 +68,10 @@ const Projects = (props) => {
 				const newSelectedProject = projects.find(
 					(project) => project.projectId === params.projectId
 				);
-				if (newSelectedProject) {
-					setSelectedProject(newSelectedProject);
-				} else {
-					push('/projects');
-				}
+				setSelectedProject(newSelectedProject);
 			}
 		}
-	}, [action, projects, params, push]);
-
-	// const rowClickHandler = (event, rowData) =>
-	// 	push(`/projects/${rowData.projectId}`);
-	// };
+	}, [action, projects, params.projectId]);
 
 	let data = [];
 	if (projects) {
@@ -110,7 +102,7 @@ const Projects = (props) => {
 			{selectedProject && projects && (
 				<EditProjectDialog
 					open={!!selectedProject}
-					close={() => setSelectedProject(null)}
+					close={() => push('/projects')}
 					projectNames={projects
 						.map((project) => project.name)
 						.filter((projectName) => projectName !== selectedProject.name)}
@@ -126,7 +118,7 @@ const Projects = (props) => {
 							variant='contained'
 							color='primary'
 							fullWidth
-							onClick={() => push('/projects/create')}
+							onClick={() => setNewProjectDialogOpen(true)}
 						>
 							Add Project
 						</Button>
