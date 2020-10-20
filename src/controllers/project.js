@@ -10,7 +10,12 @@ import {
 } from '../utils/constants';
 import { toCurrency } from '../utils/data-transformer';
 import * as fileUtils from '../utils/file-utils';
-import { NEW_PROJECT } from '../utils/notification-types';
+import {
+	EDIT_PROJECT,
+	NEW_PROJECT,
+	NEW_PROJECT_COMMENT
+} from '../utils/notification-types';
+import { getServerTimeInMilliseconds } from '../utils/firebase';
 
 export const addProject = (values, notifyUsers, attachments) => {
 	return async (dispatch, getState) => {
@@ -249,7 +254,81 @@ export const editProject = (project, values, notifyUsers, attachments) => {
 						page: 'Projects',
 						recipient: transformedRecipient,
 						title: `Project "${name.trim()}" updated by ${senderFullName}`,
-						type: NEW_PROJECT
+						type: EDIT_PROJECT
+					});
+					notifications.push(notification);
+				}
+				await Notification.saveAll(notifications);
+			}
+			return true;
+		} catch (error) {
+			return true;
+		}
+	};
+};
+
+export const addComment = (project, body, attachments, notifyUsers) => {
+	return async (dispatch, getState) => {
+		const { authUser } = getState().authState;
+		const { users } = getState().dataState;
+		let uploadedAttachments;
+		try {
+			const serverTime = await getServerTimeInMilliseconds();
+			uploadedAttachments = [];
+			if (attachments.length > 0) {
+				uploadedAttachments = await dispatch(
+					fileUtils.upload({
+						files: attachments,
+						collection: 'projectsNew',
+						collectionId: project.projectId,
+						folder: serverTime.toString()
+					})
+				);
+			}
+			await project.addComment(body.trim(), uploadedAttachments, serverTime);
+		} catch (error) {
+			const message = new Message({
+				title: 'Projects',
+				body: 'Comment failed to post',
+				feedback: DIALOG
+			});
+			dispatch({
+				type: SET_MESSAGE,
+				message
+			});
+			return false;
+		}
+		//Send notification, do nothing if this fails so no error is thrown
+		try {
+			const recipients = users.filter(
+				(user) =>
+					project.owners.map((owner) => owner.userId).includes(user.userId) ||
+					notifyUsers.includes(user.userId)
+			);
+			if (recipients.length > 0) {
+				const notifications = [];
+				for (const recipient of recipients) {
+					const senderFullName = `${authUser.firstName} ${authUser.lastName}`;
+					const emailData = {
+						commentBody: body.trim(),
+						attachments: uploadedAttachments,
+						name: project.name
+					};
+					const transformedRecipient = {
+						userId: recipient.userId,
+						email: recipient.email,
+						firstName: recipient.firstName,
+						lastName: recipient.lastName,
+						location: recipient.location.locationId
+					};
+					const notification = new Notification({
+						notificationId: null,
+						emailData: emailData,
+						link: `/projects/${project.projectId}`,
+						page: 'Projects',
+						recipient: transformedRecipient,
+						title: `Project "${project.name}" New comment from ${senderFullName}`,
+						type: NEW_PROJECT_COMMENT
 					});
 					notifications.push(notification);
 				}

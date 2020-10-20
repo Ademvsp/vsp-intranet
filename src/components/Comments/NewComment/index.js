@@ -1,17 +1,13 @@
 import React, { useState } from 'react';
 import { StyledContainer } from './styled-components';
 import { ListItemAvatar, Grid } from '@material-ui/core';
-import Avatar from '../../../../../components/Avatar';
+import Avatar from '../../Avatar';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useDispatch } from 'react-redux';
-import * as postController from '../../../../../controllers/post';
-import BalloonEditorWrapper from '../../../../../components/BalloonEditorWrapper';
-import ActionsBar from '../../../../../components/ActionsBar';
+import BalloonEditorWrapper from '../../BalloonEditorWrapper';
+import ActionsBar from '../../ActionsBar';
 
 const NewComment = (props) => {
-	const dispatch = useDispatch();
-	const { authUser, post } = props;
 	const [uploading, setUploading] = useState();
 	const [loading, setLoading] = useState(false);
 	const [attachments, setAttachments] = useState([]);
@@ -26,8 +22,10 @@ const NewComment = (props) => {
 
 	const submitHandler = async (values) => {
 		setLoading(true);
-		const result = await dispatch(
-			postController.addComment(post, values.body, attachments, notifyUsers)
+		const result = await props.submitHandler(
+			values.body,
+			attachments,
+			notifyUsers
 		);
 		setLoading(false);
 		if (result) {
@@ -47,7 +45,7 @@ const NewComment = (props) => {
 	return (
 		<StyledContainer>
 			<ListItemAvatar>
-				<Avatar user={authUser} />
+				<Avatar user={props.authUser} />
 			</ListItemAvatar>
 			<Grid container direction='column' spacing={1}>
 				<Grid item>

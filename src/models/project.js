@@ -81,6 +81,28 @@ export default class Project {
 		}
 	}
 
+	async addComment(body, attachments, serverTime) {
+		const comment = {
+			attachments: attachments,
+			body: body,
+			metadata: {
+				createdAt: new Date(serverTime),
+				createdBy: firebase.auth().currentUser.uid,
+				updatedAt: new Date(serverTime),
+				updatedBy: firebase.auth().currentUser.uid
+			},
+			user: firebase.auth().currentUser.uid
+		};
+		await firebase
+			.firestore()
+			.collection('projectsNew')
+			.doc(this.projectId)
+			.update({
+				comments: firebase.firestore.FieldValue.arrayUnion(comment)
+			});
+		this.comments.push(comment);
+	}
+
 	static getListener(userId) {
 		return firebase
 			.firestore()

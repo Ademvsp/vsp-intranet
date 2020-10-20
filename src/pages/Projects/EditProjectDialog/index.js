@@ -1,6 +1,7 @@
 import {
 	Avatar,
 	CircularProgress,
+	Collapse,
 	Dialog,
 	DialogActions,
 	DialogContent,
@@ -31,6 +32,7 @@ import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { LONG_DATE } from '../../../utils/date';
 import ActionsBar from '../../../components/ActionsBar';
+import Comments from '../../../components/Comments';
 const filter = createFilterOptions();
 
 const EditProjectDialog = withTheme((props) => {
@@ -38,6 +40,8 @@ const EditProjectDialog = withTheme((props) => {
 	const { authUser } = useSelector((state) => state.authState);
 	const { customers, vendors, users } = useSelector((state) => state.dataState);
 	const { open, close, projectNames, project } = props;
+
+	const [showComments, setShowComments] = useState(false);
 	const [notifyUsers, setNotifyUsers] = useState([]);
 	const [attachments, setAttachments] = useState(project.attachments);
 	const [loading, setLoading] = useState();
@@ -137,8 +141,6 @@ const EditProjectDialog = withTheme((props) => {
 		value: project.value
 	};
 
-	const closeHandler = () => {};
-
 	const submitHandler = async (values) => {
 		setLoading(true);
 		const result = await dispatch(
@@ -149,6 +151,13 @@ const EditProjectDialog = withTheme((props) => {
 			formik.setValues(initialValues);
 			close();
 		}
+	};
+
+	const newCommentHandler = async (body, attachments, notifyUsers) => {
+		const result = await dispatch(
+			projectController.addComment(project, body, attachments, notifyUsers)
+		);
+		return result;
 	};
 
 	const formik = useFormik({
@@ -539,6 +548,11 @@ const EditProjectDialog = withTheme((props) => {
 						attachments: attachments,
 						setAttachments: setAttachments
 					}}
+					comments={{
+						enabled: true,
+						count: project.comments.length,
+						clickHandler: () => setShowComments((prevState) => !prevState)
+					}}
 					buttonLoading={loading}
 					loading={loading}
 					isValid={formik.isValid}
@@ -547,6 +561,13 @@ const EditProjectDialog = withTheme((props) => {
 					actionButtonText='Update'
 				/>
 			</DialogActions>
+			<Collapse in={showComments} timeout='auto'>
+				<Comments
+					authUser={authUser}
+					submitHandler={newCommentHandler}
+					comments={[...project.comments].reverse()}
+				/>
+			</Collapse>
 		</Dialog>
 	);
 });

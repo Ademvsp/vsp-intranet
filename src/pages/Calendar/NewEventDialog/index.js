@@ -259,9 +259,6 @@ const NewEventDialog = (props) => {
 						notifyUsers: notifyUsers,
 						setNotifyUsers: setNotifyUsers
 					}}
-					attachments={{
-						enabled: false
-					}}
 					buttonLoading={loading}
 					loading={loading}
 					isValid={formik.isValid}

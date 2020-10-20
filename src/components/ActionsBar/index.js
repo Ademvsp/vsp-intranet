@@ -4,7 +4,8 @@ import ProgressWithLabel from '../ProgressWithLabel';
 import { useSelector } from 'react-redux';
 import {
 	Attachment as AttachmentIcon,
-	People as PeopleIcon
+	People as PeopleIcon,
+	Comment as CommentIcon
 } from '@material-ui/icons';
 import NotifyUsersList from '../NotifyUsersList';
 import AttachmentsDropzone from '../AttachmentsDropZone';
@@ -17,6 +18,7 @@ const ActionsBar = (props) => {
 	const {
 		notifications,
 		attachments,
+		comments,
 		buttonLoading,
 		loading,
 		isValid,
@@ -49,7 +51,18 @@ const ActionsBar = (props) => {
 					justify='flex-end'
 					alignItems='center'
 				>
-					{notifications.enabled && (
+					{comments?.enabled && (
+						<Grid item>
+							<Tooltip title='Comments' placement={tooltipPlacement}>
+								<IconButton disabled={loading} onClick={comments.clickHandler}>
+									<Badge badgeContent={comments.count} color='secondary'>
+										<CommentIcon />
+									</Badge>
+								</IconButton>
+							</Tooltip>
+						</Grid>
+					)}
+					{notifications?.enabled && (
 						<Grid item>
 							<Tooltip title='Notify staff' placement={tooltipPlacement}>
 								<IconButton
@@ -72,7 +85,7 @@ const ActionsBar = (props) => {
 							/>
 						</Grid>
 					)}
-					{attachments.enabled && (
+					{attachments?.enabled && (
 						<Grid item>
 							<Tooltip title='Attachments' placement={tooltipPlacement}>
 								<IconButton

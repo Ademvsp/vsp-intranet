@@ -44,7 +44,7 @@ const BalloonEditorWrapper = (props) => {
 				}}
 				disabled={loading}
 				config={{
-					placeholder: 'Write a post...',
+					placeholder: 'Write a comment...',
 					toolbar: {
 						items: [
 							'heading',

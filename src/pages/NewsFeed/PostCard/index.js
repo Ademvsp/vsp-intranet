@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Collapse, Typography, IconButton } from '@material-ui/core';
-import { useSelector } from 'react-redux';
-import * as postContoller from '../../../controllers/post';
+import { useDispatch, useSelector } from 'react-redux';
+import * as postController from '../../../controllers/post';
 import { format } from 'date-fns';
 import {
 	StyledCardHeader,
@@ -14,7 +14,7 @@ import {
 	Comment as CommentIcon,
 	MoreVert as MoreVertIcon
 } from '@material-ui/icons';
-import Comments from './Comments';
+import Comments from '../../../components/Comments';
 import { Skeleton } from '@material-ui/lab';
 import InnerHtml from '../../../components/InnerHtml';
 import AttachmentsContainer from '../../../components/AttachmentsContainer';
@@ -25,6 +25,7 @@ import Card from '../../../components/Card';
 import { LONG_DATE_TIME } from '../../../utils/date';
 
 const PostCard = (props) => {
+	const dispatch = useDispatch();
 	const scrollRef = useRef();
 	const { authUser } = useSelector((state) => state.authState);
 	const { users } = useSelector((state) => state.dataState);
@@ -47,7 +48,7 @@ const PostCard = (props) => {
 	useEffect(() => {
 		let postListener;
 		const asyncFunction = async () => {
-			postListener = postContoller.getListener(postId).onSnapshot((doc) => {
+			postListener = postController.getListener(postId).onSnapshot((doc) => {
 				const newPost = new Post({
 					...doc.data(),
 					postId: doc.id
@@ -89,6 +90,13 @@ const PostCard = (props) => {
 			</Card>
 		);
 	}
+
+	const newCommentHandler = async (body, attachments, notifyUsers) => {
+		const result = await dispatch(
+			postController.addComment(post, body, attachments, notifyUsers)
+		);
+		return result;
+	};
 
 	const commentsClickHandler = () => {
 		setShowComments((prevState) => !prevState);
@@ -137,7 +145,7 @@ const PostCard = (props) => {
 			<Collapse in={showComments} timeout='auto'>
 				<Comments
 					authUser={authUser}
-					post={post}
+					submitHandler={newCommentHandler}
 					comments={[...post.comments].reverse()}
 				/>
 			</Collapse>

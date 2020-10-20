@@ -10,7 +10,7 @@ import {
 } from '../utils/constants';
 import { SET_MESSAGE, SET_POSTS_COUNTER } from '../utils/actions';
 import * as fileUtils from '../utils/file-utils';
-import { NEW_COMMENT, NEW_POST } from '../utils/notification-types';
+import { NEW_POST_COMMENT, NEW_POST } from '../utils/notification-types';
 import { getServerTimeInMilliseconds } from '../utils/firebase';
 let postsCounterListener;
 
@@ -207,7 +207,7 @@ export const addComment = (post, body, attachments, notifyUsers) => {
 						page: 'News Feed',
 						recipient: transformedRecipient,
 						title: `News Feed "${post.title}" New comment from ${senderFullName}`,
-						type: NEW_COMMENT
+						type: NEW_POST_COMMENT
 					});
 					notifications.push(notification);
 				}

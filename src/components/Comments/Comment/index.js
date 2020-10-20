@@ -2,11 +2,11 @@ import React from 'react';
 import { ListItemAvatar, ListItemText } from '@material-ui/core';
 import { format } from 'date-fns';
 import { StyledListHeader, StyledListItem } from './styled-components';
-import InnerHtml from '../../../../../components/InnerHtml';
-import AttachmentsContainer from '../../../../../components/AttachmentsContainer';
-import Avatar from '../../../../../components/Avatar';
+import InnerHtml from '../../InnerHtml';
+import AttachmentsContainer from '../../AttachmentsContainer';
+import Avatar from '../../Avatar';
 import { useSelector } from 'react-redux';
-import { LONG_DATE_TIME } from '../../../../../utils/date';
+import { LONG_DATE_TIME } from '../../../utils/date';
 
 const Comment = (props) => {
 	const { users } = useSelector((state) => state.dataState);
