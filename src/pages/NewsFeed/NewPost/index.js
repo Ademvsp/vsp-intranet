@@ -42,9 +42,9 @@ const NewPost = (props) => {
 						/>
 						<NewPostDialog
 							authUser={authUser}
-							newPostDialogOpen={newPostDialogOpen}
-							setNewPostDialogOpen={setNewPostDialogOpen}
-							setSearchResults={setSearchResults}
+							open={newPostDialogOpen}
+							close={() => setNewPostDialogOpen(false)}
+							clearSearchResults={() => setSearchResults(null)}
 						/>
 					</Grid>
 					<Grid item>
@@ -62,8 +62,8 @@ const NewPost = (props) => {
 							</Tooltip>
 						)}
 						<SearchPostDialog
-							searchPostDialogOpen={searchPostDialogOpen}
-							setSearchPostDialogOpen={setSearchPostDialogOpen}
+							open={searchPostDialogOpen}
+							close={() => setSearchPostDialogOpen(false)}
 							setSearchResults={setSearchResults}
 						/>
 					</Grid>

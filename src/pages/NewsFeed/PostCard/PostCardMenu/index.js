@@ -60,7 +60,7 @@ const PostCardMenu = (props) => {
 			>
 				<MenuItem>Share</MenuItem>
 				<CopyToClipboard
-					text={`${process.env.REACT_APP_BASE_URL}/newsfeed/post?postId=${post.postId}`}
+					text={`${process.env.REACT_APP_BASE_URL}/newsfeed/${post.postId}`}
 					onCopy={copyClickHandler}
 				>
 					<MenuItem>Copy direct link</MenuItem>

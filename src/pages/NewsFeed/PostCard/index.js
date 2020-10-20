@@ -115,41 +115,43 @@ const PostCard = (props) => {
 	const postDate = post.metadata.createdAt.toDate();
 
 	return (
-		<Card ref={scrollRef} elevation={2}>
-			<StyledCardHeader
-				avatar={<Avatar user={user} clickable={true} contactCard={true} />}
-				title={post.title}
-				titleTypographyProps={{
-					variant: 'body1'
-				}}
-				subheader={`${user.firstName} ${user.lastName}`}
-				action={<PostCardMenu post={post} />}
-			/>
-			<StyledCardContent>
-				<InnerHtml html={post.body} />
-				<AttachmentsContainer attachments={post.attachments} />
-			</StyledCardContent>
-			<StyledCardActions>
-				<Typography color='secondary' component='span' variant='body2'>
-					{format(postDate, LONG_DATE_TIME)}
-				</Typography>
-				<StyledButton
-					size='small'
-					color='secondary'
-					onClick={commentsClickHandler}
-					startIcon={post.comments.length === 0 && <CommentIcon />}
-				>
-					{commentButtonText}
-				</StyledButton>
-			</StyledCardActions>
-			<Collapse in={showComments} timeout='auto'>
-				<Comments
-					authUser={authUser}
-					submitHandler={newCommentHandler}
-					comments={[...post.comments].reverse()}
+		<div ref={scrollRef}>
+			<Card elevation={2}>
+				<StyledCardHeader
+					avatar={<Avatar user={user} clickable={true} contactCard={true} />}
+					title={post.title}
+					titleTypographyProps={{
+						variant: 'body1'
+					}}
+					subheader={`${user.firstName} ${user.lastName}`}
+					action={<PostCardMenu post={post} />}
 				/>
-			</Collapse>
-		</Card>
+				<StyledCardContent>
+					<InnerHtml html={post.body} />
+					<AttachmentsContainer attachments={post.attachments} />
+				</StyledCardContent>
+				<StyledCardActions>
+					<Typography color='secondary' component='span' variant='body2'>
+						{format(postDate, LONG_DATE_TIME)}
+					</Typography>
+					<StyledButton
+						size='small'
+						color='secondary'
+						onClick={commentsClickHandler}
+						startIcon={post.comments.length === 0 && <CommentIcon />}
+					>
+						{commentButtonText}
+					</StyledButton>
+				</StyledCardActions>
+				<Collapse in={showComments} timeout='auto'>
+					<Comments
+						authUser={authUser}
+						submitHandler={newCommentHandler}
+						comments={[...post.comments].reverse()}
+					/>
+				</Collapse>
+			</Card>
+		</div>
 	);
 };
 

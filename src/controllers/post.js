@@ -1,5 +1,4 @@
 import Message from '../models/message';
-import Counter from '../models/counter';
 import Post from '../models/post';
 import Notification from '../models/notification';
 import {
@@ -8,39 +7,15 @@ import {
 	SNACKBAR_VARIANTS,
 	SNACKBAR_SEVERITY
 } from '../utils/constants';
-import { SET_MESSAGE, SET_POSTS_COUNTER } from '../utils/actions';
+import { SET_MESSAGE } from '../utils/actions';
 import * as fileUtils from '../utils/file-utils';
 import { NEW_POST_COMMENT, NEW_POST } from '../utils/notification-types';
 import { getServerTimeInMilliseconds } from '../utils/firebase';
+import Metadata from '../models/metadata';
 let postsCounterListener;
 
-export const subscribePostsCounterListener = () => {
-	return async (dispatch, _getState) => {
-		try {
-			postsCounterListener = Counter.getListener('posts').onSnapshot(
-				(snapshot) => {
-					const postsCounter = new Counter({
-						...snapshot.data(),
-						collection: snapshot.id
-					});
-					dispatch({
-						type: SET_POSTS_COUNTER,
-						postsCounter
-					});
-				}
-			);
-		} catch (error) {
-			const message = new Message({
-				title: 'News Feed',
-				body: 'Failed to retrieve news feed',
-				feedback: DIALOG
-			});
-			dispatch({
-				type: SET_MESSAGE,
-				message
-			});
-		}
-	};
+export const getMetadataListener = () => {
+	return Metadata.getListener('posts');
 };
 
 export const getListener = (postId) => {
@@ -129,7 +104,7 @@ export const addPost = (values, attachments, notifyUsers) => {
 					const notification = new Notification({
 						notificationId: null,
 						emailData: emailData,
-						link: `/newsfeed/post?postId=${newPost.postId}`,
+						link: `/newsfeed/${newPost.postId}`,
 						page: 'News Feed',
 						recipient: transformedRecipient,
 						title: `News Feed "${title}" New post from ${senderFullName}`,
@@ -203,7 +178,7 @@ export const addComment = (post, body, attachments, notifyUsers) => {
 					const notification = new Notification({
 						notificationId: null,
 						emailData: emailData,
-						link: `/newsfeed/post?postId=${post.postId}`,
+						link: `/newsfeed/${post.postId}`,
 						page: 'News Feed',
 						recipient: transformedRecipient,
 						title: `News Feed "${post.title}" New comment from ${senderFullName}`,

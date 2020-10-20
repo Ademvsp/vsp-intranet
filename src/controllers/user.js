@@ -9,7 +9,7 @@ import {
 } from '../utils/actions';
 import Message from '../models/message';
 import User from '../models/user';
-import Counter from '../models/counter';
+import Counter from '../models/metadata';
 let usersListener, usersCounterListener, activeUsersCounterListener;
 
 export const subscribeUserListener = () => {

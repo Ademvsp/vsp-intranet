@@ -18,11 +18,7 @@ const SearchPostDialog = (props) => {
 	const dispatch = useDispatch();
 	const { users } = useSelector((state) => state.dataState);
 	const [loading, setLoading] = useState(false);
-	const {
-		searchPostDialogOpen,
-		setSearchPostDialogOpen,
-		setSearchResults
-	} = props;
+	const { open, close, setSearchResults } = props;
 
 	const initialValues = { value: '', user: null };
 	const initialErrors = { value: true };
@@ -39,7 +35,7 @@ const SearchPostDialog = (props) => {
 
 	const dialogCloseHandler = () => {
 		if (!loading) {
-			setSearchPostDialogOpen(false);
+			close();
 		}
 	};
 
@@ -48,7 +44,7 @@ const SearchPostDialog = (props) => {
 		const results = await dispatch(postController.searchPosts(values));
 		if (results) {
 			formik.setValues(initialValues, true);
-			setSearchPostDialogOpen(false);
+			close();
 			setSearchResults(results);
 			history.replace('/newsfeed/page/1');
 		}
@@ -63,12 +59,7 @@ const SearchPostDialog = (props) => {
 	});
 
 	return (
-		<Dialog
-			open={searchPostDialogOpen}
-			onClose={dialogCloseHandler}
-			fullWidth
-			maxWidth='xs'
-		>
+		<Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='xs'>
 			<DialogContent>
 				<TextField
 					label='Search'

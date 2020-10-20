@@ -17,12 +17,7 @@ import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 const NewPostDialog = (props) => {
 	const dispatch = useDispatch();
-	const {
-		authUser,
-		newPostDialogOpen,
-		setNewPostDialogOpen,
-		setSearchResults
-	} = props;
+	const { authUser, open, close, clearSearchResults } = props;
 	const history = useHistory();
 	const [loading, setLoading] = useState(false);
 	const [notifyUsers, setNotifyUsers] = useState([]);
@@ -33,7 +28,7 @@ const NewPostDialog = (props) => {
 
 	const dialogCloseHandler = () => {
 		if (!loading) {
-			setNewPostDialogOpen(false);
+			close();
 		}
 	};
 
@@ -47,8 +42,8 @@ const NewPostDialog = (props) => {
 			formik.setValues(initialValues, true);
 			setAttachments([]);
 			setNotifyUsers([]);
-			setNewPostDialogOpen(false);
-			setSearchResults(null);
+			clearSearchResults();
+			close();
 			history.push('/newsfeed/page/1');
 		}
 	};
@@ -68,12 +63,7 @@ const NewPostDialog = (props) => {
 	});
 
 	return (
-		<Dialog
-			open={newPostDialogOpen}
-			onClose={dialogCloseHandler}
-			fullWidth
-			maxWidth='sm'
-		>
+		<Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
 			<DialogContent>
 				<Grid container direction='column' spacing={1}>
 					<Grid

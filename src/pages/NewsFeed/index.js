@@ -1,58 +1,73 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import * as postController from '../../controllers/post';
 import { Pagination } from '@material-ui/lab';
 import { CircularProgress, Container, Grid } from '@material-ui/core';
 import PostCard from './PostCard';
-import { useParams, useHistory, useLocation } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import NewPost from './NewPost';
-import queryString from 'query-string';
+import Metadata from '../../models/metadata';
+import { READ_PAGE, READ_POST } from '../../utils/actions';
 
 const NewsFeed = (props) => {
 	const params = useParams();
-	const history = useHistory();
-	const location = useLocation();
+	const { action } = props;
+	const { replace, push } = useHistory();
 	const initialPage = 1;
 	const MAX_PER_PAGE = 5;
 	const dispatch = useDispatch();
-	const { postsCounter } = useSelector((state) => state.dataState);
+	const [postsMetadata, setPostsMetadata] = useState();
+
 	const [page, setPage] = useState(initialPage);
 	const [searchResults, setSearchResults] = useState();
 	const [dataSource, setDataSource] = useState();
 	const [postIds, setPostIds] = useState();
 	const [activePostId, setActivePostId] = useState(null);
-
 	//Mount and dismount
 	useEffect(() => {
-		dispatch(postController.subscribePostsCounterListener());
+		let postsMetadataListener;
+		postsMetadataListener = postController
+			.getMetadataListener()
+			.onSnapshot((snapshot) => {
+				const newPostsMetadata = new Metadata({
+					...snapshot.data(),
+					collection: snapshot.id
+				});
+				setPostsMetadata(newPostsMetadata);
+			});
 		return () => {
-			postController.unsubscribePostsCounter();
+			if (postsMetadataListener) {
+				postsMetadataListener();
+			}
 		};
 	}, [dispatch]);
-
-	//If search results change or postsCounter changes, update the data source
+	//If search results change or postsMetadata changes, update the data source
 	useEffect(() => {
-		if (postsCounter) {
-			let newDataSource = [...postsCounter.documents].reverse();
+		if (postsMetadata) {
+			let newDataSource = [...postsMetadata.documents].reverse();
 			if (searchResults) {
 				newDataSource = searchResults;
 			}
 			setDataSource(newDataSource);
 		}
-	}, [postsCounter, searchResults, history, location]);
-
-	//If search results, or clear search results, reset back to page 1
-	useEffect(() => {
-		// history.replace(`/newsfeed/page/${initialPage}`);
-	}, [searchResults, history]);
-
+	}, [postsMetadata, searchResults]);
 	//When a new change in the data source is detected
 	useEffect(() => {
 		if (dataSource) {
 			let newPage = initialPage;
-			//Coming from direct link
-			if (location.pathname === '/newsfeed/post') {
-				const { postId } = queryString.parse(location.search);
+			if (action === READ_PAGE) {
+				//Common case
+				const pageNumber = parseInt(params.page);
+				const lastPage = Math.ceil(dataSource.length / MAX_PER_PAGE);
+				if (pageNumber > 0 && pageNumber <= lastPage) {
+					newPage = pageNumber;
+				} else {
+					newPage = initialPage;
+					replace(`/newsfeed/page/${initialPage}`);
+				}
+			} else if (action === READ_POST) {
+				//Coming from direct link
+				const postId = params.postId;
 				const index = dataSource.findIndex((document) => document === postId);
 				if (index !== -1) {
 					newPage = Math.floor(index / MAX_PER_PAGE) + 1;
@@ -60,18 +75,7 @@ const NewsFeed = (props) => {
 					setActivePostId(newActivePostId);
 				} else {
 					newPage = initialPage;
-					history.replace(`/newsfeed/page/${initialPage}`);
-				}
-			}
-			//Common case
-			if (location.pathname.startsWith('/newsfeed/page')) {
-				const pageNumber = parseInt(params.page);
-				const lastPage = Math.ceil(dataSource.length / MAX_PER_PAGE);
-				if (pageNumber > 0 && pageNumber <= lastPage) {
-					newPage = pageNumber;
-				} else {
-					newPage = initialPage;
-					history.replace(`/newsfeed/page/${initialPage}`);
+					replace(`/newsfeed/page/${initialPage}`);
 				}
 			}
 			//Slicing the data source to only include 5 results
@@ -81,7 +85,7 @@ const NewsFeed = (props) => {
 			setPage(newPage);
 			setPostIds(newPostIds);
 		}
-	}, [dataSource, location.pathname, location.search, params.page, history]);
+	}, [dataSource, action, params, replace]);
 
 	if (!postIds) {
 		return <CircularProgress />;
@@ -94,16 +98,14 @@ const NewsFeed = (props) => {
 			<Grid container direction='column' spacing={2}>
 				<Grid item>
 					<NewPost
+						action={props.action}
 						searchResults={searchResults}
 						setSearchResults={setSearchResults}
 					/>
 				</Grid>
 				<Grid item container direction='column' spacing={2}>
 					{postIds.map((postId) => {
-						let scroll = false;
-						if (activePostId === postId) {
-							scroll = true;
-						}
+						const scroll = activePostId === postId;
 						return (
 							<Grid item key={postId}>
 								<PostCard
@@ -120,7 +122,7 @@ const NewsFeed = (props) => {
 							count={count}
 							page={page}
 							onChange={(_event, value) =>
-								history.push(`/newsfeed/page/${value.toString()}`)
+								push(`/newsfeed/page/${value.toString()}`)
 							}
 							showFirstButton={true}
 							showLastButton={true}
