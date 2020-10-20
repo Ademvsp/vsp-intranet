@@ -10,24 +10,26 @@ import NewEventDialog from './NewEventDialog';
 import { StyledCalendarCard, StyledSidePanelCard } from './styled-components';
 import WorkFromHomeSwitch from './WorkFromHomeSwitch';
 import { Skeleton } from '@material-ui/lab';
-import { useLocation, useHistory } from 'react-router-dom';
-import queryString from 'query-string';
+import { useHistory, useParams } from 'react-router-dom';
 import ViewEventDialog from './ViewEventDialog';
 import EditEventDialog from './EditEventDialog';
 import Event from '../../models/event';
 import { startOfMonth, sub, add } from 'date-fns';
+import { UPDATE } from '../../utils/actions';
 
 export const EventContext = createContext();
 
 const Calendar = (props) => {
+	const { action } = props;
 	const initalRange = {
 		startOfMonth: startOfMonth(new Date()),
 		start: sub(startOfMonth(new Date()), { months: 1 }),
 		end: add(startOfMonth(new Date()), { months: 1 })
 	};
-	const history = useHistory();
-	const location = useLocation();
+	const params = useParams();
+	const { push, replace } = useHistory();
 	const { authUser } = useSelector((state) => state.authState);
+	const { userId } = authUser;
 	const [events, setEvents] = useState();
 	const [newEventPrefillData, setNewEventPrefillData] = useState();
 	const [showAddEventDialog, setShowAddEventDialog] = useState(false);
@@ -89,28 +91,28 @@ const Calendar = (props) => {
 
 	useEffect(() => {
 		const asyncFunction = async () => {
-			if (location.pathname === '/calendar/event') {
-				const { eventId } = queryString.parse(location.search);
+			if (action === UPDATE) {
+				const eventId = params.eventId;
 				if (eventId) {
 					const event = await Event.get(eventId);
 					if (event) {
 						setSelectedEvent(event);
-						if (event.user === authUser.userId) {
+						if (event.user === userId) {
 							setShowEditEventDialog(true);
 						} else {
 							setShowViewEventDialog(true);
 						}
 					} else {
-						history.push('/calendar');
+						push('/calendar');
 					}
 				} else {
-					history.push('/calendar');
+					push('/calendar');
 				}
 			}
 		};
 
 		asyncFunction();
-	}, [location.pathname, location.search, history, authUser.userId]);
+	}, [action, push, userId, params.eventId]);
 
 	const addEventClickHandler = () => {
 		setNewEventPrefillData(null);
@@ -120,10 +122,10 @@ const Calendar = (props) => {
 	const closeDialogHandler = () => {
 		setSelectedEvent(null);
 		setShowEditEventDialog(false);
-		history.replace('/calendar');
+		replace('/calendar');
 	};
 
-	const skeleton = (
+	const sidePanelSkeleton = (
 		<Grid container direction='column' spacing={1}>
 			<Grid item>
 				<Skeleton animation='pulse' variant='rect' height={40} />
@@ -140,7 +142,8 @@ const Calendar = (props) => {
 				selectedLocations,
 				setSelectedLocations,
 				selectedEventTypes,
-				setSelectedEventTypes
+				setSelectedEventTypes,
+				events
 			}}
 		>
 			{showAddEventDialog && (
@@ -200,7 +203,7 @@ const Calendar = (props) => {
 											</Grid>
 										</Fragment>
 									) : (
-										skeleton
+										sidePanelSkeleton
 									)}
 									<Grid item>
 										<ExpandableItems />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
 	CircularProgress,
@@ -8,9 +8,11 @@ import {
 } from '@material-ui/core';
 import Avatar from '../../../../components/Avatar';
 import { startOfDay, endOfDay } from 'date-fns';
+import { EventContext } from '../..';
 
 const LeaveListItem = (props) => {
-	const { activeUsers, events } = useSelector((state) => state.dataState);
+	const { activeUsers } = useSelector((state) => state.dataState);
+	const { events } = useContext(EventContext);
 	const [leaveUsers, setLeaveUsers] = useState();
 	const { eventTypeId } = props;
 	useEffect(() => {

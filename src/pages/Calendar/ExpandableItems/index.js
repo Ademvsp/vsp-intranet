@@ -1,17 +1,17 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, Fragment, useContext } from 'react';
 import { ListItem, ListItemText, Collapse } from '@material-ui/core';
 import { StyledList } from './styled-components';
 import {
 	ExpandLess as ExpandLessIcon,
 	ExpandMore as ExpandMoreIcon
 } from '@material-ui/icons';
-import { useSelector } from 'react-redux';
 import CalendarsListItem from './CalendarsListItem';
 import EventTypesListItem from './EventTypesListItem';
 import WorkFromHomeListItem from './WorkFromHomeListItem';
 import LeaveListItem from './LeaveListItem';
 import { eventTypeNames } from '../../../utils/event-types';
 import SkeletonContainer from './SkeletonContainer';
+import { EventContext } from '..';
 
 const ExpandableItems = (props) => {
 	const initialPanelItems = [
@@ -64,7 +64,7 @@ const ExpandableItems = (props) => {
 		}
 	];
 	const [panelItems, setPanelItems] = useState(initialPanelItems);
-	const { events } = useSelector((state) => state.dataState);
+	const { events } = useContext(EventContext);
 	const expandClickHandler = (index) => {
 		setPanelItems((prevState) => {
 			const newPanelItems = [...prevState];
@@ -73,9 +73,11 @@ const ExpandableItems = (props) => {
 		});
 	};
 
-	return !events ? (
-		<SkeletonContainer />
-	) : (
+	if (!events) {
+		return <SkeletonContainer />;
+	}
+
+	return (
 		<StyledList>
 			{panelItems.map((panelItem, index) => {
 				const ExpandedIcon = panelItem.expanded

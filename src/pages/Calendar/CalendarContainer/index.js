@@ -130,9 +130,7 @@ const CalendarContainer = (props) => {
 			drilldownView='agenda'
 			longPressThreshold={50}
 			eventPropGetter={eventPropGetterHandler}
-			onSelectEvent={(event) =>
-				history.push(`/calendar/event?eventId=${event.eventId}`)
-			}
+			onSelectEvent={(event) => history.push(`/calendar/${event.eventId}`)}
 			onSelectSlot={selectSlotHandler}
 		/>
 	);

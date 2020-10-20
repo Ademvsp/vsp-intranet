@@ -9,7 +9,7 @@ import projectStatusTypes from '../../utils/project-status-types';
 import columnSchema from './column-schema';
 import tableColumns from '../Calendar/table-icons';
 import { useHistory, useParams } from 'react-router-dom';
-import { CREATE, READ, UPDATE } from '../../utils/actions';
+import { READ, UPDATE } from '../../utils/actions';
 import NewProjectDialog from './NewProjectDialog';
 import EditProjectDialog from './EditProjectDialog';
 
@@ -19,6 +19,7 @@ const Projects = (props) => {
 	const { action } = props;
 	const { authUser } = useSelector((state) => state.authState);
 	const { users, usersCounter } = useSelector((state) => state.dataState);
+	const [newProjectDialogOpen, setNewProjectDialogOpen] = useState(false);
 	const [projects, setProjects] = useState();
 	const [selectedProject, setSelectedProject] = useState();
 
@@ -101,15 +102,15 @@ const Projects = (props) => {
 		<Fragment>
 			{projects && (
 				<NewProjectDialog
-					open={action === CREATE}
-					close={() => push('/projects')}
+					open={newProjectDialogOpen}
+					close={() => setNewProjectDialogOpen(false)}
 					projectNames={projects.map((project) => project.name)}
 				/>
 			)}
 			{selectedProject && projects && (
 				<EditProjectDialog
 					open={!!selectedProject}
-					close={() => push('/projects')}
+					close={() => setSelectedProject(null)}
 					projectNames={projects
 						.map((project) => project.name)
 						.filter((projectName) => projectName !== selectedProject.name)}

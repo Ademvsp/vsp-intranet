@@ -173,7 +173,7 @@ export const addEvent = (values, notifyUsers) => {
 					const notification = new Notification({
 						notificationId: null,
 						emailData: emailData,
-						link: `/calendar/event?eventId=${newEvent.eventId}`,
+						link: `/calendar/${newEvent.eventId}`,
 						page: 'Staff Calendar',
 						recipient: transformedRecipient,
 						title: `Staff Calendar "${readableTitle}" created by ${senderFullName}`,
@@ -283,7 +283,7 @@ export const editEvent = (event, values, notifyUsers) => {
 					const notification = new Notification({
 						notificationId: null,
 						emailData: emailData,
-						link: `/calendar/event?eventId=${newEvent.eventId}`,
+						link: `/calendar/${newEvent.eventId}`,
 						page: 'Staff Calendar',
 						recipient: transformedRecipient,
 						title: `Staff Calendar "${readableTitle}" updated by ${senderFullName}`,
