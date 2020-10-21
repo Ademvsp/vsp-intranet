@@ -14,7 +14,7 @@ import { getServerTimeInMilliseconds } from '../utils/firebase';
 import CollectionData from '../models/collection-data';
 let collectionDataListener;
 
-export const getMetadataListener = () => {
+export const getCollectionDataListener = () => {
 	return CollectionData.getListener('posts');
 };
 

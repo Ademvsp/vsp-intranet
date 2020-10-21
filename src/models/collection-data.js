@@ -7,16 +7,25 @@ export default class CollectionData {
 		this.documents = documents;
 	}
 
-	static async get(collection) {
+	static async get(document) {
 		const doc = await firebase
 			.firestore()
 			.collection('collection-data')
-			.doc(collection)
+			.doc(document)
 			.get();
 		return new CollectionData({ ...doc.data(), collection: doc.id });
 	}
 
-	static getListener(collection) {
-		return firebase.firestore().collection('collection-data').doc(collection);
+	static getListener(document) {
+		return firebase.firestore().collection('collection-data').doc(document);
+	}
+
+	static getNestedListener(document, subCollection, subCollectionDoc) {
+		return firebase
+			.firestore()
+			.collection('collection-data')
+			.doc(document)
+			.collection(subCollection)
+			.doc(subCollectionDoc);
 	}
 }

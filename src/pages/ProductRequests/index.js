@@ -1,7 +1,7 @@
 import { CircularProgress, Container, Grid } from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import * as productRequestController from '../../controllers/product-request';
 import CollectionData from '../../models/collection-data';
@@ -12,56 +12,55 @@ const ProductRequests = (props) => {
 	const dispatch = useDispatch();
 
 	const params = useParams();
+	const { authUser } = useSelector((state) => state.authState);
+	const { userId } = authUser;
 	const { action } = props;
 	const { replace, push } = useHistory();
 
 	const initialPage = 1;
 	const MAX_PER_PAGE = 5;
 
-	const [metadata, setMetadata] = useState();
+	const [collectionData, setCollectionData] = useState();
 	const [dataSource, setDataSource] = useState();
 
 	const [page, setPage] = useState(initialPage);
 	const [productRequestIds, setProductRequestIds] = useState();
 	const [activeRequestId, setActiveRequestId] = useState(null);
-
-	const [adminChecked, setAdminChecked] = useState(false);
-
-	useEffect(() => {
-		const asyncFunction = async () => {
-			const isAdmin = await dispatch(productRequestController.isAdmin());
-			console.log(isAdmin);
-		};
-		asyncFunction();
-	}, [dispatch]);
-
 	//Mount and dismount
 	useEffect(() => {
-		let metadataListener;
-		if (adminChecked) {
-			metadataListener = productRequestController
-				.getMetadataListener()
-				.onSnapshot((snapshot) => {
-					const newMetaData = new CollectionData({
+		let collectionDataListener;
+		const asyncFunction = async () => {
+			collectionDataListener = (
+				await productRequestController.getCollectionDataListener(userId)
+			).onSnapshot((snapshot) => {
+				let newCollectionData = new CollectionData({
+					collection: 'product-requests',
+					count: 0,
+					documents: []
+				});
+				if (snapshot.exists) {
+					newCollectionData = new CollectionData({
 						...snapshot.data(),
 						collection: snapshot.id
 					});
-					setMetadata(newMetaData);
-				});
-		}
+				}
+				setCollectionData(newCollectionData);
+			});
+		};
+		asyncFunction();
 		return () => {
-			if (metadataListener) {
-				metadataListener();
+			if (collectionDataListener) {
+				collectionDataListener();
 			}
 		};
-	}, [dispatch, adminChecked]);
-	//If search results change or metadata changes, update the data source
+	}, [dispatch, userId]);
+	//If results change or collectionData changes, update the data source
 	useEffect(() => {
-		if (metadata) {
-			let newDataSource = [...metadata.documents].reverse();
+		if (collectionData) {
+			let newDataSource = [...collectionData.documents].reverse();
 			setDataSource(newDataSource);
 		}
-	}, [metadata]);
+	}, [collectionData]);
 	//When a new change in the data source is detected
 	useEffect(() => {
 		if (dataSource) {
@@ -70,11 +69,12 @@ const ProductRequests = (props) => {
 				//Common case
 				const pageNumber = parseInt(params.page);
 				const lastPage = Math.ceil(dataSource.length / MAX_PER_PAGE);
-				if (pageNumber > 0 && pageNumber <= lastPage) {
+				//lastPage === 0, means there are no records
+				if ((pageNumber > 0 && pageNumber <= lastPage) || lastPage === 0) {
 					newPage = pageNumber;
 				} else {
 					newPage = initialPage;
-					replace(`/newsfeed/page/${initialPage}`);
+					replace(`/product-requests/page/${initialPage}`);
 				}
 			} else if (action === READ_PRODUCT_REQUEST) {
 				//Coming from direct link
@@ -88,7 +88,7 @@ const ProductRequests = (props) => {
 					setActiveRequestId(newActiveProductRequestId);
 				} else {
 					newPage = initialPage;
-					replace(`/newsfeed/page/${initialPage}`);
+					replace(`/product-requests/page/${initialPage}`);
 				}
 			}
 			//Slicing the data source to only include 5 results
@@ -103,8 +103,6 @@ const ProductRequests = (props) => {
 	if (!productRequestIds) {
 		return <CircularProgress />;
 	}
-
-	console.log(productRequestIds);
 
 	const count = Math.ceil(dataSource.length / MAX_PER_PAGE);
 
@@ -136,18 +134,20 @@ const ProductRequests = (props) => {
 							</Grid>
 						);
 					})}
-					<Grid item container direction='row' justify='center'>
-						<Pagination
-							color='primary'
-							count={count}
-							page={page}
-							onChange={(_event, value) =>
-								push(`/product-requests/page/${value.toString()}`)
-							}
-							showFirstButton={true}
-							showLastButton={true}
-						/>
-					</Grid>
+					{dataSource.length > 0 && (
+						<Grid item container direction='row' justify='center'>
+							<Pagination
+								color='primary'
+								count={count}
+								page={page}
+								onChange={(_event, value) =>
+									push(`/product-requests/page/${value.toString()}`)
+								}
+								showFirstButton={true}
+								showLastButton={true}
+							/>
+						</Grid>
+					)}
 				</Grid>
 			</Grid>
 		</Container>

@@ -75,7 +75,6 @@ const PostCard = withTheme((props) => {
 		return (
 			<Card elevation={2}>
 				<CardHeader
-					skeleton={true}
 					avatar={
 						<Skeleton animation='pulse' variant='circle'>
 							<Avatar user={authUser} />
@@ -89,7 +88,7 @@ const PostCard = withTheme((props) => {
 						</IconButton>
 					}
 				/>
-				<CardContent skeleton={true}>
+				<CardContent>
 					<Skeleton animation='pulse' variant='rect' height={200} />
 				</CardContent>
 				<CardActions style={{ padding: `${props.theme.spacing(2)}px` }}>

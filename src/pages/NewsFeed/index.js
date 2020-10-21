@@ -25,9 +25,9 @@ const NewsFeed = (props) => {
 	const [activePostId, setActivePostId] = useState(null);
 	//Mount and dismount
 	useEffect(() => {
-		let metadataListener;
-		metadataListener = postController
-			.getMetadataListener()
+		let collectionDataListener;
+		collectionDataListener = postController
+			.getCollectionDataListener()
 			.onSnapshot((snapshot) => {
 				const newPostsMetadata = new CollectionData({
 					...snapshot.data(),
@@ -36,8 +36,8 @@ const NewsFeed = (props) => {
 				setMetadata(newPostsMetadata);
 			});
 		return () => {
-			if (metadataListener) {
-				metadataListener();
+			if (collectionDataListener) {
+				collectionDataListener();
 			}
 		};
 	}, [dispatch]);
@@ -59,7 +59,8 @@ const NewsFeed = (props) => {
 				//Common case
 				const pageNumber = parseInt(params.page);
 				const lastPage = Math.ceil(dataSource.length / MAX_PER_PAGE);
-				if (pageNumber > 0 && pageNumber <= lastPage) {
+				//lastPage === 0, means there are no records
+				if ((pageNumber > 0 && pageNumber <= lastPage) || lastPage === 0) {
 					newPage = pageNumber;
 				} else {
 					newPage = initialPage;
@@ -116,18 +117,20 @@ const NewsFeed = (props) => {
 							</Grid>
 						);
 					})}
-					<Grid item container direction='row' justify='center'>
-						<Pagination
-							color='primary'
-							count={count}
-							page={page}
-							onChange={(_event, value) =>
-								push(`/newsfeed/page/${value.toString()}`)
-							}
-							showFirstButton={true}
-							showLastButton={true}
-						/>
-					</Grid>
+					{dataSource.length > 0 && (
+						<Grid item container direction='row' justify='center'>
+							<Pagination
+								color='primary'
+								count={count}
+								page={page}
+								onChange={(_event, value) =>
+									push(`/newsfeed/page/${value.toString()}`)
+								}
+								showFirstButton={true}
+								showLastButton={true}
+							/>
+						</Grid>
+					)}
 				</Grid>
 			</Grid>
 		</Container>

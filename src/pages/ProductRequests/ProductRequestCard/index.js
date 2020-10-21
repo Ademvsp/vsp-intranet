@@ -83,7 +83,6 @@ const ProductRequestCard = withTheme((props) => {
 		return (
 			<Card elevation={2}>
 				<CardHeader
-					skeleton={true}
 					avatar={
 						<Skeleton animation='pulse' variant='circle'>
 							<Avatar user={authUser} />
@@ -97,7 +96,7 @@ const ProductRequestCard = withTheme((props) => {
 						</IconButton>
 					}
 				/>
-				<CardContent skeleton={true}>
+				<CardContent>
 					<Skeleton animation='pulse' variant='rect' height={200} />
 				</CardContent>
 				<CardActions style={{ padding: `${props.theme.spacing(2)}px` }}>
@@ -133,10 +132,7 @@ const ProductRequestCard = withTheme((props) => {
 		}
 	}
 
-	console.log(productRequest);
-
 	const user = users.find((user) => user.userId === productRequest.user);
-	console.log(user);
 	const postDate = productRequest.metadata.createdAt;
 
 	return (

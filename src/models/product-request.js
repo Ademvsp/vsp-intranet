@@ -72,7 +72,6 @@ export default class ProductRequest {
 			.collection('admins')
 			.doc(userId)
 			.get();
-		console.log(docRef);
 		return docRef.exists;
 	}
 
