@@ -14,6 +14,7 @@ import * as authController from '../../controllers/auth';
 import { useDispatch } from 'react-redux';
 
 const Login = (props) => {
+	const captchaRef = useRef();
 	const dispatch = useDispatch();
 	const [loading, setLoading] = useState(false);
 	const [passwordMode, setPasswordMode] = useState(false);
@@ -23,7 +24,6 @@ const Login = (props) => {
 	const [confirmationResult, setConfirmationResult] = useState();
 	const [activeStep, setActiveStep] = useState(0);
 	const stepLabels = ['Enter email', 'Enter SMS code', 'Sign in'];
-	const captchaRef = useRef();
 	//Initialize the recaptcha div
 	useEffect(() => {
 		window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
@@ -113,39 +113,41 @@ const Login = (props) => {
 	}, [password, email, dispatch]);
 
 	return (
-		<Container maxWidth='sm'>
+		<Fragment>
 			<div ref={captchaRef} />
-			<Grid container direction='column' spacing={2}>
-				<Grid item>
-					<Card>
-						{activeStep === 0 ? (
-							<EmailForm loading={loading} setEmail={setEmail} />
-						) : (
-							<CodeForm
-								loading={loading}
-								setActiveStep={setActiveStep}
-								setVerificationCode={setVerificationCode}
-								passwordMode={passwordMode}
-								setPassword={setPassword}
-							/>
-						)}
-					</Card>
+			<Container maxWidth='sm'>
+				<Grid container direction='column' spacing={2}>
+					<Grid item>
+						<Card>
+							{activeStep === 0 ? (
+								<EmailForm loading={loading} setEmail={setEmail} />
+							) : (
+								<CodeForm
+									loading={loading}
+									setActiveStep={setActiveStep}
+									setVerificationCode={setVerificationCode}
+									passwordMode={passwordMode}
+									setPassword={setPassword}
+								/>
+							)}
+						</Card>
+					</Grid>
+					<Grid item>
+						<Stepper
+							style={{ backgroundColor: 'inherit' }}
+							activeStep={activeStep}
+							alternativeLabel={true}
+						>
+							{stepLabels.map((label, index) => (
+								<Step key={index}>
+									<StepLabel>{label}</StepLabel>
+								</Step>
+							))}
+						</Stepper>
+					</Grid>
 				</Grid>
-				<Grid item>
-					<Stepper
-						style={{ backgroundColor: 'inherit' }}
-						activeStep={activeStep}
-						alternativeLabel={true}
-					>
-						{stepLabels.map((label, index) => (
-							<Step key={index}>
-								<StepLabel>{label}</StepLabel>
-							</Step>
-						))}
-					</Stepper>
-				</Grid>
-			</Grid>
-		</Container>
+			</Container>
+		</Fragment>
 	);
 };
 export default Login;

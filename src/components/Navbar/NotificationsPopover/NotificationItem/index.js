@@ -5,13 +5,13 @@ import {
 	ListItemSecondaryAction,
 	IconButton
 } from '@material-ui/core';
-import { LONG_DATE_TIME } from '../../../utils/date';
+import { LONG_DATE_TIME } from '../../../../utils/date';
 import { format } from 'date-fns';
 import { StyledListItem } from './styled-components';
 import { useHistory } from 'react-router-dom';
 import { Delete as DeleteIcon } from '@material-ui/icons';
 import { useDispatch } from 'react-redux';
-import * as notificationController from '../../../controllers/notification';
+import * as notificationController from '../../../../controllers/notification';
 
 const NotificationItem = (props) => {
 	const history = useHistory();

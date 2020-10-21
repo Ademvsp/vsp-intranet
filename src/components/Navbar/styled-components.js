@@ -1,16 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Typography, Toolbar } from '@material-ui/core/';
+import { Typography, Toolbar, withTheme } from '@material-ui/core/';
 import MenuIcon from '@material-ui/icons/Menu';
 
 // eslint-disable-next-line no-unused-vars
-export const StyledToolbar = styled(({ authUser, ...otherProps }) => (
+export const StyledToolbar = withTheme(styled(({ authUser, ...otherProps }) => (
 	<Toolbar {...otherProps} />
 ))`
-	min-height: 84px;
-	justify-content: ${(props) =>
-		props.authUser ? 'space-between' : 'flex-end'};
-`;
+	min-height: ${(props) => props.theme.spacing(10.5)}px;
+`);
 
 export const StyledMenuIcon = styled(MenuIcon)`
 	font-size: 48px;

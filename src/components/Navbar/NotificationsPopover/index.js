@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useState, Fragment } from 'react';
 import {
-	StyledIconButton,
-	StyledToolbar,
 	StyledList,
 	StyledTitle,
 	StyledClearAllIcon
@@ -11,12 +9,13 @@ import {
 	Divider,
 	IconButton,
 	Tooltip,
-	Popover
+	Popover,
+	Grid
 } from '@material-ui/core';
 import { Notifications as NotificationsIcon } from '@material-ui/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import NotificationItem from './NotificationItem';
-import * as notificationController from '../../controllers/notification';
+import * as notificationController from '../../../controllers/notification';
 
 const NotificationsPopover = (props) => {
 	const dispatch = useDispatch();
@@ -40,8 +39,7 @@ const NotificationsPopover = (props) => {
 
 	return (
 		<Fragment>
-			<StyledIconButton
-				edge='start'
+			<IconButton
 				color='inherit'
 				onClick={(event) => {
 					if (notifications.length > 0) {
@@ -52,7 +50,7 @@ const NotificationsPopover = (props) => {
 				<Badge badgeContent={notifications.length} max={99} color='secondary'>
 					<NotificationsIcon />
 				</Badge>
-			</StyledIconButton>
+			</IconButton>
 
 			<Popover
 				open={!!anchorEl}
@@ -67,14 +65,18 @@ const NotificationsPopover = (props) => {
 					horizontal: 'center'
 				}}
 			>
-				<StyledToolbar>
-					<StyledTitle variant='h6'>Notifications</StyledTitle>
-					<Tooltip title='Clear all' placement='bottom'>
-						<IconButton onClick={notificationsClearHandler}>
-							<StyledClearAllIcon />
-						</IconButton>
-					</Tooltip>
-				</StyledToolbar>
+				<Grid container justify='space-between'>
+					<Grid item>
+						<StyledTitle variant='h6'>Notifications</StyledTitle>
+					</Grid>
+					<Grid item>
+						<Tooltip title='Clear all' placement='bottom'>
+							<IconButton onClick={notificationsClearHandler}>
+								<StyledClearAllIcon />
+							</IconButton>
+						</Tooltip>
+					</Grid>
+				</Grid>
 				<StyledList>
 					{notifications.map((notification, index, array) => {
 						const firstElement = index === 0;
