@@ -36,6 +36,7 @@ const NewEventDialog = (props) => {
 	const { users } = useSelector((state) => state.dataState);
 	const [notifyUsers, setNotifyUsers] = useState([]);
 	const [loading, setLoading] = useState();
+	const [validatedOnMount, setValidatedOnMount] = useState(false);
 	const { open, close, newEventPrefillData } = props;
 
 	const initialValues = {
@@ -51,14 +52,6 @@ const NewEventDialog = (props) => {
 		allCalendars: false
 	};
 
-	const initialErrors = {
-		type: true,
-		details: true,
-		start: true,
-		end: true,
-		allDay: true,
-		allCalendars: true
-	};
 	const validationSchema = yup.object().shape({
 		type: yup
 			.object()
@@ -101,12 +94,16 @@ const NewEventDialog = (props) => {
 
 	const formik = useFormik({
 		initialValues: initialValues,
-		initialErrors: initialErrors,
 		onSubmit: submitHandler,
 		validationSchema: validationSchema
 	});
 	const { start, end, type } = formik.values;
-	const { setFieldValue } = formik;
+	const { setFieldValue, validateForm } = formik;
+
+	useEffect(() => {
+		validateForm();
+		setValidatedOnMount(true);
+	}, [validateForm]);
 
 	useEffect(() => {
 		if (type) {
@@ -260,7 +257,7 @@ const NewEventDialog = (props) => {
 						setNotifyUsers: setNotifyUsers
 					}}
 					buttonLoading={loading}
-					loading={loading}
+					loading={loading || !validatedOnMount}
 					isValid={formik.isValid}
 					onClick={formik.handleSubmit}
 					tooltipPlacement='top'

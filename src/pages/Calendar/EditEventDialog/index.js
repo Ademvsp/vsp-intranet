@@ -39,6 +39,7 @@ const EditEventDialog = (props) => {
 	const [editLoading, setEditLoading] = useState(false);
 	const [deleteLoading, setDeleteLoading] = useState(false);
 	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+	const [validatedOnMount, setValidatedOnMount] = useState(false);
 	const loading = deleteLoading || editLoading;
 	const { open, close, event } = props;
 
@@ -108,6 +109,13 @@ const EditEventDialog = (props) => {
 		onSubmit: submitHandler,
 		validationSchema: validationSchema
 	});
+
+	const { validateForm } = formik;
+
+	useEffect(() => {
+		validateForm();
+		setValidatedOnMount(true);
+	}, [validateForm]);
 
 	const { start, end, type } = formik.values;
 	const { setFieldValue } = formik;
@@ -272,7 +280,7 @@ const EditEventDialog = (props) => {
 							setNotifyUsers: setNotifyUsers
 						}}
 						buttonLoading={editLoading}
-						loading={loading}
+						loading={loading || !validatedOnMount}
 						isValid={formik.isValid}
 						onClick={formik.handleSubmit}
 						tooltipPlacement='top'

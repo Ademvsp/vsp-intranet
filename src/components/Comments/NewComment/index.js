@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyledContainer } from './styled-components';
 import { ListItemAvatar, Grid } from '@material-ui/core';
 import Avatar from '../../Avatar';
@@ -10,11 +10,11 @@ import ActionsBar from '../../ActionsBar';
 const NewComment = (props) => {
 	const [uploading, setUploading] = useState();
 	const [loading, setLoading] = useState(false);
+	const [validatedOnMount, setValidatedOnMount] = useState(false);
 	const [attachments, setAttachments] = useState([]);
 	const [notifyUsers, setNotifyUsers] = useState([]);
 
 	const initialValues = { body: '' };
-	const initialErrors = { body: true };
 
 	const validationSchema = yup.object().shape({
 		body: yup.string().label('Comment').required()
@@ -37,10 +37,16 @@ const NewComment = (props) => {
 
 	const formik = useFormik({
 		initialValues: initialValues,
-		initialErrors: initialErrors,
 		onSubmit: submitHandler,
 		validationSchema: validationSchema
 	});
+
+	const { validateForm } = formik;
+
+	useEffect(() => {
+		validateForm();
+		setValidatedOnMount(true);
+	}, [validateForm]);
 
 	return (
 		<StyledContainer>
@@ -70,7 +76,7 @@ const NewComment = (props) => {
 							setAttachments: setAttachments
 						}}
 						buttonLoading={loading}
-						loading={loading || uploading}
+						loading={loading || uploading || !validatedOnMount}
 						isValid={formik.isValid}
 						onClick={formik.handleSubmit}
 						tooltipPlacement='bottom'

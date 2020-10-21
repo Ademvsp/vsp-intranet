@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	DialogActions,
 	TextField,
@@ -18,10 +18,10 @@ const SearchPostDialog = (props) => {
 	const dispatch = useDispatch();
 	const { users } = useSelector((state) => state.dataState);
 	const [loading, setLoading] = useState(false);
+	const [validatedOnMount, setValidatedOnMount] = useState(false);
 	const { open, close, setSearchResults } = props;
 
 	const initialValues = { value: '', user: null };
-	const initialErrors = { value: true };
 	const validationSchema = yup.object().shape({
 		value: yup.string().label('Search').trim().required(),
 		user: yup.object().label('User').nullable()
@@ -53,10 +53,16 @@ const SearchPostDialog = (props) => {
 
 	const formik = useFormik({
 		initialValues: initialValues,
-		initialErrors: initialErrors,
 		onSubmit: submitHandler,
 		validationSchema: validationSchema
 	});
+
+	const { validateForm } = formik;
+
+	useEffect(() => {
+		validateForm();
+		setValidatedOnMount(true);
+	}, [validateForm]);
 
 	return (
 		<Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='xs'>
@@ -95,7 +101,7 @@ const SearchPostDialog = (props) => {
 					variant='outlined'
 					color='primary'
 					onClick={formik.handleSubmit}
-					disabled={!formik.isValid || loading}
+					disabled={!formik.isValid || loading || validatedOnMount}
 				>
 					Search
 				</Button>

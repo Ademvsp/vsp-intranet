@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
 	Grid,
@@ -23,8 +23,8 @@ const NewPostDialog = (props) => {
 	const [notifyUsers, setNotifyUsers] = useState([]);
 	const [attachments, setAttachments] = useState([]);
 	const [uploading, setUploading] = useState(false);
+	const [validatedOnMount, setValidatedOnMount] = useState(false);
 	const initialValues = { title: '', body: '' };
-	const initialErrors = { title: true, body: true };
 
 	const dialogCloseHandler = () => {
 		if (!loading) {
@@ -57,10 +57,16 @@ const NewPostDialog = (props) => {
 
 	const formik = useFormik({
 		initialValues: initialValues,
-		initialErrors: initialErrors,
 		onSubmit: submitHandler,
 		validationSchema: validationSchema
 	});
+
+	const { validateForm } = formik;
+
+	useEffect(() => {
+		validateForm();
+		setValidatedOnMount(true);
+	}, [validateForm]);
 
 	return (
 		<Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
@@ -115,7 +121,7 @@ const NewPostDialog = (props) => {
 								setAttachments: setAttachments
 							}}
 							buttonLoading={loading}
-							loading={loading || uploading}
+							loading={loading || uploading || !validatedOnMount}
 							isValid={formik.isValid}
 							onClick={formik.handleSubmit}
 							tooltipPlacement='top'

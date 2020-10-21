@@ -42,6 +42,7 @@ const NewProjectDialog = withTheme((props) => {
 	const [notifyUsers, setNotifyUsers] = useState([]);
 	const [attachments, setAttachments] = useState([]);
 	const [loading, setLoading] = useState();
+	const [validatedOnMount, setValidatedOnMount] = useState(false);
 	//Customer field
 	const [customersOpen, setCustomersOpen] = useState(false);
 	const [customerAdding, setCustomerAdding] = useState(false);
@@ -162,7 +163,6 @@ const NewProjectDialog = withTheme((props) => {
 
 	const formik = useFormik({
 		initialValues: initialValues,
-		validateOnMount: true,
 		onSubmit: submitHandler,
 		validationSchema: validationSchema
 	});
@@ -171,6 +171,7 @@ const NewProjectDialog = withTheme((props) => {
 
 	useEffect(() => {
 		validateForm();
+		setValidatedOnMount(true);
 	}, [validateForm]);
 
 	const customerRenderInput = (params) => (
@@ -542,7 +543,7 @@ const NewProjectDialog = withTheme((props) => {
 						setAttachments: setAttachments
 					}}
 					buttonLoading={loading}
-					loading={loading}
+					loading={loading || !validatedOnMount}
 					isValid={formik.isValid}
 					onClick={formik.handleSubmit}
 					tooltipPlacement='top'

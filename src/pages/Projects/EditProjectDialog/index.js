@@ -45,6 +45,7 @@ const EditProjectDialog = withTheme((props) => {
 	const [notifyUsers, setNotifyUsers] = useState([]);
 	const [attachments, setAttachments] = useState(project.attachments);
 	const [loading, setLoading] = useState();
+	const [validatedOnMount, setValidatedOnMount] = useState(false);
 	//Customer field
 	const [customersOpen, setCustomersOpen] = useState(false);
 	const [customerAdding, setCustomerAdding] = useState(false);
@@ -162,7 +163,6 @@ const EditProjectDialog = withTheme((props) => {
 
 	const formik = useFormik({
 		initialValues: initialValues,
-		validateOnMount: true,
 		onSubmit: submitHandler,
 		validationSchema: validationSchema
 	});
@@ -171,6 +171,7 @@ const EditProjectDialog = withTheme((props) => {
 
 	useEffect(() => {
 		validateForm();
+		setValidatedOnMount(true);
 	}, [validateForm]);
 
 	const customerRenderInput = (params) => (
@@ -554,7 +555,7 @@ const EditProjectDialog = withTheme((props) => {
 						clickHandler: () => setShowComments((prevState) => !prevState)
 					}}
 					buttonLoading={loading}
-					loading={loading}
+					loading={loading || !validatedOnMount}
 					isValid={formik.isValid}
 					onClick={formik.handleSubmit}
 					tooltipPlacement='top'
