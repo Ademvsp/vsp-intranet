@@ -3,11 +3,6 @@ import styled from 'styled-components';
 import { Typography, Toolbar } from '@material-ui/core/';
 import MenuIcon from '@material-ui/icons/Menu';
 
-export const StyledDiv = styled.div`
-	display: flex;
-	align-items: center;
-`;
-
 // eslint-disable-next-line no-unused-vars
 export const StyledToolbar = styled(({ authUser, ...otherProps }) => (
 	<Toolbar {...otherProps} />

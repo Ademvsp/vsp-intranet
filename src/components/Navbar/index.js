@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { AppBar, IconButton } from '@material-ui/core';
+import { AppBar, Grid, IconButton } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import NavbarAvatar from '../NavbarAvatar';
 import {
@@ -23,21 +23,37 @@ const Navbar = (props) => {
 				{/* <StyledTitle variant='h4' onClick={() => history.push('/')}>
 					VSP Intranet
 				</StyledTitle> */}
-				{authUser && (
-					<IconButton
-						edge='start'
-						color='inherit'
-						onClick={() => setDrawerOpen(true)}
-					>
-						<StyledMenuIcon />
-					</IconButton>
-				)}
-				{authUser && (
-					<StyledDiv>
-						<NotificationsPopover />
-						<NavbarAvatar authUser={authUser} />
-					</StyledDiv>
-				)}
+				<Grid
+					container
+					direction='row'
+					justify='space-between'
+					alignItems='center'
+				>
+					<Grid item>
+						{authUser && (
+							<IconButton
+								edge='start'
+								color='inherit'
+								onClick={() => setDrawerOpen(true)}
+							>
+								<StyledMenuIcon />
+							</IconButton>
+						)}
+					</Grid>
+					<Grid item>
+						{authUser && (
+							<Grid container justify='center' spacing={1}>
+								<Grid item></Grid>
+								<Grid item>
+									<NotificationsPopover />
+								</Grid>
+								<Grid item>
+									<NavbarAvatar authUser={authUser} />
+								</Grid>
+							</Grid>
+						)}
+					</Grid>
+				</Grid>
 			</StyledToolbar>
 		</AppBar>
 	);

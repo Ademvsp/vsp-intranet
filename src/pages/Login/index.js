@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef, Fragment } from 'react';
-import { Step, StepLabel } from '@material-ui/core';
+import {
+	Card,
+	Container,
+	Grid,
+	Step,
+	StepLabel,
+	Stepper
+} from '@material-ui/core';
 import firebase from '../../utils/firebase';
 import EmailForm from './EmailForm';
 import CodeForm from './CodeForm';
-import {
-	StyledChildContainer,
-	StyledCard,
-	StyledStepper
-} from './styled-components';
 import * as authController from '../../controllers/auth';
 import { useDispatch } from 'react-redux';
 
@@ -111,33 +113,39 @@ const Login = (props) => {
 	}, [password, email, dispatch]);
 
 	return (
-		<Fragment>
+		<Container maxWidth='sm'>
 			<div ref={captchaRef} />
-			<StyledChildContainer>
-				<StyledCard raised={true}>
-					{activeStep === 0 ? (
-						<EmailForm loading={loading} setEmail={setEmail} />
-					) : (
-						<CodeForm
-							loading={loading}
-							setActiveStep={setActiveStep}
-							setVerificationCode={setVerificationCode}
-							passwordMode={passwordMode}
-							setPassword={setPassword}
-						/>
-					)}
-				</StyledCard>
-			</StyledChildContainer>
-			<StyledChildContainer>
-				<StyledStepper activeStep={activeStep} alternativeLabel={true}>
-					{stepLabels.map((label, index) => (
-						<Step key={index}>
-							<StepLabel>{label}</StepLabel>
-						</Step>
-					))}
-				</StyledStepper>
-			</StyledChildContainer>
-		</Fragment>
+			<Grid container direction='column' spacing={2}>
+				<Grid item>
+					<Card>
+						{activeStep === 0 ? (
+							<EmailForm loading={loading} setEmail={setEmail} />
+						) : (
+							<CodeForm
+								loading={loading}
+								setActiveStep={setActiveStep}
+								setVerificationCode={setVerificationCode}
+								passwordMode={passwordMode}
+								setPassword={setPassword}
+							/>
+						)}
+					</Card>
+				</Grid>
+				<Grid item>
+					<Stepper
+						style={{ backgroundColor: 'inherit' }}
+						activeStep={activeStep}
+						alternativeLabel={true}
+					>
+						{stepLabels.map((label, index) => (
+							<Step key={index}>
+								<StepLabel>{label}</StepLabel>
+							</Step>
+						))}
+					</Stepper>
+				</Grid>
+			</Grid>
+		</Container>
 	);
 };
 export default Login;

@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { Button, CircularProgress, TextField } from '@material-ui/core';
 import {
-	StyledButtonContainer,
-	StyledCardContent,
-	StyledSpinnerContainer
-} from '../styled-components';
+	Button,
+	CardActions,
+	CardContent,
+	CircularProgress,
+	Grid,
+	TextField
+} from '@material-ui/core';
 
 const EmailForm = (props) => {
+	const [validatedOnMount, setValidatedOnMount] = useState(false);
 	const initialValues = { verificationCode: '' };
-	const initialErrors = { verificationCode: true };
 
 	let verificationCodeSchema = yup
 		.string()
@@ -42,53 +44,63 @@ const EmailForm = (props) => {
 
 	const formik = useFormik({
 		initialValues: initialValues,
-		initialErrors: initialErrors,
 		onSubmit: submitHandler,
 		validationSchema: validationSchema
 	});
 
+	const { validateForm } = formik;
+
+	useEffect(() => {
+		setValidatedOnMount(true);
+		validateForm();
+	}, [validateForm]);
+
 	return (
-		<StyledCardContent>
-			{props.loading ? (
-				<StyledSpinnerContainer>
-					<CircularProgress />
-				</StyledSpinnerContainer>
-			) : (
-				<TextField
-					margin='dense'
-					label={props.passwordMode ? 'Password' : 'SMS confirmation code'}
-					type={props.passwordMode ? 'password' : 'text'}
-					value={formik.values.verificationCode}
-					onKeyDown={keyDownHandler}
-					onChange={formik.handleChange('verificationCode')}
-					onBlur={formik.handleBlur('verificationCode')}
-					error={
-						!!formik.touched.verificationCode &&
-						!!formik.errors.verificationCode
-					}
-					autoFocus={true}
-				/>
-			)}
-			<StyledButtonContainer>
-				<Button
-					variant='outlined'
-					color='primary'
-					type='button'
-					onClick={props.setActiveStep.bind(this, 0)}
-					disabled={props.loading}
-				>
-					Back
-				</Button>
-				<Button
-					variant='contained'
-					color='primary'
-					onClick={formik.handleSubmit}
-					disabled={!formik.isValid || props.loading}
-				>
-					Next
-				</Button>
-			</StyledButtonContainer>
-		</StyledCardContent>
+		<Fragment>
+			<CardContent>
+				<Grid container justify='center'>
+					{props.loading ? (
+						<CircularProgress />
+					) : (
+						<TextField
+							fullWidth
+							label={props.passwordMode ? 'Password' : 'SMS confirmation code'}
+							type={props.passwordMode ? 'password' : 'text'}
+							value={formik.values.verificationCode}
+							onKeyDown={keyDownHandler}
+							onChange={formik.handleChange('verificationCode')}
+							onBlur={formik.handleBlur('verificationCode')}
+							autoFocus={true}
+						/>
+					)}
+				</Grid>
+			</CardContent>
+			<CardActions>
+				<Grid container justify='flex-end' spacing={1}>
+					<Grid item>
+						<Button
+							variant='outlined'
+							color='primary'
+							type='button'
+							onClick={props.setActiveStep.bind(this, 0)}
+							disabled={props.loading}
+						>
+							Back
+						</Button>
+					</Grid>
+					<Grid item>
+						<Button
+							variant='contained'
+							color='primary'
+							onClick={formik.handleSubmit}
+							disabled={!formik.isValid || props.loading || !validatedOnMount}
+						>
+							Next
+						</Button>
+					</Grid>
+				</Grid>
+			</CardActions>
+		</Fragment>
 	);
 };
 
