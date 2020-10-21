@@ -64,6 +64,18 @@ export default class ProductRequest {
 		return productRequests;
 	}
 
+	static async isAdmin(userId) {
+		const docRef = await firebase
+			.firestore()
+			.collection('permissions')
+			.doc('product-requests')
+			.collection('admins')
+			.doc(userId)
+			.get();
+		console.log(docRef);
+		return docRef.exists;
+	}
+
 	static getListener(productRequestId) {
 		return firebase
 			.firestore()

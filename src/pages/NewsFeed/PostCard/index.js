@@ -1,13 +1,17 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Collapse, Typography, IconButton, Button } from '@material-ui/core';
+import {
+	Collapse,
+	Typography,
+	IconButton,
+	Button,
+	CardHeader,
+	CardContent,
+	CardActions,
+	withTheme
+} from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import * as postController from '../../../controllers/post';
 import { format } from 'date-fns';
-import {
-	StyledCardHeader,
-	StyledCardContent,
-	StyledCardActions
-} from './styled-components';
 import Post from '../../../models/post';
 import {
 	Comment as CommentIcon,
@@ -23,7 +27,7 @@ import PostCardMenu from './PostCardMenu';
 import Card from '../../../components/Card';
 import { LONG_DATE_TIME } from '../../../utils/date';
 
-const PostCard = (props) => {
+const PostCard = withTheme((props) => {
 	const dispatch = useDispatch();
 	const scrollRef = useRef();
 	const { authUser } = useSelector((state) => state.authState);
@@ -70,28 +74,28 @@ const PostCard = (props) => {
 	if (!post) {
 		return (
 			<Card elevation={2}>
-				<StyledCardHeader
+				<CardHeader
 					skeleton={true}
 					avatar={
 						<Skeleton animation='pulse' variant='circle'>
 							<Avatar user={authUser} />
 						</Skeleton>
 					}
-					title={<Skeleton animation='pulse' height={10} width='60%' />}
-					subheader={<Skeleton animation='pulse' height={10} width='40%' />}
+					title={<Skeleton animation='pulse' height={20} width='60%' />}
+					subheader={<Skeleton animation='pulse' height={20} width='40%' />}
 					action={
 						<IconButton disabled={true}>
 							<MoreVertIcon />
 						</IconButton>
 					}
 				/>
-				<StyledCardContent skeleton={true}>
+				<CardContent skeleton={true}>
 					<Skeleton animation='pulse' variant='rect' height={200} />
-				</StyledCardContent>
-				<StyledCardActions>
-					<Skeleton animation='pulse' height={10} width='20%' />
-					<Skeleton animation='pulse' height={15} width='10%' />
-				</StyledCardActions>
+				</CardContent>
+				<CardActions style={{ padding: `${props.theme.spacing(2)}px` }}>
+					<Skeleton animation='pulse' height={20} width='20%' />
+					<Skeleton animation='pulse' height={30} width='10%' />
+				</CardActions>
 			</Card>
 		);
 	}
@@ -122,7 +126,7 @@ const PostCard = (props) => {
 	return (
 		<div ref={scrollRef}>
 			<Card elevation={2}>
-				<StyledCardHeader
+				<CardHeader
 					avatar={<Avatar user={user} clickable={true} contactCard={true} />}
 					title={post.title}
 					titleTypographyProps={{
@@ -131,11 +135,12 @@ const PostCard = (props) => {
 					subheader={`${user.firstName} ${user.lastName}`}
 					action={<PostCardMenu post={post} />}
 				/>
-				<StyledCardContent>
+				<CardContent>
 					<InnerHtml html={post.body} />
 					<AttachmentsContainer attachments={post.attachments} />
-				</StyledCardContent>
-				<StyledCardActions>
+				</CardContent>
+				        
+				<CardActions style={{ padding: `${props.theme.spacing(2)}px` }}>
 					<Typography color='secondary' component='span' variant='body2'>
 						{format(postDate, LONG_DATE_TIME)}
 					</Typography>
@@ -148,7 +153,7 @@ const PostCard = (props) => {
 					>
 						{commentButtonText}
 					</Button>
-				</StyledCardActions>
+				</CardActions>
 				<Collapse in={showComments} timeout='auto'>
 					<Comments
 						authUser={authUser}
@@ -159,6 +164,6 @@ const PostCard = (props) => {
 			</Card>
 		</div>
 	);
-};
+});
 
 export default PostCard;

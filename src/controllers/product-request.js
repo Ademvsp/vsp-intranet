@@ -30,6 +30,26 @@ export const getProductRequests = (all) => {
 	};
 };
 
+export const isAdmin = () => {
+	return async (dispatch, getState) => {
+		try {
+			const userId = getState().authState.authUser.userId;
+			return await ProductRequest.isAdmin(userId);
+		} catch (error) {
+			console.log('error', error);
+			const message = new Message({
+				title: 'Product Requests',
+				body: 'Failed to retrieve admin permissions',
+				feedback: DIALOG
+			});
+			dispatch({
+				type: SET_MESSAGE,
+				message
+			});
+		}
+	};
+};
+
 export const getMetadataListener = () => {
 	return CollectionData.getListener('product-requests');
 };

@@ -25,24 +25,36 @@ const ProductRequests = (props) => {
 	const [productRequestIds, setProductRequestIds] = useState();
 	const [activeRequestId, setActiveRequestId] = useState(null);
 
+	const [adminChecked, setAdminChecked] = useState(false);
+
+	useEffect(() => {
+		const asyncFunction = async () => {
+			const isAdmin = await dispatch(productRequestController.isAdmin());
+			console.log(isAdmin);
+		};
+		asyncFunction();
+	}, [dispatch]);
+
 	//Mount and dismount
 	useEffect(() => {
 		let metadataListener;
-		metadataListener = productRequestController
-			.getMetadataListener()
-			.onSnapshot((snapshot) => {
-				const newMetaData = new CollectionData({
-					...snapshot.data(),
-					collection: snapshot.id
+		if (adminChecked) {
+			metadataListener = productRequestController
+				.getMetadataListener()
+				.onSnapshot((snapshot) => {
+					const newMetaData = new CollectionData({
+						...snapshot.data(),
+						collection: snapshot.id
+					});
+					setMetadata(newMetaData);
 				});
-				setMetadata(newMetaData);
-			});
+		}
 		return () => {
 			if (metadataListener) {
 				metadataListener();
 			}
 		};
-	}, [dispatch]);
+	}, [dispatch, adminChecked]);
 	//If search results change or metadata changes, update the data source
 	useEffect(() => {
 		if (metadata) {

@@ -13,11 +13,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import * as productRequestController from '../../../controllers/product-request';
 import { format } from 'date-fns';
-import {
-	StyledCardHeader,
-	StyledCardContent,
-	StyledCardActions
-} from './styled-components';
 import ProductRequest from '../../../models/product-request';
 import {
 	Comment as CommentIcon,
@@ -87,28 +82,28 @@ const ProductRequestCard = withTheme((props) => {
 	if (!productRequest) {
 		return (
 			<Card elevation={2}>
-				<StyledCardHeader
+				<CardHeader
 					skeleton={true}
 					avatar={
 						<Skeleton animation='pulse' variant='circle'>
 							<Avatar user={authUser} />
 						</Skeleton>
 					}
-					title={<Skeleton animation='pulse' height={10} width='60%' />}
-					subheader={<Skeleton animation='pulse' height={10} width='40%' />}
+					title={<Skeleton animation='pulse' height={20} width='60%' />}
+					subheader={<Skeleton animation='pulse' height={20} width='40%' />}
 					action={
 						<IconButton disabled={true}>
 							<MoreVertIcon />
 						</IconButton>
 					}
 				/>
-				<StyledCardContent skeleton={true}>
+				<CardContent skeleton={true}>
 					<Skeleton animation='pulse' variant='rect' height={200} />
-				</StyledCardContent>
-				<StyledCardActions>
-					<Skeleton animation='pulse' height={10} width='20%' />
-					<Skeleton animation='pulse' height={15} width='10%' />
-				</StyledCardActions>
+				</CardContent>
+				<CardActions style={{ padding: `${props.theme.spacing(2)}px` }}>
+					<Skeleton animation='pulse' height={20} width='20%' />
+					<Skeleton animation='pulse' height={30} width='10%' />
+				</CardActions>
 			</Card>
 		);
 	}
@@ -157,7 +152,7 @@ const ProductRequestCard = withTheme((props) => {
 					// action={<PostCardMenu productRequest={productRequest} />}
 				/>
 				<CardContent>
-					<Grid container direction='column' spacing={1}>
+					<Grid container direction='column' spacing={2}>
 						<Grid item>
 							<ProductRequestForm productRequest={productRequest} />
 						</Grid>
