@@ -8,7 +8,7 @@ import PanToolIcon from '@material-ui/icons/PanTool';
 import CloseIcon from '@material-ui/icons/Close';
 import PriorityHighIcon from '@material-ui/icons/PriorityHigh';
 import DoneIcon from '@material-ui/icons/Done';
-import { projectStatusTypeNames } from '../../utils/project-status-types';
+import { statusNames } from '../../data/project-status-types';
 import { withTheme } from '@material-ui/core/styles';
 
 const {
@@ -20,7 +20,7 @@ const {
 	CLOSED_STALE,
 	CLOSED_LOST,
 	CLOSED_WON
-} = projectStatusTypeNames;
+} = statusNames;
 
 const ProjectStatusChip = withTheme((props) => {
 	let ChipIcon;

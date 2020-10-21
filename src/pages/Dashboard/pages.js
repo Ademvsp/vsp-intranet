@@ -71,7 +71,7 @@ const pages = [
 		description:
 			'Use this form to add request a new part number to be added into Fishbowl',
 		icon: ShoppingCartIcon,
-		link: '/product-request'
+		link: '/product-requests'
 	},
 	{
 		name: 'Leave Request Form',

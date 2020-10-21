@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Collapse, Typography, IconButton } from '@material-ui/core';
+import { Collapse, Typography, IconButton, Button } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import * as postController from '../../../controllers/post';
 import { format } from 'date-fns';
@@ -49,9 +49,15 @@ const PostCard = (props) => {
 		let postListener;
 		const asyncFunction = async () => {
 			postListener = postController.getListener(postId).onSnapshot((doc) => {
+				const metadata = {
+					...doc.data().metadata,
+					createdAt: doc.data().metadata.createdAt.toDate(),
+					updatedAt: doc.data().metadata.updatedAt.toDate()
+				};
 				const newPost = new Post({
 					...doc.data(),
-					postId: doc.id
+					postId: doc.id,
+					metadata: metadata
 				});
 				setPost(newPost);
 			});
@@ -60,7 +66,7 @@ const PostCard = (props) => {
 		return () => {
 			postListener();
 		};
-	}, [postId, users]);
+	}, [postId]);
 
 	if (!post) {
 		return (
@@ -112,7 +118,7 @@ const PostCard = (props) => {
 	}
 
 	const user = users.find((user) => user.userId === post.user);
-	const postDate = post.metadata.createdAt.toDate();
+	const postDate = post.metadata.createdAt;
 
 	return (
 		<div ref={scrollRef}>
@@ -134,14 +140,15 @@ const PostCard = (props) => {
 					<Typography color='secondary' component='span' variant='body2'>
 						{format(postDate, LONG_DATE_TIME)}
 					</Typography>
-					<StyledButton
+					<Button
+						style={{ textTransform: 'unset' }}
 						size='small'
 						color='secondary'
 						onClick={commentsClickHandler}
 						startIcon={post.comments.length === 0 && <CommentIcon />}
 					>
 						{commentButtonText}
-					</StyledButton>
+					</Button>
 				</StyledCardActions>
 				<Collapse in={showComments} timeout='auto'>
 					<Comments

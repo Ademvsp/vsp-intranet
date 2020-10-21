@@ -1,9 +1,15 @@
 export const toCurrency = (value) => {
-	return value.toLocaleString('en-US', {
+	return value.toLocaleString('en-AU', {
 		style: 'currency',
-		currency: 'USD',
+		currency: 'AUD',
 		minimumFractionDigits: 0,
 		maximumFractionDigits: 0
+	});
+};
+
+export const toDecimal = (value) => {
+	return value.toLocaleString('en-AU', {
+		style: 'decimal'
 	});
 };
 

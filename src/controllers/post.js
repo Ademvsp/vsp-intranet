@@ -9,7 +9,7 @@ import {
 } from '../utils/constants';
 import { SET_MESSAGE } from '../utils/actions';
 import * as fileUtils from '../utils/file-utils';
-import { NEW_POST_COMMENT, NEW_POST } from '../utils/notification-types';
+import { NEW_POST_COMMENT, NEW_POST } from '../data/notification-types';
 import { getServerTimeInMilliseconds } from '../utils/firebase';
 import Metadata from '../models/metadata';
 let postsCounterListener;

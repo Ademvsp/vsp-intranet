@@ -14,7 +14,7 @@ import {
 	EDIT_PROJECT,
 	NEW_PROJECT,
 	NEW_PROJECT_COMMENT
-} from '../utils/notification-types';
+} from '../data/notification-types';
 import { getServerTimeInMilliseconds } from '../utils/firebase';
 
 export const addProject = (values, notifyUsers, attachments) => {

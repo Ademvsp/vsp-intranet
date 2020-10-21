@@ -15,7 +15,7 @@ import {
 	DELETE_EVENT,
 	EDIT_EVENT,
 	NEW_EVENT
-} from '../utils/notification-types';
+} from '../data/notification-types';
 import { MILLISECONDS, millisecondsToDate } from '../utils/date';
 
 export const getReadableTitle = (data, users) => {

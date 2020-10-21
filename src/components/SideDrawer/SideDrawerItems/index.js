@@ -101,7 +101,7 @@ const SideDrawerItems = (props) => {
 							key='0'
 							Icon={ShoppingCartIcon}
 							text='Product Request'
-							link='/calendar'
+							link='/product-requests'
 							subItem={true}
 						/>,
 						<SideDrawerItem

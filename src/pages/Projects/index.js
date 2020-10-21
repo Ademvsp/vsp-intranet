@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import * as projectsController from '../../controllers/project';
 import Project from '../../models/project';
 import MaterialTable from 'material-table';
-import projectStatusTypes from '../../utils/project-status-types';
+import projectStatusTypes from '../../data/project-status-types';
 import columnSchema from './column-schema';
 import tableColumns from '../Calendar/table-icons';
 import { useHistory, useParams } from 'react-router-dom';

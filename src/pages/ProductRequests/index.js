@@ -1,39 +1,41 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import * as postController from '../../controllers/post';
-import { Pagination } from '@material-ui/lab';
 import { CircularProgress, Container, Grid } from '@material-ui/core';
-import PostCard from './PostCard';
-import { useParams, useHistory } from 'react-router-dom';
-import NewPost from './NewPost';
+import { Pagination } from '@material-ui/lab';
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useHistory, useParams } from 'react-router-dom';
+import * as productRequestController from '../../controllers/product-request';
 import Metadata from '../../models/metadata';
-import { READ_PAGE, READ_POST } from '../../utils/actions';
+import { READ_PAGE, READ_PRODUCT_REQUEST } from '../../utils/actions';
+import ProductRequestCard from './ProductRequestCard';
 
-const NewsFeed = (props) => {
+const ProductRequests = (props) => {
+	const dispatch = useDispatch();
+
 	const params = useParams();
 	const { action } = props;
 	const { replace, push } = useHistory();
+
 	const initialPage = 1;
 	const MAX_PER_PAGE = 5;
-	const dispatch = useDispatch();
+
 	const [metadata, setMetadata] = useState();
+	const [dataSource, setDataSource] = useState();
 
 	const [page, setPage] = useState(initialPage);
-	const [searchResults, setSearchResults] = useState();
-	const [dataSource, setDataSource] = useState();
-	const [postIds, setPostIds] = useState();
-	const [activePostId, setActivePostId] = useState(null);
+	const [productRequestIds, setProductRequestIds] = useState();
+	const [activeRequestId, setActiveRequestId] = useState(null);
+
 	//Mount and dismount
 	useEffect(() => {
 		let metadataListener;
-		metadataListener = postController
+		metadataListener = productRequestController
 			.getMetadataListener()
 			.onSnapshot((snapshot) => {
-				const newPostsMetadata = new Metadata({
+				const newMetaData = new Metadata({
 					...snapshot.data(),
 					collection: snapshot.id
 				});
-				setMetadata(newPostsMetadata);
+				setMetadata(newMetaData);
 			});
 		return () => {
 			if (metadataListener) {
@@ -45,12 +47,9 @@ const NewsFeed = (props) => {
 	useEffect(() => {
 		if (metadata) {
 			let newDataSource = [...metadata.documents].reverse();
-			if (searchResults) {
-				newDataSource = searchResults;
-			}
 			setDataSource(newDataSource);
 		}
-	}, [metadata, searchResults]);
+	}, [metadata]);
 	//When a new change in the data source is detected
 	useEffect(() => {
 		if (dataSource) {
@@ -65,14 +64,16 @@ const NewsFeed = (props) => {
 					newPage = initialPage;
 					replace(`/newsfeed/page/${initialPage}`);
 				}
-			} else if (action === READ_POST) {
+			} else if (action === READ_PRODUCT_REQUEST) {
 				//Coming from direct link
-				const postId = params.postId;
-				const index = dataSource.findIndex((document) => document === postId);
+				const productRequestIds = params.productRequestIds;
+				const index = dataSource.findIndex(
+					(document) => document === productRequestIds
+				);
 				if (index !== -1) {
 					newPage = Math.floor(index / MAX_PER_PAGE) + 1;
-					const newActivePostId = postId;
-					setActivePostId(newActivePostId);
+					const newActiveProductRequestId = productRequestIds;
+					setActiveRequestId(newActiveProductRequestId);
 				} else {
 					newPage = initialPage;
 					replace(`/newsfeed/page/${initialPage}`);
@@ -81,15 +82,17 @@ const NewsFeed = (props) => {
 			//Slicing the data source to only include 5 results
 			const START_INDEX = newPage * MAX_PER_PAGE - MAX_PER_PAGE;
 			const END_INDEX = START_INDEX + MAX_PER_PAGE;
-			const newPostIds = dataSource.slice(START_INDEX, END_INDEX);
+			const newProductRequestIds = dataSource.slice(START_INDEX, END_INDEX);
 			setPage(newPage);
-			setPostIds(newPostIds);
+			setProductRequestIds(newProductRequestIds);
 		}
 	}, [dataSource, action, params, replace]);
 
-	if (!postIds) {
+	if (!productRequestIds) {
 		return <CircularProgress />;
 	}
+
+	console.log(productRequestIds);
 
 	const count = Math.ceil(dataSource.length / MAX_PER_PAGE);
 
@@ -97,22 +100,27 @@ const NewsFeed = (props) => {
 		<Container disableGutters maxWidth='sm'>
 			<Grid container direction='column' spacing={2}>
 				<Grid item>
-					<NewPost
+					{/* <NewPost
 						action={props.action}
 						searchResults={searchResults}
 						setSearchResults={setSearchResults}
-					/>
+					/> */}
 				</Grid>
 				<Grid item container direction='column' spacing={2}>
-					{postIds.map((postId) => {
-						const scroll = activePostId === postId;
+					{productRequestIds.map((productRequestId) => {
+						const scroll = activeRequestId === productRequestId;
 						return (
-							<Grid item key={postId}>
-								<PostCard
+							<Grid item key={productRequestId}>
+								<ProductRequestCard
+									productRequestId={productRequestId}
+									setActiveRequestId={setActiveRequestId}
+									scroll={scroll}
+								/>
+								{/* <PostCard
 									postId={postId}
 									setActivePostId={setActivePostId}
 									scroll={scroll}
-								/>
+								/> */}
 							</Grid>
 						);
 					})}
@@ -122,7 +130,7 @@ const NewsFeed = (props) => {
 							count={count}
 							page={page}
 							onChange={(_event, value) =>
-								push(`/newsfeed/page/${value.toString()}`)
+								push(`/product-requests/page/${value.toString()}`)
 							}
 							showFirstButton={true}
 							showLastButton={true}
@@ -134,4 +142,4 @@ const NewsFeed = (props) => {
 	);
 };
 
-export default NewsFeed;
+export default ProductRequests;

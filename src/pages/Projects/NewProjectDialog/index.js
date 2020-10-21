@@ -20,7 +20,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import projectStatusTypes from '../../../utils/project-status-types';
+import projectStatusTypes from '../../../data/project-status-types';
 import * as customerController from '../../../controllers/customer';
 import * as vendorController from '../../../controllers/vendor';
 import * as projectController from '../../../controllers/project';

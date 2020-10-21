@@ -14,8 +14,15 @@ import NewsFeed from './pages/NewsFeed';
 import Calendar from './pages/Calendar';
 import StaffDirectory from './pages/StaffDirectory';
 import Projects from './pages/Projects';
-import { READ, READ_PAGE, READ_POST, UPDATE } from './utils/actions';
+import {
+	READ,
+	READ_PAGE,
+	READ_POST,
+	READ_PRODUCT_REQUEST,
+	UPDATE
+} from './utils/actions';
 import Dashboard from './pages/Dashboard';
+import ProductRequests from './pages/ProductRequests';
 
 const App = (props) => {
 	const dispatch = useDispatch();
@@ -98,6 +105,13 @@ const App = (props) => {
 					<Route path='/projects'>
 						<Projects action={READ} />
 					</Route>
+					<Route path={'/product-requests/page/:page'}>
+						<ProductRequests action={READ_PAGE} />
+					</Route>
+					<Route path={'/product-requests/:productRequestId'}>
+						<ProductRequests action={READ_PRODUCT_REQUEST} />
+					</Route>
+					<Redirect from='/product-requests' to='/product-requests/page/1' />
 					<Redirect from='/login' to='/' />
 					<Redirect from='/' to='/dashboard' />
 				</Switch>

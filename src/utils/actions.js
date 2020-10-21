@@ -4,6 +4,7 @@ export const UPDATE = 'UPDATE';
 export const DELETE = 'DELETE';
 export const READ_PAGE = 'READ_PAGE';
 export const READ_POST = 'READ_POST';
+export const READ_PRODUCT_REQUEST = 'READ_PRODUCT_REQUEST';
 export const SET_AUTH_USER = 'SET_AUTH_USER';
 export const SET_AUTH_TOUCHED = 'SET_AUTH_TOUCHED';
 export const LOGOUT = 'LOGOUT';
