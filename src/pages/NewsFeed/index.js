@@ -6,7 +6,7 @@ import { CircularProgress, Container, Grid } from '@material-ui/core';
 import PostCard from './PostCard';
 import { useParams, useHistory } from 'react-router-dom';
 import NewPost from './NewPost';
-import Metadata from '../../models/metadata';
+import CollectionData from '../../models/collection-data';
 import { READ_PAGE, READ_POST } from '../../utils/actions';
 
 const NewsFeed = (props) => {
@@ -29,7 +29,7 @@ const NewsFeed = (props) => {
 		metadataListener = postController
 			.getMetadataListener()
 			.onSnapshot((snapshot) => {
-				const newPostsMetadata = new Metadata({
+				const newPostsMetadata = new CollectionData({
 					...snapshot.data(),
 					collection: snapshot.id
 				});

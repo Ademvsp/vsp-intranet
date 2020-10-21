@@ -16,7 +16,6 @@ import { format } from 'date-fns';
 import {
 	StyledCardHeader,
 	StyledCardContent,
-	StyledButton,
 	StyledCardActions
 } from './styled-components';
 import ProductRequest from '../../../models/product-request';
@@ -26,7 +25,6 @@ import {
 } from '@material-ui/icons';
 import Comments from '../../../components/Comments';
 import { Skeleton } from '@material-ui/lab';
-import InnerHtml from '../../../components/InnerHtml';
 import AttachmentsContainer from '../../../components/AttachmentsContainer';
 import Avatar from '../../../components/Avatar';
 import scrollToComponent from 'react-scroll-to-component';

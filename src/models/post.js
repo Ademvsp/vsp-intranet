@@ -58,7 +58,7 @@ export default class Post {
 			this.postId = postId;
 			await firebase
 				.firestore()
-				.collection('counters')
+				.collection('collection-data')
 				.doc('posts')
 				.update({
 					count: firebase.firestore.FieldValue.increment(1),

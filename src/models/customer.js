@@ -26,7 +26,7 @@ export default class Customer {
 			this.customerId = docRef.id;
 			await firebase
 				.firestore()
-				.collection('counters')
+				.collection('collection-data')
 				.doc('customers')
 				.update({
 					count: firebase.firestore.FieldValue.increment(1),

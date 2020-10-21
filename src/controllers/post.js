@@ -11,11 +11,11 @@ import { SET_MESSAGE } from '../utils/actions';
 import * as fileUtils from '../utils/file-utils';
 import { NEW_POST_COMMENT, NEW_POST } from '../data/notification-types';
 import { getServerTimeInMilliseconds } from '../utils/firebase';
-import Metadata from '../models/metadata';
-let postsCounterListener;
+import CollectionData from '../models/collection-data';
+let collectionDataListener;
 
 export const getMetadataListener = () => {
-	return Metadata.getListener('posts');
+	return CollectionData.getListener('posts');
 };
 
 export const getListener = (postId) => {
@@ -281,8 +281,8 @@ const getSearchMatch = (post, value, userId) => {
 	return false;
 };
 
-export const unsubscribePostsCounter = () => {
-	if (postsCounterListener) {
-		postsCounterListener();
+export const unsubscribeCollectionDataListener = () => {
+	if (collectionDataListener) {
+		collectionDataListener();
 	}
 };

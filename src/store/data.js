@@ -2,10 +2,10 @@ import {
 	SET_USERS,
 	SET_ACTIVE_USERS,
 	SET_USERS_TOUCHED,
-	SET_POSTS_COUNTER,
+	SET_POSTS_DATA,
 	SET_LOCATIONS,
-	SET_USERS_COUNTER,
-	SET_ACTIVE_USERS_COUNTER,
+	SET_USERS_DATA,
+	SET_ACTIVE_USERS_DATA,
 	SET_CUSTOMERS,
 	SET_VENDORS
 } from '../utils/actions';
@@ -13,10 +13,10 @@ import {
 const initialState = {
 	users: null,
 	activeUsers: null,
-	usersCounter: null,
-	activeUsersCounter: null,
+	usersData: null,
+	activeUsersData: null,
 	usersTouched: false,
-	postsCounter: null,
+	postsData: null,
 	locations: null,
 	customers: null,
 	vendors: null
@@ -39,20 +39,20 @@ export default (state = initialState, action) => {
 				...state,
 				usersTouched: true
 			};
-		case SET_POSTS_COUNTER:
+		case SET_POSTS_DATA:
 			return {
 				...state,
-				postsCounter: action.postsCounter
+				postsData: action.postsData
 			};
-		case SET_USERS_COUNTER:
+		case SET_USERS_DATA:
 			return {
 				...state,
-				usersCounter: action.usersCounter
+				usersData: action.usersData
 			};
-		case SET_ACTIVE_USERS_COUNTER:
+		case SET_ACTIVE_USERS_DATA:
 			return {
 				...state,
-				activeUsersCounter: action.activeUsersCounter
+				activeUsersData: action.activeUsersData
 			};
 		case SET_LOCATIONS:
 			return {

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import * as productRequestController from '../../controllers/product-request';
-import Metadata from '../../models/metadata';
+import CollectionData from '../../models/collection-data';
 import { READ_PAGE, READ_PRODUCT_REQUEST } from '../../utils/actions';
 import ProductRequestCard from './ProductRequestCard';
 
@@ -31,7 +31,7 @@ const ProductRequests = (props) => {
 		metadataListener = productRequestController
 			.getMetadataListener()
 			.onSnapshot((snapshot) => {
-				const newMetaData = new Metadata({
+				const newMetaData = new CollectionData({
 					...snapshot.data(),
 					collection: snapshot.id
 				});

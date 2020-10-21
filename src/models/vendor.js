@@ -26,7 +26,7 @@ export default class Vendor {
 			this.vendorId = docRef.id;
 			await firebase
 				.firestore()
-				.collection('counters')
+				.collection('collection-data')
 				.doc('vendors')
 				.update({
 					count: firebase.firestore.FieldValue.increment(1),

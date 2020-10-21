@@ -1,8 +1,8 @@
 import { DIALOG } from '../utils/constants';
-import { SET_MESSAGE, SET_LOCATIONS } from '../utils/actions';
+import { SET_MESSAGE } from '../utils/actions';
 import Message from '../models/message';
 import ProductRequest from '../models/product-request';
-import Metadata from '../models/metadata';
+import CollectionData from '../models/collection-data';
 
 export const getProductRequests = (all) => {
 	return async (dispatch, getState) => {
@@ -31,7 +31,7 @@ export const getProductRequests = (all) => {
 };
 
 export const getMetadataListener = () => {
-	return Metadata.getListener('product-requests');
+	return CollectionData.getListener('product-requests');
 };
 
 export const getListener = (productRequestId) => {

@@ -93,7 +93,7 @@ export default class Event {
 			this.eventId = docRef.id;
 			await firebase
 				.firestore()
-				.collection('counters')
+				.collection('collection-data')
 				.doc('events')
 				.update({
 					count: firebase.firestore.FieldValue.increment(1),
@@ -110,7 +110,7 @@ export default class Event {
 			.delete();
 		await firebase
 			.firestore()
-			.collection('counters')
+			.collection('collection-data')
 			.doc('events')
 			.update({
 				count: firebase.firestore.FieldValue.increment(-1),

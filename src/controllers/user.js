@@ -4,39 +4,39 @@ import {
 	SET_USERS,
 	SET_ACTIVE_USERS,
 	SET_USERS_TOUCHED,
-	SET_USERS_COUNTER,
-	SET_ACTIVE_USERS_COUNTER
+	SET_USERS_DATA,
+	SET_ACTIVE_USERS_DATA
 } from '../utils/actions';
 import Message from '../models/message';
 import User from '../models/user';
-import Counter from '../models/metadata';
-let usersListener, usersCounterListener, activeUsersCounterListener;
+import CollectionData from '../models/collection-data';
+let usersListener, usersDataListener, activeUsersDataListener;
 
 export const subscribeUserListener = () => {
 	return async (dispatch, getState) => {
 		try {
-			usersCounterListener = Counter.getListener('users').onSnapshot(
+			usersDataListener = CollectionData.getListener('users').onSnapshot(
 				(snapshot) => {
-					const usersCounter = new Counter({
+					const usersData = new CollectionData({
 						...snapshot.data(),
 						collection: snapshot.id
 					});
 					dispatch({
-						type: SET_USERS_COUNTER,
-						usersCounter
+						type: SET_USERS_DATA,
+						usersData
 					});
 				}
 			);
-			activeUsersCounterListener = Counter.getListener(
+			activeUsersDataListener = CollectionData.getListener(
 				'activeUsers'
 			).onSnapshot((snapshot) => {
-				const activeUsersCounter = new Counter({
+				const activeUsersData = new CollectionData({
 					...snapshot.data(),
 					collection: snapshot.id
 				});
 				dispatch({
-					type: SET_ACTIVE_USERS_COUNTER,
-					activeUsersCounter
+					type: SET_ACTIVE_USERS_DATA,
+					activeUsersData
 				});
 			});
 			usersListener = User.getListener().onSnapshot((snapshot) => {
@@ -88,10 +88,10 @@ export const unsubscribeUsersListener = () => {
 	if (usersListener) {
 		usersListener();
 	}
-	if (usersCounterListener) {
-		usersCounterListener();
+	if (usersDataListener) {
+		usersDataListener();
 	}
-	if (activeUsersCounterListener) {
-		activeUsersCounterListener();
+	if (activeUsersDataListener) {
+		activeUsersDataListener();
 	}
 };

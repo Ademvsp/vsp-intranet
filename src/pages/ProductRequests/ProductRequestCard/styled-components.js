@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { CardHeader, CardContent, Button } from '@material-ui/core';
+import { CardHeader, CardContent } from '@material-ui/core';
 // eslint-disable-next-line no-unused-vars
 export const StyledCardHeader = styled(({ skeleton, ...otherProps }) => (
 	<CardHeader {...otherProps} />

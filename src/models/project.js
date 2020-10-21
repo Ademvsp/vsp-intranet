@@ -72,7 +72,7 @@ export default class Project {
 			this.projectId = docRef.id;
 			await firebase
 				.firestore()
-				.collection('counters')
+				.collection('collection-data')
 				.doc('projects')
 				.update({
 					count: firebase.firestore.FieldValue.increment(1),

@@ -6,7 +6,6 @@ import { format } from 'date-fns';
 import {
 	StyledCardHeader,
 	StyledCardContent,
-	StyledButton,
 	StyledCardActions
 } from './styled-components';
 import Post from '../../../models/post';

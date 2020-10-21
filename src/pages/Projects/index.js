@@ -18,15 +18,15 @@ const Projects = (props) => {
 	const params = useParams();
 	const { action } = props;
 	const { authUser } = useSelector((state) => state.authState);
-	const { users, usersCounter } = useSelector((state) => state.dataState);
+	const { users, usersData } = useSelector((state) => state.dataState);
 	const [newProjectDialogOpen, setNewProjectDialogOpen] = useState(false);
 	const [projects, setProjects] = useState();
 	const [selectedProject, setSelectedProject] = useState();
 
 	useEffect(() => {
 		let projectsListener;
-		if (usersCounter && users) {
-			if (users.length === usersCounter.count) {
+		if (usersData && users) {
+			if (users.length === usersData.count) {
 				projectsListener = projectsController
 					.getListener(authUser.userId)
 					.onSnapshot((snapshot) => {
@@ -58,7 +58,7 @@ const Projects = (props) => {
 				projectsListener();
 			}
 		};
-	}, [authUser.userId, users, usersCounter]);
+	}, [authUser.userId, users, usersData]);
 
 	useEffect(() => {
 		if (projects) {

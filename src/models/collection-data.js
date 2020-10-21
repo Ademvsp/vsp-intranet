@@ -1,6 +1,6 @@
 import firebase from '../utils/firebase';
 
-export default class Metadata {
+export default class CollectionData {
 	constructor({ collection, count, documents }) {
 		this.collection = collection;
 		this.count = count;
@@ -10,13 +10,13 @@ export default class Metadata {
 	static async get(collection) {
 		const doc = await firebase
 			.firestore()
-			.collection('counters')
+			.collection('collection-data')
 			.doc(collection)
 			.get();
-		return new Metadata({ ...doc.data(), collection: doc.id });
+		return new CollectionData({ ...doc.data(), collection: doc.id });
 	}
 
 	static getListener(collection) {
-		return firebase.firestore().collection('counters').doc(collection);
+		return firebase.firestore().collection('collection-data').doc(collection);
 	}
 }

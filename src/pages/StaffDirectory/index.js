@@ -14,13 +14,13 @@ import { StyledLink } from './styled-components';
 
 const StaffDirectory = (props) => {
 	const [groupedUsers, setGroupedUsers] = useState();
-	const { activeUsers, activeUsersCounter } = useSelector(
+	const { activeUsers, activeUsersData } = useSelector(
 		(state) => state.dataState
 	);
 
 	useEffect(() => {
-		if (activeUsers && activeUsersCounter) {
-			if (activeUsers.length === activeUsersCounter.count) {
+		if (activeUsers && activeUsersData) {
+			if (activeUsers.length === activeUsersData.count) {
 				//Only start process when all users are loaded. Firebase loads original authUser first as it is already in cache
 				const newGroupedUsers = [];
 				activeUsers.forEach((user) => {
@@ -46,7 +46,7 @@ const StaffDirectory = (props) => {
 				setGroupedUsers(newGroupedUsers);
 			}
 		}
-	}, [activeUsers, activeUsersCounter]);
+	}, [activeUsers, activeUsersData]);
 
 	if (!groupedUsers) {
 		return <CircularProgress />;
