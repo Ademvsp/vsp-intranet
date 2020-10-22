@@ -1,11 +1,10 @@
 import React, { createContext, useState, useEffect, Fragment } from 'react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Grid, Container, Button, CardContent } from '@material-ui/core';
+import { Grid, Container, CardContent } from '@material-ui/core';
 import ExpandableItems from './ExpandableItems';
 import CalendarContainer from './CalendarContainer';
 import { useSelector } from 'react-redux';
 import eventTypes from '../../utils/event-types';
-import { Add as AddIcon } from '@material-ui/icons';
 import NewEventDialog from './NewEventDialog';
 import { StyledCalendarCard, StyledSidePanelCard } from './styled-components';
 import WorkFromHomeSwitch from './WorkFromHomeSwitch';
@@ -16,6 +15,8 @@ import EditEventDialog from './EditEventDialog';
 import Event from '../../models/event';
 import { startOfMonth, sub, add } from 'date-fns';
 import { UPDATE } from '../../utils/actions';
+import FloatingActionButton from '../../components/FloatingActionButton';
+import AddIcon from '@material-ui/icons/Add';
 
 export const EventContext = createContext();
 
@@ -168,6 +169,13 @@ const Calendar = (props) => {
 				</Fragment>
 			)}
 			<Container disableGutters maxWidth='xl'>
+				<FloatingActionButton
+					color='primary'
+					tooltip='Add Event'
+					onClick={addEventClickHandler}
+				>
+					<AddIcon />
+				</FloatingActionButton>
 				<Grid container direction='row' spacing={1} justify='center'>
 					<Grid item>
 						<StyledCalendarCard elevation={2}>
@@ -187,7 +195,7 @@ const Calendar = (props) => {
 									{filteredEvents ? (
 										<Fragment>
 											<Grid item>
-												<Button
+												{/* <Button
 													fullWidth
 													variant='contained'
 													color='primary'
@@ -196,7 +204,7 @@ const Calendar = (props) => {
 													onClick={addEventClickHandler}
 												>
 													Add event
-												</Button>
+												</Button> */}
 											</Grid>
 											<Grid item>
 												<WorkFromHomeSwitch />

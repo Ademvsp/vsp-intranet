@@ -20,9 +20,13 @@ const StaffDirectory = (props) => {
 
 	useEffect(() => {
 		if (activeUsers && activeUsersData) {
+			console.log(activeUsers);
+			console.log(activeUsersData);
 			if (activeUsers.length === activeUsersData.count) {
+				console.log('HERE?');
 				//Only start process when all users are loaded. Firebase loads original authUser first as it is already in cache
 				const newGroupedUsers = [];
+				console.log(activeUsers);
 				activeUsers.forEach((user) => {
 					const userBranch = user.location.branch;
 					const indexOfBranch = newGroupedUsers.findIndex(
@@ -43,6 +47,7 @@ const StaffDirectory = (props) => {
 				newGroupedUsers.forEach((group) =>
 					group.users.sort((a, b) => (a.firstName > b.firstName ? 1 : -1))
 				);
+				console.log(newGroupedUsers);
 				setGroupedUsers(newGroupedUsers);
 			}
 		}

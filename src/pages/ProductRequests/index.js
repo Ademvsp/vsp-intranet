@@ -7,6 +7,8 @@ import * as productRequestController from '../../controllers/product-request';
 import CollectionData from '../../models/collection-data';
 import { READ_PAGE, READ_PRODUCT_REQUEST } from '../../utils/actions';
 import ProductRequestCard from './ProductRequestCard';
+import AddIcon from '@material-ui/icons/Add';
+import FloatingActionButton from '../../components/FloatingActionButton';
 
 const ProductRequests = (props) => {
 	const dispatch = useDispatch();
@@ -108,8 +110,11 @@ const ProductRequests = (props) => {
 
 	return (
 		<Container disableGutters maxWidth='sm'>
+			<FloatingActionButton color='primary' tooltip='Add Product Request'>
+				<AddIcon />
+			</FloatingActionButton>
 			<Grid container direction='column' spacing={2}>
-				<Grid item>
+				<Grid item container justify='flex-end'>
 					{/* <NewPost
 						action={props.action}
 						searchResults={searchResults}

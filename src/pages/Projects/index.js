@@ -1,5 +1,5 @@
 /* eslint-disable react/display-name */
-import { Container, Button } from '@material-ui/core';
+import { Container } from '@material-ui/core';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import * as projectsController from '../../controllers/project';
@@ -12,6 +12,8 @@ import { useHistory, useParams } from 'react-router-dom';
 import { READ, UPDATE } from '../../utils/actions';
 import NewProjectDialog from './NewProjectDialog';
 import EditProjectDialog from './EditProjectDialog';
+import AddIcon from '@material-ui/icons/Add';
+import FloatingActionButton from '../../components/FloatingActionButton';
 
 const Projects = (props) => {
 	const { push } = useHistory();
@@ -92,6 +94,13 @@ const Projects = (props) => {
 
 	return (
 		<Fragment>
+			<FloatingActionButton
+				color='primary'
+				tooltip='Add Project'
+				onClick={() => setNewProjectDialogOpen(true)}
+			>
+				<AddIcon />
+			</FloatingActionButton>
 			{projects && (
 				<NewProjectDialog
 					open={newProjectDialogOpen}
@@ -113,19 +122,10 @@ const Projects = (props) => {
 				<MaterialTable
 					isLoading={!projects}
 					icons={tableColumns}
-					title={
-						<Button
-							variant='contained'
-							color='primary'
-							fullWidth
-							onClick={() => setNewProjectDialogOpen(true)}
-						>
-							Add Project
-						</Button>
-					}
 					columns={columnSchema}
 					data={data}
 					options={{
+						showTitle: false,
 						paginationType: 'normal',
 						minBodyHeight: window.innerHeight / 1.5,
 						maxBodyHeight: window.innerHeight / 1.5,

@@ -28,15 +28,16 @@ export const subscribeUserListener = () => {
 				}
 			);
 			activeUsersDataListener = CollectionData.getListener(
-				'activeUsers'
+				'active-users'
 			).onSnapshot((snapshot) => {
 				const activeUsersData = new CollectionData({
 					...snapshot.data(),
 					collection: snapshot.id
 				});
+				console.log(activeUsersData);
 				dispatch({
 					type: SET_ACTIVE_USERS_DATA,
-					activeUsersData
+					activeUsersData: activeUsersData
 				});
 			});
 			usersListener = User.getListener().onSnapshot((snapshot) => {
