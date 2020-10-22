@@ -12,6 +12,10 @@ import User from '../models/user';
 import CollectionData from '../models/collection-data';
 let usersListener, usersDataListener, activeUsersDataListener;
 
+export const getFullName = (user) => {
+	return `${user.firstName} ${user.lastName}`;
+};
+
 export const subscribeUserListener = () => {
 	return async (dispatch, getState) => {
 		try {
@@ -34,7 +38,6 @@ export const subscribeUserListener = () => {
 					...snapshot.data(),
 					collection: snapshot.id
 				});
-				console.log(activeUsersData);
 				dispatch({
 					type: SET_ACTIVE_USERS_DATA,
 					activeUsersData: activeUsersData

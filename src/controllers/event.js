@@ -17,6 +17,8 @@ import {
 	NEW_EVENT
 } from '../data/notification-types';
 import { MILLISECONDS, millisecondsToDate } from '../utils/date';
+import { transformedRecipient } from './notification';
+import { getFullName } from './user';
 
 export const getReadableTitle = (data, users) => {
 	const { details, user, type } = data;
@@ -148,7 +150,7 @@ export const addEvent = (values, notifyUsers) => {
 			if (recipients.length > 0) {
 				const notifications = [];
 				for (const recipient of recipients) {
-					const senderFullName = `${authUser.firstName} ${authUser.lastName}`;
+					const senderFullName = getFullName(authUser);
 					const readableTitle = getReadableTitle(
 						{
 							details: newEvent.details,
@@ -163,19 +165,12 @@ export const addEvent = (values, notifyUsers) => {
 						end: newEvent.end.getTime(),
 						allDay: newEvent.allDay
 					};
-					const transformedRecipient = {
-						userId: recipient.userId,
-						email: recipient.email,
-						firstName: recipient.firstName,
-						lastName: recipient.lastName,
-						location: recipient.location.locationId
-					};
 					const notification = new Notification({
 						notificationId: null,
 						emailData: emailData,
 						link: `/calendar/${newEvent.eventId}`,
 						page: 'Staff Calendar',
-						recipient: transformedRecipient,
+						recipient: transformedRecipient(recipient),
 						title: `Staff Calendar "${readableTitle}" created by ${senderFullName}`,
 						type: NEW_EVENT
 					});
@@ -258,7 +253,7 @@ export const editEvent = (event, values, notifyUsers) => {
 			if (recipients.length > 0) {
 				const notifications = [];
 				for (const recipient of recipients) {
-					const senderFullName = `${authUser.firstName} ${authUser.lastName}`;
+					const senderFullName = getFullName(authUser);
 					const readableTitle = getReadableTitle(
 						{
 							details: newEvent.details,
@@ -273,19 +268,12 @@ export const editEvent = (event, values, notifyUsers) => {
 						end: newEvent.end.getTime(),
 						allDay: newEvent.allDay
 					};
-					const transformedRecipient = {
-						userId: recipient.userId,
-						email: recipient.email,
-						firstName: recipient.firstName,
-						lastName: recipient.lastName,
-						location: recipient.location.locationId
-					};
 					const notification = new Notification({
 						notificationId: null,
 						emailData: emailData,
 						link: `/calendar/${newEvent.eventId}`,
 						page: 'Staff Calendar',
-						recipient: transformedRecipient,
+						recipient: transformedRecipient(recipient),
 						title: `Staff Calendar "${readableTitle}" updated by ${senderFullName}`,
 						type: EDIT_EVENT
 					});
@@ -342,7 +330,7 @@ export const deleteEvent = (event, notifyUsers) => {
 			if (recipients.length > 0) {
 				const notifications = [];
 				for (const recipient of recipients) {
-					const senderFullName = `${authUser.firstName} ${authUser.lastName}`;
+					const senderFullName = getFullName(authUser);
 					const readableTitle = getReadableTitle(
 						{
 							details: event.details,
@@ -357,19 +345,12 @@ export const deleteEvent = (event, notifyUsers) => {
 						end: event.end.getTime(),
 						allDay: event.allDay
 					};
-					const transformedRecipient = {
-						userId: recipient.userId,
-						email: recipient.email,
-						firstName: recipient.firstName,
-						lastName: recipient.lastName,
-						location: recipient.location.locationId
-					};
 					const notification = new Notification({
 						notificationId: null,
 						emailData: emailData,
 						link: '/calendar',
 						page: 'Staff Calendar',
-						recipient: transformedRecipient,
+						recipient: transformedRecipient(recipient),
 						title: `Staff Calendar "${readableTitle}" deleted by ${senderFullName}`,
 						type: DELETE_EVENT
 					});

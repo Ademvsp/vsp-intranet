@@ -12,6 +12,8 @@ import * as fileUtils from '../utils/file-utils';
 import { NEW_POST_COMMENT, NEW_POST } from '../data/notification-types';
 import { getServerTimeInMilliseconds } from '../utils/firebase';
 import CollectionData from '../models/collection-data';
+import { transformedRecipient } from './notification';
+import { getFullName } from './user';
 let collectionDataListener;
 
 export const getCollectionDataListener = () => {
@@ -88,25 +90,18 @@ export const addPost = (values, attachments, notifyUsers) => {
 			if (recipients.length > 0) {
 				const notifications = [];
 				for (const recipient of recipients) {
-					const senderFullName = `${authUser.firstName} ${authUser.lastName}`;
+					const senderFullName = getFullName(authUser);
 					const emailData = {
 						postBody: body.trim(),
 						attachments: newPost.attachments,
 						postTitle: title.trim()
-					};
-					const transformedRecipient = {
-						userId: recipient.userId,
-						email: recipient.email,
-						firstName: recipient.firstName,
-						lastName: recipient.lastName,
-						location: recipient.location.locationId
 					};
 					const notification = new Notification({
 						notificationId: null,
 						emailData: emailData,
 						link: `/newsfeed/${newPost.postId}`,
 						page: 'News Feed',
-						recipient: transformedRecipient,
+						recipient: transformedRecipient(recipient),
 						title: `News Feed "${title}" New post from ${senderFullName}`,
 						type: NEW_POST
 					});
@@ -162,25 +157,18 @@ export const addComment = (post, body, attachments, notifyUsers) => {
 			if (recipients.length > 0) {
 				const notifications = [];
 				for (const recipient of recipients) {
-					const senderFullName = `${authUser.firstName} ${authUser.lastName}`;
+					const senderFullName = getFullName(authUser);
 					const emailData = {
 						commentBody: body.trim(),
 						attachments: uploadedAttachments,
 						postTitle: post.title
-					};
-					const transformedRecipient = {
-						userId: recipient.userId,
-						email: recipient.email,
-						firstName: recipient.firstName,
-						lastName: recipient.lastName,
-						location: recipient.location.locationId
 					};
 					const notification = new Notification({
 						notificationId: null,
 						emailData: emailData,
 						link: `/newsfeed/${post.postId}`,
 						page: 'News Feed',
-						recipient: transformedRecipient,
+						recipient: transformedRecipient(recipient),
 						title: `News Feed "${post.title}" New comment from ${senderFullName}`,
 						type: NEW_POST_COMMENT
 					});

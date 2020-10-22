@@ -1,4 +1,5 @@
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
+import CollectionData from './collection-data';
 
 export default class ProductRequest {
 	constructor({
@@ -29,6 +30,47 @@ export default class ProductRequest {
 		this.user = user;
 		this.vendor = vendor;
 		this.vendorSku = vendorSku;
+	}
+
+	getDatabaseObject() {
+		const databaseObject = { ...this };
+		delete databaseObject.productRequestId;
+		return databaseObject;
+	}
+
+	async save() {
+		const serverTime = await getServerTimeInMilliseconds();
+		if (this.productRequestId) {
+			this.metadata = {
+				...this.metadata,
+				updatedAt: new Date(serverTime),
+				updatedBy: firebase.auth().currentUser.uid
+			};
+		} else {
+			this.metadata = {
+				createdAt: new Date(serverTime),
+				createdBy: firebase.auth().currentUser.uid,
+				updatedAt: new Date(serverTime),
+				updatedBy: firebase.auth().currentUser.uid
+			};
+			console.log(this.getDatabaseObject());
+			const docRef = await firebase
+				.firestore()
+				.collection('product-requests')
+				.add(this.getDatabaseObject());
+			this.productRequestId = docRef.id;
+			console.log(docRef);
+			await CollectionData.updateCollectionData(
+				'product-requests',
+				this.productRequestId
+			);
+			await CollectionData.updateSubCollectionData(
+				'product-requests',
+				'users',
+				this.user,
+				this.productRequestId
+			);
+		}
 	}
 
 	static async get(userId) {
@@ -62,6 +104,16 @@ export default class ProductRequest {
 			});
 		});
 		return productRequests;
+	}
+
+	static async getAdmins() {
+		const collection = await firebase
+			.firestore()
+			.collection('permissions')
+			.doc('product-requests')
+			.collection('admins')
+			.get();
+		return collection.docs.map((doc) => doc.id);
 	}
 
 	static async isAdmin(userId) {

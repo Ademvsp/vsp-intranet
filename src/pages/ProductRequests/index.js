@@ -1,6 +1,6 @@
 import { CircularProgress, Container, Grid } from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import * as productRequestController from '../../controllers/product-request';
@@ -9,6 +9,7 @@ import { READ_PAGE, READ_PRODUCT_REQUEST } from '../../utils/actions';
 import ProductRequestCard from './ProductRequestCard';
 import AddIcon from '@material-ui/icons/Add';
 import FloatingActionButton from '../../components/FloatingActionButton';
+import NewProductRequestDialog from './NewProductRequestDialog';
 
 const ProductRequests = (props) => {
 	const dispatch = useDispatch();
@@ -28,6 +29,12 @@ const ProductRequests = (props) => {
 	const [page, setPage] = useState(initialPage);
 	const [productRequestIds, setProductRequestIds] = useState();
 	const [activeRequestId, setActiveRequestId] = useState(null);
+
+	const [
+		showNewProductRequestDialog,
+		setShowNewProductRequestDialog
+	] = useState(false);
+
 	//Mount and dismount
 	useEffect(() => {
 		let collectionDataListener;
@@ -109,53 +116,51 @@ const ProductRequests = (props) => {
 	const count = Math.ceil(dataSource.length / MAX_PER_PAGE);
 
 	return (
-		<Container disableGutters maxWidth='sm'>
-			<FloatingActionButton color='primary' tooltip='Add Product Request'>
+		<Fragment>
+			<NewProductRequestDialog
+				open={showNewProductRequestDialog}
+				close={() => setShowNewProductRequestDialog(false)}
+			/>
+			<Container disableGutters maxWidth='sm'>
+				<Grid container direction='column' spacing={2}>
+					<Grid item container direction='column' spacing={2}>
+						{productRequestIds.map((productRequestId) => {
+							const scroll = activeRequestId === productRequestId;
+							return (
+								<Grid item key={productRequestId}>
+									<ProductRequestCard
+										productRequestId={productRequestId}
+										setActiveRequestId={setActiveRequestId}
+										scroll={scroll}
+									/>
+								</Grid>
+							);
+						})}
+						{dataSource.length > 0 && (
+							<Grid item container direction='row' justify='center'>
+								<Pagination
+									color='primary'
+									count={count}
+									page={page}
+									onChange={(_event, value) =>
+										push(`/product-requests/page/${value.toString()}`)
+									}
+									showFirstButton={true}
+									showLastButton={true}
+								/>
+							</Grid>
+						)}
+					</Grid>
+				</Grid>
+			</Container>
+			<FloatingActionButton
+				color='primary'
+				tooltip='Add Product Request'
+				onClick={() => setShowNewProductRequestDialog(true)}
+			>
 				<AddIcon />
 			</FloatingActionButton>
-			<Grid container direction='column' spacing={2}>
-				<Grid item container justify='flex-end'>
-					{/* <NewPost
-						action={props.action}
-						searchResults={searchResults}
-						setSearchResults={setSearchResults}
-					/> */}
-				</Grid>
-				<Grid item container direction='column' spacing={2}>
-					{productRequestIds.map((productRequestId) => {
-						const scroll = activeRequestId === productRequestId;
-						return (
-							<Grid item key={productRequestId}>
-								<ProductRequestCard
-									productRequestId={productRequestId}
-									setActiveRequestId={setActiveRequestId}
-									scroll={scroll}
-								/>
-								{/* <PostCard
-									postId={postId}
-									setActivePostId={setActivePostId}
-									scroll={scroll}
-								/> */}
-							</Grid>
-						);
-					})}
-					{dataSource.length > 0 && (
-						<Grid item container direction='row' justify='center'>
-							<Pagination
-								color='primary'
-								count={count}
-								page={page}
-								onChange={(_event, value) =>
-									push(`/product-requests/page/${value.toString()}`)
-								}
-								showFirstButton={true}
-								showLastButton={true}
-							/>
-						</Grid>
-					)}
-				</Grid>
-			</Grid>
-		</Container>
+		</Fragment>
 	);
 };
 

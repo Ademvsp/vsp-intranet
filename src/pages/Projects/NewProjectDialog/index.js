@@ -149,6 +149,12 @@ const NewProjectDialog = withTheme((props) => {
 		value: 0
 	};
 
+	const dialogCloseHandler = () => {
+		if (!loading) {
+			close();
+		}
+	};
+
 	const submitHandler = async (values) => {
 		setLoading(true);
 		const result = await dispatch(
@@ -334,7 +340,7 @@ const NewProjectDialog = withTheme((props) => {
 	};
 
 	return (
-		<Dialog open={open} onClose={close} fullWidth maxWidth='sm'>
+		<Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
 			<DialogTitle>New Project</DialogTitle>
 			<DialogContent>
 				<Grid container direction='column' spacing={1}>

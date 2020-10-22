@@ -49,7 +49,7 @@ const ViewEventDialog = (props) => {
 	}
 
 	return (
-		<Dialog open={open} onClose={() => close()} fullWidth maxWidth='sm'>
+		<Dialog open={open} onClose={close} fullWidth maxWidth='sm'>
 			<DialogTitle>
 				<StyledTitle>{readableTitle}</StyledTitle>
 			</DialogTitle>

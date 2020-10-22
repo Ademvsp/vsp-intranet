@@ -10,7 +10,8 @@ import {
 	withTheme,
 	Grid
 } from '@material-ui/core';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+// import { useDispatch, useSelector } from 'react-redux';
 import * as productRequestController from '../../../controllers/product-request';
 import { format } from 'date-fns';
 import ProductRequest from '../../../models/product-request';
@@ -29,7 +30,7 @@ import { LONG_DATE_TIME } from '../../../utils/date';
 import ProductRequestForm from './ProductRequestForm';
 
 const ProductRequestCard = withTheme((props) => {
-	const dispatch = useDispatch();
+	// const dispatch = useDispatch();
 	const scrollRef = useRef();
 	const { authUser } = useSelector((state) => state.authState);
 	const { users } = useSelector((state) => state.dataState);

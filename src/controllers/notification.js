@@ -13,6 +13,16 @@ import Message from '../models/message';
 import Notification from '../models/notification';
 let notificationsListener;
 
+export const transformedRecipient = (recipient) => {
+	return {
+		userId: recipient.userId,
+		email: recipient.email,
+		firstName: recipient.firstName,
+		lastName: recipient.lastName,
+		location: recipient.location.locationId
+	};
+};
+
 export const subscribeNotificationsListener = () => {
 	return async (dispatch, getState) => {
 		const authUser = getState().authState.authUser;

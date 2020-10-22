@@ -86,7 +86,7 @@ const NewEventDialog = (props) => {
 		}
 	};
 
-	const closeHandler = () => {
+	const dialogCloseHandler = () => {
 		if (!loading) {
 			close();
 		}
@@ -145,7 +145,7 @@ const NewEventDialog = (props) => {
 	}
 
 	return (
-		<Dialog open={open} onClose={closeHandler} fullWidth maxWidth='sm'>
+		<Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
 			<DialogTitle>
 				<StyledTitle>{`Title Preview: ${readableTitle}`}</StyledTitle>
 			</DialogTitle>

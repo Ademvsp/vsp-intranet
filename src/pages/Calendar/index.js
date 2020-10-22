@@ -169,13 +169,6 @@ const Calendar = (props) => {
 				</Fragment>
 			)}
 			<Container disableGutters maxWidth='xl'>
-				<FloatingActionButton
-					color='primary'
-					tooltip='Add Event'
-					onClick={addEventClickHandler}
-				>
-					<AddIcon />
-				</FloatingActionButton>
 				<Grid container direction='row' spacing={1} justify='center'>
 					<Grid item>
 						<StyledCalendarCard elevation={2}>
@@ -221,6 +214,13 @@ const Calendar = (props) => {
 						</StyledSidePanelCard>
 					</Grid>
 				</Grid>
+				<FloatingActionButton
+					color='primary'
+					tooltip='Add Event'
+					onClick={addEventClickHandler}
+				>
+					<AddIcon />
+				</FloatingActionButton>
 			</Container>
 		</EventContext.Provider>
 	);

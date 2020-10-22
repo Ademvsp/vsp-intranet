@@ -16,6 +16,8 @@ import {
 	NEW_PROJECT_COMMENT
 } from '../data/notification-types';
 import { getServerTimeInMilliseconds } from '../utils/firebase';
+import { transformedRecipient } from './notification';
+import { getFullName } from './user';
 
 export const addProject = (values, notifyUsers, attachments) => {
 	return async (dispatch, getState) => {
@@ -77,7 +79,7 @@ export const addProject = (values, notifyUsers, attachments) => {
 		} catch (error) {
 			const message = new Message({
 				title: 'Pojects',
-				body: 'Failed to add project',
+				body: 'Failed to add Project',
 				feedback: DIALOG
 			});
 			dispatch({
@@ -96,7 +98,7 @@ export const addProject = (values, notifyUsers, attachments) => {
 			if (recipients.length > 0) {
 				const notifications = [];
 				for (const recipient of recipients) {
-					const senderFullName = `${authUser.firstName} ${authUser.lastName}`;
+					const senderFullName = getFullName(authUser);
 					const emailData = {
 						attachments: newProject.attachments,
 						name: newProject.name,
@@ -109,18 +111,11 @@ export const addProject = (values, notifyUsers, attachments) => {
 						status: status.name,
 						value: toCurrency(newProject.value)
 					};
-					const transformedRecipient = {
-						userId: recipient.userId,
-						email: recipient.email,
-						firstName: recipient.firstName,
-						lastName: recipient.lastName,
-						location: recipient.location.locationId
-					};
 					const notification = new Notification({
 						emailData: emailData,
 						link: `/projects/${newProject.projectId}`,
 						page: 'Projects',
-						recipient: transformedRecipient,
+						recipient: transformedRecipient(recipient),
 						title: `Project "${name.trim()}" created by ${senderFullName}`,
 						type: NEW_PROJECT
 					});
@@ -228,7 +223,7 @@ export const editProject = (project, values, notifyUsers, attachments) => {
 			if (recipients.length > 0) {
 				const notifications = [];
 				for (const recipient of recipients) {
-					const senderFullName = `${authUser.firstName} ${authUser.lastName}`;
+					const senderFullName = getFullName(authUser);
 					const emailData = {
 						attachments: newProject.attachments,
 						name: newProject.name,
@@ -241,18 +236,11 @@ export const editProject = (project, values, notifyUsers, attachments) => {
 						status: status.name,
 						value: toCurrency(newProject.value)
 					};
-					const transformedRecipient = {
-						userId: recipient.userId,
-						email: recipient.email,
-						firstName: recipient.firstName,
-						lastName: recipient.lastName,
-						location: recipient.location.locationId
-					};
 					const notification = new Notification({
 						emailData: emailData,
 						link: `/projects/${newProject.projectId}`,
 						page: 'Projects',
-						recipient: transformedRecipient,
+						recipient: transformedRecipient(recipient),
 						title: `Project "${name.trim()}" updated by ${senderFullName}`,
 						type: EDIT_PROJECT
 					});
@@ -308,25 +296,18 @@ export const addComment = (project, body, attachments, notifyUsers) => {
 			if (recipients.length > 0) {
 				const notifications = [];
 				for (const recipient of recipients) {
-					const senderFullName = `${authUser.firstName} ${authUser.lastName}`;
+					const senderFullName = getFullName(authUser);
 					const emailData = {
 						commentBody: body.trim(),
 						attachments: uploadedAttachments,
 						name: project.name
-					};
-					const transformedRecipient = {
-						userId: recipient.userId,
-						email: recipient.email,
-						firstName: recipient.firstName,
-						lastName: recipient.lastName,
-						location: recipient.location.locationId
 					};
 					const notification = new Notification({
 						notificationId: null,
 						emailData: emailData,
 						link: `/projects/${project.projectId}`,
 						page: 'Projects',
-						recipient: transformedRecipient,
+						recipient: transformedRecipient(recipient),
 						title: `Project "${project.name}" New comment from ${senderFullName}`,
 						type: NEW_PROJECT_COMMENT
 					});

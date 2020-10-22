@@ -98,7 +98,7 @@ const EditEventDialog = (props) => {
 		}
 	};
 
-	const closeHandler = () => {
+	const dialogCloseHandler = () => {
 		if (!loading) {
 			close();
 		}
@@ -168,7 +168,7 @@ const EditEventDialog = (props) => {
 				title='Staff Calendar'
 				message='Are you sure you want to delete this event?'
 			/>
-			<Dialog open={open} onClose={closeHandler} fullWidth maxWidth='sm'>
+			<Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
 				<DialogTitle>
 					<StyledTitle>{`Title Preview: ${readableTitle}`}</StyledTitle>
 				</DialogTitle>

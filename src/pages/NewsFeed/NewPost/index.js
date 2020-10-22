@@ -25,13 +25,6 @@ const NewPost = (props) => {
 
 	return (
 		<Fragment>
-			<FloatingActionButton
-				color='primary'
-				tooltip='New Post'
-				onClick={() => setNewPostDialogOpen(true)}
-			>
-				<AddIcon />
-			</FloatingActionButton>
 			<Card elevation={2}>
 				<CardContent>
 					<Grid
@@ -80,6 +73,13 @@ const NewPost = (props) => {
 					</Grid>
 				</CardContent>
 			</Card>
+			<FloatingActionButton
+				color='primary'
+				tooltip='New Post'
+				onClick={() => setNewPostDialogOpen(true)}
+			>
+				<AddIcon />
+			</FloatingActionButton>
 		</Fragment>
 	);
 };

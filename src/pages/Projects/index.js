@@ -94,13 +94,6 @@ const Projects = (props) => {
 
 	return (
 		<Fragment>
-			<FloatingActionButton
-				color='primary'
-				tooltip='Add Project'
-				onClick={() => setNewProjectDialogOpen(true)}
-			>
-				<AddIcon />
-			</FloatingActionButton>
 			{projects && (
 				<NewProjectDialog
 					open={newProjectDialogOpen}
@@ -137,6 +130,13 @@ const Projects = (props) => {
 					}
 				/>
 			</Container>
+			<FloatingActionButton
+				color='primary'
+				tooltip='Add Project'
+				onClick={() => setNewProjectDialogOpen(true)}
+			>
+				<AddIcon />
+			</FloatingActionButton>
 		</Fragment>
 	);
 };

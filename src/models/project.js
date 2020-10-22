@@ -1,4 +1,5 @@
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
+import CollectionData from './collection-data';
 
 export default class Project {
 	constructor({
@@ -30,19 +31,8 @@ export default class Project {
 	}
 
 	getDatabaseObject() {
-		return {
-			attachments: this.attachments,
-			comments: this.comments,
-			customer: this.customer,
-			description: this.description,
-			metadata: this.metadata,
-			name: this.name,
-			owners: this.owners,
-			reminder: this.reminder,
-			status: this.status,
-			value: this.value,
-			vendors: this.vendors
-		};
+		const databaseObject = { ...this };
+		delete databaseObject.projectId;
 	}
 
 	async save() {
@@ -70,14 +60,7 @@ export default class Project {
 				.collection('projectsNew')
 				.add(this.getDatabaseObject());
 			this.projectId = docRef.id;
-			await firebase
-				.firestore()
-				.collection('collection-data')
-				.doc('projects')
-				.update({
-					count: firebase.firestore.FieldValue.increment(1),
-					documents: firebase.firestore.FieldValue.arrayUnion(this.projectId)
-				});
+			await CollectionData.updateCollectionData('projects', this.projectId);
 		}
 	}
 

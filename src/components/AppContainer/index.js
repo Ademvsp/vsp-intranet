@@ -12,9 +12,7 @@ const AppContainer = (props) => {
 		<SideDrawerContext.Provider value={{ drawerOpen, setDrawerOpen }}>
 			<Navbar />
 			<SideDrawer />
-			<StyledContainer disableGutters={true} maxWidth={false}>
-				{props.children}
-			</StyledContainer>
+			<StyledContainer maxWidth={false}>{props.children}</StyledContainer>
 		</SideDrawerContext.Provider>
 	);
 };
