@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from 'react';
 import { Menu, MenuItem, Divider } from '@material-ui/core/';
 import { useDispatch } from 'react-redux';
-import * as authController from '../../../controllers/auth';
+import * as authController from '../../../controllers/auth-user';
 import { useHistory } from 'react-router-dom';
 import Avatar from '../../Avatar';
 

@@ -24,6 +24,10 @@ export default class AuthUser {
 		this.settings = settings;
 	}
 
+	static getUserId() {
+		return firebase.auth().currentUser.uid;
+	}
+
 	async save() {
 		const metadata = {
 			...this.metadata,

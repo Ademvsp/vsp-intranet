@@ -1,10 +1,11 @@
+import { REQUESTED } from '../data/product-request-status-types';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
 import CollectionData from './collection-data';
 
 export default class ProductRequest {
 	constructor({
 		productRequestId,
-		action,
+		actions,
 		attachments,
 		comments,
 		cost,
@@ -12,13 +13,12 @@ export default class ProductRequest {
 		finalSku,
 		metadata,
 		productType,
-		status,
 		user,
 		vendor,
 		vendorSku
 	}) {
 		this.productRequestId = productRequestId;
-		this.action = action;
+		this.actions = actions;
 		this.attachments = attachments;
 		this.comments = comments;
 		this.cost = cost;
@@ -26,7 +26,6 @@ export default class ProductRequest {
 		this.finalSku = finalSku;
 		this.metadata = metadata;
 		this.productType = productType;
-		this.status = status;
 		this.user = user;
 		this.vendor = vendor;
 		this.vendorSku = vendorSku;
@@ -41,11 +40,11 @@ export default class ProductRequest {
 	async save() {
 		const serverTime = await getServerTimeInMilliseconds();
 		if (this.productRequestId) {
-			this.metadata = {
-				...this.metadata,
-				updatedAt: new Date(serverTime),
-				updatedBy: firebase.auth().currentUser.uid
-			};
+			// this.metadata = {
+			// 	...this.metadata,
+			// 	updatedAt: new Date(serverTime),
+			// 	updatedBy: firebase.auth().currentUser.uid
+			// };
 		} else {
 			this.metadata = {
 				createdAt: new Date(serverTime),
@@ -53,13 +52,18 @@ export default class ProductRequest {
 				updatedAt: new Date(serverTime),
 				updatedBy: firebase.auth().currentUser.uid
 			};
-			console.log(this.getDatabaseObject());
+			this.actions = [
+				{
+					actionType: REQUESTED,
+					actionedAt: new Date(serverTime),
+					actionedBy: firebase.auth().currentUser.uid
+				}
+			];
 			const docRef = await firebase
 				.firestore()
 				.collection('product-requests')
 				.add(this.getDatabaseObject());
 			this.productRequestId = docRef.id;
-			console.log(docRef);
 			await CollectionData.updateCollectionData(
 				'product-requests',
 				this.productRequestId
@@ -73,37 +77,26 @@ export default class ProductRequest {
 		}
 	}
 
-	static async get(userId) {
-		let collection;
-		let collectionRef = firebase
+	async addComment(body, attachments, serverTime) {
+		const comment = {
+			attachments: attachments,
+			body: body,
+			metadata: {
+				createdAt: new Date(serverTime),
+				createdBy: firebase.auth().currentUser.uid,
+				updatedAt: new Date(serverTime),
+				updatedBy: firebase.auth().currentUser.uid
+			},
+			user: firebase.auth().currentUser.uid
+		};
+		await firebase
 			.firestore()
 			.collection('product-requests')
-			.orderBy('metadata.createdAt', 'desc');
-		if (userId) {
-			collection = await collectionRef
-				.where('metadata.createdBy', '==', userId)
-				.get();
-		} else {
-			collection = await collectionRef.get();
-		}
-		const productRequests = collection.docs.map((doc) => {
-			const metadata = {
-				...doc.data().metadata,
-				createdAt: doc.data().metadata.createdAt.toDate(),
-				updatedAt: doc.data().metadata.updatedAt.toDate()
-			};
-			const action = {
-				...doc.data().action,
-				actionedAt: doc.data().action.actionedAt?.toDate()
-			};
-			return new ProductRequest({
-				...doc.data(),
-				productRequestId: doc.id,
-				action: action,
-				metadata: metadata
+			.doc(this.productRequestId)
+			.update({
+				comments: firebase.firestore.FieldValue.arrayUnion(comment)
 			});
-		});
-		return productRequests;
+		this.comments.push(comment);
 	}
 
 	static async getAdmins() {
@@ -116,13 +109,13 @@ export default class ProductRequest {
 		return collection.docs.map((doc) => doc.id);
 	}
 
-	static async isAdmin(userId) {
+	static async isAdmin() {
 		const docRef = await firebase
 			.firestore()
 			.collection('permissions')
 			.doc('product-requests')
 			.collection('admins')
-			.doc(userId)
+			.doc(firebase.auth().currentUser.uid)
 			.get();
 		return docRef.exists;
 	}

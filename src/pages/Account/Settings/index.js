@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core';
 import Switch from '@material-ui/core/Switch';
 import { useDispatch } from 'react-redux';
-import * as authController from '../../../controllers/auth';
+import * as authController from '../../../controllers/auth-user';
 import {
 	Brightness4 as Brightness4Icon,
 	Home as HomeIcon

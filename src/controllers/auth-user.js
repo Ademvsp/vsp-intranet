@@ -18,6 +18,10 @@ import * as pictureUtils from '../utils/picture-utils';
 import * as fileUtils from '../utils/file-utils';
 let authUserListener;
 
+export const getUserId = () => {
+	return AuthUser.getUserId();
+};
+
 export const verifyAuth = () => {
 	return async (dispatch, getState) => {
 		AuthUser.getAuth().onAuthStateChanged(async (firebaseAuthUser) => {

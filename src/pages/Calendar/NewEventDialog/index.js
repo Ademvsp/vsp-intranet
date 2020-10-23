@@ -15,7 +15,7 @@ import {
 import ActionsBar from '../../../components/ActionsBar';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import eventTypes from '../../../utils/event-types';
+import eventTypes from '../../../data/event-types';
 import { useSelector, useDispatch } from 'react-redux';
 import {
 	DateTimePicker,

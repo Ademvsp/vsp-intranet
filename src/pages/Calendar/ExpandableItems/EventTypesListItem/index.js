@@ -6,7 +6,7 @@ import {
 	Switch
 } from '@material-ui/core';
 import { EventContext } from '../..';
-import eventTypes from '../../../../utils/event-types';
+import eventTypes from '../../../../data/event-types';
 
 const EventTypesListItem = (props) => {
 	const { selectedEventTypes, setSelectedEventTypes } = useContext(

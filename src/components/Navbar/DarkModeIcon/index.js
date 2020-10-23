@@ -5,7 +5,7 @@ import {
 	Brightness5 as Brightness5Icon
 } from '@material-ui/icons';
 import { useDispatch, useSelector } from 'react-redux';
-import * as authController from '../../../controllers/auth';
+import * as authController from '../../../controllers/auth-user';
 
 const DarkModeIcon = (props) => {
 	const dispatch = useDispatch();

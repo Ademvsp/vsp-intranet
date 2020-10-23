@@ -4,7 +4,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import AppContainer from './components/AppContainer';
 import { CircularProgress } from '@material-ui/core';
-import * as authController from './controllers/auth';
+import * as authController from './controllers/auth-user';
 import * as notificationController from './controllers/notification';
 import * as userController from './controllers/user';
 import * as locationController from './controllers/location';

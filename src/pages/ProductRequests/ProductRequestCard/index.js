@@ -10,8 +10,7 @@ import {
 	withTheme,
 	Grid
 } from '@material-ui/core';
-import { useSelector } from 'react-redux';
-// import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as productRequestController from '../../../controllers/product-request';
 import { format } from 'date-fns';
 import ProductRequest from '../../../models/product-request';
@@ -28,13 +27,19 @@ import scrollToComponent from 'react-scroll-to-component';
 import Card from '../../../components/Card';
 import { LONG_DATE_TIME } from '../../../utils/date';
 import ProductRequestForm from './ProductRequestForm';
+import ActionButtons from './ActionButtons';
 
 const ProductRequestCard = withTheme((props) => {
-	// const dispatch = useDispatch();
+	const dispatch = useDispatch();
 	const scrollRef = useRef();
 	const { authUser } = useSelector((state) => state.authState);
 	const { users } = useSelector((state) => state.dataState);
-	const { productRequestId, scroll, setActiveProductRequestId } = props;
+	const {
+		isAdmin,
+		productRequestId,
+		scroll,
+		setActiveProductRequestId
+	} = props;
 	const [productRequest, setProductRequest] = useState();
 	const [showComments, setShowComments] = useState(false);
 
@@ -61,14 +66,14 @@ const ProductRequestCard = withTheme((props) => {
 						createdAt: doc.data().metadata.createdAt.toDate(),
 						updatedAt: doc.data().metadata.updatedAt.toDate()
 					};
-					const action = {
-						...doc.data().action,
-						actionedAt: doc.data().action.actionedAt?.toDate()
-					};
+					const actions = doc.data().actions.map((action) => ({
+						...action,
+						actionedAt: action.actionedAt.toDate()
+					}));
 					const newProductRequest = new ProductRequest({
 						...doc.data(),
 						productRequestId: doc.id,
-						action: action,
+						actions: actions,
 						metadata: metadata
 					});
 					setProductRequest(newProductRequest);
@@ -108,16 +113,11 @@ const ProductRequestCard = withTheme((props) => {
 		);
 	}
 
-	const newCommentHandler = async (body, attachments, notifyUsers) => {
-		// const result = await dispatch(
-		// 	productRequestController.addComment(
-		// 		productRequest,
-		// 		body,
-		// 		attachments,
-		// 		notifyUsers
-		// 	)
-		// );
-		// return result;
+	const newCommentHandler = async (body, attachments) => {
+		const result = await dispatch(
+			productRequestController.addComment(productRequest, body, attachments)
+		);
+		return result;
 	};
 
 	const commentsClickHandler = () => {
@@ -146,7 +146,6 @@ const ProductRequestCard = withTheme((props) => {
 						variant: 'body1'
 					}}
 					subheader={`${user.firstName} ${user.lastName}`}
-					// action={<PostCardMenu productRequest={productRequest} />}
 				/>
 				<CardContent>
 					<Grid container direction='column' spacing={2}>
@@ -159,24 +158,32 @@ const ProductRequestCard = withTheme((props) => {
 					</Grid>
 				</CardContent>
 				<CardActions style={{ padding: `${props.theme.spacing(2)}px` }}>
-					<Grid container direction='row' justify='space-between'>
-						<Grid item>
-							<Typography color='secondary' component='span' variant='body2'>
-								{format(postDate, LONG_DATE_TIME)}
-							</Typography>
+					<Grid container direction='column' spacing={1}>
+						<Grid item container direction='row' justify='flex-end' spacing={1}>
+							<ActionButtons
+								productRequest={productRequest}
+								isAdmin={isAdmin}
+							/>
 						</Grid>
-						<Grid item>
-							<Button
-								style={{ textTransform: 'unset' }}
-								size='small'
-								color='secondary'
-								onClick={commentsClickHandler}
-								startIcon={
-									productRequest.comments.length === 0 && <CommentIcon />
-								}
-							>
-								{commentButtonText}
-							</Button>
+						<Grid item container direction='row' justify='space-between'>
+							<Grid item>
+								<Typography color='secondary' component='span' variant='body2'>
+									{format(postDate, LONG_DATE_TIME)}
+								</Typography>
+							</Grid>
+							<Grid item>
+								<Button
+									style={{ textTransform: 'unset' }}
+									size='small'
+									color='secondary'
+									onClick={commentsClickHandler}
+									startIcon={
+										productRequest.comments.length === 0 && <CommentIcon />
+									}
+								>
+									{commentButtonText}
+								</Button>
+							</Grid>
 						</Grid>
 					</Grid>
 				</CardActions>

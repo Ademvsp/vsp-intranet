@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { Menu, MenuItem, CircularProgress } from '@material-ui/core';
-import * as authController from '../../../controllers/auth';
+import * as authController from '../../../controllers/auth-user';
 import ConfirmDialog from '../../../components/ConfirmDialog';
 import { StyledAvatar } from './styled-components';
 

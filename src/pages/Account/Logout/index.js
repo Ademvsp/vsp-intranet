@@ -2,7 +2,7 @@ import React, { Fragment, useState } from 'react';
 import { StyledButtonContainer } from '../styled-components';
 import { Button } from '@material-ui/core';
 import ConfirmDialog from '../../../components/ConfirmDialog';
-import * as authController from '../../../controllers/auth';
+import * as authController from '../../../controllers/auth-user';
 import { useDispatch } from 'react-redux';
 
 const Logout = (props) => {

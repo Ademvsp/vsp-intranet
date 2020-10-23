@@ -6,7 +6,7 @@ import {
 	Switch,
 	List
 } from '@material-ui/core';
-import * as authController from '../../../controllers/auth';
+import * as authController from '../../../controllers/auth-user';
 import { useSelector, useDispatch } from 'react-redux';
 
 const WorkFromHomeSwitch = (props) => {

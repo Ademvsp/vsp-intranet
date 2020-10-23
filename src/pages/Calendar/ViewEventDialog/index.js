@@ -10,7 +10,7 @@ import {
 	Tooltip,
 	Dialog
 } from '@material-ui/core';
-import eventTypes from '../../../utils/event-types';
+import eventTypes from '../../../data/event-types';
 import { useSelector } from 'react-redux';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';

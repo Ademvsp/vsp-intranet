@@ -9,9 +9,14 @@ import CalendarsListItem from './CalendarsListItem';
 import EventTypesListItem from './EventTypesListItem';
 import WorkFromHomeListItem from './WorkFromHomeListItem';
 import LeaveListItem from './LeaveListItem';
-import { eventTypeNames } from '../../../utils/event-types';
 import SkeletonContainer from './SkeletonContainer';
 import { EventContext } from '..';
+import {
+	ANNUAL_LEAVE,
+	ON_SITE,
+	OUT_OF_OFFICE,
+	SICK_LEAVE
+} from '../../../data/event-types';
 
 const ExpandableItems = (props) => {
 	const initialPanelItems = [
@@ -33,34 +38,22 @@ const ExpandableItems = (props) => {
 		{
 			name: 'Out of Office',
 			expanded: false,
-			component: (
-				<LeaveListItem
-					eventTypeId={eventTypeNames.OUT_OF_OFFICE.toLowerCase()}
-				/>
-			)
+			component: <LeaveListItem eventTypeId={OUT_OF_OFFICE.toLowerCase()} />
 		},
 		{
 			name: 'Annual Leave',
 			expanded: false,
-			component: (
-				<LeaveListItem
-					eventTypeId={eventTypeNames.ANNUAL_LEAVE.toLowerCase()}
-				/>
-			)
+			component: <LeaveListItem eventTypeId={ANNUAL_LEAVE.toLowerCase()} />
 		},
 		{
 			name: 'Sick Leave',
 			expanded: false,
-			component: (
-				<LeaveListItem eventTypeId={eventTypeNames.SICK_LEAVE.toLowerCase()} />
-			)
+			component: <LeaveListItem eventTypeId={SICK_LEAVE.toLowerCase()} />
 		},
 		{
 			name: 'On Site',
 			expanded: false,
-			component: (
-				<LeaveListItem eventTypeId={eventTypeNames.ON_SITE.toLowerCase()} />
-			)
+			component: <LeaveListItem eventTypeId={ON_SITE.toLowerCase()} />
 		}
 	];
 	const [panelItems, setPanelItems] = useState(initialPanelItems);

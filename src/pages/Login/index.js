@@ -10,7 +10,7 @@ import {
 import firebase from '../../utils/firebase';
 import EmailForm from './EmailForm';
 import CodeForm from './CodeForm';
-import * as authController from '../../controllers/auth';
+import * as authController from '../../controllers/auth-user';
 import { useDispatch } from 'react-redux';
 
 const Login = (props) => {

@@ -119,6 +119,7 @@ const NewProductRequestDialog = withTheme((props) => {
 		<TextField
 			{...params}
 			label='Vendor'
+			autoFocus
 			fullWidth
 			helperText={
 				formik.errors.vendor && formik.touched.vendor

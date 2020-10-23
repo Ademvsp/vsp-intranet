@@ -4,7 +4,7 @@ import { Grid, Container, CardContent } from '@material-ui/core';
 import ExpandableItems from './ExpandableItems';
 import CalendarContainer from './CalendarContainer';
 import { useSelector } from 'react-redux';
-import eventTypes from '../../utils/event-types';
+import eventTypes from '../../data/event-types';
 import NewEventDialog from './NewEventDialog';
 import { StyledCalendarCard, StyledSidePanelCard } from './styled-components';
 import WorkFromHomeSwitch from './WorkFromHomeSwitch';

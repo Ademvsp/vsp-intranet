@@ -22,6 +22,12 @@ export default class Notification {
 		this.type = type;
 	}
 
+	getDatabaseObject() {
+		const databaseObject = { ...this };
+		delete databaseObject.notificationId;
+		return databaseObject;
+	}
+
 	async delete() {
 		await firebase
 			.firestore()
@@ -33,21 +39,14 @@ export default class Notification {
 	static async saveAll(notifications) {
 		const batch = firebase.firestore().batch();
 		for (const notification of notifications) {
+			notification.metadata = {
+				createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+				createdBy: firebase.auth().currentUser.uid,
+				updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+				updatedBy: firebase.auth().currentUser.uid
+			};
 			const docRef = firebase.firestore().collection('notificationsNew').doc();
-			batch.set(docRef, {
-				emailData: notification.emailData,
-				link: notification.link,
-				metadata: {
-					createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-					createdBy: firebase.auth().currentUser.uid,
-					updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-					updatedBy: firebase.auth().currentUser.uid
-				},
-				page: notification.page,
-				recipient: { ...notification.recipient },
-				title: notification.title,
-				type: notification.type
-			});
+			batch.set(docRef, notification.getDatabaseObject());
 		}
 		await batch.commit();
 	}

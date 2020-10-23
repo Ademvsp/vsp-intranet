@@ -8,7 +8,6 @@ import { SET_MESSAGE } from '../utils/actions';
 import Message from '../models/message';
 import Event from '../models/event';
 import Notification from '../models/notification';
-import { eventTypeNames } from '../utils/event-types';
 import { format } from 'date-fns-tz';
 import { set } from 'date-fns';
 import {
@@ -19,22 +18,22 @@ import {
 import { MILLISECONDS, millisecondsToDate } from '../utils/date';
 import { transformedRecipient } from './notification';
 import { getFullName } from './user';
+import {
+	ANNUAL_LEAVE,
+	GENERAL,
+	MEETING,
+	ON_SITE,
+	OTHER_LEAVE,
+	OUT_OF_OFFICE,
+	PUBLIC_HOLIDAY,
+	SICK_LEAVE,
+	TRAINING
+} from '../data/event-types';
 
 export const getReadableTitle = (data, users) => {
 	const { details, user, type } = data;
 	const eventUser = users.find((u) => u.userId === user);
 	const eventUserName = `${eventUser.firstName} ${eventUser.lastName}`;
-	const {
-		GENERAL,
-		MEETING,
-		ON_SITE,
-		TRAINING,
-		OUT_OF_OFFICE,
-		SICK_LEAVE,
-		ANNUAL_LEAVE,
-		OTHER_LEAVE,
-		PUBLIC_HOLIDAY
-	} = eventTypeNames;
 	switch (type) {
 		case GENERAL.toLowerCase():
 			return details;

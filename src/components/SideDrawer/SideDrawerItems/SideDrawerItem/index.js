@@ -13,7 +13,7 @@ import { useHistory } from 'react-router-dom';
 import { withTheme } from '@material-ui/core/styles';
 import { SideDrawerContext } from '../../../AppContainer';
 import { useDispatch, useSelector } from 'react-redux';
-import * as authController from '../../../../controllers/auth';
+import * as authController from '../../../../controllers/auth-user';
 
 const SideDrawerItem = withTheme((props) => {
 	const { Icon, text, link, subItems, subItem } = props;

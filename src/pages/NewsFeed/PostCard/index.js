@@ -7,7 +7,8 @@ import {
 	CardHeader,
 	CardContent,
 	CardActions,
-	withTheme
+	withTheme,
+	Grid
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import * as postController from '../../../controllers/post';
@@ -92,8 +93,10 @@ const PostCard = withTheme((props) => {
 					<Skeleton animation='pulse' variant='rect' height={200} />
 				</CardContent>
 				<CardActions style={{ padding: `${props.theme.spacing(2)}px` }}>
-					<Skeleton animation='pulse' height={20} width='20%' />
-					<Skeleton animation='pulse' height={30} width='10%' />
+					<Grid container justify='space-between'>
+						<Skeleton animation='pulse' height={20} width='20%' />
+						<Skeleton animation='pulse' height={30} width='10%' />
+					</Grid>
 				</CardActions>
 			</Card>
 		);
@@ -140,18 +143,20 @@ const PostCard = withTheme((props) => {
 				</CardContent>
 				        
 				<CardActions style={{ padding: `${props.theme.spacing(2)}px` }}>
-					<Typography color='secondary' component='span' variant='body2'>
-						{format(postDate, LONG_DATE_TIME)}
-					</Typography>
-					<Button
-						style={{ textTransform: 'unset' }}
-						size='small'
-						color='secondary'
-						onClick={commentsClickHandler}
-						startIcon={post.comments.length === 0 && <CommentIcon />}
-					>
-						{commentButtonText}
-					</Button>
+					<Grid container justify='space-between'>
+						<Typography color='secondary' component='span' variant='body2'>
+							{format(postDate, LONG_DATE_TIME)}
+						</Typography>
+						<Button
+							style={{ textTransform: 'unset' }}
+							size='small'
+							color='secondary'
+							onClick={commentsClickHandler}
+							startIcon={post.comments.length === 0 && <CommentIcon />}
+						>
+							{commentButtonText}
+						</Button>
+					</Grid>
 				</CardActions>
 				<Collapse in={showComments} timeout='auto'>
 					<Comments

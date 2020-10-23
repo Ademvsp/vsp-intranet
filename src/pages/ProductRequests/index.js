@@ -1,7 +1,7 @@
 import { CircularProgress, Container, Grid } from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
 import React, { Fragment, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import * as productRequestController from '../../controllers/product-request';
 import CollectionData from '../../models/collection-data';
@@ -15,8 +15,6 @@ const ProductRequests = (props) => {
 	const dispatch = useDispatch();
 
 	const params = useParams();
-	const { authUser } = useSelector((state) => state.authState);
-	const { userId } = authUser;
 	const { action } = props;
 	const { replace, push } = useHistory();
 
@@ -30,17 +28,26 @@ const ProductRequests = (props) => {
 	const [productRequestIds, setProductRequestIds] = useState();
 	const [activeRequestId, setActiveRequestId] = useState(null);
 
+	const [isAdmin, setIsAdmin] = useState();
 	const [
 		showNewProductRequestDialog,
 		setShowNewProductRequestDialog
 	] = useState(false);
 
-	//Mount and dismount
+	//Mount and dismount, get admin status
+	useEffect(() => {
+		const asyncFunction = async () => {
+			const newIsAdmin = await productRequestController.getIsAdmin();
+			setIsAdmin(newIsAdmin);
+		};
+		asyncFunction();
+	}, []);
+	//Get product requests based on user
 	useEffect(() => {
 		let collectionDataListener;
 		const asyncFunction = async () => {
 			collectionDataListener = (
-				await productRequestController.getCollectionDataListener(userId)
+				await productRequestController.getCollectionDataListener()
 			).onSnapshot((snapshot) => {
 				let newCollectionData = new CollectionData({
 					collection: 'product-requests',
@@ -56,13 +63,16 @@ const ProductRequests = (props) => {
 				setCollectionData(newCollectionData);
 			});
 		};
+		if (isAdmin !== undefined) {
+			asyncFunction();
+		}
 		asyncFunction();
 		return () => {
 			if (collectionDataListener) {
 				collectionDataListener();
 			}
 		};
-	}, [dispatch, userId]);
+	}, [dispatch, isAdmin]);
 	//If results change or collectionData changes, update the data source
 	useEffect(() => {
 		if (collectionData) {
@@ -132,6 +142,7 @@ const ProductRequests = (props) => {
 										productRequestId={productRequestId}
 										setActiveRequestId={setActiveRequestId}
 										scroll={scroll}
+										isAdmin={isAdmin}
 									/>
 								</Grid>
 							);
