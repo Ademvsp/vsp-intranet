@@ -36,6 +36,20 @@ export default class Notification {
 			.delete();
 	}
 
+	async save() {
+		this.metadata = {
+			createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+			createdBy: firebase.auth().currentUser.uid,
+			updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+			updatedBy: firebase.auth().currentUser.uid
+		};
+		const docRef = await firebase
+			.firestore()
+			.collection('notificationsNew')
+			.add(this.getDatabaseObject());
+		this.notificationId = docRef.id;
+	}
+
 	static async saveAll(notifications) {
 		const batch = firebase.firestore().batch();
 		for (const notification of notifications) {

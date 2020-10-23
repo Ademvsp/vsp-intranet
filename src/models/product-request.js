@@ -1,4 +1,8 @@
-import { REQUESTED } from '../data/product-request-status-types';
+import {
+	APPROVED,
+	REJECTED,
+	REQUESTED
+} from '../data/product-request-status-types';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
 import CollectionData from './collection-data';
 
@@ -97,6 +101,58 @@ export default class ProductRequest {
 				comments: firebase.firestore.FieldValue.arrayUnion(comment)
 			});
 		this.comments.push(comment);
+	}
+
+	async approve(finalSku) {
+		const serverTime = await getServerTimeInMilliseconds();
+		const action = {
+			actionType: APPROVED,
+			actionedAt: new Date(serverTime),
+			actionedBy: firebase.auth().currentUser.uid
+		};
+		const metadata = {
+			createdAt: this.metadata.createdAt,
+			createdBy: this.metadata.createdBy,
+			updatedAt: new Date(serverTime),
+			updatedBy: firebase.auth().currentUser.uid
+		};
+		await firebase
+			.firestore()
+			.collection('product-requests')
+			.doc(this.productRequestId)
+			.update({
+				actions: firebase.firestore.FieldValue.arrayUnion(action),
+				finalSku: finalSku,
+				metadata: metadata
+			});
+		this.finalSku = finalSku;
+		this.metadata = metadata;
+		this.actions = [...this.actions, action];
+	}
+
+	async reject() {
+		const serverTime = await getServerTimeInMilliseconds();
+		const action = {
+			actionType: REJECTED,
+			actionedAt: new Date(serverTime),
+			actionedBy: firebase.auth().currentUser.uid
+		};
+		const metadata = {
+			createdAt: this.metadata.createdAt,
+			createdBy: this.metadata.createdBy,
+			updatedAt: new Date(serverTime),
+			updatedBy: firebase.auth().currentUser.uid
+		};
+		await firebase
+			.firestore()
+			.collection('product-requests')
+			.doc(this.productRequestId)
+			.update({
+				actions: firebase.firestore.FieldValue.arrayUnion(action),
+				metadata: metadata
+			});
+		this.metadata = metadata;
+		this.actions = [...this.actions, action];
 	}
 
 	static async getAdmins() {

@@ -1,92 +1,103 @@
-import { Button, Chip, Grid, withTheme } from '@material-ui/core';
-import React, { Fragment } from 'react';
-import {
-	APPROVED,
-	REJECTED,
-	REQUESTED
-} from '../../../../data/product-request-status-types';
+import { Button, Grid, withTheme } from '@material-ui/core';
+import React, { Fragment, useState } from 'react';
+import { REQUESTED } from '../../../../data/product-request-status-types';
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
-import ThumbsUpDownIcon from '@material-ui/icons/ThumbsUpDown';
-import Avatar from '../../../../components/Avatar';
-import { useSelector } from 'react-redux';
+import StatusChip from './StatusChip';
+import RejectDialog from '../../../../components/ConfirmDialog';
+import ApproveDialog from './ApproveDialog';
+import { useDispatch } from 'react-redux';
+import * as productRequestController from '../../../../controllers/product-request';
 
 const ActionButtons = withTheme((props) => {
-	const { users } = useSelector((state) => state.dataState);
+	const dispatch = useDispatch();
+	const [loading, setLoading] = useState(false);
+	const [showRejectDialog, setShowRejectDialog] = useState(false);
+	const [showApproveDialog, setShowApproveDialog] = useState(false);
 	const { isAdmin, productRequest } = props;
-	let children = null;
-
 	const action = [...productRequest.actions].pop();
 	const actionType = action.actionType;
-	const actionUser = users.find((user) => user.userId === action.actionedBy);
 
-	if (actionType === REQUESTED) {
-		if (isAdmin) {
-			children = (
-				<Fragment>
-					<Grid item>
-						<Button
-							variant='contained'
-							color='default'
-							startIcon={<ThumbDownAltIcon />}
-						>
-							Reject
-						</Button>
-					</Grid>
-					<Grid item>
-						<Button
-							variant='contained'
-							color='secondary'
-							startIcon={<ThumbUpAltIcon />}
-						>
-							Approve
-						</Button>
-					</Grid>
-				</Fragment>
-			);
-		} else {
-			children = (
-				<Grid item>
-					<Chip
-						color='secondary'
-						variant='outlined'
-						avatar={<Avatar user={actionUser} contactCard clickable />}
-						label={REQUESTED}
-						deleteIcon={<ThumbsUpDownIcon />}
-						onDelete={() => {}}
-					/>
-				</Grid>
-			);
+	const rejectClickHandler = () => {
+		setShowRejectDialog(true);
+	};
+
+	const rejectConfirmHandler = async () => {
+		setLoading(true);
+		const result = await dispatch(
+			productRequestController.rejectProductRequest(productRequest)
+		);
+		if (result) {
+			setShowRejectDialog(false);
 		}
-	} else if (actionType === REJECTED) {
-		children = (
-			<Grid item>
-				<Chip
-					color='secondary'
-					variant='outlined'
-					avatar={<Avatar user={actionUser} contactCard clickable />}
-					label={REJECTED}
-					deleteIcon={<ThumbDownAltIcon />}
-					onDelete={() => {}}
-				/>
-			</Grid>
-		);
-	} else if (actionType === APPROVED) {
-		children = (
-			<Grid item>
-				<Chip
-					color='secondary'
-					variant='outlined'
-					avatar={<Avatar user={actionUser} contactCard clickable />}
-					label={APPROVED}
-					deleteIcon={<ThumbUpAltIcon />}
-					onDelete={() => {}}
-				/>
-			</Grid>
-		);
-	}
+		setLoading(false);
+	};
 
-	return children;
+	const approveClickHandler = () => {
+		setShowApproveDialog(true);
+	};
+
+	const approveConfirmHandler = async (values) => {
+		setLoading(true);
+		const result = await dispatch(
+			productRequestController.approveProductRequest(productRequest, values)
+		);
+		if (result) {
+			setShowApproveDialog(false);
+		}
+		setLoading(false);
+	};
+
+	return (
+		<Fragment>
+			<RejectDialog
+				open={showRejectDialog}
+				cancel={() => setShowRejectDialog(false)}
+				title='Confirm Rejection'
+				message={`Are you sure you want to reject ${productRequest.vendorSku}`}
+				confirm={rejectConfirmHandler}
+				loading={loading}
+			/>
+			<ApproveDialog
+				open={showApproveDialog}
+				cancel={() => setShowApproveDialog(false)}
+				title='Confirm Approval'
+				confirm={approveConfirmHandler}
+				loading={loading}
+			/>
+			<Grid item container direction='column' spacing={1}>
+				<Grid item container justify='flex-end'>
+					<Grid item>
+						<StatusChip action={action} />
+					</Grid>
+				</Grid>
+				{actionType === REQUESTED && isAdmin && (
+					<Grid item container justify='flex-end' spacing={1}>
+						<Grid item>
+							<Button
+								variant='contained'
+								color='default'
+								startIcon={<ThumbDownAltIcon />}
+								onClick={rejectClickHandler}
+							>
+								Reject
+							</Button>
+						</Grid>
+						<Grid item>
+							<Button
+								variant='contained'
+								color='secondary'
+								startIcon={<ThumbUpAltIcon />}
+								onClick={approveClickHandler}
+							>
+								Approve
+							</Button>
+						</Grid>
+					</Grid>
+				)}
+			</Grid>
+		</Fragment>
+	);
 });
 
 export default ActionButtons;

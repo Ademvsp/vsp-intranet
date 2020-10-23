@@ -26,7 +26,7 @@ const ProductRequests = (props) => {
 
 	const [page, setPage] = useState(initialPage);
 	const [productRequestIds, setProductRequestIds] = useState();
-	const [activeRequestId, setActiveRequestId] = useState(null);
+	const [activeProductRequestId, setActiveProductRequestId] = useState(null);
 
 	const [isAdmin, setIsAdmin] = useState();
 	const [
@@ -97,14 +97,14 @@ const ProductRequests = (props) => {
 				}
 			} else if (action === READ_PRODUCT_REQUEST) {
 				//Coming from direct link
-				const productRequestIds = params.productRequestIds;
+				const productRequestId = params.productRequestId;
 				const index = dataSource.findIndex(
-					(document) => document === productRequestIds
+					(document) => document === productRequestId
 				);
 				if (index !== -1) {
 					newPage = Math.floor(index / MAX_PER_PAGE) + 1;
-					const newActiveProductRequestId = productRequestIds;
-					setActiveRequestId(newActiveProductRequestId);
+					const newActiveProductRequestId = productRequestId;
+					setActiveProductRequestId(newActiveProductRequestId);
 				} else {
 					newPage = initialPage;
 					replace(`/product-requests/page/${initialPage}`);
@@ -135,12 +135,12 @@ const ProductRequests = (props) => {
 				<Grid container direction='column' spacing={2}>
 					<Grid item container direction='column' spacing={2}>
 						{productRequestIds.map((productRequestId) => {
-							const scroll = activeRequestId === productRequestId;
+							const scroll = activeProductRequestId === productRequestId;
 							return (
 								<Grid item key={productRequestId}>
 									<ProductRequestCard
 										productRequestId={productRequestId}
-										setActiveRequestId={setActiveRequestId}
+										setActiveProductRequestId={setActiveProductRequestId}
 										scroll={scroll}
 										isAdmin={isAdmin}
 									/>
