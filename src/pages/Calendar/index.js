@@ -13,6 +13,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import ViewEventDialog from './ViewEventDialog';
 import EditEventDialog from './EditEventDialog';
 import Event from '../../models/event';
+import * as eventController from '../../controllers/event';
 import { startOfMonth, sub, add } from 'date-fns';
 import { UPDATE } from '../../utils/actions';
 import FloatingActionButton from '../../components/FloatingActionButton';
@@ -39,17 +40,18 @@ const Calendar = (props) => {
 		authUser.location
 	]);
 	const [selectedEventTypes, setSelectedEventTypes] = useState(
-		eventTypes.map((eventType) => eventType.eventTypeId)
+		eventTypes.map((eventType) => eventType.name)
 	);
 	const [showViewEventDialog, setShowViewEventDialog] = useState(false);
 	const [showEditEventDialog, setShowEditEventDialog] = useState(false);
 	const [selectedEvent, setSelectedEvent] = useState();
 	const [range, setRange] = useState(initalRange);
-
+	//Get new listener every time date range changes on calendar
 	useEffect(() => {
 		let eventsListener;
-		eventsListener = Event.getListener(range.start, range.end).onSnapshot(
-			(snapshot) => {
+		eventsListener = eventController
+			.getListener(range.start, range.end)
+			.onSnapshot((snapshot) => {
 				const newEvents = snapshot.docs.map((doc) => {
 					const metadata = {
 						...doc.data().metadata,
@@ -65,15 +67,14 @@ const Calendar = (props) => {
 					});
 				});
 				setEvents(newEvents);
-			}
-		);
+			});
 		return () => {
 			if (eventsListener) {
 				eventsListener();
 			}
 		};
 	}, [range]);
-
+	//Set filtered events based on selections
 	useEffect(() => {
 		if (events) {
 			const newFilteredEvents = [];
@@ -95,7 +96,7 @@ const Calendar = (props) => {
 			if (action === UPDATE) {
 				const eventId = params.eventId;
 				if (eventId) {
-					const event = await Event.get(eventId);
+					const event = await eventController.getEvent(eventId);
 					if (event) {
 						setSelectedEvent(event);
 						if (event.user === userId) {

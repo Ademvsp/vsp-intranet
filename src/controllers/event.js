@@ -35,23 +35,23 @@ export const getReadableTitle = (data, users) => {
 	const eventUser = users.find((u) => u.userId === user);
 	const eventUserName = `${eventUser.firstName} ${eventUser.lastName}`;
 	switch (type) {
-		case GENERAL.toLowerCase():
+		case GENERAL:
 			return details;
-		case MEETING.toLowerCase():
+		case MEETING:
 			return `${eventUserName} in a Meeting${details ? ` (${details})` : ''}`;
-		case ON_SITE.toLowerCase():
+		case ON_SITE:
 			return `${eventUserName} On Site${details ? ` (${details})` : ''}`;
-		case TRAINING.toLowerCase():
+		case TRAINING:
 			return `${eventUserName} in Training${details ? ` (${details})` : ''}`;
-		case OUT_OF_OFFICE.toLowerCase():
+		case OUT_OF_OFFICE:
 			return `${eventUserName} Out of Office${details ? ` (${details})` : ''}`;
-		case SICK_LEAVE.toLowerCase():
+		case SICK_LEAVE:
 			return `${eventUserName} on Sick Leave`;
-		case ANNUAL_LEAVE.toLowerCase():
+		case ANNUAL_LEAVE:
 			return `${eventUserName} on Annual Leave`;
-		case OTHER_LEAVE.toLowerCase():
+		case OTHER_LEAVE:
 			return `${eventUserName} on Other Leave${details ? ` (${details})` : ''}`;
-		case PUBLIC_HOLIDAY.toLowerCase():
+		case PUBLIC_HOLIDAY:
 			return `${details} Public Holiday`;
 		default:
 			return details;
@@ -75,6 +75,10 @@ const transformDate = (date, allDay, timezone) => {
 
 export const getListener = (start, end) => {
 	return Event.getListener(start, end);
+};
+
+export const getEvent = (eventId) => {
+	return Event.get(eventId);
 };
 
 export const addEvent = (values, notifyUsers) => {
@@ -109,7 +113,7 @@ export const addEvent = (values, notifyUsers) => {
 				metadata: null,
 				start: startTransformed,
 				subscribers: subscribers,
-				type: type.eventTypeId,
+				type: type.name,
 				user: authUser.userId
 			});
 			await newEvent.save();
@@ -213,7 +217,7 @@ export const editEvent = (event, values, notifyUsers) => {
 				end: endTransformed,
 				locations: locations,
 				start: startTransformed,
-				type: type.eventTypeId
+				type: type.name
 			});
 			await newEvent.save();
 			const message = new Message({

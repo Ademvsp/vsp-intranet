@@ -25,7 +25,7 @@ const ViewEventDialog = (props) => {
 	const { open, close, event } = props;
 
 	const initialValues = {
-		type: eventTypes.find((eventType) => eventType.eventTypeId === event.type),
+		type: eventTypes.find((eventType) => eventType.name === event.type),
 		details: event.details,
 		start: event.start,
 		end: event.end,
@@ -38,7 +38,7 @@ const ViewEventDialog = (props) => {
 	const readableTitle = getReadableTitle(
 		{
 			details: initialValues.details,
-			type: initialValues.type.eventTypeId,
+			type: initialValues.type.name,
 			user: event.user
 		},
 		users

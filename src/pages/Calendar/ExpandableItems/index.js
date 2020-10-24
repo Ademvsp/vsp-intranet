@@ -38,22 +38,22 @@ const ExpandableItems = (props) => {
 		{
 			name: 'Out of Office',
 			expanded: false,
-			component: <LeaveListItem eventTypeId={OUT_OF_OFFICE.toLowerCase()} />
+			component: <LeaveListItem eventTypeName={OUT_OF_OFFICE} />
 		},
 		{
 			name: 'Annual Leave',
 			expanded: false,
-			component: <LeaveListItem eventTypeId={ANNUAL_LEAVE.toLowerCase()} />
+			component: <LeaveListItem eventTypeName={ANNUAL_LEAVE} />
 		},
 		{
 			name: 'Sick Leave',
 			expanded: false,
-			component: <LeaveListItem eventTypeId={SICK_LEAVE.toLowerCase()} />
+			component: <LeaveListItem eventTypeName={SICK_LEAVE} />
 		},
 		{
 			name: 'On Site',
 			expanded: false,
-			component: <LeaveListItem eventTypeId={ON_SITE.toLowerCase()} />
+			component: <LeaveListItem eventTypeName={ON_SITE} />
 		}
 	];
 	const [panelItems, setPanelItems] = useState(initialPanelItems);

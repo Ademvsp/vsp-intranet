@@ -28,7 +28,7 @@ export default class Event {
 	static async get(eventId) {
 		const doc = await firebase
 			.firestore()
-			.collection('eventsNew')
+			.collection('events-new')
 			.doc(eventId)
 			.get();
 		if (!doc.exists) {
@@ -59,7 +59,7 @@ export default class Event {
 			};
 			await firebase
 				.firestore()
-				.collection('eventsNew')
+				.collection('events-new')
 				.doc(this.eventId)
 				.update({
 					allDay: this.allDay,
@@ -79,7 +79,7 @@ export default class Event {
 				updatedAt: new Date(serverTime),
 				updatedBy: firebase.auth().currentUser.uid
 			};
-			const docRef = await firebase.firestore().collection('eventsNew').add({
+			const docRef = await firebase.firestore().collection('events-new').add({
 				allDay: this.allDay,
 				details: this.details,
 				end: this.end,
@@ -105,7 +105,7 @@ export default class Event {
 	async delete() {
 		await firebase
 			.firestore()
-			.collection('eventsNew')
+			.collection('events-new')
 			.doc(this.eventId)
 			.delete();
 		await firebase
@@ -121,7 +121,7 @@ export default class Event {
 	static getListener(start, end) {
 		return firebase
 			.firestore()
-			.collection('eventsNew')
+			.collection('events-new')
 			.where('start', '>=', start)
 			.where('start', '<=', end)
 			.orderBy('start', 'asc');

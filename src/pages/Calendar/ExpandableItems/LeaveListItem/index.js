@@ -14,13 +14,13 @@ const LeaveListItem = (props) => {
 	const { activeUsers } = useSelector((state) => state.dataState);
 	const { events } = useContext(EventContext);
 	const [leaveUsers, setLeaveUsers] = useState();
-	const { eventTypeId } = props;
+	const { eventTypeName } = props;
 	useEffect(() => {
 		const todayEvents = events.filter((event) => {
 			const todayMatch =
 				new Date() >= startOfDay(event.start) &&
 				new Date() <= endOfDay(event.end);
-			const typeMatch = event.type === eventTypeId;
+			const typeMatch = event.type === eventTypeName;
 			return todayMatch && typeMatch;
 		});
 
@@ -33,7 +33,7 @@ const LeaveListItem = (props) => {
 		);
 
 		setLeaveUsers(newLeaveUsers);
-	}, [events, activeUsers, eventTypeId]);
+	}, [events, activeUsers, eventTypeName]);
 
 	if (!leaveUsers) {
 		return <CircularProgress />;

@@ -44,7 +44,7 @@ const EditEventDialog = (props) => {
 	const { open, close, event } = props;
 
 	const initialValues = {
-		type: eventTypes.find((eventType) => eventType.eventTypeId === event.type),
+		type: eventTypes.find((eventType) => eventType.name === event.type),
 		details: event.details,
 		start: event.start,
 		end: event.end,
@@ -60,7 +60,7 @@ const EditEventDialog = (props) => {
 			.label('Event type')
 			.required()
 			.test('isValidArrayElement', 'Event type not valid', (value) =>
-				eventTypes.find((type) => type.eventTypeId === value.eventTypeId)
+				eventTypes.find((type) => type.name === value.name)
 			),
 		details: yup
 			.string()
@@ -144,7 +144,7 @@ const EditEventDialog = (props) => {
 	const readableTitle = getReadableTitle(
 		{
 			details: formik.values.details,
-			type: formik.values.type.eventTypeId,
+			type: formik.values.type.name,
 			user: authUser.userId
 		},
 		users
@@ -183,9 +183,9 @@ const EditEventDialog = (props) => {
 								onBlur={formik.handleBlur('type')}
 								onChange={formik.handleChange('type')}
 							>
-								{eventTypes.map((type) => (
-									<MenuItem key={type.eventTypeId} value={type}>
-										{type.name}
+								{eventTypes.map((eventType) => (
+									<MenuItem key={eventType.name} value={eventType}>
+										{eventType.name}
 									</MenuItem>
 								))}
 							</TextField>
