@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux';
 import * as projectsController from '../../controllers/project';
 import Project from '../../models/project';
 import MaterialTable from 'material-table';
-import projectStatusTypes from '../../data/project-status-types';
 import columnSchema from './column-schema';
 import tableColumns from '../Calendar/table-icons';
 import { useHistory, useParams } from 'react-router-dom';
@@ -78,10 +77,10 @@ const Projects = (props) => {
 	let data = [];
 	if (projects) {
 		data = projects.map((project) => {
-			const status = projectStatusTypes.find(
-				(projectStatusType) => projectStatusType.statusId === project.status
-			);
 			const vendors = project.vendors.map((vendor) => vendor.name).join(', ');
+			const actions = [...project.actions];
+			const action = actions.pop();
+			const status = action.actionType;
 			return {
 				...project,
 				createdAt: project.metadata.createdAt,

@@ -119,7 +119,7 @@ const EditProjectDialog = withTheme((props) => {
 			.label('Status')
 			.required()
 			.test('isValidArrayElement', 'Status is not valid', (value) =>
-				projectStatusTypes.find((status) => status.statusId === value.statusId)
+				projectStatusTypes.find((status) => status.name === value.name)
 			),
 		reminder: yup
 			.date()
@@ -136,7 +136,9 @@ const EditProjectDialog = withTheme((props) => {
 		vendors: project.vendors.map((vendor) => new Vendor({ ...vendor })),
 		owners: project.owners,
 		status: projectStatusTypes.find(
-			(statusType) => statusType.statusId === project.status
+			(statusType) =>
+				statusType.name ===
+				project.actions[project.actions.length - 1].actionType
 		),
 		reminder: new Date(project.reminder),
 		value: project.value
@@ -479,7 +481,7 @@ const EditProjectDialog = withTheme((props) => {
 								}}
 							>
 								{projectStatusTypes.map((status) => (
-									<MenuItem key={status.statusId} value={status}>
+									<MenuItem key={status.name} value={status}>
 										{status.name}
 									</MenuItem>
 								))}

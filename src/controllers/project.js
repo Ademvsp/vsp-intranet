@@ -33,28 +33,34 @@ export const addProject = (values, notifyUsers, attachments) => {
 		} = values;
 		const { authUser } = getState().authState;
 		const { users } = getState().dataState;
-		let newProject;
+		const newProject = new Project({
+			projectId: null,
+			actions: [
+				{
+					actionType: status.name,
+					actionedAt: null,
+					actionedBy: authUser.userId
+				}
+			],
+			attachments: [],
+			comments: [],
+			customer: { ...customer },
+			description: description.trim(),
+			metadata: null,
+			name: name.trim(),
+			owners: owners.map((owner) => owner.userId),
+			reminder: reminder,
+			user: authUser.userId,
+			value: value,
+			vendors: vendors.map((vendor) => ({ ...vendor }))
+		});
 		try {
-			newProject = new Project({
-				projectId: null,
-				attachments: [],
-				comments: [],
-				customer: { ...customer },
-				description: description.trim(),
-				metadata: null,
-				name: name.trim(),
-				owners: owners.map((owner) => owner.userId),
-				reminder: reminder,
-				status: status.statusId,
-				value: value,
-				vendors: vendors.map((vendor) => ({ ...vendor }))
-			});
 			await newProject.save();
 			if (attachments.length > 0) {
 				const uploadedAttachments = await dispatch(
 					fileUtils.upload({
 						files: attachments,
-						collection: 'projectsNew',
+						collection: 'projects-new',
 						collectionId: newProject.projectId,
 						folder: newProject.metadata.createdAt.getTime().toString()
 					})
@@ -150,7 +156,7 @@ export const editProject = (project, values, notifyUsers, attachments) => {
 			newAttachments: attachments.filter(
 				(attachment) => !(attachment instanceof File)
 			),
-			collection: 'projectsNew',
+			collection: 'projects-new',
 			collectionId: project.projectId,
 			folder: project.metadata.createdAt.getTime().toString()
 		});
@@ -163,29 +169,36 @@ export const editProject = (project, values, notifyUsers, attachments) => {
 			uploadedAttachments = await dispatch(
 				fileUtils.upload({
 					files: toBeUploadedAttachments,
-					collection: 'projectsNew',
+					collection: 'projects-new',
 					collectionId: project.projectId,
 					folder: project.metadata.createdAt.getTime().toString()
 				})
 			);
 		}
 
-		let newProject;
+		const newProject = new Project({
+			projectId: project.projectId,
+			actions: [
+				...project.actions,
+				{
+					actionType: status.name,
+					actionedAt: null,
+					actionedBy: authUser.userId
+				}
+			],
+			attachments: [...existingAttachments, ...uploadedAttachments],
+			comments: project.comments,
+			customer: { ...customer },
+			description: description.trim(),
+			metadata: project.metadata,
+			name: name.trim(),
+			owners: owners.map((owner) => owner.userId),
+			reminder: reminder,
+			user: authUser.userId,
+			value: value,
+			vendors: vendors.map((vendor) => ({ ...vendor }))
+		});
 		try {
-			newProject = new Project({
-				projectId: project.projectId,
-				attachments: [...existingAttachments, ...uploadedAttachments],
-				comments: project.comments,
-				customer: { ...customer },
-				description: description.trim(),
-				metadata: project.metadata,
-				name: name.trim(),
-				owners: owners.map((owner) => owner.userId),
-				reminder: reminder,
-				status: status.statusId,
-				value: value,
-				vendors: vendors.map((vendor) => ({ ...vendor }))
-			});
 			await newProject.save();
 			const message = new Message({
 				title: 'Projects',
@@ -267,7 +280,7 @@ export const addComment = (project, body, attachments, notifyUsers) => {
 				uploadedAttachments = await dispatch(
 					fileUtils.upload({
 						files: attachments,
-						collection: 'projectsNew',
+						collection: 'projects-new',
 						collectionId: project.projectId,
 						folder: serverTime.toString()
 					})

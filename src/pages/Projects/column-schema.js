@@ -33,7 +33,7 @@ const columnSchema = [
 		type: 'string'
 	},
 	{
-		field: 'status.name',
+		field: 'status',
 		title: 'Status',
 		type: 'string',
 		render: (rowData) => <ProjectStatusChip status={rowData.status} />

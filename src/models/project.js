@@ -4,6 +4,7 @@ import CollectionData from './collection-data';
 export default class Project {
 	constructor({
 		projectId,
+		actions,
 		attachments,
 		comments,
 		customer,
@@ -12,11 +13,12 @@ export default class Project {
 		name,
 		owners,
 		reminder,
-		status,
+		user,
 		value,
 		vendors
 	}) {
 		this.projectId = projectId;
+		this.actions = actions;
 		this.attachments = attachments;
 		this.comments = comments;
 		this.customer = customer;
@@ -25,7 +27,7 @@ export default class Project {
 		this.name = name;
 		this.owners = owners;
 		this.reminder = reminder;
-		this.status = status;
+		this.user = user;
 		this.value = value;
 		this.vendors = vendors;
 	}
@@ -33,6 +35,7 @@ export default class Project {
 	getDatabaseObject() {
 		const databaseObject = { ...this };
 		delete databaseObject.projectId;
+		return databaseObject;
 	}
 
 	async save() {
@@ -43,9 +46,10 @@ export default class Project {
 				updatedAt: new Date(serverTime),
 				updatedBy: firebase.auth().currentUser.uid
 			};
+			this.actions[this.actions.length - 1].actionedAt = new Date(serverTime);
 			await firebase
 				.firestore()
-				.collection('projectsNew')
+				.collection('projects-new')
 				.doc(this.projectId)
 				.update(this.getDatabaseObject());
 		} else {
@@ -55,9 +59,13 @@ export default class Project {
 				updatedAt: new Date(serverTime),
 				updatedBy: firebase.auth().currentUser.uid
 			};
+			this.actions = this.actions.map((action) => ({
+				...action,
+				actionedAt: new Date(serverTime)
+			}));
 			const docRef = await firebase
 				.firestore()
-				.collection('projectsNew')
+				.collection('projects-new')
 				.add(this.getDatabaseObject());
 			this.projectId = docRef.id;
 			await CollectionData.updateCollectionData('projects', this.projectId);
@@ -78,7 +86,7 @@ export default class Project {
 		};
 		await firebase
 			.firestore()
-			.collection('projectsNew')
+			.collection('projects-new')
 			.doc(this.projectId)
 			.update({
 				comments: firebase.firestore.FieldValue.arrayUnion(comment)
@@ -89,7 +97,7 @@ export default class Project {
 	static getListener(userId) {
 		return firebase
 			.firestore()
-			.collection('projectsNew')
+			.collection('projects-new')
 			.where('owners', 'array-contains', userId)
 			.orderBy('metadata.createdAt', 'desc');
 	}

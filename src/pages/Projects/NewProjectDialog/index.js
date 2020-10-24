@@ -127,7 +127,7 @@ const NewProjectDialog = withTheme((props) => {
 			.label('Status')
 			.required()
 			.test('isValidArrayElement', 'Status is not valid', (value) =>
-				projectStatusTypes.find((status) => status.statusId === value.statusId)
+				projectStatusTypes.find((status) => status.name === value.name)
 			),
 		reminder: yup
 			.date()
@@ -477,7 +477,7 @@ const NewProjectDialog = withTheme((props) => {
 								}}
 							>
 								{projectStatusTypes.map((status) => (
-									<MenuItem key={status.statusId} value={status}>
+									<MenuItem key={status.name} value={status}>
 										{status.name}
 									</MenuItem>
 								))}

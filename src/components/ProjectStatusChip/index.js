@@ -25,7 +25,7 @@ const {
 const ProjectStatusChip = withTheme((props) => {
 	let ChipIcon;
 	let color;
-	switch (props.status.name) {
+	switch (props.status) {
 		case EXPRESSION_OF_INTEREST:
 			ChipIcon = CallIcon;
 			color = props.theme.palette.primary.main;
@@ -63,7 +63,7 @@ const ProjectStatusChip = withTheme((props) => {
 	}
 	return (
 		<Chip
-			label={props.status.name}
+			label={props.status}
 			icon={<ChipIcon style={{ color: color }} />}
 			variant='outlined'
 			style={{ borderColor: color, color: color }}
