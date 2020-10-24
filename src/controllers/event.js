@@ -8,14 +8,11 @@ import { SET_MESSAGE } from '../utils/actions';
 import Message from '../models/message';
 import Event from '../models/event';
 import Notification from '../models/notification';
-import { format } from 'date-fns-tz';
-import { set } from 'date-fns';
 import {
 	DELETE_EVENT,
 	EDIT_EVENT,
 	NEW_EVENT
 } from '../data/notification-types';
-import { MILLISECONDS, millisecondsToDate } from '../utils/date';
 import { transformedRecipient } from './notification';
 import { getFullName } from './user';
 import {
@@ -29,6 +26,7 @@ import {
 	SICK_LEAVE,
 	TRAINING
 } from '../data/event-types';
+import { transformDate } from '../utils/date';
 
 export const getReadableTitle = (data, users) => {
 	const { details, user, type } = data;
@@ -56,21 +54,6 @@ export const getReadableTitle = (data, users) => {
 		default:
 			return details;
 	}
-};
-
-const transformDate = (date, allDay, timezone) => {
-	let transformedDate = millisecondsToDate(
-		format(date, MILLISECONDS, {
-			timeZone: timezone
-		})
-	);
-	if (allDay) {
-		transformedDate = set(new Date(transformedDate), {
-			hours: 12,
-			minutes: 0
-		});
-	}
-	return transformedDate;
 };
 
 export const getListener = (start, end) => {

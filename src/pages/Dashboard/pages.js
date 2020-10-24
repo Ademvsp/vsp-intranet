@@ -78,7 +78,7 @@ const pages = [
 		description:
 			'Apply for annual leave, sick leave or any other type of leave here',
 		icon: DirectionsWalkIcon,
-		link: '/leave-request'
+		link: '/leave-requests'
 	},
 	{
 		name: 'Expenses',

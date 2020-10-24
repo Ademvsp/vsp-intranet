@@ -1,21 +1,21 @@
 import { Button, Grid, withTheme } from '@material-ui/core';
 import React, { Fragment, useState } from 'react';
-import { REQUESTED } from '../../../../data/product-request-status-types';
+import { REQUESTED } from '../../../../data/leave-request-status-types';
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
-import RejectDialog from '../../../../components/ConfirmDialog';
-import ApproveDialog from './ApproveDialog';
-import { useDispatch } from 'react-redux';
-import * as productRequestController from '../../../../controllers/product-request';
 import ActionStatusChip from '../../../../components/ActionStatusChip';
+import ConfirmDialog from '../../../../components/ConfirmDialog';
+import { useDispatch } from 'react-redux';
+import * as leaveRequestController from '../../../../controllers/leave-request';
 
 const ActionButtons = withTheme((props) => {
 	const dispatch = useDispatch();
 	const [loading, setLoading] = useState(false);
 	const [showRejectDialog, setShowRejectDialog] = useState(false);
 	const [showApproveDialog, setShowApproveDialog] = useState(false);
-	const { isAdmin, productRequest } = props;
-	const action = [...productRequest.actions].pop();
+	const { isAdmin, user, leaveRequest } = props;
+
+	const action = [...leaveRequest.actions].pop();
 	const actionType = action.actionType;
 
 	const rejectClickHandler = () => {
@@ -24,12 +24,12 @@ const ActionButtons = withTheme((props) => {
 
 	const rejectConfirmHandler = async () => {
 		setLoading(true);
-		const result = await dispatch(
-			productRequestController.rejectProductRequest(productRequest)
-		);
-		if (result) {
-			setShowRejectDialog(false);
-		}
+		// const result = await dispatch(
+		// 	leaveRequestController.rejectProductRequest(leaveRequest)
+		// );
+		// if (result) {
+		// 	setShowRejectDialog(false);
+		// }
 		setLoading(false);
 	};
 
@@ -39,29 +39,30 @@ const ActionButtons = withTheme((props) => {
 
 	const approveConfirmHandler = async (values) => {
 		setLoading(true);
-		const result = await dispatch(
-			productRequestController.approveProductRequest(productRequest, values)
-		);
-		if (result) {
-			setShowApproveDialog(false);
-		}
+		// const result = await dispatch(
+		// 	leaveRequestController.approveProductRequest(leaveRequest, values)
+		// );
+		// if (result) {
+		// 	setShowApproveDialog(false);
+		// }
 		setLoading(false);
 	};
 
 	return (
 		<Fragment>
-			<RejectDialog
+			<ConfirmDialog
 				open={showRejectDialog}
 				cancel={() => setShowRejectDialog(false)}
 				title='Confirm Rejection'
-				message={`Are you sure you want to reject ${productRequest.vendorSku}`}
+				message={`Are you sure you want to reject ${user.firstName}'s ${leaveRequest.type} request?`}
 				confirm={rejectConfirmHandler}
 				loading={loading}
 			/>
-			<ApproveDialog
+			<ConfirmDialog
 				open={showApproveDialog}
 				cancel={() => setShowApproveDialog(false)}
-				title='Confirm Approval'
+				title='Confirm Rejection'
+				message={`Confirm approval for ${user.firstName}'s ${leaveRequest.type} request?`}
 				confirm={approveConfirmHandler}
 				loading={loading}
 			/>

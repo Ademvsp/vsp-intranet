@@ -19,10 +19,12 @@ import {
 	READ_PAGE,
 	READ_POST,
 	READ_PRODUCT_REQUEST,
+	READ_LEAVE_REQUEST,
 	UPDATE
 } from './utils/actions';
 import Dashboard from './pages/Dashboard';
 import ProductRequests from './pages/ProductRequests';
+import LeaveRequests from './pages/LeaveRequests';
 
 const App = (props) => {
 	const dispatch = useDispatch();
@@ -111,7 +113,14 @@ const App = (props) => {
 					<Route path={'/product-requests/:productRequestId'}>
 						<ProductRequests action={READ_PRODUCT_REQUEST} />
 					</Route>
+					<Route path={'/leave-requests/page/:page'}>
+						<LeaveRequests action={READ_PAGE} />
+					</Route>
+					<Route path={'/leave-requests/:leaveRequestId'}>
+						<LeaveRequests action={READ_LEAVE_REQUEST} />
+					</Route>
 					<Redirect from='/product-requests' to='/product-requests/page/1' />
+					<Redirect from='/leave-requests' to='/leave-requests/page/1' />
 					<Redirect from='/login' to='/' />
 					<Redirect from='/' to='/dashboard' />
 				</Switch>

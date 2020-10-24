@@ -108,7 +108,7 @@ const SideDrawerItems = (props) => {
 							key='1'
 							Icon={DirectionsWalkIcon}
 							text='Leave Request'
-							link='/calendar'
+							link='/leave-requests'
 							subItem={true}
 						/>,
 						<SideDrawerItem

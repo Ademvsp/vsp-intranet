@@ -3,15 +3,17 @@ import { Pagination } from '@material-ui/lab';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
-import * as productRequestController from '../../controllers/product-request';
+import * as leaveRequestController from '../../controllers/leave-request';
 import CollectionData from '../../models/collection-data';
-import { READ_PAGE, READ_PRODUCT_REQUEST } from '../../utils/actions';
-import ProductRequestCard from './ProductRequestCard';
+import { READ_PAGE, READ_LEAVE_REQUEST } from '../../utils/actions';
+// import ProductRequestCard from './ProductRequestCard';
 import AddIcon from '@material-ui/icons/Add';
 import FloatingActionButton from '../../components/FloatingActionButton';
-import NewProductRequestDialog from './NewProductRequestDialog';
+import LeaveRequestCard from './LeaveRequestCard';
+import NewLeaveRequestDialog from './NewLeaveRequestDialog';
+// import NewProductRequestDialog from './NewProductRequestDialog';
 
-const ProductRequests = (props) => {
+const LeaveRequests = (props) => {
 	const dispatch = useDispatch();
 
 	const params = useParams();
@@ -25,29 +27,28 @@ const ProductRequests = (props) => {
 	const [dataSource, setDataSource] = useState();
 
 	const [page, setPage] = useState(initialPage);
-	const [productRequestIds, setProductRequestIds] = useState();
-	const [activeProductRequestId, setActiveProductRequestId] = useState(null);
+	const [leaveRequestIds, setLeaveRequestIds] = useState();
+	const [activeLeaveRequestId, setActiveLeaveRequestId] = useState(null);
 
 	const [isAdmin, setIsAdmin] = useState();
-	const [
-		showNewProductRequestDialog,
-		setShowNewProductRequestDialog
-	] = useState(false);
+	const [showNewLeaveRequestDialog, setShowNewLeaveRequestDialog] = useState(
+		false
+	);
 
 	//Mount and dismount, get admin status
 	useEffect(() => {
 		const asyncFunction = async () => {
-			const newIsAdmin = await productRequestController.getIsAdmin();
+			const newIsAdmin = await leaveRequestController.getIsAdmin();
 			setIsAdmin(newIsAdmin);
 		};
 		asyncFunction();
 	}, []);
-	//Get product requests based on user
+	//Get leave requests based on user
 	useEffect(() => {
 		let collectionDataListener;
 		const asyncFunction = async () => {
 			collectionDataListener = (
-				await productRequestController.getCollectionDataListener()
+				await leaveRequestController.getCollectionDataListener()
 			).onSnapshot((snapshot) => {
 				let newCollectionData = new CollectionData({
 					collection: 'product-requests',
@@ -92,21 +93,21 @@ const ProductRequests = (props) => {
 					newPage = pageNumber;
 				} else {
 					newPage = initialPage;
-					replace(`/product-requests/page/${initialPage}`);
+					replace(`/leave-requests/page/${initialPage}`);
 				}
-			} else if (action === READ_PRODUCT_REQUEST) {
+			} else if (action === READ_LEAVE_REQUEST) {
 				//Coming from direct link
-				const productRequestId = params.productRequestId;
+				const leaveRequestId = params.leaveRequestId;
 				const index = dataSource.findIndex(
-					(document) => document === productRequestId
+					(document) => document === leaveRequestId
 				);
 				if (index !== -1) {
 					newPage = Math.floor(index / MAX_PER_PAGE) + 1;
-					const newActiveProductRequestId = productRequestId;
-					setActiveProductRequestId(newActiveProductRequestId);
+					const newActiveLeaveRequestId = leaveRequestId;
+					setActiveLeaveRequestId(newActiveLeaveRequestId);
 				} else {
 					newPage = initialPage;
-					replace(`/product-requests/page/${initialPage}`);
+					replace(`/leave-requests/page/${initialPage}`);
 				}
 			}
 			//Slicing the data source to only include 5 results
@@ -114,11 +115,11 @@ const ProductRequests = (props) => {
 			const END_INDEX = START_INDEX + MAX_PER_PAGE;
 			const newProductRequestIds = dataSource.slice(START_INDEX, END_INDEX);
 			setPage(newPage);
-			setProductRequestIds(newProductRequestIds);
+			setLeaveRequestIds(newProductRequestIds);
 		}
 	}, [dataSource, action, params, replace]);
 
-	if (!productRequestIds) {
+	if (!leaveRequestIds) {
 		return <CircularProgress />;
 	}
 
@@ -126,20 +127,20 @@ const ProductRequests = (props) => {
 
 	return (
 		<Fragment>
-			<NewProductRequestDialog
-				open={showNewProductRequestDialog}
-				close={() => setShowNewProductRequestDialog(false)}
+			<NewLeaveRequestDialog
+				open={showNewLeaveRequestDialog}
+				close={() => setShowNewLeaveRequestDialog(false)}
 			/>
 			<Container disableGutters maxWidth='sm'>
 				<Grid container direction='column' spacing={2}>
 					<Grid item container direction='column' spacing={2}>
-						{productRequestIds.map((productRequestId) => {
-							const scroll = activeProductRequestId === productRequestId;
+						{leaveRequestIds.map((leaveRequestId) => {
+							const scroll = activeLeaveRequestId === leaveRequestId;
 							return (
-								<Grid item key={productRequestId}>
-									<ProductRequestCard
-										productRequestId={productRequestId}
-										setActiveProductRequestId={setActiveProductRequestId}
+								<Grid item key={leaveRequestId}>
+									<LeaveRequestCard
+										leaveRequestId={leaveRequestId}
+										setActiveLeaveRequestId={setActiveLeaveRequestId}
 										scroll={scroll}
 										isAdmin={isAdmin}
 									/>
@@ -153,7 +154,7 @@ const ProductRequests = (props) => {
 									count={count}
 									page={page}
 									onChange={(_event, value) =>
-										push(`/product-requests/page/${value.toString()}`)
+										push(`/leave-requests/page/${value.toString()}`)
 									}
 									showFirstButton={true}
 									showLastButton={true}
@@ -165,8 +166,8 @@ const ProductRequests = (props) => {
 			</Container>
 			<FloatingActionButton
 				color='primary'
-				tooltip='Add Product Request'
-				onClick={() => setShowNewProductRequestDialog(true)}
+				tooltip='Add Leave Request'
+				onClick={() => setShowNewLeaveRequestDialog(true)}
 			>
 				<AddIcon />
 			</FloatingActionButton>
@@ -174,4 +175,4 @@ const ProductRequests = (props) => {
 	);
 };
 
-export default ProductRequests;
+export default LeaveRequests;

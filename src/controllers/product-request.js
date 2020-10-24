@@ -29,23 +29,22 @@ export const addProductRequest = (values, attachments) => {
 		const { vendor, vendorSku, productType, cost, description } = values;
 		const { authUser } = getState().authState;
 		const { users } = getState().dataState;
-		let newProductRequest;
+		const newProductRequest = new ProductRequest({
+			productRequestId: null,
+			actions: null,
+			attachments: [],
+			comments: [],
+			cost: cost,
+			description: description.trim(),
+			finalSku: '',
+			metadata: null,
+			productType: productType.name.trim(),
+			status: REQUESTED,
+			user: authUser.userId,
+			vendor: { ...vendor },
+			vendorSku: vendorSku.trim()
+		});
 		try {
-			newProductRequest = new ProductRequest({
-				productRequestId: null,
-				action: null,
-				attachments: [],
-				comments: [],
-				cost: cost,
-				description: description.trim(),
-				finalSku: '',
-				metadata: null,
-				productType: productType.name.trim(),
-				status: REQUESTED,
-				user: authUser.userId,
-				vendor: { ...vendor },
-				vendorSku: vendorSku.trim()
-			});
 			await newProductRequest.save();
 			if (attachments.length > 0) {
 				const uploadedAttachments = await dispatch(

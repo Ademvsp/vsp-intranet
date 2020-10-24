@@ -198,14 +198,6 @@ const NewProductRequestDialog = withTheme((props) => {
 			}}
 			InputProps={{
 				...params.InputProps
-				// endAdornment: (
-				// 	<Fragment>
-				// 		{customersLoading ? (
-				// 			<CircularProgress color='inherit' size={20} />
-				// 		) : null}
-				// 		{params.InputProps.endAdornment}
-				// 	</Fragment>
-				// )
 			}}
 		/>
 	);
