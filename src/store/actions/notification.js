@@ -3,25 +3,15 @@ import {
 	SNACKBAR_SEVERITY,
 	SNACKBAR,
 	DIALOG
-} from '../utils/constants';
+} from '../../utils/constants';
 import {
 	SET_MESSAGE,
 	SET_NOTIFICACTIONS_TOUCHED,
 	SET_NOTIFICACTIONS
-} from '../utils/actions';
-import Message from '../models/message';
-import Notification from '../models/notification';
+} from '../../utils/actions';
+import Message from '../../models/message';
+import Notification from '../../models/notification';
 let notificationsListener;
-
-export const transformedRecipient = (recipient) => {
-	return {
-		userId: recipient.userId,
-		email: recipient.email,
-		firstName: recipient.firstName,
-		lastName: recipient.lastName,
-		location: recipient.location.locationId
-	};
-};
 
 export const subscribeNotificationsListener = () => {
 	return async (dispatch, getState) => {
@@ -121,10 +111,6 @@ export const clearNotifications = () => {
 			});
 		}
 	};
-};
-
-export const sendNotification = async (data) => {
-	await Notification.send(data);
 };
 
 export const unsubscribeNotificationsListener = () => {

@@ -2,7 +2,7 @@ import {
 	START_UPLOAD,
 	SET_UPLOAD_PROGRESS,
 	FINISH_UPLOAD
-} from '../utils/actions';
+} from '../../utils/actions';
 
 const initialState = {
 	files: null,

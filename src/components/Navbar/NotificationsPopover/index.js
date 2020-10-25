@@ -15,7 +15,7 @@ import {
 import { Notifications as NotificationsIcon } from '@material-ui/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import NotificationItem from './NotificationItem';
-import * as notificationController from '../../../controllers/notification';
+import { clearNotifications } from '../../../store/actions/notification';
 
 const NotificationsPopover = (props) => {
 	const dispatch = useDispatch();
@@ -34,7 +34,7 @@ const NotificationsPopover = (props) => {
 	}, [notifications, closePopoverHandler]);
 
 	const notificationsClearHandler = async () => {
-		dispatch(notificationController.clearNotifications());
+		dispatch(clearNotifications());
 	};
 
 	return (

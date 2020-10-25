@@ -9,16 +9,16 @@ import {
 	Dialog
 } from '@material-ui/core/';
 import { Alert, AlertTitle } from '@material-ui/lab';
-import * as messageController from '../controllers/message';
 import { DIALOG, SILENT, SNACKBAR } from './constants';
 import Snackbar from '../components/Snackbar';
+import { clearMessage } from '../store/actions/message';
 
 const MessageHandler = (props) => {
 	const dispatch = useDispatch();
 	const { message } = useSelector((state) => state.messageState);
 
 	const messageClearHandler = () => {
-		dispatch(messageController.clearMessage());
+		dispatch(clearMessage());
 	};
 
 	let messageComponent;

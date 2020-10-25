@@ -27,10 +27,14 @@ export default class User {
 		this.workFromHome = workFromHome;
 	}
 
+	getFullName() {
+		return `${this.firstName} ${this.lastName}`;
+	}
+
 	static getListener() {
 		return firebase
 			.firestore()
-			.collection('usersNew')
+			.collection('users-new')
 			.orderBy('firstName', 'asc');
 	}
 }

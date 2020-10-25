@@ -1,4 +1,4 @@
-import { SET_MESSAGE, CLEAR_MESSAGE } from '../utils/actions';
+import { SET_MESSAGE, CLEAR_MESSAGE } from '../../utils/actions';
 
 const initialState = {
 	message: null

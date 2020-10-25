@@ -3,24 +3,21 @@ import {
 	SNACKBAR,
 	SNACKBAR_VARIANTS,
 	SNACKBAR_SEVERITY
-} from '../utils/constants';
+} from '../../utils/constants';
 import {
 	SET_AUTH_USER,
 	LOGOUT,
 	SET_MESSAGE,
 	SET_AUTH_TOUCHED
-} from '../utils/actions';
-import AuthUser from '../models/auth-user';
-import Message from '../models/message';
+} from '../../utils/actions';
+import AuthUser from '../../models/auth-user';
+import Message from '../../models/message';
 import { unsubscribeNotificationsListener } from './notification';
-import { unsubscribeUsersListener } from './user';
-import * as pictureUtils from '../utils/picture-utils';
-import * as fileUtils from '../utils/file-utils';
-let authUserListener;
+import { unsubscribeUsersListener } from '../../store/actions/user';
+import * as pictureUtils from '../../utils/picture-utils';
+import * as fileUtils from '../../utils/file-utils';
 
-export const getUserId = () => {
-	return AuthUser.getUserId();
-};
+let authUserListener;
 
 export const verifyAuth = () => {
 	return async (dispatch, getState) => {

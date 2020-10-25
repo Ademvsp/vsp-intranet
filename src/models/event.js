@@ -1,3 +1,14 @@
+import {
+	ANNUAL_LEAVE,
+	GENERAL,
+	MEETING,
+	ON_SITE,
+	OTHER_LEAVE,
+	OUT_OF_OFFICE,
+	PUBLIC_HOLIDAY,
+	SICK_LEAVE,
+	TRAINING
+} from '../data/event-types';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
 
 export default class Event {
@@ -23,6 +34,49 @@ export default class Event {
 		this.subscribers = subscribers;
 		this.type = type;
 		this.user = user;
+	}
+
+	getDatabaseObject() {
+		const databaseObject = { ...this };
+		delete databaseObject.eventId;
+		return databaseObject;
+	}
+
+	getEventTitle(users) {
+		const eventUser = users.find((u) => u.userId === this.user);
+		const eventUserFullName = eventUser.getFullName();
+		switch (this.type) {
+			case GENERAL:
+				return this.details;
+			case MEETING:
+				return `${eventUserFullName} in a Meeting${
+					this.details ? ` (${this.details})` : ''
+				}`;
+			case ON_SITE:
+				return `${eventUserFullName} On Site${
+					this.details ? ` (${this.details})` : ''
+				}`;
+			case TRAINING:
+				return `${eventUserFullName} in Training${
+					this.details ? ` (${this.details})` : ''
+				}`;
+			case OUT_OF_OFFICE:
+				return `${eventUserFullName} Out of Office${
+					this.details ? ` (${this.details})` : ''
+				}`;
+			case SICK_LEAVE:
+				return `${eventUserFullName} on Sick Leave`;
+			case ANNUAL_LEAVE:
+				return `${eventUserFullName} on Annual Leave`;
+			case OTHER_LEAVE:
+				return `${eventUserFullName} on Other Leave${
+					this.details ? ` (${this.details})` : ''
+				}`;
+			case PUBLIC_HOLIDAY:
+				return `${this.details} Public Holiday`;
+			default:
+				return this.details;
+		}
 	}
 
 	static async get(eventId) {
@@ -61,17 +115,7 @@ export default class Event {
 				.firestore()
 				.collection('events-new')
 				.doc(this.eventId)
-				.update({
-					allDay: this.allDay,
-					details: this.details,
-					end: this.end,
-					locations: this.locations,
-					metadata: this.metadata,
-					start: this.start,
-					subscribers: this.subscribers,
-					type: this.type,
-					user: this.user
-				});
+				.update(this.getDatabaseObject());
 		} else {
 			this.metadata = {
 				createdAt: new Date(serverTime),
@@ -79,26 +123,21 @@ export default class Event {
 				updatedAt: new Date(serverTime),
 				updatedBy: firebase.auth().currentUser.uid
 			};
-			const docRef = await firebase.firestore().collection('events-new').add({
-				allDay: this.allDay,
-				details: this.details,
-				end: this.end,
-				locations: this.locations,
-				metadata: this.metadata,
-				start: this.start,
-				subscribers: this.subscribers,
-				type: this.type,
-				user: this.user
-			});
+			const docRef = await firebase
+				.firestore()
+				.collection('events-new')
+				.add(this.getDatabaseObject());
 			this.eventId = docRef.id;
 			await firebase
 				.firestore()
 				.collection('collection-data')
 				.doc('events')
 				.update({
-					count: firebase.firestore.FieldValue.increment(1),
 					documents: firebase.firestore.FieldValue.arrayUnion(this.eventId)
 				});
+		}
+		if (this.notifyUsers) {
+			delete this.notifyUsers;
 		}
 	}
 
@@ -113,7 +152,6 @@ export default class Event {
 			.collection('collection-data')
 			.doc('events')
 			.update({
-				count: firebase.firestore.FieldValue.increment(-1),
 				documents: firebase.firestore.FieldValue.arrayRemove(this.eventId)
 			});
 	}

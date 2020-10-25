@@ -31,7 +31,7 @@ export default class Notification {
 	async delete() {
 		await firebase
 			.firestore()
-			.collection('notificationsNew')
+			.collection('notifications-new')
 			.doc(this.notificationId)
 			.delete();
 	}
@@ -45,7 +45,7 @@ export default class Notification {
 		};
 		const docRef = await firebase
 			.firestore()
-			.collection('notificationsNew')
+			.collection('notifications-new')
 			.add(this.getDatabaseObject());
 		this.notificationId = docRef.id;
 	}
@@ -59,7 +59,7 @@ export default class Notification {
 				updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
 				updatedBy: firebase.auth().currentUser.uid
 			};
-			const docRef = firebase.firestore().collection('notificationsNew').doc();
+			const docRef = firebase.firestore().collection('notifications-new').doc();
 			batch.set(docRef, notification.getDatabaseObject());
 		}
 		await batch.commit();
@@ -70,7 +70,7 @@ export default class Notification {
 		for (const notification of notifications) {
 			const docRef = firebase
 				.firestore()
-				.collection('notificationsNew')
+				.collection('notifications-new')
 				.doc(notification.notificationId);
 			batch.delete(docRef);
 		}
@@ -88,7 +88,7 @@ export default class Notification {
 
 		return firebase
 			.firestore()
-			.collection('notificationsNew')
+			.collection('notifications-new')
 			.where('recipient.userId', '==', userId)
 			.where('metadata.createdAt', '>=', ONE_MONTH_AGO_TIMESTAMP);
 	}

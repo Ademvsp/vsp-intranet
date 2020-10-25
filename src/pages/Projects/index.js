@@ -2,7 +2,6 @@
 import { Container } from '@material-ui/core';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import * as projectsController from '../../controllers/project';
 import Project from '../../models/project';
 import MaterialTable from 'material-table';
 import columnSchema from './column-schema';
@@ -27,10 +26,9 @@ const Projects = (props) => {
 	useEffect(() => {
 		let projectsListener;
 		if (usersData && users) {
-			if (users.length === usersData.count) {
-				projectsListener = projectsController
-					.getListener(authUser.userId)
-					.onSnapshot((snapshot) => {
+			if (users.length === usersData.documents.length) {
+				projectsListener = Project.getListener(authUser.userId).onSnapshot(
+					(snapshot) => {
 						const newProjects = snapshot.docs.map((doc) => {
 							const owners = doc
 								.data()
@@ -51,7 +49,8 @@ const Projects = (props) => {
 							});
 						});
 						setProjects(newProjects);
-					});
+					}
+				);
 			}
 		}
 		return () => {

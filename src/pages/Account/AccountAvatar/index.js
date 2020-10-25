@@ -1,9 +1,9 @@
 import React, { Fragment, useState, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { Menu, MenuItem, CircularProgress } from '@material-ui/core';
-import * as authController from '../../../controllers/auth-user';
 import ConfirmDialog from '../../../components/ConfirmDialog';
 import { StyledAvatar } from './styled-components';
+import { removePicture, uploadPicture } from '../../../store/actions/auth-user';
 
 const AccountAvatar = (props) => {
 	const authUser = props.authUser;
@@ -33,7 +33,7 @@ const AccountAvatar = (props) => {
 
 	const confirmClickHandler = async () => {
 		setLoading(true);
-		await dispatch(authController.removePicture());
+		await dispatch(removePicture());
 		setLoading(false);
 		setShowConfirmDialog(false);
 	};
@@ -42,7 +42,7 @@ const AccountAvatar = (props) => {
 		setLoading(true);
 		const files = [...event.target.files];
 		if (files.length === 1) {
-			await dispatch(authController.uploadPicture(files[0]));
+			await dispatch(uploadPicture(files[0]));
 		}
 		setLoading(false);
 		fileInputRef.current.value = null;

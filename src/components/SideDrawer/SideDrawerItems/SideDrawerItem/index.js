@@ -13,7 +13,7 @@ import { useHistory } from 'react-router-dom';
 import { withTheme } from '@material-ui/core/styles';
 import { SideDrawerContext } from '../../../AppContainer';
 import { useDispatch, useSelector } from 'react-redux';
-import * as authController from '../../../../controllers/auth-user';
+import { updateSettings } from '../../../../store/actions/auth-user';
 
 const SideDrawerItem = withTheme((props) => {
 	const { Icon, text, link, subItems, subItem } = props;
@@ -34,7 +34,7 @@ const SideDrawerItem = withTheme((props) => {
 			settings.expandSideDrawerItems[
 				text.split(' ').join('').toLowerCase()
 			] = !expand;
-			dispatch(authController.updateSettings(settings));
+			dispatch(updateSettings(settings));
 		} else {
 			history.push(link);
 			setDrawerOpen(false);

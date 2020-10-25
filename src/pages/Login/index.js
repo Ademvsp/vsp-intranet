@@ -10,8 +10,13 @@ import {
 import firebase from '../../utils/firebase';
 import EmailForm from './EmailForm';
 import CodeForm from './CodeForm';
-import * as authController from '../../controllers/auth-user';
 import { useDispatch } from 'react-redux';
+import {
+	confirmVerificationCode,
+	getPhoneNumber,
+	loginWithPassword,
+	signInWithPhoneNumber
+} from '../../store/actions/auth-user';
 
 const Login = (props) => {
 	const captchaRef = useRef();
@@ -52,13 +57,11 @@ const Login = (props) => {
 				setActiveStep(1);
 				setLoading(false);
 			} else {
-				const phoneNumber = await dispatch(
-					authController.getPhoneNumber(email)
-				);
+				const phoneNumber = await dispatch(getPhoneNumber(email));
 				if (phoneNumber) {
 					const appVerifier = window.recaptchaVerifier;
 					const newConfirmationResult = await dispatch(
-						authController.signInWithPhoneNumber(phoneNumber, appVerifier)
+						signInWithPhoneNumber(phoneNumber, appVerifier)
 					);
 					if (newConfirmationResult) {
 						setConfirmationResult(newConfirmationResult);
@@ -79,10 +82,7 @@ const Login = (props) => {
 			setLoading(true);
 			setActiveStep(2);
 			const result = await dispatch(
-				authController.confirmVerificationCode(
-					confirmationResult,
-					verificationCode
-				)
+				confirmVerificationCode(confirmationResult, verificationCode)
 			);
 			if (!result) {
 				setActiveStep(1);
@@ -99,9 +99,7 @@ const Login = (props) => {
 			setLoading(true);
 			setActiveStep(2);
 			const newEmail = email.split('*').pop();
-			const result = await dispatch(
-				authController.loginWithPassword(newEmail, password)
-			);
+			const result = await dispatch(loginWithPassword(newEmail, password));
 			if (!result) {
 				setActiveStep(1);
 				setLoading(false);

@@ -68,7 +68,7 @@ export default class Project {
 				.collection('projects-new')
 				.add(this.getDatabaseObject());
 			this.projectId = docRef.id;
-			await CollectionData.updateCollectionData('projects', this.projectId);
+			// await CollectionData.updateCollectionData('projects', this.projectId);
 		}
 	}
 

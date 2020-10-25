@@ -18,7 +18,7 @@ import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { LONG_DATE } from '../../../utils/date';
 import { isAfter } from 'date-fns';
-import * as leaveRequestController from '../../../controllers/leave-request';
+import { addLeaveRequest } from '../../../store/actions/leave-request';
 
 const NewLeaveRequestDialog = withTheme((props) => {
 	const dispatch = useDispatch();
@@ -56,9 +56,7 @@ const NewLeaveRequestDialog = withTheme((props) => {
 
 	const submitHandler = async (values) => {
 		setLoading(true);
-		const result = await dispatch(
-			leaveRequestController.addLeaveRequest(values)
-		);
+		const result = await dispatch(addLeaveRequest(values));
 		setLoading(false);
 		if (result) {
 			formik.setValues(initialValues);

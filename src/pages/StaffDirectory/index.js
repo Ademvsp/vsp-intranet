@@ -20,7 +20,7 @@ const StaffDirectory = (props) => {
 
 	useEffect(() => {
 		if (activeUsers && activeUsersData) {
-			if (activeUsers.length === activeUsersData.count) {
+			if (activeUsers.length === activeUsersData.documents.length) {
 				//Only start process when all users are loaded. Firebase loads original authUser first as it is already in cache
 				const newGroupedUsers = [];
 				activeUsers.forEach((user) => {

@@ -11,7 +11,7 @@ export default class Customer {
 		if (!this.customerId) {
 			const docRef = await firebase
 				.firestore()
-				.collection('customersNew')
+				.collection('customers-new')
 				.add({
 					metadata: {
 						createdAt: new Date(serverTime),
@@ -29,7 +29,6 @@ export default class Customer {
 				.collection('collection-data')
 				.doc('customers')
 				.update({
-					count: firebase.firestore.FieldValue.increment(1),
 					documents: firebase.firestore.FieldValue.arrayUnion(this.customerId)
 				});
 		}
@@ -38,7 +37,7 @@ export default class Customer {
 	static getListener() {
 		return firebase
 			.firestore()
-			.collection('customersNew')
+			.collection('customers-new')
 			.orderBy('name', 'asc');
 	}
 }

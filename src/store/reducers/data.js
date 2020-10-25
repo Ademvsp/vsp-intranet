@@ -8,7 +8,7 @@ import {
 	SET_ACTIVE_USERS_DATA,
 	SET_CUSTOMERS,
 	SET_VENDORS
-} from '../utils/actions';
+} from '../../utils/actions';
 
 const initialState = {
 	users: null,

@@ -1,4 +1,4 @@
-import { SILENT } from '../utils/constants';
+import { SILENT } from '../../utils/constants';
 import {
 	SET_MESSAGE,
 	SET_USERS,
@@ -6,15 +6,11 @@ import {
 	SET_USERS_TOUCHED,
 	SET_USERS_DATA,
 	SET_ACTIVE_USERS_DATA
-} from '../utils/actions';
-import Message from '../models/message';
-import User from '../models/user';
-import CollectionData from '../models/collection-data';
+} from '../../utils/actions';
+import Message from '../../models/message';
+import User from '../../models/user';
+import CollectionData from '../../models/collection-data';
 let usersListener, usersDataListener, activeUsersDataListener;
-
-export const getFullName = (user) => {
-	return `${user.firstName} ${user.lastName}`;
-};
 
 export const subscribeUserListener = () => {
 	return async (dispatch, getState) => {

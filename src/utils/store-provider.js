@@ -3,11 +3,11 @@ import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { reduxBatch } from '@manaflair/redux-batch';
 import ReduxThunk from 'redux-thunk';
-import authReducer from '../store/auth';
-import messageReducer from '../store/message';
-import notificationReducer from '../store/notification';
-import dataReducer from '../store/data';
-import uploadReducer from '../store/upload';
+import authReducer from '../store/reducers/auth';
+import messageReducer from '../store/reducers/message';
+import notificationReducer from '../store/reducers/notification';
+import dataReducer from '../store/reducers/data';
+import uploadReducer from '../store/reducers/upload';
 import { composeWithDevTools } from 'redux-devtools-extension';
 
 const rootReducer = combineReducers({

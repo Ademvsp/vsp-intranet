@@ -11,7 +11,6 @@ import {
 	Grid
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import * as productRequestController from '../../../controllers/product-request';
 import { format } from 'date-fns';
 import ProductRequest from '../../../models/product-request';
 import {
@@ -28,6 +27,7 @@ import Card from '../../../components/Card';
 import { LONG_DATE_TIME } from '../../../utils/date';
 import ProductRequestForm from './ProductRequestForm';
 import ActionButtons from './ActionButtons';
+import { addComment } from '../../../store/actions/product-request';
 
 const ProductRequestCard = withTheme((props) => {
 	const dispatch = useDispatch();
@@ -58,26 +58,26 @@ const ProductRequestCard = withTheme((props) => {
 	useEffect(() => {
 		let productRequestListener;
 		const asyncFunction = async () => {
-			productRequestListener = productRequestController
-				.getListener(productRequestId)
-				.onSnapshot((doc) => {
-					const metadata = {
-						...doc.data().metadata,
-						createdAt: doc.data().metadata.createdAt.toDate(),
-						updatedAt: doc.data().metadata.updatedAt.toDate()
-					};
-					const actions = doc.data().actions.map((action) => ({
-						...action,
-						actionedAt: action.actionedAt.toDate()
-					}));
-					const newProductRequest = new ProductRequest({
-						...doc.data(),
-						productRequestId: doc.id,
-						actions: actions,
-						metadata: metadata
-					});
-					setProductRequest(newProductRequest);
+			productRequestListener = ProductRequest.getListener(
+				productRequestId
+			).onSnapshot((doc) => {
+				const metadata = {
+					...doc.data().metadata,
+					createdAt: doc.data().metadata.createdAt.toDate(),
+					updatedAt: doc.data().metadata.updatedAt.toDate()
+				};
+				const actions = doc.data().actions.map((action) => ({
+					...action,
+					actionedAt: action.actionedAt.toDate()
+				}));
+				const newProductRequest = new ProductRequest({
+					...doc.data(),
+					productRequestId: doc.id,
+					actions: actions,
+					metadata: metadata
 				});
+				setProductRequest(newProductRequest);
+			});
 		};
 		asyncFunction();
 		return () => {
@@ -115,7 +115,7 @@ const ProductRequestCard = withTheme((props) => {
 
 	const newCommentHandler = async (body, attachments) => {
 		const result = await dispatch(
-			productRequestController.addComment(productRequest, body, attachments)
+			addComment(productRequest, body, attachments)
 		);
 		return result;
 	};

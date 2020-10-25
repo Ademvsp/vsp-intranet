@@ -24,11 +24,11 @@ import {
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { isAfter, addHours } from 'date-fns';
-import { getReadableTitle } from '../../../controllers/event';
 import { StyledTitle } from './styled-components';
-import * as eventController from '../../../controllers/event';
 import ConfirmDialog from '../../../components/ConfirmDialog';
 import { LONG_DATE, LONG_DATE_TIME } from '../../../utils/date';
+import Event from '../../../models/event';
+import { deleteEvent, editEvent } from '../../../store/actions/event';
 
 const EditEventDialog = (props) => {
 	const dispatch = useDispatch();
@@ -78,9 +78,7 @@ const EditEventDialog = (props) => {
 
 	const submitHandler = async (values) => {
 		setEditLoading(true);
-		const result = await dispatch(
-			eventController.editEvent(event, values, notifyUsers)
-		);
+		const result = await dispatch(editEvent(event, values, notifyUsers));
 		setEditLoading(false);
 		if (result) {
 			close();
@@ -89,9 +87,7 @@ const EditEventDialog = (props) => {
 
 	const deleteHandler = async () => {
 		setDeleteLoading(true);
-		const result = await dispatch(
-			eventController.deleteEvent(event, notifyUsers)
-		);
+		const result = await dispatch(deleteEvent(event, notifyUsers));
 		setDeleteLoading(false);
 		if (result) {
 			close();
@@ -141,14 +137,12 @@ const EditEventDialog = (props) => {
 		}
 	}, [start, end, setFieldValue]);
 
-	const readableTitle = getReadableTitle(
-		{
-			details: formik.values.details,
-			type: formik.values.type.name,
-			user: authUser.userId
-		},
-		users
-	);
+	const tempEvent = new Event({
+		details: formik.values.details,
+		type: formik.values.type.name,
+		user: authUser.userId
+	});
+	const eventTitle = tempEvent.getEventTitle(users);
 
 	let StartPicker = DateTimePicker;
 	let EndPicker = DateTimePicker;
@@ -170,7 +164,7 @@ const EditEventDialog = (props) => {
 			/>
 			<Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
 				<DialogTitle>
-					<StyledTitle>{`Title Preview: ${readableTitle}`}</StyledTitle>
+					<StyledTitle>{`Title Preview: ${eventTitle}`}</StyledTitle>
 				</DialogTitle>
 				<DialogContent>
 					<Grid container direction='column' spacing={1}>

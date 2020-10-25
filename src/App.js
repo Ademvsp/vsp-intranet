@@ -4,10 +4,10 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import AppContainer from './components/AppContainer';
 import { CircularProgress } from '@material-ui/core';
-import * as authController from './controllers/auth-user';
-import * as notificationController from './controllers/notification';
-import * as userController from './controllers/user';
-import * as locationController from './controllers/location';
+import * as authUserActions from './store/actions/auth-user';
+import * as notificationActions from './store/actions/notification';
+import * as userActions from './store/actions/user';
+import * as locationActions from './store/actions/location';
 import Login from './pages/Login';
 import Account from './pages/Account';
 import NewsFeed from './pages/NewsFeed';
@@ -34,34 +34,34 @@ const App = (props) => {
 	//Check authentication token from firebase
 	useEffect(() => {
 		const verifyAuth = async () => {
-			await dispatch(authController.verifyAuth());
+			await dispatch(authUserActions.verifyAuth());
 		};
 		verifyAuth();
 	}, [dispatch]);
 	//Get notification after logged in
 	useEffect(() => {
 		if (authState.authUser && !notificationState.touched) {
-			dispatch(notificationController.subscribeNotificationsListener());
+			dispatch(notificationActions.subscribeNotificationsListener());
 		}
 	}, [authState.authUser, notificationState.touched, dispatch]);
 	//Get locations after logged in
 	useEffect(() => {
 		if (authState.authUser && !dataState.usersTouched) {
-			dispatch(locationController.getLocations());
+			dispatch(locationActions.getLocations());
 		}
 	}, [authState.authUser, dataState.usersTouched, dispatch]);
 	//Get app users with mapped locations after locations are retrieved
 	useEffect(() => {
 		if (dataState.locations) {
-			dispatch(userController.subscribeUserListener());
+			dispatch(userActions.subscribeUserListener());
 		}
 	}, [dataState.locations, dispatch]);
 	//Unsubscribe to any active listeners upon unmounting app
 	useEffect(() => {
 		return () => {
-			authController.unsubscribeAuthUserListener();
-			notificationController.unsubscribeNotificationsListener();
-			userController.unsubscribeUsersListener();
+			authUserActions.unsubscribeAuthUserListener();
+			notificationActions.unsubscribeNotificationsListener();
+			userActions.unsubscribeUsersListener();
 		};
 	}, []);
 

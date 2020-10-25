@@ -1,7 +1,7 @@
-import Customer from '../models/customer';
-import Message from '../models/message';
-import { SET_CUSTOMERS, SET_MESSAGE } from '../utils/actions';
-import { SNACKBAR } from '../utils/constants';
+import Customer from '../../models/customer';
+import Message from '../../models/message';
+import { SET_CUSTOMERS, SET_MESSAGE } from '../../utils/actions';
+import { SNACKBAR } from '../../utils/constants';
 
 let customersListener;
 
@@ -30,12 +30,6 @@ export const subscribeCustomerListener = () => {
 			});
 		}
 	};
-};
-
-export const createCustomer = async (name) => {
-	const customer = new Customer({ customerId: null, name: name });
-	await customer.save();
-	return customer;
 };
 
 export const unsubscribeCustomerListener = () => {

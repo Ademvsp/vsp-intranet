@@ -11,7 +11,6 @@ import {
 	Grid
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import * as postController from '../../../controllers/post';
 import { format } from 'date-fns';
 import Post from '../../../models/post';
 import {
@@ -27,6 +26,7 @@ import scrollToComponent from 'react-scroll-to-component';
 import PostCardMenu from './PostCardMenu';
 import Card from '../../../components/Card';
 import { LONG_DATE_TIME } from '../../../utils/date';
+import { addComment } from '../../../store/actions/product-request';
 
 const PostCard = withTheme((props) => {
 	const dispatch = useDispatch();
@@ -52,7 +52,7 @@ const PostCard = withTheme((props) => {
 	useEffect(() => {
 		let postListener;
 		const asyncFunction = async () => {
-			postListener = postController.getListener(postId).onSnapshot((doc) => {
+			postListener = Post.getListener(postId).onSnapshot((doc) => {
 				const metadata = {
 					...doc.data().metadata,
 					createdAt: doc.data().metadata.createdAt.toDate(),
@@ -104,7 +104,7 @@ const PostCard = withTheme((props) => {
 
 	const newCommentHandler = async (body, attachments, notifyUsers) => {
 		const result = await dispatch(
-			postController.addComment(post, body, attachments, notifyUsers)
+			addComment(post, body, attachments, notifyUsers)
 		);
 		return result;
 	};

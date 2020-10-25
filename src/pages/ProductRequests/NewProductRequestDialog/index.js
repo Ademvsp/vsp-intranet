@@ -17,10 +17,10 @@ import * as yup from 'yup';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { productTypes as dbProductTypes } from '../../../data/product-types';
-import * as vendorController from '../../../controllers/vendor';
-import * as productRequestController from '../../../controllers/product-request';
+import { subscribeVendorListener } from '../../../store/actions/vendor';
 import Vendor from '../../../models/vendor';
 import ActionsBar from '../../../components/ActionsBar';
+import { addProductRequest } from '../../../store/actions/product-request';
 const filter = createFilterOptions();
 
 const NewProductRequestDialog = withTheme((props) => {
@@ -44,7 +44,7 @@ const NewProductRequestDialog = withTheme((props) => {
 	const vendorsLoading = vendorsOpen && !vendors;
 	useEffect(() => {
 		if (vendorsLoading) {
-			dispatch(vendorController.subscribeVendorListener());
+			dispatch(subscribeVendorListener());
 		}
 	}, [vendorsLoading, dispatch]);
 
@@ -92,9 +92,7 @@ const NewProductRequestDialog = withTheme((props) => {
 
 	const submitHandler = async (values) => {
 		setLoading(true);
-		const result = await dispatch(
-			productRequestController.addProductRequest(values, attachments)
-		);
+		const result = await dispatch(addProductRequest(values, attachments));
 		setLoading(false);
 		if (result) {
 			formik.setValues(initialValues);

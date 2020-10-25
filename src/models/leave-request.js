@@ -4,7 +4,6 @@ import {
 	REQUESTED
 } from '../data/leave-request-status-types';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
-import CollectionData from './collection-data';
 
 export default class LeaveRequest {
 	constructor({
@@ -39,13 +38,7 @@ export default class LeaveRequest {
 
 	async save() {
 		const serverTime = await getServerTimeInMilliseconds();
-		if (this.leaveRequestId) {
-			// this.metadata = {
-			// 	...this.metadata,
-			// 	updatedAt: new Date(serverTime),
-			// 	updatedBy: firebase.auth().currentUser.uid
-			// };
-		} else {
+		if (!this.leaveRequestId) {
 			this.metadata = {
 				createdAt: new Date(serverTime),
 				createdBy: firebase.auth().currentUser.uid,
@@ -64,24 +57,6 @@ export default class LeaveRequest {
 				.collection('leave-requests')
 				.add(this.getDatabaseObject());
 			this.leaveRequestId = docRef.id;
-			await CollectionData.updateCollectionData(
-				'leave-requests',
-				this.leaveRequestId
-			);
-			//Add to user sub collection of collection-data
-			await CollectionData.updateSubCollectionData(
-				'product-requests',
-				'users',
-				this.user,
-				this.leaveRequestId
-			);
-			//Add to manager sub collection of collection-data
-			await CollectionData.updateSubCollectionData(
-				'product-requests',
-				'users',
-				this.manager,
-				this.leaveRequestId
-			);
 		}
 	}
 

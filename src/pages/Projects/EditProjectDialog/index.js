@@ -22,9 +22,6 @@ import * as yup from 'yup';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import projectStatusTypes from '../../../data/project-status-types';
-import * as customerController from '../../../controllers/customer';
-import * as vendorController from '../../../controllers/vendor';
-import * as projectController from '../../../controllers/project';
 import Customer from '../../../models/customer';
 import Vendor from '../../../models/vendor';
 import User from '../../../models/user';
@@ -33,6 +30,10 @@ import DateFnsUtils from '@date-io/date-fns';
 import { LONG_DATE } from '../../../utils/date';
 import ActionsBar from '../../../components/ActionsBar';
 import Comments from '../../../components/Comments';
+import { subscribeCustomerListener } from '../../../store/actions/customer';
+import { subscribeVendorListener } from '../../../store/actions/vendor';
+import { editProject } from '../../../store/actions/project';
+import { addComment } from '../../../store/actions/product-request';
 const filter = createFilterOptions();
 
 const EditProjectDialog = withTheme((props) => {
@@ -52,7 +53,7 @@ const EditProjectDialog = withTheme((props) => {
 	const customersLoading = (customersOpen && !customers) || customerAdding;
 	useEffect(() => {
 		if (customersLoading) {
-			dispatch(customerController.subscribeCustomerListener());
+			dispatch(subscribeCustomerListener());
 		}
 	}, [customersLoading, dispatch]);
 	//Vendor field
@@ -61,7 +62,7 @@ const EditProjectDialog = withTheme((props) => {
 	const vendorsLoading = (vendorsOpen && !vendors) || vendorAdding;
 	useEffect(() => {
 		if (vendorsLoading) {
-			dispatch(vendorController.subscribeVendorListener());
+			dispatch(subscribeVendorListener());
 		}
 	}, [vendorsLoading, dispatch]);
 
@@ -147,7 +148,7 @@ const EditProjectDialog = withTheme((props) => {
 	const submitHandler = async (values) => {
 		setLoading(true);
 		const result = await dispatch(
-			projectController.editProject(project, values, notifyUsers, attachments)
+			editProject(project, values, notifyUsers, attachments)
 		);
 		setLoading(false);
 		if (result) {
@@ -158,7 +159,7 @@ const EditProjectDialog = withTheme((props) => {
 
 	const newCommentHandler = async (body, attachments, notifyUsers) => {
 		const result = await dispatch(
-			projectController.addComment(project, body, attachments, notifyUsers)
+			addComment(project, body, attachments, notifyUsers)
 		);
 		return result;
 	};
@@ -228,10 +229,9 @@ const EditProjectDialog = withTheme((props) => {
 		if (value?.inputValue) {
 			setCustomerAdding(true);
 			const newCustomerName = newValue.inputValue.trim();
-			const dbCustomer = await customerController.createCustomer(
-				newCustomerName
-			);
-			newValue = dbCustomer;
+			const newCustomer = new Customer({ name: newCustomerName });
+			await newCustomer.save();
+			newValue = newCustomer;
 			setCustomerAdding(false);
 		} else {
 			newValue = new Customer({ ...value });
@@ -292,8 +292,9 @@ const EditProjectDialog = withTheme((props) => {
 		if (newVendorIndex !== -1) {
 			setVendorAdding(true);
 			const newVendorName = newValue[newVendorIndex].inputValue.trim();
-			const dbVendor = await vendorController.createVendor(newVendorName);
-			newValue.splice(newVendorIndex, 1, dbVendor);
+			const newVendor = new Vendor({ name: newVendorName });
+			await newVendor.save();
+			newValue.splice(newVendorIndex, 1, newVendor);
 			setVendorAdding(false);
 		}
 		formik.setFieldValue('vendors', newValue, true);

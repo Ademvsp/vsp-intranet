@@ -24,10 +24,10 @@ import {
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { isAfter, set, addHours } from 'date-fns';
-import { getReadableTitle } from '../../../controllers/event';
 import { StyledTitle } from './styled-components';
-import * as eventController from '../../../controllers/event';
 import { LONG_DATE, LONG_DATE_TIME } from '../../../utils/date';
+import Event from '../../../models/event';
+import { addEvent } from '../../../store/actions/event';
 
 const NewEventDialog = (props) => {
 	const dispatch = useDispatch();
@@ -76,9 +76,7 @@ const NewEventDialog = (props) => {
 
 	const submitHandler = async (values) => {
 		setLoading(true);
-		const result = await dispatch(
-			eventController.addEvent(values, notifyUsers)
-		);
+		const result = await dispatch(addEvent(values, notifyUsers));
 		setLoading(false);
 		if (result) {
 			formik.setValues(initialValues);
@@ -126,14 +124,12 @@ const NewEventDialog = (props) => {
 		}
 	}, [start, end, setFieldValue]);
 
-	const readableTitle = getReadableTitle(
-		{
-			details: formik.values.details,
-			type: formik.values.type.name,
-			user: authUser.userId
-		},
-		users
-	);
+	const tempEvent = new Event({
+		details: formik.values.details,
+		type: formik.values.type.name,
+		user: authUser.userId
+	});
+	const eventTitle = tempEvent.getEventTitle(users);
 
 	let StartPicker = DateTimePicker;
 	let EndPicker = DateTimePicker;
@@ -147,7 +143,7 @@ const NewEventDialog = (props) => {
 	return (
 		<Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
 			<DialogTitle>
-				<StyledTitle>{`Title Preview: ${readableTitle}`}</StyledTitle>
+				<StyledTitle>{`Title Preview: ${eventTitle}`}</StyledTitle>
 			</DialogTitle>
 			<DialogContent>
 				<Grid container direction='column' spacing={1}>

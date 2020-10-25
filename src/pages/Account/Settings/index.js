@@ -8,18 +8,18 @@ import {
 } from '@material-ui/core';
 import Switch from '@material-ui/core/Switch';
 import { useDispatch } from 'react-redux';
-import * as authController from '../../../controllers/auth-user';
 import {
 	Brightness4 as Brightness4Icon,
 	Home as HomeIcon
 } from '@material-ui/icons';
+import { updateSettings } from '../../../store/actions/auth-user';
 
 const Settings = (props) => {
 	const authUser = props.authUser;
 	const dispatch = useDispatch();
 
 	const switchChangeHandler = async (settings) => {
-		await dispatch(authController.updateSettings(settings));
+		await dispatch(updateSettings(settings));
 	};
 
 	return (

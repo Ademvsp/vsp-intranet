@@ -11,10 +11,10 @@ import {
 import Avatar from '../../../../components/Avatar';
 import ActionsBar from '../../../../components/ActionsBar';
 import BalloonEditorWrapper from '../../../../components/BalloonEditorWrapper';
-import * as postController from '../../../../controllers/post';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
+import { addPost } from '../../../../store/actions/post';
 const NewPostDialog = (props) => {
 	const dispatch = useDispatch();
 	const { authUser, open, close, clearSearchResults } = props;
@@ -34,9 +34,7 @@ const NewPostDialog = (props) => {
 
 	const submitHandler = async (values) => {
 		setLoading(true);
-		const result = await dispatch(
-			postController.addPost(values, attachments, notifyUsers)
-		);
+		const result = await dispatch(addPost(values, attachments, notifyUsers));
 		setLoading(false);
 		if (result) {
 			formik.setValues(initialValues, true);

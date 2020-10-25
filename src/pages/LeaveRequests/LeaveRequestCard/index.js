@@ -11,7 +11,6 @@ import {
 	Grid
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import * as leaveRequestController from '../../../controllers/leave-request';
 import { format } from 'date-fns';
 import LeaveRequest from '../../../models/leave-request';
 import {
@@ -20,7 +19,6 @@ import {
 } from '@material-ui/icons';
 import Comments from '../../../components/Comments';
 import { Skeleton } from '@material-ui/lab';
-import AttachmentsContainer from '../../../components/AttachmentsContainer';
 import Avatar from '../../../components/Avatar';
 import scrollToComponent from 'react-scroll-to-component';
 // import PostCardMenu from './PostCardMenu';
@@ -54,30 +52,30 @@ const LeaveRequestCard = withTheme((props) => {
 	useEffect(() => {
 		let leaveRequestListener;
 		const asyncFunction = async () => {
-			leaveRequestListener = leaveRequestController
-				.getListener(leaveRequestId)
-				.onSnapshot((doc) => {
-					const metadata = {
-						...doc.data().metadata,
-						createdAt: doc.data().metadata.createdAt.toDate(),
-						updatedAt: doc.data().metadata.updatedAt.toDate()
-					};
-					const actions = doc.data().actions.map((action) => ({
-						...action,
-						actionedAt: action.actionedAt.toDate()
-					}));
-					const start = doc.data().start.toDate();
-					const end = doc.data().end.toDate();
-					const newLeaveRequest = new LeaveRequest({
-						...doc.data(),
-						leaveRequestId: doc.id,
-						actions: actions,
-						metadata: metadata,
-						start: start,
-						end: end
-					});
-					setLeaveRequest(newLeaveRequest);
+			leaveRequestListener = LeaveRequest.getListener(
+				leaveRequestId
+			).onSnapshot((doc) => {
+				const metadata = {
+					...doc.data().metadata,
+					createdAt: doc.data().metadata.createdAt.toDate(),
+					updatedAt: doc.data().metadata.updatedAt.toDate()
+				};
+				const actions = doc.data().actions.map((action) => ({
+					...action,
+					actionedAt: action.actionedAt.toDate()
+				}));
+				const start = doc.data().start.toDate();
+				const end = doc.data().end.toDate();
+				const newLeaveRequest = new LeaveRequest({
+					...doc.data(),
+					leaveRequestId: doc.id,
+					actions: actions,
+					metadata: metadata,
+					start: start,
+					end: end
 				});
+				setLeaveRequest(newLeaveRequest);
+			});
 		};
 		asyncFunction();
 		return () => {

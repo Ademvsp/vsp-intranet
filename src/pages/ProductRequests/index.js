@@ -1,17 +1,19 @@
 import { CircularProgress, Container, Grid } from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
 import React, { Fragment, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
-import * as productRequestController from '../../controllers/product-request';
 import CollectionData from '../../models/collection-data';
 import { READ_PAGE, READ_PRODUCT_REQUEST } from '../../utils/actions';
 import ProductRequestCard from './ProductRequestCard';
 import AddIcon from '@material-ui/icons/Add';
 import FloatingActionButton from '../../components/FloatingActionButton';
 import NewProductRequestDialog from './NewProductRequestDialog';
+import ProductRequest from '../../models/product-request';
 
 const ProductRequests = (props) => {
+	const { authUser } = useSelector((state) => state.authState);
+	const { userId } = authUser;
 	const dispatch = useDispatch();
 
 	const params = useParams();
@@ -37,7 +39,7 @@ const ProductRequests = (props) => {
 	//Mount and dismount, get admin status
 	useEffect(() => {
 		const asyncFunction = async () => {
-			const newIsAdmin = await productRequestController.getIsAdmin();
+			const newIsAdmin = await ProductRequest.isAdmin();
 			setIsAdmin(newIsAdmin);
 		};
 		asyncFunction();
@@ -46,12 +48,21 @@ const ProductRequests = (props) => {
 	useEffect(() => {
 		let collectionDataListener;
 		const asyncFunction = async () => {
-			collectionDataListener = (
-				await productRequestController.getCollectionDataListener()
-			).onSnapshot((snapshot) => {
+			let listenerRef;
+			if (isAdmin) {
+				//Get all documents
+				listenerRef = CollectionData.getListener('product-requests');
+			} else {
+				//Get only documents where the user has ownership
+				listenerRef = CollectionData.getNestedListener({
+					document: 'product-requests',
+					subCollection: 'users',
+					subCollectionDoc: userId
+				});
+			}
+			collectionDataListener = listenerRef.onSnapshot((snapshot) => {
 				let newCollectionData = new CollectionData({
 					collection: 'product-requests',
-					count: 0,
 					documents: []
 				});
 				if (snapshot.exists) {
@@ -71,7 +82,7 @@ const ProductRequests = (props) => {
 				collectionDataListener();
 			}
 		};
-	}, [dispatch, isAdmin]);
+	}, [dispatch, isAdmin, userId]);
 	//If results change or collectionData changes, update the data source
 	useEffect(() => {
 		if (collectionData) {

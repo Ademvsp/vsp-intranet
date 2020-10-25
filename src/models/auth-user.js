@@ -24,17 +24,13 @@ export default class AuthUser {
 		this.settings = settings;
 	}
 
-	static getUserId() {
-		return firebase.auth().currentUser.uid;
-	}
-
 	async save() {
 		const metadata = {
 			...this.metadata,
 			updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
 			updatedBy: firebase.auth().currentUser.uid
 		};
-		await firebase.firestore().collection('usersNew').doc(this.userId).update({
+		await firebase.firestore().collection('users-new').doc(this.userId).update({
 			email: this.email,
 			firstName: this.firstName,
 			lastName: this.lastName,
@@ -61,7 +57,7 @@ export default class AuthUser {
 	static async get(userId) {
 		const doc = await firebase
 			.firestore()
-			.collection('usersNew')
+			.collection('users-new')
 			.doc(userId)
 			.get();
 		if (!doc.exists) {
@@ -92,7 +88,7 @@ export default class AuthUser {
 	}
 
 	static getAuthListener(userId) {
-		return firebase.firestore().collection('usersNew').doc(userId);
+		return firebase.firestore().collection('users-new').doc(userId);
 	}
 
 	static async getPhoneNumber(email) {

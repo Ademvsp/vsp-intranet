@@ -61,7 +61,6 @@ export default class Post {
 				.collection('collection-data')
 				.doc('posts')
 				.update({
-					count: firebase.firestore.FieldValue.increment(1),
 					documents: firebase.firestore.FieldValue.arrayUnion(postId)
 				});
 			return postId;

@@ -1,7 +1,7 @@
-import { DIALOG } from '../utils/constants';
-import { SET_MESSAGE, SET_LOCATIONS } from '../utils/actions';
-import Message from '../models/message';
-import Location from '../models/location';
+import { DIALOG } from '../../utils/constants';
+import { SET_MESSAGE, SET_LOCATIONS } from '../../utils/actions';
+import Message from '../../models/message';
+import Location from '../../models/location';
 
 export const getLocations = () => {
 	return async (dispatch, _getState) => {

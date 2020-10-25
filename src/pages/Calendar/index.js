@@ -13,7 +13,6 @@ import { useHistory, useParams } from 'react-router-dom';
 import ViewEventDialog from './ViewEventDialog';
 import EditEventDialog from './EditEventDialog';
 import Event from '../../models/event';
-import * as eventController from '../../controllers/event';
 import { startOfMonth, sub, add } from 'date-fns';
 import { UPDATE } from '../../utils/actions';
 import FloatingActionButton from '../../components/FloatingActionButton';
@@ -49,9 +48,8 @@ const Calendar = (props) => {
 	//Get new listener every time date range changes on calendar
 	useEffect(() => {
 		let eventsListener;
-		eventsListener = eventController
-			.getListener(range.start, range.end)
-			.onSnapshot((snapshot) => {
+		eventsListener = Event.getListener(range.start, range.end).onSnapshot(
+			(snapshot) => {
 				const newEvents = snapshot.docs.map((doc) => {
 					const metadata = {
 						...doc.data().metadata,
@@ -67,7 +65,8 @@ const Calendar = (props) => {
 					});
 				});
 				setEvents(newEvents);
-			});
+			}
+		);
 		return () => {
 			if (eventsListener) {
 				eventsListener();
@@ -96,7 +95,7 @@ const Calendar = (props) => {
 			if (action === UPDATE) {
 				const eventId = params.eventId;
 				if (eventId) {
-					const event = await eventController.getEvent(eventId);
+					const event = await Event.get(eventId);
 					if (event) {
 						setSelectedEvent(event);
 						if (event.user === userId) {

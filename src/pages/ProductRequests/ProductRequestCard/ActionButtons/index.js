@@ -6,8 +6,11 @@ import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import RejectDialog from '../../../../components/ConfirmDialog';
 import ApproveDialog from './ApproveDialog';
 import { useDispatch } from 'react-redux';
-import * as productRequestController from '../../../../controllers/product-request';
 import ActionStatusChip from '../../../../components/ActionStatusChip';
+import {
+	approveProductRequest,
+	rejectProductRequest
+} from '../../../../store/actions/product-request';
 
 const ActionButtons = withTheme((props) => {
 	const dispatch = useDispatch();
@@ -24,9 +27,7 @@ const ActionButtons = withTheme((props) => {
 
 	const rejectConfirmHandler = async () => {
 		setLoading(true);
-		const result = await dispatch(
-			productRequestController.rejectProductRequest(productRequest)
-		);
+		const result = await dispatch(rejectProductRequest(productRequest));
 		if (result) {
 			setShowRejectDialog(false);
 		}
@@ -40,7 +41,7 @@ const ActionButtons = withTheme((props) => {
 	const approveConfirmHandler = async (values) => {
 		setLoading(true);
 		const result = await dispatch(
-			productRequestController.approveProductRequest(productRequest, values)
+			approveProductRequest(productRequest, values)
 		);
 		if (result) {
 			setShowApproveDialog(false);

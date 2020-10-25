@@ -1,28 +1,19 @@
-import Message from '../models/message';
-import Post from '../models/post';
-import Notification from '../models/notification';
+import Message from '../../models/message';
+import Post from '../../models/post';
+import Notification from '../../models/notification';
 import {
 	DIALOG,
 	SNACKBAR,
 	SNACKBAR_VARIANTS,
 	SNACKBAR_SEVERITY
-} from '../utils/constants';
-import { SET_MESSAGE } from '../utils/actions';
-import * as fileUtils from '../utils/file-utils';
-import { NEW_POST_COMMENT, NEW_POST } from '../data/notification-types';
-import { getServerTimeInMilliseconds } from '../utils/firebase';
-import CollectionData from '../models/collection-data';
+} from '../../utils/constants';
+import { SET_MESSAGE } from '../../utils/actions';
+import * as fileUtils from '../../utils/file-utils';
+import { NEW_POST_COMMENT, NEW_POST } from '../../data/notification-types';
+import { getServerTimeInMilliseconds } from '../../utils/firebase';
+import CollectionData from '../../models/collection-data';
 import { transformedRecipient } from './notification';
-import { getFullName } from './user';
 let collectionDataListener;
-
-export const getCollectionDataListener = () => {
-	return CollectionData.getListener('posts');
-};
-
-export const getListener = (postId) => {
-	return Post.getListener(postId);
-};
 
 export const addPost = (values, attachments, notifyUsers) => {
 	return async (dispatch, getState) => {
@@ -81,38 +72,38 @@ export const addPost = (values, attachments, notifyUsers) => {
 			return false;
 		}
 		//Send notification, do nothing if this fails so no error is thrown
-		try {
-			const recipients = users.filter(
-				(user) =>
-					newPost.subscribers.includes(user.userId) ||
-					notifyUsers.includes(user.userId)
-			);
-			if (recipients.length > 0) {
-				const notifications = [];
-				for (const recipient of recipients) {
-					const senderFullName = getFullName(authUser);
-					const emailData = {
-						postBody: body.trim(),
-						attachments: newPost.attachments,
-						postTitle: title.trim()
-					};
-					const notification = new Notification({
-						notificationId: null,
-						emailData: emailData,
-						link: `/newsfeed/${newPost.postId}`,
-						page: 'News Feed',
-						recipient: transformedRecipient(recipient),
-						title: `News Feed "${title}" New post from ${senderFullName}`,
-						type: NEW_POST
-					});
-					notifications.push(notification);
-				}
-				await Notification.saveAll(notifications);
-			}
-			return true;
-		} catch (error) {
-			return true;
-		}
+		// try {
+		// 	const recipients = users.filter(
+		// 		(user) =>
+		// 			newPost.subscribers.includes(user.userId) ||
+		// 			notifyUsers.includes(user.userId)
+		// 	);
+		// 	if (recipients.length > 0) {
+		// 		const notifications = [];
+		// 		for (const recipient of recipients) {
+		// 			const senderFullName = getFullName(authUser);
+		// 			const emailData = {
+		// 				postBody: body.trim(),
+		// 				attachments: newPost.attachments,
+		// 				postTitle: title.trim()
+		// 			};
+		// 			const notification = new Notification({
+		// 				notificationId: null,
+		// 				emailData: emailData,
+		// 				link: `/newsfeed/${newPost.postId}`,
+		// 				page: 'News Feed',
+		// 				recipient: transformedRecipient(recipient),
+		// 				title: `News Feed "${title}" New post from ${senderFullName}`,
+		// 				type: NEW_POST
+		// 			});
+		// 			notifications.push(notification);
+		// 		}
+		// 		await Notification.saveAll(notifications);
+		// 	}
+		// 	return true;
+		// } catch (error) {
+		// 	return true;
+		// }
 	};
 };
 
@@ -148,56 +139,38 @@ export const addComment = (post, body, attachments, notifyUsers) => {
 			return false;
 		}
 		//Send notification, do nothing if this fails so no error is thrown
-		try {
-			const recipients = users.filter(
-				(user) =>
-					post.subscribers.includes(user.userId) ||
-					notifyUsers.includes(user.userId)
-			);
-			if (recipients.length > 0) {
-				const notifications = [];
-				for (const recipient of recipients) {
-					const senderFullName = getFullName(authUser);
-					const emailData = {
-						commentBody: body.trim(),
-						attachments: uploadedAttachments,
-						postTitle: post.title
-					};
-					const notification = new Notification({
-						notificationId: null,
-						emailData: emailData,
-						link: `/newsfeed/${post.postId}`,
-						page: 'News Feed',
-						recipient: transformedRecipient(recipient),
-						title: `News Feed "${post.title}" New comment from ${senderFullName}`,
-						type: NEW_POST_COMMENT
-					});
-					notifications.push(notification);
-				}
-				await Notification.saveAll(notifications);
-			}
-			return true;
-		} catch (error) {
-			return true;
-		}
-	};
-};
-
-export const toggleSubscribePost = (post) => {
-	return async (dispatch, _getState) => {
-		try {
-			await post.toggleSubscribePost();
-		} catch (error) {
-			const message = new Message({
-				title: 'News Feed',
-				body: 'Failed to subscribe/unsubscribe to post',
-				feedback: DIALOG
-			});
-			dispatch({
-				type: SET_MESSAGE,
-				message
-			});
-		}
+		// try {
+		// 	const recipients = users.filter(
+		// 		(user) =>
+		// 			post.subscribers.includes(user.userId) ||
+		// 			notifyUsers.includes(user.userId)
+		// 	);
+		// 	if (recipients.length > 0) {
+		// 		const notifications = [];
+		// 		for (const recipient of recipients) {
+		// 			const senderFullName = getFullName(authUser);
+		// 			const emailData = {
+		// 				commentBody: body.trim(),
+		// 				attachments: uploadedAttachments,
+		// 				postTitle: post.title
+		// 			};
+		// 			const notification = new Notification({
+		// 				notificationId: null,
+		// 				emailData: emailData,
+		// 				link: `/newsfeed/${post.postId}`,
+		// 				page: 'News Feed',
+		// 				recipient: transformedRecipient(recipient),
+		// 				title: `News Feed "${post.title}" New comment from ${senderFullName}`,
+		// 				type: NEW_POST_COMMENT
+		// 			});
+		// 			notifications.push(notification);
+		// 		}
+		// 		await Notification.saveAll(notifications);
+		// 	}
+		// 	return true;
+		// } catch (error) {
+		// 	return true;
+		// }
 	};
 };
 

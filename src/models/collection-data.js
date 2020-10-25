@@ -1,9 +1,8 @@
 import firebase from '../utils/firebase';
 
 export default class CollectionData {
-	constructor({ collection, count, documents }) {
+	constructor({ collection, documents }) {
 		this.collection = collection;
-		this.count = count;
 		this.documents = documents;
 	}
 
@@ -22,13 +21,8 @@ export default class CollectionData {
 			.collection('collection-data')
 			.doc(document)
 			.set(
-				{
-					count: firebase.firestore.FieldValue.increment(1),
-					documents: firebase.firestore.FieldValue.arrayUnion(docId)
-				},
-				{
-					merge: true
-				}
+				{ documents: firebase.firestore.FieldValue.arrayUnion(docId) },
+				{ merge: true }
 			);
 	}
 
@@ -45,13 +39,8 @@ export default class CollectionData {
 			.collection(subCollection)
 			.doc(subCollectionDoc)
 			.set(
-				{
-					count: firebase.firestore.FieldValue.increment(1),
-					documents: firebase.firestore.FieldValue.arrayUnion(docId)
-				},
-				{
-					merge: true
-				}
+				{ documents: firebase.firestore.FieldValue.arrayUnion(docId) },
+				{ merge: true }
 			);
 	}
 
@@ -59,7 +48,7 @@ export default class CollectionData {
 		return firebase.firestore().collection('collection-data').doc(document);
 	}
 
-	static getNestedListener(document, subCollection, subCollectionDoc) {
+	static getNestedListener({ document, subCollection, subCollectionDoc }) {
 		return firebase
 			.firestore()
 			.collection('collection-data')

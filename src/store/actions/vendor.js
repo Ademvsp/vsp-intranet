@@ -1,7 +1,7 @@
-import Vendor from '../models/vendor';
-import Message from '../models/message';
-import { SET_VENDORS, SET_MESSAGE } from '../utils/actions';
-import { SNACKBAR } from '../utils/constants';
+import Vendor from '../../models/vendor';
+import Message from '../../models/message';
+import { SET_VENDORS, SET_MESSAGE } from '../../utils/actions';
+import { SNACKBAR } from '../../utils/constants';
 
 let vendorsListener;
 
@@ -30,12 +30,6 @@ export const subscribeVendorListener = () => {
 			});
 		}
 	};
-};
-
-export const createVendor = async (name) => {
-	const vendor = new Vendor({ vendorId: null, name: name });
-	await vendor.save();
-	return vendor;
 };
 
 export const unsubscribeVendorListener = () => {

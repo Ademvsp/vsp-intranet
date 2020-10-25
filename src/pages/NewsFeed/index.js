@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import * as postController from '../../controllers/post';
 import { Pagination } from '@material-ui/lab';
 import { CircularProgress, Container, Grid } from '@material-ui/core';
 import PostCard from './PostCard';
@@ -26,15 +25,15 @@ const NewsFeed = (props) => {
 	//Mount and dismount
 	useEffect(() => {
 		let collectionDataListener;
-		collectionDataListener = postController
-			.getCollectionDataListener()
-			.onSnapshot((snapshot) => {
+		collectionDataListener = CollectionData.getListener('posts').onSnapshot(
+			(snapshot) => {
 				const newPostsMetadata = new CollectionData({
 					...snapshot.data(),
 					collection: snapshot.id
 				});
 				setMetadata(newPostsMetadata);
-			});
+			}
+		);
 		return () => {
 			if (collectionDataListener) {
 				collectionDataListener();

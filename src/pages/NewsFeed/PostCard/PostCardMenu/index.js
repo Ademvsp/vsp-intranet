@@ -3,14 +3,14 @@ import { Menu, MenuItem, IconButton } from '@material-ui/core';
 import { MoreVert as MoreVertIcon } from '@material-ui/icons';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch, useSelector } from 'react-redux';
-import * as messageController from '../../../../controllers/message';
-import * as postController from '../../../../controllers/post';
 import Message from '../../../../models/message';
 import {
 	SNACKBAR,
 	SNACKBAR_VARIANTS,
 	SNACKBAR_SEVERITY
 } from '../../../../utils/constants';
+import { setMessage } from '../../../../store/actions/message';
+import { toggleSubscribePost } from '../../../../store/actions/post';
 
 const PostCardMenu = (props) => {
 	const dispatch = useDispatch();
@@ -29,13 +29,13 @@ const PostCardMenu = (props) => {
 				severity: SNACKBAR_SEVERITY.INFO
 			}
 		});
-		dispatch(messageController.setMessage(message));
+		dispatch(setMessage(message));
 		setAnchorEl(null);
 	};
 
-	const subscribeHandler = () => {
+	const subscribeHandler = async () => {
 		setAnchorEl(null);
-		dispatch(postController.toggleSubscribePost(post));
+		await post.toggleSubscribePost();
 	};
 
 	let subscribeText = 'Subsrcibe';

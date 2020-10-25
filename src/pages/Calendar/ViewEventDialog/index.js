@@ -15,9 +15,9 @@ import { useSelector } from 'react-redux';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { format } from 'date-fns';
-import { getReadableTitle } from '../../../controllers/event';
 import { StyledTitle } from './styled-components';
 import { LONG_DATE_TIME, LONG_DATE } from '../../../utils/date';
+import Event from '../../../models/event';
 
 const ViewEventDialog = (props) => {
 	const detailsFieldRef = useRef();
@@ -35,14 +35,13 @@ const ViewEventDialog = (props) => {
 		)
 	};
 
-	const readableTitle = getReadableTitle(
-		{
-			details: initialValues.details,
-			type: initialValues.type.name,
-			user: event.user
-		},
-		users
-	);
+	const tempEvent = new Event({
+		details: initialValues.details,
+		type: initialValues.type.name,
+		user: event.user
+	});
+	const eventTitle = tempEvent.getEventTitle(users);
+
 	let dateFormat = LONG_DATE_TIME;
 	if (initialValues.allDay) {
 		dateFormat = LONG_DATE;
@@ -51,7 +50,7 @@ const ViewEventDialog = (props) => {
 	return (
 		<Dialog open={open} onClose={close} fullWidth maxWidth='sm'>
 			<DialogTitle>
-				<StyledTitle>{readableTitle}</StyledTitle>
+				<StyledTitle>{eventTitle}</StyledTitle>
 			</DialogTitle>
 			<DialogContent>
 				<Grid container direction='column' spacing={1}>

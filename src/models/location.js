@@ -24,7 +24,7 @@ export default class Location {
 	static async getAll() {
 		const collection = await firebase
 			.firestore()
-			.collection('locationsNew')
+			.collection('locations-new')
 			.orderBy('state', 'asc')
 			.get();
 		const locations = collection.docs.map((doc) => {

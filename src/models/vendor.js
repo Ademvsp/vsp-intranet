@@ -11,7 +11,7 @@ export default class Vendor {
 		if (!this.vendorId) {
 			const docRef = await firebase
 				.firestore()
-				.collection('vendorsNew')
+				.collection('vendors-new')
 				.add({
 					metadata: {
 						createdAt: new Date(serverTime),
@@ -24,18 +24,20 @@ export default class Vendor {
 					sourceId: null
 				});
 			this.vendorId = docRef.id;
-			await firebase
-				.firestore()
-				.collection('collection-data')
-				.doc('vendors')
-				.update({
-					count: firebase.firestore.FieldValue.increment(1),
-					documents: firebase.firestore.FieldValue.arrayUnion(this.vendorId)
-				});
+			// await firebase
+			// 	.firestore()
+			// 	.collection('collection-data')
+			// 	.doc('vendors')
+			// 	.update({
+			// 		documents: firebase.firestore.FieldValue.arrayUnion(this.vendorId)
+			// 	});
 		}
 	}
 
 	static getListener() {
-		return firebase.firestore().collection('vendorsNew').orderBy('name', 'asc');
+		return firebase
+			.firestore()
+			.collection('vendors-new')
+			.orderBy('name', 'asc');
 	}
 }

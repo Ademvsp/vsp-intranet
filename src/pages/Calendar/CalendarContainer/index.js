@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import * as eventController from '../../../controllers/event';
 import { Calendar as BigCalendar, dateFnsLocalizer } from 'react-big-calendar';
 import {
 	format,
@@ -43,14 +42,7 @@ const CalendarContainer = (props) => {
 	useEffect(() => {
 		if (props.events) {
 			const newTransformedEvents = props.events.map((event) => {
-				const title = eventController.getReadableTitle(
-					{
-						details: event.details,
-						type: event.type,
-						user: event.user
-					},
-					users
-				);
+				const title = event.getEventTitle(users);
 				return {
 					...event,
 					title,

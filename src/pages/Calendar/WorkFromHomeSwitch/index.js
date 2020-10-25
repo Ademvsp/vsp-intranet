@@ -6,15 +6,15 @@ import {
 	Switch,
 	List
 } from '@material-ui/core';
-import * as authController from '../../../controllers/auth-user';
 import { useSelector, useDispatch } from 'react-redux';
+import { updateSettings } from '../../../store/actions/auth-user';
 
 const WorkFromHomeSwitch = (props) => {
 	const { authUser } = useSelector((state) => state.authState);
 	const dispatch = useDispatch();
 
 	const switchChangeHandler = async (settings) => {
-		await dispatch(authController.updateSettings(settings));
+		await dispatch(updateSettings(settings));
 	};
 
 	return (

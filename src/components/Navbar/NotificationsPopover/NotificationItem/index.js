@@ -11,7 +11,7 @@ import { StyledListItem } from './styled-components';
 import { useHistory } from 'react-router-dom';
 import { Delete as DeleteIcon } from '@material-ui/icons';
 import { useDispatch } from 'react-redux';
-import * as notificationController from '../../../../controllers/notification';
+import { clearNotification } from '../../../../store/actions/notification';
 
 const NotificationItem = (props) => {
 	const history = useHistory();
@@ -19,7 +19,7 @@ const NotificationItem = (props) => {
 	const { page, title, link, metadata } = props.notification;
 
 	const deleteClickHandler = () => {
-		dispatch(notificationController.clearNotification(props.notification));
+		dispatch(clearNotification(props.notification));
 	};
 
 	return (

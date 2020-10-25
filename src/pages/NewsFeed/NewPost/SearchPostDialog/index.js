@@ -8,10 +8,10 @@ import {
 } from '@material-ui/core';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import * as postController from '../../../../controllers/post';
 import { useDispatch, useSelector } from 'react-redux';
 import { Autocomplete } from '@material-ui/lab';
 import { useHistory } from 'react-router-dom';
+import { searchPosts } from '../../../../store/actions/post';
 
 const SearchPostDialog = (props) => {
 	const history = useHistory();
@@ -41,7 +41,7 @@ const SearchPostDialog = (props) => {
 
 	const submitHandler = async (values) => {
 		setLoading(true);
-		const results = await dispatch(postController.searchPosts(values));
+		const results = await dispatch(searchPosts(values));
 		if (results) {
 			formik.setValues(initialValues, true);
 			close();

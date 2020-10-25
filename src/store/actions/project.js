@@ -1,23 +1,22 @@
-import Message from '../models/message';
-import Project from '../models/project';
-import Notification from '../models/notification';
-import { SET_MESSAGE } from '../utils/actions';
+import Message from '../../models/message';
+import Project from '../../models/project';
+import Notification from '../../models/notification';
+import { SET_MESSAGE } from '../../utils/actions';
 import {
 	DIALOG,
 	SNACKBAR,
 	SNACKBAR_SEVERITY,
 	SNACKBAR_VARIANTS
-} from '../utils/constants';
-import { toCurrency } from '../utils/data-transformer';
-import * as fileUtils from '../utils/file-utils';
+} from '../../utils/constants';
+import { toCurrency } from '../../utils/data-transformer';
+import * as fileUtils from '../../utils/file-utils';
 import {
 	EDIT_PROJECT,
 	NEW_PROJECT,
 	NEW_PROJECT_COMMENT
-} from '../data/notification-types';
-import { getServerTimeInMilliseconds } from '../utils/firebase';
+} from '../../data/notification-types';
+import { getServerTimeInMilliseconds } from '../../utils/firebase';
 import { transformedRecipient } from './notification';
-import { getFullName } from './user';
 
 export const addProject = (values, notifyUsers, attachments) => {
 	return async (dispatch, getState) => {
@@ -95,44 +94,44 @@ export const addProject = (values, notifyUsers, attachments) => {
 			return false;
 		}
 		//Send notification, do nothing if this fails so no error is thrown
-		try {
-			const recipients = users.filter(
-				(user) =>
-					newProject.owners.includes(user.userId) ||
-					notifyUsers.includes(user.userId)
-			);
-			if (recipients.length > 0) {
-				const notifications = [];
-				for (const recipient of recipients) {
-					const senderFullName = getFullName(authUser);
-					const emailData = {
-						attachments: newProject.attachments,
-						name: newProject.name,
-						description: newProject.description,
-						customer: newProject.customer.name,
-						vendors: newProject.vendors.map((vendor) => vendor.name).join(', '),
-						owners: owners
-							.map((owner) => `${owner.firstName} ${owner.lastName}`)
-							.join(', '),
-						status: status.name,
-						value: toCurrency(newProject.value)
-					};
-					const notification = new Notification({
-						emailData: emailData,
-						link: `/projects/${newProject.projectId}`,
-						page: 'Projects',
-						recipient: transformedRecipient(recipient),
-						title: `Project "${name.trim()}" created by ${senderFullName}`,
-						type: NEW_PROJECT
-					});
-					notifications.push(notification);
-				}
-				await Notification.saveAll(notifications);
-			}
-			return true;
-		} catch (error) {
-			return true;
-		}
+		// try {
+		// 	const recipients = users.filter(
+		// 		(user) =>
+		// 			newProject.owners.includes(user.userId) ||
+		// 			notifyUsers.includes(user.userId)
+		// 	);
+		// 	if (recipients.length > 0) {
+		// 		const notifications = [];
+		// 		for (const recipient of recipients) {
+		// 			const senderFullName = getFullName(authUser);
+		// 			const emailData = {
+		// 				attachments: newProject.attachments,
+		// 				name: newProject.name,
+		// 				description: newProject.description,
+		// 				customer: newProject.customer.name,
+		// 				vendors: newProject.vendors.map((vendor) => vendor.name).join(', '),
+		// 				owners: owners
+		// 					.map((owner) => `${owner.firstName} ${owner.lastName}`)
+		// 					.join(', '),
+		// 				status: status.name,
+		// 				value: toCurrency(newProject.value)
+		// 			};
+		// 			const notification = new Notification({
+		// 				emailData: emailData,
+		// 				link: `/projects/${newProject.projectId}`,
+		// 				page: 'Projects',
+		// 				recipient: transformedRecipient(recipient),
+		// 				title: `Project "${name.trim()}" created by ${senderFullName}`,
+		// 				type: NEW_PROJECT
+		// 			});
+		// 			notifications.push(notification);
+		// 		}
+		// 		await Notification.saveAll(notifications);
+		// 	}
+		// 	return true;
+		// } catch (error) {
+		// 	return true;
+		// }
 	};
 };
 
@@ -227,44 +226,44 @@ export const editProject = (project, values, notifyUsers, attachments) => {
 			return false;
 		}
 		//Send notification, do nothing if this fails so no error is thrown
-		try {
-			const recipients = users.filter(
-				(user) =>
-					newProject.owners.includes(user.userId) ||
-					notifyUsers.includes(user.userId)
-			);
-			if (recipients.length > 0) {
-				const notifications = [];
-				for (const recipient of recipients) {
-					const senderFullName = getFullName(authUser);
-					const emailData = {
-						attachments: newProject.attachments,
-						name: newProject.name,
-						description: newProject.description,
-						customer: newProject.customer.name,
-						vendors: newProject.vendors.map((vendor) => vendor.name).join(', '),
-						owners: owners
-							.map((owner) => `${owner.firstName} ${owner.lastName}`)
-							.join(', '),
-						status: status.name,
-						value: toCurrency(newProject.value)
-					};
-					const notification = new Notification({
-						emailData: emailData,
-						link: `/projects/${newProject.projectId}`,
-						page: 'Projects',
-						recipient: transformedRecipient(recipient),
-						title: `Project "${name.trim()}" updated by ${senderFullName}`,
-						type: EDIT_PROJECT
-					});
-					notifications.push(notification);
-				}
-				await Notification.saveAll(notifications);
-			}
-			return true;
-		} catch (error) {
-			return true;
-		}
+		// try {
+		// 	const recipients = users.filter(
+		// 		(user) =>
+		// 			newProject.owners.includes(user.userId) ||
+		// 			notifyUsers.includes(user.userId)
+		// 	);
+		// 	if (recipients.length > 0) {
+		// 		const notifications = [];
+		// 		for (const recipient of recipients) {
+		// 			const senderFullName = getFullName(authUser);
+		// 			const emailData = {
+		// 				attachments: newProject.attachments,
+		// 				name: newProject.name,
+		// 				description: newProject.description,
+		// 				customer: newProject.customer.name,
+		// 				vendors: newProject.vendors.map((vendor) => vendor.name).join(', '),
+		// 				owners: owners
+		// 					.map((owner) => `${owner.firstName} ${owner.lastName}`)
+		// 					.join(', '),
+		// 				status: status.name,
+		// 				value: toCurrency(newProject.value)
+		// 			};
+		// 			const notification = new Notification({
+		// 				emailData: emailData,
+		// 				link: `/projects/${newProject.projectId}`,
+		// 				page: 'Projects',
+		// 				recipient: transformedRecipient(recipient),
+		// 				title: `Project "${name.trim()}" updated by ${senderFullName}`,
+		// 				type: EDIT_PROJECT
+		// 			});
+		// 			notifications.push(notification);
+		// 		}
+		// 		await Notification.saveAll(notifications);
+		// 	}
+		// 	return true;
+		// } catch (error) {
+		// 	return true;
+		// }
 	};
 };
 
@@ -300,38 +299,38 @@ export const addComment = (project, body, attachments, notifyUsers) => {
 			return false;
 		}
 		//Send notification, do nothing if this fails so no error is thrown
-		try {
-			const recipients = users.filter(
-				(user) =>
-					project.owners.map((owner) => owner.userId).includes(user.userId) ||
-					notifyUsers.includes(user.userId)
-			);
-			if (recipients.length > 0) {
-				const notifications = [];
-				for (const recipient of recipients) {
-					const senderFullName = getFullName(authUser);
-					const emailData = {
-						commentBody: body.trim(),
-						attachments: uploadedAttachments,
-						name: project.name
-					};
-					const notification = new Notification({
-						notificationId: null,
-						emailData: emailData,
-						link: `/projects/${project.projectId}`,
-						page: 'Projects',
-						recipient: transformedRecipient(recipient),
-						title: `Project "${project.name}" New comment from ${senderFullName}`,
-						type: NEW_PROJECT_COMMENT
-					});
-					notifications.push(notification);
-				}
-				await Notification.saveAll(notifications);
-			}
-			return true;
-		} catch (error) {
-			return true;
-		}
+		// try {
+		// 	const recipients = users.filter(
+		// 		(user) =>
+		// 			project.owners.map((owner) => owner.userId).includes(user.userId) ||
+		// 			notifyUsers.includes(user.userId)
+		// 	);
+		// 	if (recipients.length > 0) {
+		// 		const notifications = [];
+		// 		for (const recipient of recipients) {
+		// 			const senderFullName = getFullName(authUser);
+		// 			const emailData = {
+		// 				commentBody: body.trim(),
+		// 				attachments: uploadedAttachments,
+		// 				name: project.name
+		// 			};
+		// 			const notification = new Notification({
+		// 				notificationId: null,
+		// 				emailData: emailData,
+		// 				link: `/projects/${project.projectId}`,
+		// 				page: 'Projects',
+		// 				recipient: transformedRecipient(recipient),
+		// 				title: `Project "${project.name}" New comment from ${senderFullName}`,
+		// 				type: NEW_PROJECT_COMMENT
+		// 			});
+		// 			notifications.push(notification);
+		// 		}
+		// 		await Notification.saveAll(notifications);
+		// 	}
+		// 	return true;
+		// } catch (error) {
+		// 	return true;
+		// }
 	};
 };
 

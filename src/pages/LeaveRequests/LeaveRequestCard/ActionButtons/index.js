@@ -6,7 +6,6 @@ import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import ActionStatusChip from '../../../../components/ActionStatusChip';
 import ConfirmDialog from '../../../../components/ConfirmDialog';
 import { useDispatch } from 'react-redux';
-import * as leaveRequestController from '../../../../controllers/leave-request';
 
 const ActionButtons = withTheme((props) => {
 	const dispatch = useDispatch();

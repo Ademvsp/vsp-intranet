@@ -1,9 +1,8 @@
 import { CircularProgress, Container, Grid } from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
 import React, { Fragment, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
-import * as leaveRequestController from '../../controllers/leave-request';
 import CollectionData from '../../models/collection-data';
 import { READ_PAGE, READ_LEAVE_REQUEST } from '../../utils/actions';
 // import ProductRequestCard from './ProductRequestCard';
@@ -11,10 +10,13 @@ import AddIcon from '@material-ui/icons/Add';
 import FloatingActionButton from '../../components/FloatingActionButton';
 import LeaveRequestCard from './LeaveRequestCard';
 import NewLeaveRequestDialog from './NewLeaveRequestDialog';
+import LeaveRequest from '../../models/leave-request';
 // import NewProductRequestDialog from './NewProductRequestDialog';
 
 const LeaveRequests = (props) => {
 	const dispatch = useDispatch();
+	const { authUser } = useSelector((state) => state.authState);
+	const { userId } = authUser;
 
 	const params = useParams();
 	const { action } = props;
@@ -38,7 +40,7 @@ const LeaveRequests = (props) => {
 	//Mount and dismount, get admin status
 	useEffect(() => {
 		const asyncFunction = async () => {
-			const newIsAdmin = await leaveRequestController.getIsAdmin();
+			const newIsAdmin = await LeaveRequest.isAdmin();
 			setIsAdmin(newIsAdmin);
 		};
 		asyncFunction();
@@ -47,12 +49,21 @@ const LeaveRequests = (props) => {
 	useEffect(() => {
 		let collectionDataListener;
 		const asyncFunction = async () => {
-			collectionDataListener = (
-				await leaveRequestController.getCollectionDataListener()
-			).onSnapshot((snapshot) => {
+			let listenerRef;
+			if (isAdmin) {
+				//Get all documents
+				listenerRef = CollectionData.getListener('leave-requests');
+			} else {
+				//Get only documents where the user has ownership
+				listenerRef = CollectionData.getNestedListener({
+					document: 'leave-requests',
+					subCollection: 'users',
+					subCollectionDoc: userId
+				});
+			}
+			collectionDataListener = listenerRef.onSnapshot((snapshot) => {
 				let newCollectionData = new CollectionData({
-					collection: 'product-requests',
-					count: 0,
+					collection: 'leave-requests',
 					documents: []
 				});
 				if (snapshot.exists) {
@@ -72,7 +83,7 @@ const LeaveRequests = (props) => {
 				collectionDataListener();
 			}
 		};
-	}, [dispatch, isAdmin]);
+	}, [dispatch, isAdmin, userId]);
 	//If results change or collectionData changes, update the data source
 	useEffect(() => {
 		if (collectionData) {
