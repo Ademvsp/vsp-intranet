@@ -1,5 +1,5 @@
 import React from 'react';
-import { CardContent, Grid, Typography } from '@material-ui/core';
+import { CardContent, Grid, Paper, Typography } from '@material-ui/core';
 import { StyledPaper } from './styled-components';
 import { StyledLink } from '../styled-components';
 import Avatar from '../../../components/Avatar';
@@ -8,7 +8,7 @@ const ContactCard = (props) => {
 	const { user } = props;
 	const fullName = `${user.firstName} ${user.lastName}`;
 	return (
-		<StyledPaper variant='outlined'>
+		<Paper variant='outlined'>
 			<CardContent>
 				<Grid container direction='row' spacing={2} wrap='nowrap'>
 					<Grid item>
@@ -54,7 +54,7 @@ const ContactCard = (props) => {
 					</Grid>
 				</Grid>
 			</CardContent>
-		</StyledPaper>
+		</Paper>
 	);
 };
 

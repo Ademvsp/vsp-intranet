@@ -78,7 +78,7 @@ const StaffDirectory = (props) => {
 									justify='flex-start'
 								>
 									{group.users.map((user) => (
-										<Grid item key={user.userId}>
+										<Grid item key={user.userId} xs={12} sm={6}>
 											<ContactCard user={user} />
 										</Grid>
 									))}
