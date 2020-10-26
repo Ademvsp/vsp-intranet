@@ -192,6 +192,7 @@ const ProductRequestCard = withTheme((props) => {
 						authUser={authUser}
 						submitHandler={newCommentHandler}
 						comments={[...productRequest.comments].reverse()}
+						enableNotifyUsers={false}
 					/>
 				</Collapse>
 			</Card>

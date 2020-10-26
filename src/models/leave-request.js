@@ -60,27 +60,27 @@ export default class LeaveRequest {
 		}
 	}
 
-	// async addComment(body, attachments, serverTime) {
-	// 	const comment = {
-	// 		attachments: attachments,
-	// 		body: body,
-	// 		metadata: {
-	// 			createdAt: new Date(serverTime),
-	// 			createdBy: firebase.auth().currentUser.uid,
-	// 			updatedAt: new Date(serverTime),
-	// 			updatedBy: firebase.auth().currentUser.uid
-	// 		},
-	// 		user: firebase.auth().currentUser.uid
-	// 	};
-	// 	await firebase
-	// 		.firestore()
-	// 		.collection('product-requests')
-	// 		.doc(this.leaveRequestId)
-	// 		.update({
-	// 			comments: firebase.firestore.FieldValue.arrayUnion(comment)
-	// 		});
-	// 	this.comments.push(comment);
-	// }
+	async addComment(body, attachments, serverTime) {
+		const comment = {
+			attachments: attachments,
+			body: body,
+			metadata: {
+				createdAt: new Date(serverTime),
+				createdBy: firebase.auth().currentUser.uid,
+				updatedAt: new Date(serverTime),
+				updatedBy: firebase.auth().currentUser.uid
+			},
+			user: firebase.auth().currentUser.uid
+		};
+		await firebase
+			.firestore()
+			.collection('leave-requests')
+			.doc(this.leaveRequestId)
+			.update({
+				comments: firebase.firestore.FieldValue.arrayUnion(comment)
+			});
+		this.comments.push(comment);
+	}
 
 	async approve() {
 		const serverTime = await getServerTimeInMilliseconds();

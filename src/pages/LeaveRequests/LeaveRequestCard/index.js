@@ -21,12 +21,11 @@ import Comments from '../../../components/Comments';
 import { Skeleton } from '@material-ui/lab';
 import Avatar from '../../../components/Avatar';
 import scrollToComponent from 'react-scroll-to-component';
-// import PostCardMenu from './PostCardMenu';
 import Card from '../../../components/Card';
 import { LONG_DATE_TIME } from '../../../utils/date';
 import LeaveRequestForm from './LeaveRequestFom';
-// import ProductRequestForm from './ProductRequestForm';
 import ActionButtons from './ActionButtons';
+import { addComment } from '../../../store/actions/leave-request';
 
 const LeaveRequestCard = withTheme((props) => {
 	const dispatch = useDispatch();
@@ -112,10 +111,8 @@ const LeaveRequestCard = withTheme((props) => {
 	}
 
 	const newCommentHandler = async (body, attachments) => {
-		// const result = await dispatch(
-		// 	leaveRequestController.addComment(leaveRequest, body, attachments)
-		// );
-		// return result;
+		const result = await dispatch(addComment(leaveRequest, body, attachments));
+		return result;
 	};
 
 	const commentsClickHandler = () => {
@@ -183,6 +180,7 @@ const LeaveRequestCard = withTheme((props) => {
 						authUser={authUser}
 						submitHandler={newCommentHandler}
 						comments={[...leaveRequest.comments].reverse()}
+						enableNotifyUsers={false}
 					/>
 				</Collapse>
 			</Card>

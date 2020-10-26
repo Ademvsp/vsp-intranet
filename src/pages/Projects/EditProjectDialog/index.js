@@ -570,6 +570,7 @@ const EditProjectDialog = withTheme((props) => {
 					authUser={authUser}
 					submitHandler={newCommentHandler}
 					comments={[...project.comments].reverse()}
+					enableNotifyUsers={false}
 				/>
 			</Collapse>
 		</Dialog>

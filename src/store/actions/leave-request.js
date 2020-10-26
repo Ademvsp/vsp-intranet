@@ -10,6 +10,8 @@ import {
 	SNACKBAR_VARIANTS
 } from '../../utils/constants';
 import { transformDate } from '../../utils/date';
+import { upload } from '../../utils/file-utils';
+import { getServerTimeInMilliseconds } from '../../utils/firebase';
 
 export const getCollectionDataListener = async () => {
 	const isAdmin = await LeaveRequest.isAdmin();
@@ -86,74 +88,73 @@ export const addLeaveRequest = (values) => {
 };
 
 export const addComment = (leaveRequest, body, attachments) => {
-	// return async (dispatch, getState) => {
-	// 	const { authUser } = getState().authState;
-	// 	const { users } = getState().dataState;
-	// 	let uploadedAttachments;
-	// 	try {
-	// 		const serverTime = await getServerTimeInMilliseconds();
-	// 		uploadedAttachments = [];
-	// 		if (attachments.length > 0) {
-	// 			uploadedAttachments = await dispatch(
-	// 				fileUtils.upload({
-	// 					files: attachments,
-	// 					collection: 'product-requests',
-	// 					collectionId: leaveRequest.leaveRequestId,
-	// 					folder: serverTime.toString()
-	// 				})
-	// 			);
-	// 		}
-	// 		await leaveRequest.addComment(
-	// 			body.trim(),
-	// 			uploadedAttachments,
-	// 			serverTime
-	// 		);
-	// 	} catch (error) {
-	// 		const message = new Message({
-	// 			title: 'Leave Requests',
-	// 			body: 'Comment failed to post',
-	// 			feedback: DIALOG
-	// 		});
-	// 		dispatch({
-	// 			type: SET_MESSAGE,
-	// 			message
-	// 		});
-	// 		return false;
-	// 	}
-	//Send notification, do nothing if this fails so no error is thrown
-	// try {
-	// 	const admins = await LeaveRequest.getAdmins();
-	// 	const recipients = users.filter(
-	// 		(user) =>
-	// 			admins.includes(user.userId) || user.userId === leaveRequest.user
-	// 	);
-	// 	if (recipients.length > 0) {
-	// 		const notifications = [];
-	// 		for (const recipient of recipients) {
-	// 			const senderFullName = getFullName(authUser);
-	// 			const emailData = {
-	// 				commentBody: body.trim(),
-	// 				attachments: uploadedAttachments,
-	// 				vendorSku: leaveRequest.vendorSku
-	// 			};
-	// 			const notification = new Notification({
-	// 				notificationId: null,
-	// 				emailData: emailData,
-	// 				link: `/product-requests/${leaveRequest.leaveRequestId}`,
-	// 				page: 'Leave Requests',
-	// 				recipient: transformedRecipient(recipient),
-	// 				title: `Leave Request "${leaveRequest.vendorSku}" New comment from ${senderFullName}`,
-	// 				type: NEW_PRODUCT_REQUEST_COMMENT
-	// 			});
-	// 			notifications.push(notification);
-	// 		}
-	// 		await Notification.saveAll(notifications);
-	// 	}
-	// 	return true;
-	// } catch (error) {
-	// 	return true;
-	// }
-	// };
+	return async (dispatch, getState) => {
+		let uploadedAttachments;
+		try {
+			const serverTime = await getServerTimeInMilliseconds();
+			uploadedAttachments = [];
+			if (attachments.length > 0) {
+				uploadedAttachments = await dispatch(
+					upload({
+						files: attachments,
+						collection: 'leave-requests',
+						collectionId: leaveRequest.leaveRequestId,
+						folder: serverTime.toString()
+					})
+				);
+			}
+			await leaveRequest.addComment(
+				body.trim(),
+				uploadedAttachments,
+				serverTime
+			);
+			return true;
+		} catch (error) {
+			const message = new Message({
+				title: 'Leave Requests',
+				body: 'Comment failed to post',
+				feedback: DIALOG
+			});
+			dispatch({
+				type: SET_MESSAGE,
+				message
+			});
+			return false;
+		}
+		//Send notification, do nothing if this fails so no error is thrown
+		// try {
+		// 	const admins = await LeaveRequest.getAdmins();
+		// 	const recipients = users.filter(
+		// 		(user) =>
+		// 			admins.includes(user.userId) || user.userId === leaveRequest.user
+		// 	);
+		// 	if (recipients.length > 0) {
+		// 		const notifications = [];
+		// 		for (const recipient of recipients) {
+		// 			const senderFullName = getFullName(authUser);
+		// 			const emailData = {
+		// 				commentBody: body.trim(),
+		// 				attachments: uploadedAttachments,
+		// 				vendorSku: leaveRequest.vendorSku
+		// 			};
+		// 			const notification = new Notification({
+		// 				notificationId: null,
+		// 				emailData: emailData,
+		// 				link: `/product-requests/${leaveRequest.leaveRequestId}`,
+		// 				page: 'Leave Requests',
+		// 				recipient: transformedRecipient(recipient),
+		// 				title: `Leave Request "${leaveRequest.vendorSku}" New comment from ${senderFullName}`,
+		// 				type: NEW_PRODUCT_REQUEST_COMMENT
+		// 			});
+		// 			notifications.push(notification);
+		// 		}
+		// 		await Notification.saveAll(notifications);
+		// 	}
+		// 	return true;
+		// } catch (error) {
+		// 	return true;
+		// }
+	};
 };
 
 export const approveLeaveRequest = (leaveRequest) => {

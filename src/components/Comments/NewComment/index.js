@@ -66,7 +66,7 @@ const NewComment = (props) => {
 				<Grid item>
 					<ActionsBar
 						notifications={{
-							enabled: true,
+							enabled: props.enableNotifyUsers,
 							notifyUsers: notifyUsers,
 							setNotifyUsers: setNotifyUsers
 						}}
