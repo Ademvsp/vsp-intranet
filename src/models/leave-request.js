@@ -82,57 +82,53 @@ export default class LeaveRequest {
 	// 	this.comments.push(comment);
 	// }
 
-	// async approve(finalSku) {
-	// 	const serverTime = await getServerTimeInMilliseconds();
-	// 	const action = {
-	// 		actionType: APPROVED,
-	// 		actionedAt: new Date(serverTime),
-	// 		actionedBy: firebase.auth().currentUser.uid
-	// 	};
-	// 	const metadata = {
-	// 		createdAt: this.metadata.createdAt,
-	// 		createdBy: this.metadata.createdBy,
-	// 		updatedAt: new Date(serverTime),
-	// 		updatedBy: firebase.auth().currentUser.uid
-	// 	};
-	// 	await firebase
-	// 		.firestore()
-	// 		.collection('product-requests')
-	// 		.doc(this.leaveRequestId)
-	// 		.update({
-	// 			actions: firebase.firestore.FieldValue.arrayUnion(action),
-	// 			finalSku: finalSku,
-	// 			metadata: metadata
-	// 		});
-	// 	this.finalSku = finalSku;
-	// 	this.metadata = metadata;
-	// 	this.actions = [...this.actions, action];
-	// }
+	async approve() {
+		const serverTime = await getServerTimeInMilliseconds();
+		const action = {
+			actionType: APPROVED,
+			actionedAt: new Date(serverTime),
+			actionedBy: firebase.auth().currentUser.uid
+		};
+		const metadata = {
+			...this.metadata,
+			updatedAt: new Date(serverTime),
+			updatedBy: firebase.auth().currentUser.uid
+		};
+		await firebase
+			.firestore()
+			.collection('leave-requests')
+			.doc(this.leaveRequestId)
+			.update({
+				actions: firebase.firestore.FieldValue.arrayUnion(action),
+				metadata: metadata
+			});
+		this.metadata = metadata;
+		this.actions = [...this.actions, action];
+	}
 
-	// async reject() {
-	// 	const serverTime = await getServerTimeInMilliseconds();
-	// 	const action = {
-	// 		actionType: REJECTED,
-	// 		actionedAt: new Date(serverTime),
-	// 		actionedBy: firebase.auth().currentUser.uid
-	// 	};
-	// 	const metadata = {
-	// 		createdAt: this.metadata.createdAt,
-	// 		createdBy: this.metadata.createdBy,
-	// 		updatedAt: new Date(serverTime),
-	// 		updatedBy: firebase.auth().currentUser.uid
-	// 	};
-	// 	await firebase
-	// 		.firestore()
-	// 		.collection('product-requests')
-	// 		.doc(this.leaveRequestId)
-	// 		.update({
-	// 			actions: firebase.firestore.FieldValue.arrayUnion(action),
-	// 			metadata: metadata
-	// 		});
-	// 	this.metadata = metadata;
-	// 	this.actions = [...this.actions, action];
-	// }
+	async reject() {
+		const serverTime = await getServerTimeInMilliseconds();
+		const action = {
+			actionType: REJECTED,
+			actionedAt: new Date(serverTime),
+			actionedBy: firebase.auth().currentUser.uid
+		};
+		const metadata = {
+			...this.metadata,
+			updatedAt: new Date(serverTime),
+			updatedBy: firebase.auth().currentUser.uid
+		};
+		await firebase
+			.firestore()
+			.collection('leave-requests')
+			.doc(this.leaveRequestId)
+			.update({
+				actions: firebase.firestore.FieldValue.arrayUnion(action),
+				metadata: metadata
+			});
+		this.metadata = metadata;
+		this.actions = [...this.actions, action];
+	}
 
 	static async getAdmins() {
 		const collection = await firebase

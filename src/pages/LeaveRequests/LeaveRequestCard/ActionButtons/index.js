@@ -6,13 +6,17 @@ import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import ActionStatusChip from '../../../../components/ActionStatusChip';
 import ConfirmDialog from '../../../../components/ConfirmDialog';
 import { useDispatch } from 'react-redux';
+import {
+	approveLeaveRequest,
+	rejectLeaveRequest
+} from '../../../../store/actions/leave-request';
 
 const ActionButtons = withTheme((props) => {
 	const dispatch = useDispatch();
 	const [loading, setLoading] = useState(false);
 	const [showRejectDialog, setShowRejectDialog] = useState(false);
 	const [showApproveDialog, setShowApproveDialog] = useState(false);
-	const { isAdmin, user, leaveRequest } = props;
+	const { isManager, user, leaveRequest } = props;
 
 	const action = [...leaveRequest.actions].pop();
 	const actionType = action.actionType;
@@ -23,12 +27,8 @@ const ActionButtons = withTheme((props) => {
 
 	const rejectConfirmHandler = async () => {
 		setLoading(true);
-		// const result = await dispatch(
-		// 	leaveRequestController.rejectProductRequest(leaveRequest)
-		// );
-		// if (result) {
-		// 	setShowRejectDialog(false);
-		// }
+		await dispatch(rejectLeaveRequest(leaveRequest));
+		setShowRejectDialog(false);
 		setLoading(false);
 	};
 
@@ -36,14 +36,10 @@ const ActionButtons = withTheme((props) => {
 		setShowApproveDialog(true);
 	};
 
-	const approveConfirmHandler = async (values) => {
+	const approveConfirmHandler = async () => {
 		setLoading(true);
-		// const result = await dispatch(
-		// 	leaveRequestController.approveProductRequest(leaveRequest, values)
-		// );
-		// if (result) {
-		// 	setShowApproveDialog(false);
-		// }
+		await dispatch(approveLeaveRequest(leaveRequest));
+		setShowApproveDialog(false);
 		setLoading(false);
 	};
 
@@ -53,15 +49,15 @@ const ActionButtons = withTheme((props) => {
 				open={showRejectDialog}
 				cancel={() => setShowRejectDialog(false)}
 				title='Confirm Rejection'
-				message={`Are you sure you want to reject ${user.firstName}'s ${leaveRequest.type} request?`}
+				message={`Are you sure you want to Reject ${user.firstName}'s ${leaveRequest.type} Request?`}
 				confirm={rejectConfirmHandler}
 				loading={loading}
 			/>
 			<ConfirmDialog
 				open={showApproveDialog}
 				cancel={() => setShowApproveDialog(false)}
-				title='Confirm Rejection'
-				message={`Confirm approval for ${user.firstName}'s ${leaveRequest.type} request?`}
+				title='Confirm Approval'
+				message={`Confirm Approval for ${user.firstName}'s ${leaveRequest.type} Request?`}
 				confirm={approveConfirmHandler}
 				loading={loading}
 			/>
@@ -71,7 +67,7 @@ const ActionButtons = withTheme((props) => {
 						<ActionStatusChip action={action} />
 					</Grid>
 				</Grid>
-				{actionType === REQUESTED && isAdmin && (
+				{actionType === REQUESTED && isManager && (
 					<Grid item container justify='flex-end' spacing={1}>
 						<Grid item>
 							<Button

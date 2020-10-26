@@ -153,7 +153,6 @@ const LeaveRequests = (props) => {
 										leaveRequestId={leaveRequestId}
 										setActiveLeaveRequestId={setActiveLeaveRequestId}
 										scroll={scroll}
-										isAdmin={isAdmin}
 									/>
 								</Grid>
 							);

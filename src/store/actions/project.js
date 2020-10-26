@@ -72,7 +72,7 @@ export const addProject = (values, notifyUsers, attachments) => {
 				body: 'Project added successfully',
 				feedback: SNACKBAR,
 				options: {
-					duration: 3000,
+					duration: 5000,
 					variant: SNACKBAR_VARIANTS.FILLED,
 					severity: SNACKBAR_SEVERITY.SUCCESS
 				}
@@ -204,7 +204,7 @@ export const editProject = (project, values, notifyUsers, attachments) => {
 				body: 'Project updated successfully',
 				feedback: SNACKBAR,
 				options: {
-					duration: 3000,
+					duration: 5000,
 					variant: SNACKBAR_VARIANTS.FILLED,
 					severity: SNACKBAR_SEVERITY.SUCCESS
 				}

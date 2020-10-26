@@ -89,7 +89,7 @@ export default class Notification {
 		return firebase
 			.firestore()
 			.collection('notifications-new')
-			.where('recipient.userId', '==', userId)
+			.where('recipient', '==', userId)
 			.where('metadata.createdAt', '>=', ONE_MONTH_AGO_TIMESTAMP);
 	}
 

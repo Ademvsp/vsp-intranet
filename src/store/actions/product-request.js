@@ -60,7 +60,7 @@ export const addProductRequest = (values, attachments) => {
 				body: 'Product Request submitted successfully',
 				feedback: SNACKBAR,
 				options: {
-					duration: 3000,
+					duration: 5000,
 					variant: SNACKBAR_VARIANTS.FILLED,
 					severity: SNACKBAR_SEVERITY.SUCCESS
 				}
@@ -220,7 +220,7 @@ export const approveProductRequest = (productRequest, values) => {
 				body: 'Product Request approved successfully',
 				feedback: SNACKBAR,
 				options: {
-					duration: 3000,
+					duration: 5000,
 					variant: SNACKBAR_VARIANTS.FILLED,
 					severity: SNACKBAR_SEVERITY.SUCCESS
 				}
@@ -278,7 +278,7 @@ export const rejectProductRequest = (productRequest) => {
 				body: 'Product Request rejected successfully',
 				feedback: SNACKBAR,
 				options: {
-					duration: 3000,
+					duration: 5000,
 					variant: SNACKBAR_VARIANTS.FILLED,
 					severity: SNACKBAR_SEVERITY.SUCCESS
 				}

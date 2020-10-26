@@ -51,7 +51,7 @@ export const addEvent = (values, notifyUsers) => {
 				body: 'Event added successfully',
 				feedback: SNACKBAR,
 				options: {
-					duration: 3000,
+					duration: 5000,
 					variant: SNACKBAR_VARIANTS.FILLED,
 					severity: SNACKBAR_SEVERITY.SUCCESS
 				}
@@ -154,7 +154,7 @@ export const editEvent = (event, values, notifyUsers) => {
 				body: 'Event updated successfully',
 				feedback: SNACKBAR,
 				options: {
-					duration: 3000,
+					duration: 5000,
 					variant: SNACKBAR_VARIANTS.FILLED,
 					severity: SNACKBAR_SEVERITY.SUCCESS
 				}
@@ -229,7 +229,7 @@ export const deleteEvent = (event, notifyUsers) => {
 				body: 'Event deleted successfully',
 				feedback: SNACKBAR,
 				options: {
-					duration: 3000,
+					duration: 5000,
 					variant: SNACKBAR_VARIANTS.FILLED,
 					severity: SNACKBAR_SEVERITY.SUCCESS
 				}

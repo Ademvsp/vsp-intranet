@@ -33,7 +33,7 @@ const LeaveRequestCard = withTheme((props) => {
 	const scrollRef = useRef();
 	const { authUser } = useSelector((state) => state.authState);
 	const { users } = useSelector((state) => state.dataState);
-	const { isAdmin, leaveRequestId, scroll, setActiveLeaveRequestId } = props;
+	const { leaveRequestId, scroll, setActiveLeaveRequestId } = props;
 	const [leaveRequest, setLeaveRequest] = useState();
 	const [showComments, setShowComments] = useState(false);
 
@@ -153,7 +153,7 @@ const LeaveRequestCard = withTheme((props) => {
 							<ActionButtons
 								leaveRequest={leaveRequest}
 								user={user}
-								isAdmin={isAdmin}
+								isManager={authUser.userId === leaveRequest.manager}
 							/>
 						</Grid>
 						<Grid item container direction='row' justify='space-between'>

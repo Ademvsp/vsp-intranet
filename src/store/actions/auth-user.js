@@ -60,7 +60,7 @@ export const verifyAuth = () => {
 									body: `Welcome back ${authUser.firstName}`,
 									feedback: SNACKBAR,
 									options: {
-										duration: 3000,
+										duration: 5000,
 										variant: SNACKBAR_VARIANTS.FILLED,
 										severity: SNACKBAR_SEVERITY.INFO
 									}

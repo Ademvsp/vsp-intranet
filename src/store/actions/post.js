@@ -50,7 +50,7 @@ export const addPost = (values, attachments, notifyUsers) => {
 				body: 'Post created successfully',
 				feedback: SNACKBAR,
 				options: {
-					duration: 3000,
+					duration: 5000,
 					variant: SNACKBAR_VARIANTS.FILLED,
 					severity: SNACKBAR_SEVERITY.INFO
 				}
