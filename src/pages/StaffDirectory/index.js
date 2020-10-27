@@ -10,7 +10,7 @@ import React, { useState, useEffect, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import Card from '../../components/Card';
 import ContactCard from './ContactCard';
-import { StyledLink } from './styled-components';
+import { StyledLink } from './ContactCard/styled-components';
 
 const StaffDirectory = (props) => {
 	const [groupedUsers, setGroupedUsers] = useState();

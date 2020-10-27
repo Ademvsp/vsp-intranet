@@ -14,6 +14,7 @@ import { Skeleton } from '@material-ui/lab';
 import { Grid } from '@material-ui/core';
 import colors from '../../../utils/colors';
 import { useHistory } from 'react-router-dom';
+import { set } from 'date-fns';
 
 const locales = {
 	'en-AU': import('date-fns/locale/en-AU')
@@ -30,6 +31,7 @@ const CalendarContainer = (props) => {
 	const history = useHistory();
 	const [transformedEvents, setTransformedEvents] = useState();
 	const { locations, users } = useSelector((state) => state.dataState);
+	const [view, setView] = useState('month');
 	// const dispatch = useDispatch();
 	// const [range, setRange] = useState(initalRange);
 	const {
@@ -86,7 +88,16 @@ const CalendarContainer = (props) => {
 	};
 
 	const selectSlotHandler = (event) => {
-		setNewEventPrefillData({ start: event.start, end: event.end });
+		if (view === 'month') {
+			//If on month view, prevent new event from showing 12:00am to 12:00am
+			setNewEventPrefillData({
+				start: set(event.start, { hours: 8, minutes: 0 }),
+				end: set(event.end, { hours: 9, minutes: 0 })
+			});
+		} else {
+			//All other views, the time follow the slot the user clicks on
+			setNewEventPrefillData({ start: event.start, end: event.end });
+		}
 		setShowAddEventDialog(true);
 	};
 
@@ -124,6 +135,8 @@ const CalendarContainer = (props) => {
 			eventPropGetter={eventPropGetterHandler}
 			onSelectEvent={(event) => history.push(`/calendar/${event.eventId}`)}
 			onSelectSlot={selectSlotHandler}
+			view={view}
+			onView={(newView) => setView(newView)}
 		/>
 	);
 };

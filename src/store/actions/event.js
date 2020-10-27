@@ -31,21 +31,18 @@ export const addEvent = (values, notifyUsers) => {
 			);
 			let endTransformed = transformDate(end, allDay, userLocation.timezone);
 
-			const subscribers = [authUser.userId];
 			newEvent = new Event({
-				eventId: null,
+				actions: [],
 				allDay: allDay,
 				details: details,
 				end: endTransformed,
 				locations: locations,
-				metadata: null,
 				start: startTransformed,
-				subscribers: subscribers,
+				subscribers: [authUser.userId],
 				type: type.name,
 				user: authUser.userId
 			});
-			newEvent.notifyUsers = notifyUsers;
-			await newEvent.save();
+			await newEvent.save(notifyUsers);
 			const message = new Message({
 				title: 'Staff Calendar',
 				body: 'Event added successfully',
@@ -60,7 +57,9 @@ export const addEvent = (values, notifyUsers) => {
 				type: SET_MESSAGE,
 				message
 			});
+			return true;
 		} catch (error) {
+			console.log('error', error);
 			const message = new Message({
 				title: 'Staff Calendar',
 				body: 'Failed to add event',
@@ -70,50 +69,8 @@ export const addEvent = (values, notifyUsers) => {
 				type: SET_MESSAGE,
 				message
 			});
-			return null;
+			return false;
 		}
-		//Send notification, do nothing if this fails so no error is thrown
-		// try {
-		// 	const recipients = users.filter(
-		// 		(user) =>
-		// 			newEvent.subscribers.includes(user.userId) ||
-		// 			notifyUsers.includes(user.userId)
-		// 	);
-		// 	if (recipients.length > 0) {
-		// 		const notifications = [];
-		// 		for (const recipient of recipients) {
-		// 			const senderFullName = getFullName(authUser);
-		// 			const readableTitle = getReadableTitle(
-		// 				{
-		// 					details: newEvent.details,
-		// 					type: newEvent.type,
-		// 					user: authUser.userId
-		// 				},
-		// 				users
-		// 			);
-		// 			const emailData = {
-		// 				eventTitle: readableTitle,
-		// 				start: newEvent.start.getTime(),
-		// 				end: newEvent.end.getTime(),
-		// 				allDay: newEvent.allDay
-		// 			};
-		// 			const notification = new Notification({
-		// 				notificationId: null,
-		// 				emailData: emailData,
-		// 				link: `/calendar/${newEvent.eventId}`,
-		// 				page: 'Staff Calendar',
-		// 				recipient: transformedRecipient(recipient),
-		// 				title: `Staff Calendar "${readableTitle}" created by ${senderFullName}`,
-		// 				type: NEW_EVENT
-		// 			});
-		// 			notifications.push(notification);
-		// 		}
-		// 		await Notification.saveAll(notifications);
-		// 	}
-		// 	return true;
-		// } catch (error) {
-		// 	return true;
-		// }
 	};
 };
 
@@ -148,7 +105,7 @@ export const editEvent = (event, values, notifyUsers) => {
 				start: startTransformed,
 				type: type.name
 			});
-			await newEvent.save();
+			await newEvent.save(notifyUsers);
 			const message = new Message({
 				title: 'Staff Calendar',
 				body: 'Event updated successfully',
@@ -163,6 +120,7 @@ export const editEvent = (event, values, notifyUsers) => {
 				type: SET_MESSAGE,
 				message
 			});
+			return true;
 		} catch (error) {
 			const message = new Message({
 				title: 'Staff Calendar',
@@ -175,55 +133,14 @@ export const editEvent = (event, values, notifyUsers) => {
 			});
 			return false;
 		}
-		//Send notification, do nothing if this fails so no error is thrown
-		// try {
-		// 	const recipients = users.filter(
-		// 		(user) =>
-		// 			newEvent.subscribers.includes(user.userId) ||
-		// 			notifyUsers.includes(user.userId)
-		// 	);
-		// 	if (recipients.length > 0) {
-		// 		const notifications = [];
-		// 		for (const recipient of recipients) {
-		// 			const senderFullName = getFullName(authUser);
-		// 			const readableTitle = getReadableTitle(
-		// 				{
-		// 					details: newEvent.details,
-		// 					type: newEvent.type,
-		// 					user: authUser.userId
-		// 				},
-		// 				users
-		// 			);
-		// 			const emailData = {
-		// 				eventTitle: readableTitle,
-		// 				start: newEvent.start.getTime(),
-		// 				end: newEvent.end.getTime(),
-		// 				allDay: newEvent.allDay
-		// 			};
-		// 			const notification = new Notification({
-		// 				notificationId: null,
-		// 				emailData: emailData,
-		// 				link: `/calendar/${newEvent.eventId}`,
-		// 				page: 'Staff Calendar',
-		// 				recipient: transformedRecipient(recipient),
-		// 				title: `Staff Calendar "${readableTitle}" updated by ${senderFullName}`,
-		// 				type: EDIT_EVENT
-		// 			});
-		// 			notifications.push(notification);
-		// 		}
-		// 		await Notification.saveAll(notifications);
-		// 	}
-		// 	return true;
-		// } catch (error) {
-		// 	return true;
-		// }
 	};
 };
 
 export const deleteEvent = (event, notifyUsers) => {
-	return async (dispatch, getState) => {
+	return async (dispatch, _getState) => {
 		try {
-			await event.delete();
+			const newEvent = new Event({ ...event });
+			await newEvent.delete(notifyUsers);
 			const message = new Message({
 				title: 'Staff Calendar',
 				body: 'Event deleted successfully',
@@ -238,6 +155,7 @@ export const deleteEvent = (event, notifyUsers) => {
 				type: SET_MESSAGE,
 				message
 			});
+			return true;
 		} catch (error) {
 			const message = new Message({
 				title: 'Staff Calendar',
@@ -250,47 +168,5 @@ export const deleteEvent = (event, notifyUsers) => {
 			});
 			return false;
 		}
-		//Send notification, do nothing if this fails so no error is thrown
-		// try {
-		// 	const recipients = users.filter(
-		// 		(user) =>
-		// 			event.subscribers.includes(user.userId) ||
-		// 			notifyUsers.includes(user.userId)
-		// 	);
-		// 	if (recipients.length > 0) {
-		// 		const notifications = [];
-		// 		for (const recipient of recipients) {
-		// 			const senderFullName = getFullName(authUser);
-		// 			const readableTitle = getReadableTitle(
-		// 				{
-		// 					details: event.details,
-		// 					type: event.type,
-		// 					user: authUser.userId
-		// 				},
-		// 				users
-		// 			);
-		// 			const emailData = {
-		// 				eventTitle: readableTitle,
-		// 				start: event.start.getTime(),
-		// 				end: event.end.getTime(),
-		// 				allDay: event.allDay
-		// 			};
-		// 			const notification = new Notification({
-		// 				notificationId: null,
-		// 				emailData: emailData,
-		// 				link: '/calendar',
-		// 				page: 'Staff Calendar',
-		// 				recipient: transformedRecipient(recipient),
-		// 				title: `Staff Calendar "${readableTitle}" deleted by ${senderFullName}`,
-		// 				type: DELETE_EVENT
-		// 			});
-		// 			notifications.push(notification);
-		// 		}
-		// 		await Notification.saveAll(notifications);
-		// 	}
-		// 	return true;
-		// } catch (error) {
-		// 	return true;
-		// }
 	};
 };

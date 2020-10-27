@@ -9,11 +9,13 @@ import {
 	SICK_LEAVE,
 	TRAINING
 } from '../data/event-types';
+import { CREATE, DELETE, UPDATE } from '../utils/actions';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
 
 export default class Event {
 	constructor({
 		eventId,
+		actions,
 		allDay,
 		details,
 		end,
@@ -25,6 +27,7 @@ export default class Event {
 		user
 	}) {
 		this.eventId = eventId;
+		this.actions = actions;
 		this.allDay = allDay;
 		this.details = details;
 		this.end = end;
@@ -103,7 +106,7 @@ export default class Event {
 		});
 	}
 
-	async save() {
+	async save(notifyUsers) {
 		const serverTime = await getServerTimeInMilliseconds();
 		if (this.eventId) {
 			this.metadata = {
@@ -111,6 +114,15 @@ export default class Event {
 				updatedAt: new Date(serverTime),
 				updatedBy: firebase.auth().currentUser.uid
 			};
+			this.actions = [
+				...this.actions,
+				{
+					actionType: UPDATE,
+					actionedAt: new Date(serverTime),
+					actionedBy: firebase.auth().currentUser.uid,
+					notifyUsers: notifyUsers
+				}
+			];
 			await firebase
 				.firestore()
 				.collection('events-new')
@@ -123,37 +135,45 @@ export default class Event {
 				updatedAt: new Date(serverTime),
 				updatedBy: firebase.auth().currentUser.uid
 			};
+			this.actions = [
+				...this.actions,
+				{
+					actionType: CREATE,
+					actionedAt: new Date(serverTime),
+					actionedBy: firebase.auth().currentUser.uid,
+					notifyUsers: notifyUsers
+				}
+			];
 			const docRef = await firebase
 				.firestore()
 				.collection('events-new')
 				.add(this.getDatabaseObject());
 			this.eventId = docRef.id;
-			await firebase
-				.firestore()
-				.collection('collection-data')
-				.doc('events')
-				.update({
-					documents: firebase.firestore.FieldValue.arrayUnion(this.eventId)
-				});
-		}
-		if (this.notifyUsers) {
-			delete this.notifyUsers;
 		}
 	}
 
-	async delete() {
+	async delete(notifyUsers) {
+		const serverTime = await getServerTimeInMilliseconds();
+		this.metadata = {
+			...this.metadata,
+			updatedAt: new Date(serverTime),
+			updatedBy: firebase.auth().currentUser.uid
+		};
+		//Send DELETE action to back end along with notifyUsers for back end to handle actual delete
+		this.actions = [
+			...this.actions,
+			{
+				actionType: DELETE,
+				actionedAt: new Date(serverTime),
+				actionedBy: firebase.auth().currentUser.uid,
+				notifyUsers: notifyUsers
+			}
+		];
 		await firebase
 			.firestore()
 			.collection('events-new')
 			.doc(this.eventId)
-			.delete();
-		await firebase
-			.firestore()
-			.collection('collection-data')
-			.doc('events')
-			.update({
-				documents: firebase.firestore.FieldValue.arrayRemove(this.eventId)
-			});
+			.update(this.getDatabaseObject());
 	}
 
 	static getListener(start, end) {

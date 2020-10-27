@@ -7,17 +7,7 @@ import {
 import { SET_MESSAGE } from '../../utils/actions';
 import Message from '../../models/message';
 import ProductRequest from '../../models/product-request';
-import Notification from '../../models/notification';
 import * as fileUtils from '../../utils/file-utils';
-import { transformedRecipient } from './notification';
-import {
-	APPROVED_PRODUCT_REQUEST,
-	NEW_PRODUCT_REQUEST_ADMIN,
-	NEW_PRODUCT_REQUEST_COMMENT,
-	NEW_PRODUCT_REQUEST_USER,
-	REJECTED_PRODUCT_REQUEST
-} from '../../data/notification-types';
-import { toCurrency } from '../../utils/data-transformer';
 import { getServerTimeInMilliseconds } from '../../utils/firebase';
 import { REQUESTED } from '../../data/product-request-status-types';
 

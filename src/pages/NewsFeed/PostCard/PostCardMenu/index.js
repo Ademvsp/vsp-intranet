@@ -10,7 +10,6 @@ import {
 	SNACKBAR_SEVERITY
 } from '../../../../utils/constants';
 import { setMessage } from '../../../../store/actions/message';
-import { toggleSubscribePost } from '../../../../store/actions/post';
 
 const PostCardMenu = (props) => {
 	const dispatch = useDispatch();

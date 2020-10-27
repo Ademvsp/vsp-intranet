@@ -1,5 +1,4 @@
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
-import CollectionData from './collection-data';
 
 export default class Project {
 	constructor({

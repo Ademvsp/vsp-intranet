@@ -87,11 +87,9 @@ const EditEventDialog = (props) => {
 
 	const deleteHandler = async () => {
 		setDeleteLoading(true);
-		const result = await dispatch(deleteEvent(event, notifyUsers));
+		await dispatch(deleteEvent(event, notifyUsers));
 		setDeleteLoading(false);
-		if (result) {
-			close();
-		}
+		close();
 	};
 
 	const dialogCloseHandler = () => {
