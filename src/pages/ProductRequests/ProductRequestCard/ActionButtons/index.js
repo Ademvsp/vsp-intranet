@@ -27,10 +27,8 @@ const ActionButtons = withTheme((props) => {
 
 	const rejectConfirmHandler = async () => {
 		setLoading(true);
-		const result = await dispatch(rejectProductRequest(productRequest));
-		if (result) {
-			setShowRejectDialog(false);
-		}
+		await dispatch(rejectProductRequest(productRequest));
+		setShowRejectDialog();
 		setLoading(false);
 	};
 
@@ -40,12 +38,8 @@ const ActionButtons = withTheme((props) => {
 
 	const approveConfirmHandler = async (values) => {
 		setLoading(true);
-		const result = await dispatch(
-			approveProductRequest(productRequest, values)
-		);
-		if (result) {
-			setShowApproveDialog(false);
-		}
+		await dispatch(approveProductRequest(productRequest, values));
+		setShowApproveDialog(false);
 		setLoading(false);
 	};
 

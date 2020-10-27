@@ -80,7 +80,7 @@ const NewComment = (props) => {
 						isValid={formik.isValid}
 						onClick={formik.handleSubmit}
 						tooltipPlacement='bottom'
-						actionButtonText='Post'
+						actionButtonText='Comment'
 					/>
 				</Grid>
 			</Grid>

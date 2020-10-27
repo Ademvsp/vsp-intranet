@@ -177,7 +177,6 @@ export const approveLeaveRequest = (leaveRequest) => {
 				message
 			});
 		} catch (error) {
-			console.log(error);
 			const message = new Message({
 				title: 'Leave Requests',
 				body: 'The Leave Request failed to approve',

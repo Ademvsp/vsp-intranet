@@ -25,7 +25,6 @@ export const addProductRequest = (values, attachments) => {
 	return async (dispatch, getState) => {
 		const { vendor, vendorSku, productType, cost, description } = values;
 		const { authUser } = getState().authState;
-		const { users } = getState().dataState;
 		const newProductRequest = new ProductRequest({
 			productRequestId: null,
 			actions: null,
@@ -69,6 +68,7 @@ export const addProductRequest = (values, attachments) => {
 				type: SET_MESSAGE,
 				message
 			});
+			return true;
 		} catch (error) {
 			const message = new Message({
 				title: 'Product Requests',
@@ -81,67 +81,11 @@ export const addProductRequest = (values, attachments) => {
 			});
 			return false;
 		}
-		//Send notification, do nothing if this fails so no error is thrown
-		// try {
-		// 	//Send email to user that submitted the form
-		// 	let senderFullName = getFullName(authUser);
-		// 	const notifications = [];
-		// 	let recipient = users.find(
-		// 		(user) => user.userId === newProductRequest.user
-		// 	);
-		// 	let emailData = {
-		// 		attachments: newProductRequest.attachments,
-		// 		vendor: newProductRequest.vendor.name,
-		// 		vendorSku: newProductRequest.vendorSku,
-		// 		productType: newProductRequest.productType,
-		// 		cost: toCurrency(newProductRequest.cost),
-		// 		description: newProductRequest.description
-		// 	};
-		// 	const notification = new Notification({
-		// 		emailData: emailData,
-		// 		link: `/product-requests/${newProductRequest.productRequestId}`,
-		// 		page: 'Product Requests',
-		// 		recipient: transformedRecipient(recipient),
-		// 		title: `Your Product Request for "${vendorSku.trim()}" has been submitted successfully`,
-		// 		type: NEW_PRODUCT_REQUEST_USER
-		// 	});
-		// 	notifications.push(notification);
-		// 	//Send emails to all admins responsible for approving or rejecting
-		// 	const admins = await ProductRequest.getAdmins();
-		// 	const recipients = users.filter((user) => admins.includes(user.userId));
-		// 	if (recipients.length > 0) {
-		// 		for (const recipient of recipients) {
-		// 			const emailData = {
-		// 				attachments: newProductRequest.attachments,
-		// 				vendor: newProductRequest.vendor.name,
-		// 				vendorSku: newProductRequest.vendorSku,
-		// 				productType: newProductRequest.productType,
-		// 				cost: toCurrency(newProductRequest.cost),
-		// 				description: newProductRequest.description
-		// 			};
-		// 			const notification = new Notification({
-		// 				emailData: emailData,
-		// 				link: `/product-requests/${newProductRequest.productRequestId}`,
-		// 				page: 'Product Requests',
-		// 				recipient: transformedRecipient(recipient),
-		// 				title: `New Product Request submitted by ${senderFullName} for "${newProductRequest.vendorSku}"`,
-		// 				type: NEW_PRODUCT_REQUEST_ADMIN
-		// 			});
-		// 			notifications.push(notification);
-		// 		}
-		// 		await Notification.saveAll(notifications);
-		// 	}
-		// 	return true;
-		// } catch (error) {
-		// 	return true;
-		// }
 	};
 };
 
 export const addComment = (productRequest, body, attachments) => {
-	return async (dispatch, getState) => {
-		const { authUser } = getState().authState;
-		const { users } = getState().dataState;
+	return async (dispatch, _getState) => {
 		let uploadedAttachments;
 		try {
 			const serverTime = await getServerTimeInMilliseconds();
@@ -161,6 +105,7 @@ export const addComment = (productRequest, body, attachments) => {
 				uploadedAttachments,
 				serverTime
 			);
+			return true;
 		} catch (error) {
 			const message = new Message({
 				title: 'Product Requests',
@@ -173,45 +118,11 @@ export const addComment = (productRequest, body, attachments) => {
 			});
 			return false;
 		}
-		//Send notification, do nothing if this fails so no error is thrown
-		// try {
-		// 	const admins = await ProductRequest.getAdmins();
-		// 	const recipients = users.filter(
-		// 		(user) =>
-		// 			admins.includes(user.userId) || user.userId === productRequest.user
-		// 	);
-		// 	if (recipients.length > 0) {
-		// 		const notifications = [];
-		// 		for (const recipient of recipients) {
-		// 			const senderFullName = getFullName(authUser);
-		// 			const emailData = {
-		// 				commentBody: body.trim(),
-		// 				attachments: uploadedAttachments,
-		// 				vendorSku: productRequest.vendorSku
-		// 			};
-		// 			const notification = new Notification({
-		// 				notificationId: null,
-		// 				emailData: emailData,
-		// 				link: `/product-requests/${productRequest.productRequestId}`,
-		// 				page: 'Product Requests',
-		// 				recipient: transformedRecipient(recipient),
-		// 				title: `Product Request "${productRequest.vendorSku}" New comment from ${senderFullName}`,
-		// 				type: NEW_PRODUCT_REQUEST_COMMENT
-		// 			});
-		// 			notifications.push(notification);
-		// 		}
-		// 		await Notification.saveAll(notifications);
-		// 	}
-		// 	return true;
-		// } catch (error) {
-		// 	return true;
-		// }
 	};
 };
 
 export const approveProductRequest = (productRequest, values) => {
-	return async (dispatch, getState) => {
-		const { users } = getState().dataState;
+	return async (dispatch, _getState) => {
 		const newProductRequest = new ProductRequest({ ...productRequest });
 		try {
 			await newProductRequest.approve(values.finalSku.trim());
@@ -229,6 +140,7 @@ export const approveProductRequest = (productRequest, values) => {
 				type: SET_MESSAGE,
 				message
 			});
+			return true;
 		} catch (error) {
 			const message = new Message({
 				title: 'Product Requests',
@@ -241,35 +153,11 @@ export const approveProductRequest = (productRequest, values) => {
 			});
 			return false;
 		}
-		//Send notification, do nothing if this fails so no error is thrown
-		// try {
-		// 	const recipient = users.find(
-		// 		(user) => user.userId === newProductRequest.user
-		// 	);
-		// 	const emailData = {
-		// 		vendorSku: newProductRequest.vendorSku,
-		// 		finalSku: newProductRequest.finalSku
-		// 	};
-		// 	const notification = new Notification({
-		// 		notificationId: null,
-		// 		emailData: emailData,
-		// 		link: `/product-requests/${productRequest.productRequestId}`,
-		// 		page: 'Product Requests',
-		// 		recipient: transformedRecipient(recipient),
-		// 		title: `Product Request for "${productRequest.vendorSku}" has been approved`,
-		// 		type: APPROVED_PRODUCT_REQUEST
-		// 	});
-		// 	await notification.save();
-		// 	return true;
-		// } catch (error) {
-		// 	return true;
-		// }
 	};
 };
 
 export const rejectProductRequest = (productRequest) => {
-	return async (dispatch, getState) => {
-		const { users } = getState().dataState;
+	return async (dispatch, _getState) => {
 		const newProductRequest = new ProductRequest({ ...productRequest });
 		try {
 			await newProductRequest.reject();
@@ -287,6 +175,7 @@ export const rejectProductRequest = (productRequest) => {
 				type: SET_MESSAGE,
 				message
 			});
+			return true;
 		} catch (error) {
 			const message = new Message({
 				title: 'Product Requests',
@@ -299,27 +188,5 @@ export const rejectProductRequest = (productRequest) => {
 			});
 			return false;
 		}
-		//Send notification, do nothing if this fails so no error is thrown
-		// try {
-		// 	const recipient = users.find(
-		// 		(user) => user.userId === newProductRequest.user
-		// 	);
-		// 	const emailData = {
-		// 		vendorSku: newProductRequest.vendorSku
-		// 	};
-		// 	const notification = new Notification({
-		// 		notificationId: null,
-		// 		emailData: emailData,
-		// 		link: `/product-requests/${productRequest.productRequestId}`,
-		// 		page: 'Product Requests',
-		// 		recipient: transformedRecipient(recipient),
-		// 		title: `Product Request for "${productRequest.vendorSku}" has been rejected`,
-		// 		type: REJECTED_PRODUCT_REQUEST
-		// 	});
-		// 	await notification.save();
-		// 	return true;
-		// } catch (error) {
-		// 	return true;
-		// }
 	};
 };
