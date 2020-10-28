@@ -59,7 +59,6 @@ export const addEvent = (values, notifyUsers) => {
 			});
 			return true;
 		} catch (error) {
-			console.log('error', error);
 			const message = new Message({
 				title: 'Staff Calendar',
 				body: 'Failed to add event',

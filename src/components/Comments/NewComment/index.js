@@ -48,8 +48,6 @@ const NewComment = (props) => {
 		setValidatedOnMount(true);
 	}, [validateForm]);
 
-	console.log(props.actionBarNotificationProps);
-
 	return (
 		<StyledContainer>
 			<ListItemAvatar>

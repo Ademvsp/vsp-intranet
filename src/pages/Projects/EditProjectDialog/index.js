@@ -154,10 +154,8 @@ const EditProjectDialog = withTheme((props) => {
 		}
 	};
 
-	const newCommentHandler = async (body, attachments, notifyUsers) => {
-		const result = await dispatch(
-			addComment(project, body, attachments, notifyUsers)
-		);
+	const newCommentHandler = async (body, attachments) => {
+		const result = await dispatch(addComment(project, body, attachments));
 		return result;
 	};
 

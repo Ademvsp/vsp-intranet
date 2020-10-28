@@ -28,35 +28,35 @@ const ProjectStatusChip = withTheme((props) => {
 	switch (props.status) {
 		case EXPRESSION_OF_INTEREST:
 			ChipIcon = CallIcon;
-			color = props.theme.palette.primary.main;
+			color = props.theme.palette.primary.light;
 			break;
 		case PROOF_OF_CONCEPT:
 			ChipIcon = RemoveRedEyeIcon;
-			color = props.theme.palette.primary.main;
+			color = props.theme.palette.primary.light;
 			break;
 		case QUOTATION_STAGE:
 			ChipIcon = FormatListNumberedIcon;
-			color = props.theme.palette.primary.main;
+			color = props.theme.palette.primary.light;
 			break;
 		case AWAITING_QUOTATION_RESPONSE:
 			ChipIcon = HourglassEmptyIcon;
-			color = props.theme.palette.warning.main;
+			color = props.theme.palette.warning.light;
 			break;
 		case ON_HOLD:
 			ChipIcon = PanToolIcon;
-			color = props.theme.palette.warning.main;
+			color = props.theme.palette.warning.light;
 			break;
 		case CLOSED_STALE:
 			ChipIcon = PriorityHighIcon;
-			color = props.theme.palette.warning.main;
+			color = props.theme.palette.warning.light;
 			break;
 		case CLOSED_LOST:
 			ChipIcon = CloseIcon;
-			color = props.theme.palette.error.main;
+			color = props.theme.palette.error.light;
 			break;
 		case CLOSED_WON:
 			ChipIcon = DoneIcon;
-			color = props.theme.palette.success.main;
+			color = props.theme.palette.success.light;
 			break;
 		default:
 			break;
