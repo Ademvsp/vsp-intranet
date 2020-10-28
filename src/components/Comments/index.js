@@ -9,14 +9,14 @@ import {
 import { ArrowDropDown as ArrowDropDownIcon } from '@material-ui/icons';
 
 const Comments = (props) => {
-	const { comments, enableNotifyUsers, submitHandler } = props;
+	const { comments, submitHandler, actionBarNotificationProps } = props;
 	return (
 		<Fragment>
 			<StyledNewCommentContainer>
 				<NewComment
 					authUser={props.authUser}
 					submitHandler={submitHandler}
-					enableNotifyUsers={enableNotifyUsers}
+					actionBarNotificationProps={actionBarNotificationProps}
 				/>
 			</StyledNewCommentContainer>
 			{comments.length > 0 ? (

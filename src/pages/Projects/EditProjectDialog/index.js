@@ -43,7 +43,6 @@ const EditProjectDialog = withTheme((props) => {
 	const { open, close, projectNames, project } = props;
 
 	const [showComments, setShowComments] = useState(false);
-	const [notifyUsers, setNotifyUsers] = useState([]);
 	const [attachments, setAttachments] = useState(project.attachments);
 	const [loading, setLoading] = useState();
 	const [validatedOnMount, setValidatedOnMount] = useState(false);
@@ -147,9 +146,7 @@ const EditProjectDialog = withTheme((props) => {
 
 	const submitHandler = async (values) => {
 		setLoading(true);
-		const result = await dispatch(
-			editProject(project, values, notifyUsers, attachments)
-		);
+		const result = await dispatch(editProject(project, values, attachments));
 		setLoading(false);
 		if (result) {
 			formik.setValues(initialValues);
@@ -544,8 +541,8 @@ const EditProjectDialog = withTheme((props) => {
 				<ActionsBar
 					notifications={{
 						enabled: true,
-						notifyUsers: notifyUsers,
-						setNotifyUsers: setNotifyUsers
+						readOnly: true,
+						tooltip: 'All project owners will be notified automatically'
 					}}
 					attachments={{
 						enabled: true,
@@ -570,7 +567,11 @@ const EditProjectDialog = withTheme((props) => {
 					authUser={authUser}
 					submitHandler={newCommentHandler}
 					comments={[...project.comments].reverse()}
-					enableNotifyUsers={false}
+					actionBarNotificationProps={{
+						enabled: true,
+						tooltip: 'All project owners will be notified',
+						readOnly: true
+					}}
 				/>
 			</Collapse>
 		</Dialog>

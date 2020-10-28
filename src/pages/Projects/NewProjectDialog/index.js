@@ -39,7 +39,6 @@ const NewProjectDialog = withTheme((props) => {
 	const { authUser } = useSelector((state) => state.authState);
 	const { customers, vendors, users } = useSelector((state) => state.dataState);
 	const { open, close, projectNames } = props;
-	const [notifyUsers, setNotifyUsers] = useState([]);
 	const [attachments, setAttachments] = useState([]);
 	const [loading, setLoading] = useState();
 	const [validatedOnMount, setValidatedOnMount] = useState(false);
@@ -157,7 +156,7 @@ const NewProjectDialog = withTheme((props) => {
 
 	const submitHandler = async (values) => {
 		setLoading(true);
-		const result = await dispatch(addProject(values, notifyUsers, attachments));
+		const result = await dispatch(addProject(values, attachments));
 		setLoading(false);
 		if (result) {
 			formik.setValues(initialValues);
@@ -538,8 +537,8 @@ const NewProjectDialog = withTheme((props) => {
 				<ActionsBar
 					notifications={{
 						enabled: true,
-						notifyUsers: notifyUsers,
-						setNotifyUsers: setNotifyUsers
+						readOnly: true,
+						tooltip: 'All project owners will be notified automatically'
 					}}
 					attachments={{
 						enabled: true,

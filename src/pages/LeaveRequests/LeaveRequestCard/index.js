@@ -180,7 +180,12 @@ const LeaveRequestCard = withTheme((props) => {
 						authUser={authUser}
 						submitHandler={newCommentHandler}
 						comments={[...leaveRequest.comments].reverse()}
-						enableNotifyUsers={false}
+						actionBarNotificationProps={{
+							enabled: true,
+							tooltip:
+								'The leave request admin, the original requester and their manager will be notified automatically',
+							readOnly: true
+						}}
 					/>
 				</Collapse>
 			</Card>

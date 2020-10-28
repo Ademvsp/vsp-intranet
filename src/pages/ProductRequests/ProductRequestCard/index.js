@@ -192,7 +192,12 @@ const ProductRequestCard = withTheme((props) => {
 						authUser={authUser}
 						submitHandler={newCommentHandler}
 						comments={[...productRequest.comments].reverse()}
-						enableNotifyUsers={false}
+						actionBarNotificationProps={{
+							enabled: true,
+							tooltip:
+								'The product request admin and the original requester will be notified automatically',
+							readOnly: true
+						}}
 					/>
 				</Collapse>
 			</Card>

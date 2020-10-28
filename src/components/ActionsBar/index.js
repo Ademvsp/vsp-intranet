@@ -64,13 +64,19 @@ const ActionsBar = (props) => {
 					)}
 					{notifications?.enabled && (
 						<Grid item>
-							<Tooltip title='Notify staff' placement={tooltipPlacement}>
+							<Tooltip
+								title={notifications.tooltip || 'Notify staff'}
+								placement={tooltipPlacement}
+							>
 								<IconButton
 									disabled={loading}
-									onClick={setNotifyUsersOpen.bind(this, true)}
+									onClick={
+										!notifications.readOnly &&
+										setNotifyUsersOpen.bind(this, true)
+									}
 								>
 									<Badge
-										badgeContent={notifications.notifyUsers.length}
+										badgeContent={notifications.notifyUsers?.length}
 										color='secondary'
 									>
 										<PeopleIcon />

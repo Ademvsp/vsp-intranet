@@ -48,6 +48,8 @@ const NewComment = (props) => {
 		setValidatedOnMount(true);
 	}, [validateForm]);
 
+	console.log(props.actionBarNotificationProps);
+
 	return (
 		<StyledContainer>
 			<ListItemAvatar>
@@ -66,7 +68,9 @@ const NewComment = (props) => {
 				<Grid item>
 					<ActionsBar
 						notifications={{
-							enabled: props.enableNotifyUsers,
+							enabled: props.actionBarNotificationProps.enabled,
+							tooltip: props.actionBarNotificationProps.tooltip,
+							readOnly: props.actionBarNotificationProps.readOnly,
 							notifyUsers: notifyUsers,
 							setNotifyUsers: setNotifyUsers
 						}}

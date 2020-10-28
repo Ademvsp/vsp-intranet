@@ -18,7 +18,7 @@ import {
 import { getServerTimeInMilliseconds } from '../../utils/firebase';
 import { transformedRecipient } from './notification';
 
-export const addProject = (values, notifyUsers, attachments) => {
+export const addProject = (values, attachments) => {
 	return async (dispatch, getState) => {
 		const {
 			name,
@@ -31,7 +31,6 @@ export const addProject = (values, notifyUsers, attachments) => {
 			value
 		} = values;
 		const { authUser } = getState().authState;
-		const { users } = getState().dataState;
 		const newProject = new Project({
 			projectId: null,
 			actions: [
@@ -135,7 +134,7 @@ export const addProject = (values, notifyUsers, attachments) => {
 	};
 };
 
-export const editProject = (project, values, notifyUsers, attachments) => {
+export const editProject = (project, values, attachments) => {
 	return async (dispatch, getState) => {
 		const {
 			name,
@@ -148,7 +147,6 @@ export const editProject = (project, values, notifyUsers, attachments) => {
 			value
 		} = values;
 		const { authUser } = getState().authState;
-		const { users } = getState().dataState;
 		//Handle any attachment deletions
 		let existingAttachments = await fileUtils.compareAndDelete({
 			oldAttachments: project.attachments,
@@ -267,7 +265,7 @@ export const editProject = (project, values, notifyUsers, attachments) => {
 	};
 };
 
-export const addComment = (project, body, attachments, notifyUsers) => {
+export const addComment = (project, body, attachments) => {
 	return async (dispatch, getState) => {
 		const { authUser } = getState().authState;
 		const { users } = getState().dataState;

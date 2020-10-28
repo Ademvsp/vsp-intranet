@@ -163,7 +163,10 @@ const PostCard = withTheme((props) => {
 						authUser={authUser}
 						submitHandler={newCommentHandler}
 						comments={[...post.comments].reverse()}
-						enableNotifyUsers={true}
+						actionBarNotificationProps={{
+							enabled: true,
+							tooltip: 'All post participants will be notified automatically'
+						}}
 					/>
 				</Collapse>
 			</Card>
