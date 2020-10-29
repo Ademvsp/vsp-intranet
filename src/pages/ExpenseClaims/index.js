@@ -9,6 +9,8 @@ import { READ_PAGE, READ_EXPENSE_CLAIM } from '../../utils/actions';
 import AddIcon from '@material-ui/icons/Add';
 import FloatingActionButton from '../../components/FloatingActionButton';
 import ExpenseClaim from '../../models/expense-claim';
+import ExpenseClaimCard from './ExpenseClaimCard';
+import NewExpenseClaimDialog from './NewExpenseClaimDialog';
 // import NewProductRequestDialog from './NewProductRequestDialog';
 
 const ExpenseClaims = (props) => {
@@ -55,7 +57,7 @@ const ExpenseClaims = (props) => {
 				listenerRef = CollectionData.getNestedListener({
 					document: 'expense-claims',
 					subCollection: 'users',
-					subCollectionDoc: userId
+					subCollectionDoc: 'GQOQYkuXGOewtkBOXjguSn85ZgJ2'
 				});
 			}
 			collectionDataListener = listenerRef.onSnapshot((snapshot) => {
@@ -135,10 +137,10 @@ const ExpenseClaims = (props) => {
 
 	return (
 		<Fragment>
-			{/* <NewLeaveRequestDialog
+			<NewExpenseClaimDialog
 				open={showNewExpenseClaimDialog}
 				close={() => setShowNewExpenseClaimDialog(false)}
-			/> */}
+			/>
 			<Container disableGutters maxWidth='sm'>
 				<Grid container direction='column' spacing={2}>
 					<Grid item container direction='column' spacing={2}>
@@ -146,11 +148,12 @@ const ExpenseClaims = (props) => {
 							const scroll = activeExpenseClaimId === expenseClaimId;
 							return (
 								<Grid item key={expenseClaimId}>
-									{/* <LeaveRequestCard
+									<ExpenseClaimCard
 										expenseClaimId={expenseClaimId}
 										setActiveExpenseClaimId={setActiveExpenseClaimId}
 										scroll={scroll}
-									/> */}
+										isAdmin={isAdmin}
+									/>
 								</Grid>
 							);
 						})}

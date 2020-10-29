@@ -1,6 +1,12 @@
 import { Chip, Popover, Typography, withTheme } from '@material-ui/core';
 import React, { Fragment, useState } from 'react';
-import { APPROVED, PAID, REJECTED, REQUESTED } from '../../utils/constants';
+import {
+	APPROVED,
+	PAID,
+	REJECTED,
+	REQUESTED,
+	SUBMITTED
+} from '../../utils/constants';
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
@@ -20,6 +26,9 @@ const ActionStatusChip = withTheme((props) => {
 
 	switch (action.actionType) {
 		case REQUESTED:
+			ChipIcon = ErrorOutlineIcon;
+			break;
+		case SUBMITTED:
 			ChipIcon = ErrorOutlineIcon;
 			break;
 		case REJECTED:

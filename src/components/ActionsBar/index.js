@@ -37,9 +37,9 @@ const ActionsBar = withTheme((props) => {
 	} = props;
 
 	function getAttachmentsTooltip(attachments) {
-		let tooltip = 'Attachments';
-		if (attachments.length > 0) {
-			tooltip = attachments.map((attachment) => (
+		let tooltip = attachments.emptyTooltip || 'Attachments';
+		if (attachments.attachments.length > 0) {
+			tooltip = attachments.attachments.map((attachment) => (
 				<div key={attachment.name}>{attachment.name}</div>
 			));
 		}
@@ -47,7 +47,7 @@ const ActionsBar = withTheme((props) => {
 	}
 
 	function getNotfyUsersTooltip(notifications, users) {
-		let tooltip = 'Notify Staff';
+		let tooltip = notifications.emptyTooltip || 'Notify Staff';
 		if (notifications.tooltip) {
 			tooltip = notifications.tooltip;
 		}
@@ -106,8 +106,9 @@ const ActionsBar = withTheme((props) => {
 								<IconButton
 									disabled={loading}
 									onClick={
-										!notifications.readOnly &&
-										setNotifyUsersOpen.bind(this, true)
+										notifications.readOnly
+											? null
+											: setNotifyUsersOpen.bind(this, true)
 									}
 								>
 									<Badge
@@ -129,7 +130,7 @@ const ActionsBar = withTheme((props) => {
 					{attachments?.enabled && (
 						<Grid item>
 							<Tooltip
-								title={getAttachmentsTooltip(attachments.attachments)}
+								title={getAttachmentsTooltip(attachments)}
 								placement={tooltipPlacement}
 							>
 								<IconButton

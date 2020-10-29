@@ -35,7 +35,7 @@ export default class ExpenseClaim {
 	static getListener(expenseClaimId) {
 		return firebase
 			.firestore()
-			.collection('leave-requests')
+			.collection('expense-claims')
 			.doc(expenseClaimId);
 	}
 }

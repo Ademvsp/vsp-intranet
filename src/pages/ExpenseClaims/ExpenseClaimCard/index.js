@@ -22,7 +22,7 @@ import Avatar from '../../../components/Avatar';
 import scrollToComponent from 'react-scroll-to-component';
 import Card from '../../../components/Card';
 import { LONG_DATE_TIME } from '../../../utils/date';
-import LeaveRequestForm from './LeaveRequestForm';
+import ExpenseClaimTable from './ExpenseClaimTable';
 import ActionButtons from './ActionButtons';
 // import { addComment } from '../../../store/actions/leave-request';
 import ExpenseClaim from '../../../models/expense-claim';
@@ -32,7 +32,7 @@ const ExpenseClaimCard = withTheme((props) => {
 	const scrollRef = useRef();
 	const { authUser } = useSelector((state) => state.authState);
 	const { users } = useSelector((state) => state.dataState);
-	const { expenseClaimId, scroll, setActiveExpenseClaimId } = props;
+	const { expenseClaimId, scroll, setActiveExpenseClaimId, isAdmin } = props;
 	const [expenseClaim, setExpenseClaim] = useState();
 	const [showComments, setShowComments] = useState(false);
 
@@ -136,14 +136,14 @@ const ExpenseClaimCard = withTheme((props) => {
 			<Card elevation={2}>
 				<CardHeader
 					avatar={<Avatar user={user} clickable={true} contactCard={true} />}
-					title={expenseClaim.type}
+					title={format(postDate, LONG_DATE_TIME)}
 					titleTypographyProps={{
 						variant: 'body1'
 					}}
 					subheader={`${user.firstName} ${user.lastName}`}
 				/>
 				<CardContent>
-					<LeaveRequestForm expenseClaim={expenseClaim} />
+					<ExpenseClaimTable expenseClaim={expenseClaim} />
 				</CardContent>
 				<CardActions style={{ padding: `${props.theme.spacing(2)}px` }}>
 					<Grid container direction='column' spacing={1}>
@@ -151,6 +151,7 @@ const ExpenseClaimCard = withTheme((props) => {
 							<ActionButtons
 								expenseClaim={expenseClaim}
 								user={user}
+								isAdmin={isAdmin}
 								isManager={authUser.userId === expenseClaim.manager}
 							/>
 						</Grid>

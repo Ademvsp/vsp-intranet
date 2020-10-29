@@ -1,11 +1,11 @@
-export const REQUESTED = 'Requested';
+export const SUBMITTED = 'Submitted';
 export const APPROVED = 'Approved';
 export const REJECTED = 'Rejected';
 export const PAID = 'Paid';
 
 export default [
 	{
-		name: REQUESTED,
+		name: SUBMITTED,
 		oldId: 'EBot3quGOrDBii0qV43S'
 	},
 	{

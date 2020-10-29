@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import Project from '../../models/project';
 import MaterialTable from 'material-table';
 import columnSchema from './column-schema';
-import tableColumns from '../Calendar/table-icons';
+import tableColumns from '../../utils/table-icons';
 import { useHistory, useParams } from 'react-router-dom';
 import { READ, UPDATE } from '../../utils/actions';
 import NewProjectDialog from './NewProjectDialog';

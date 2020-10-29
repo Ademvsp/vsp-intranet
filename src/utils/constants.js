@@ -3,6 +3,7 @@ export const SNACKBAR = 'SNACKBAR';
 export const SILENT = 'SILENT';
 export const DARK = 'dark';
 export const LIGHT = 'light';
+export const SUBMITTED = 'Submitted';
 export const REQUESTED = 'Requested';
 export const APPROVED = 'Approved';
 export const REJECTED = 'Rejected';

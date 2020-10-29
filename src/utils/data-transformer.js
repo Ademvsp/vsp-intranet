@@ -1,9 +1,9 @@
-export const toCurrency = (value) => {
+export const toCurrency = (value, fractionDigits) => {
 	return value.toLocaleString('en-AU', {
 		style: 'currency',
 		currency: 'AUD',
-		minimumFractionDigits: 0,
-		maximumFractionDigits: 0
+		minimumFractionDigits: fractionDigits || 0,
+		maximumFractionDigits: fractionDigits || 0
 	});
 };
 
