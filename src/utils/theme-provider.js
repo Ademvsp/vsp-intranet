@@ -1,19 +1,22 @@
 import React from 'react';
 import {
 	createMuiTheme,
-	ThemeProvider as MuiThemeProvider
+	ThemeProvider as MuiThemeProvider,
+	withTheme
 } from '@material-ui/core/styles';
 import colors from './colors';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { useSelector } from 'react-redux';
 import { LIGHT, DARK } from './constants';
 
-const ThemeProvider = (props) => {
+const ThemeProvider = withTheme((props) => {
 	const { authUser } = useSelector((state) => state.authState);
 	let type = LIGHT;
 	if (authUser && authUser.settings.darkMode) {
 		type = DARK;
 	}
+
+	console.log(props.theme);
 
 	const theme = createMuiTheme({
 		palette: {
@@ -24,17 +27,17 @@ const ThemeProvider = (props) => {
 		overrides: {
 			MuiPaper: {
 				rounded: {
-					borderRadius: '8px'
+					borderRadius: `${props.theme.spacing(1)}px`
 				}
 			},
 			MuiButton: {
 				root: {
-					borderRadius: '32px'
+					borderRadius: `${props.theme.spacing(4)}px`
 				}
 			},
 			MuiButtonBase: {
 				root: {
-					borderRadius: '32px'
+					borderRadius: `${props.theme.spacing(4)}px`
 				}
 			},
 			MuiDialogContent: {
@@ -50,6 +53,6 @@ const ThemeProvider = (props) => {
 			<CssBaseline>{props.children}</CssBaseline>
 		</MuiThemeProvider>
 	);
-};
+});
 
 export default ThemeProvider;

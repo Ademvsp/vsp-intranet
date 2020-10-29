@@ -43,13 +43,7 @@ export default class ProductRequest {
 
 	async save() {
 		const serverTime = await getServerTimeInMilliseconds();
-		if (this.productRequestId) {
-			// this.metadata = {
-			// 	...this.metadata,
-			// 	updatedAt: new Date(serverTime),
-			// 	updatedBy: firebase.auth().currentUser.uid
-			// };
-		} else {
+		if (!this.productRequestId) {
 			this.metadata = {
 				createdAt: new Date(serverTime),
 				createdBy: firebase.auth().currentUser.uid,

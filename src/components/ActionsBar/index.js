@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { Grid, Tooltip, IconButton, Badge, Button } from '@material-ui/core';
+import {
+	Grid,
+	Tooltip,
+	IconButton,
+	Badge,
+	Button,
+	Typography,
+	withTheme
+} from '@material-ui/core';
 import ProgressWithLabel from '../ProgressWithLabel';
 import { useSelector } from 'react-redux';
 import {
@@ -11,7 +19,7 @@ import NotifyUsersList from '../NotifyUsersList';
 import AttachmentsDropzone from '../AttachmentsDropZone';
 import { StyledButtonProgress } from './styled-components';
 
-const ActionsBar = (props) => {
+const ActionsBar = withTheme((props) => {
 	const uploadState = useSelector((state) => state.uploadState);
 	const [notifyUsersOpen, setNotifyUsersOpen] = useState(false);
 	const [dropzoneOpen, setDropzoneOpen] = useState(false);
@@ -27,6 +35,11 @@ const ActionsBar = (props) => {
 		actionButtonText,
 		additionalButtons
 	} = props;
+
+	function getAttachmentsTooltip(attachments) {
+		console.log(attachments);
+	}
+
 	return (
 		<Grid container direction='column'>
 			{uploadState.filesProgress && (
@@ -93,7 +106,18 @@ const ActionsBar = (props) => {
 					)}
 					{attachments?.enabled && (
 						<Grid item>
-							<Tooltip title='Attachments' placement={tooltipPlacement}>
+							<Tooltip
+								title={
+									attachments.attachments.length
+										? attachments.attachments.map((attachment) => {
+												return (
+													<div key={attachment.name}>{attachment.name}</div>
+												);
+										  })
+										: 'Attachments'
+								}
+								placement={tooltipPlacement}
+							>
 								<IconButton
 									onClick={setDropzoneOpen.bind(this, true)}
 									disabled={loading}
@@ -169,6 +193,6 @@ const ActionsBar = (props) => {
 			</Grid>
 		</Grid>
 	);
-};
+});
 
 export default ActionsBar;

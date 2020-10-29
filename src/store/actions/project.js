@@ -24,14 +24,8 @@ export const addProject = (values, attachments) => {
 		} = values;
 		const { authUser } = getState().authState;
 		const newProject = new Project({
-			projectId: null,
-			actions: [
-				{
-					actionType: status.name,
-					actionedAt: null,
-					actionedBy: authUser.userId
-				}
-			],
+			//The rest of .actions will be filled out in the model when you .save()
+			actions: [{ actionType: status.name }],
 			attachments: [],
 			comments: [],
 			customer: { ...customer },

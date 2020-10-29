@@ -136,7 +136,6 @@ export default class Event {
 				updatedBy: firebase.auth().currentUser.uid
 			};
 			this.actions = [
-				...this.actions,
 				{
 					actionType: CREATE,
 					actionedAt: new Date(serverTime),

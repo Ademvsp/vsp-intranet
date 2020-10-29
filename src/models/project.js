@@ -58,16 +58,19 @@ export default class Project {
 				updatedAt: new Date(serverTime),
 				updatedBy: firebase.auth().currentUser.uid
 			};
-			this.actions = this.actions.map((action) => ({
-				...action,
-				actionedAt: new Date(serverTime)
-			}));
+			this.actions = [
+				{
+					//Extract status.name from project actions
+					actionType: this.actions[0].actionType,
+					actionedAt: new Date(serverTime),
+					actionedBy: firebase.auth().currentUser.uid
+				}
+			];
 			const docRef = await firebase
 				.firestore()
 				.collection('projects-new')
 				.add(this.getDatabaseObject());
 			this.projectId = docRef.id;
-			// await CollectionData.updateCollectionData('projects', this.projectId);
 		}
 	}
 

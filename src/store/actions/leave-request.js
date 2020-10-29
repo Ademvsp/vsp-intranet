@@ -43,8 +43,6 @@ export const addLeaveRequest = (values) => {
 		let endTransformed = transformDate(end, true, userLocation.timezone);
 
 		const newLeaveRequest = new LeaveRequest({
-			leaveRequestId: null,
-			actions: null,
 			comments: [],
 			end: endTransformed,
 			manager: authUser.manager,

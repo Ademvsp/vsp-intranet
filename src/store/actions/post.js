@@ -7,7 +7,7 @@ import {
 	SNACKBAR_VARIANTS,
 	SNACKBAR_SEVERITY
 } from '../../utils/constants';
-import { SET_MESSAGE } from '../../utils/actions';
+import { CREATE, SET_MESSAGE } from '../../utils/actions';
 import * as fileUtils from '../../utils/file-utils';
 import { NEW_POST_COMMENT, NEW_POST } from '../../data/notification-types';
 import { getServerTimeInMilliseconds } from '../../utils/firebase';
@@ -19,11 +19,11 @@ export const addPost = (values, attachments, notifyUsers) => {
 	return async (dispatch, getState) => {
 		const { title, body } = values;
 		const { authUser } = getState().authState;
-		const { users } = getState().dataState;
 		let newPost;
 		try {
 			newPost = new Post({
-				postId: null,
+				//The rest of .actions will be filled out in the model
+				actions: [{ notifyUsers: notifyUsers }],
 				attachments: [],
 				body: body.trim(),
 				comments: [],
@@ -59,6 +59,7 @@ export const addPost = (values, attachments, notifyUsers) => {
 				type: SET_MESSAGE,
 				message
 			});
+			return true;
 		} catch (error) {
 			const message = new Message({
 				title: 'News Feed',
@@ -71,46 +72,11 @@ export const addPost = (values, attachments, notifyUsers) => {
 			});
 			return false;
 		}
-		//Send notification, do nothing if this fails so no error is thrown
-		// try {
-		// 	const recipients = users.filter(
-		// 		(user) =>
-		// 			newPost.subscribers.includes(user.userId) ||
-		// 			notifyUsers.includes(user.userId)
-		// 	);
-		// 	if (recipients.length > 0) {
-		// 		const notifications = [];
-		// 		for (const recipient of recipients) {
-		// 			const senderFullName = getFullName(authUser);
-		// 			const emailData = {
-		// 				postBody: body.trim(),
-		// 				attachments: newPost.attachments,
-		// 				postTitle: title.trim()
-		// 			};
-		// 			const notification = new Notification({
-		// 				notificationId: null,
-		// 				emailData: emailData,
-		// 				link: `/newsfeed/${newPost.postId}`,
-		// 				page: 'News Feed',
-		// 				recipient: transformedRecipient(recipient),
-		// 				title: `News Feed "${title}" New post from ${senderFullName}`,
-		// 				type: NEW_POST
-		// 			});
-		// 			notifications.push(notification);
-		// 		}
-		// 		await Notification.saveAll(notifications);
-		// 	}
-		// 	return true;
-		// } catch (error) {
-		// 	return true;
-		// }
 	};
 };
 
 export const addComment = (post, body, attachments, notifyUsers) => {
-	return async (dispatch, getState) => {
-		const { authUser } = getState().authState;
-		const { users } = getState().dataState;
+	return async (dispatch, _getState) => {
 		let uploadedAttachments;
 		try {
 			const serverTime = await getServerTimeInMilliseconds();
@@ -125,7 +91,13 @@ export const addComment = (post, body, attachments, notifyUsers) => {
 					})
 				);
 			}
-			await post.addComment(body.trim(), uploadedAttachments, serverTime);
+			await post.addComment(
+				body.trim(),
+				uploadedAttachments,
+				notifyUsers,
+				serverTime
+			);
+			return true;
 		} catch (error) {
 			const message = new Message({
 				title: 'News Feed',
@@ -138,39 +110,6 @@ export const addComment = (post, body, attachments, notifyUsers) => {
 			});
 			return false;
 		}
-		//Send notification, do nothing if this fails so no error is thrown
-		// try {
-		// 	const recipients = users.filter(
-		// 		(user) =>
-		// 			post.subscribers.includes(user.userId) ||
-		// 			notifyUsers.includes(user.userId)
-		// 	);
-		// 	if (recipients.length > 0) {
-		// 		const notifications = [];
-		// 		for (const recipient of recipients) {
-		// 			const senderFullName = getFullName(authUser);
-		// 			const emailData = {
-		// 				commentBody: body.trim(),
-		// 				attachments: uploadedAttachments,
-		// 				postTitle: post.title
-		// 			};
-		// 			const notification = new Notification({
-		// 				notificationId: null,
-		// 				emailData: emailData,
-		// 				link: `/newsfeed/${post.postId}`,
-		// 				page: 'News Feed',
-		// 				recipient: transformedRecipient(recipient),
-		// 				title: `News Feed "${post.title}" New comment from ${senderFullName}`,
-		// 				type: NEW_POST_COMMENT
-		// 			});
-		// 			notifications.push(notification);
-		// 		}
-		// 		await Notification.saveAll(notifications);
-		// 	}
-		// 	return true;
-		// } catch (error) {
-		// 	return true;
-		// }
 	};
 };
 

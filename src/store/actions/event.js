@@ -32,7 +32,6 @@ export const addEvent = (values, notifyUsers) => {
 			let endTransformed = transformDate(end, allDay, userLocation.timezone);
 
 			newEvent = new Event({
-				actions: [],
 				allDay: allDay,
 				details: details,
 				end: endTransformed,

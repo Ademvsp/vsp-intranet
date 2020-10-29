@@ -1,8 +1,10 @@
+import { CREATE } from '../utils/actions';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
 
 export default class Post {
 	constructor({
 		postId,
+		actions,
 		attachments,
 		body,
 		comments,
@@ -12,6 +14,7 @@ export default class Post {
 		user
 	}) {
 		this.postId = postId;
+		this.actions = actions;
 		this.attachments = attachments;
 		this.body = body;
 		this.comments = comments;
@@ -19,6 +22,12 @@ export default class Post {
 		this.subscribers = subscribers;
 		this.title = title;
 		this.user = user;
+	}
+
+	getDatabaseObject() {
+		const databaseObject = { ...this };
+		delete databaseObject.postId;
+		return databaseObject;
 	}
 
 	async save() {
@@ -29,15 +38,11 @@ export default class Post {
 				updatedAt: new Date(serverTime),
 				updatedBy: firebase.auth().currentUser.uid
 			};
-			await firebase.firestore().collection('posts').doc(this.postId).update({
-				attachments: this.attachments,
-				body: this.body,
-				comments: this.comments,
-				metadata: this.metadata,
-				subscribers: this.subscribers,
-				title: this.title,
-				user: this.user
-			});
+			await firebase
+				.firestore()
+				.collection('posts')
+				.doc(this.postId)
+				.update(this.getDatabaseObject());
 		} else {
 			this.metadata = {
 				createdAt: new Date(serverTime),
@@ -45,29 +50,25 @@ export default class Post {
 				updatedAt: new Date(serverTime),
 				updatedBy: firebase.auth().currentUser.uid
 			};
-			const docRef = await firebase.firestore().collection('posts').add({
-				attachments: this.attachments,
-				body: this.body,
-				comments: this.comments,
-				metadata: this.metadata,
-				subscribers: this.subscribers,
-				title: this.title,
-				user: this.user
-			});
+			this.actions = [
+				{
+					actionType: CREATE,
+					actionedAt: new Date(serverTime),
+					actionedBy: firebase.auth().currentUser.uid,
+					//notifyUsers from the post actions
+					notifyUsers: this.actions[0].notifyUsers
+				}
+			];
+			const docRef = await firebase
+				.firestore()
+				.collection('posts')
+				.add(this.getDatabaseObject());
 			const postId = docRef.id;
 			this.postId = postId;
-			await firebase
-				.firestore()
-				.collection('collection-data')
-				.doc('posts')
-				.update({
-					documents: firebase.firestore.FieldValue.arrayUnion(postId)
-				});
-			return postId;
 		}
 	}
 
-	async addComment(body, attachments, serverTime) {
+	async addComment(body, attachments, notifyUsers, serverTime) {
 		const comment = {
 			attachments: attachments,
 			body: body,
@@ -77,14 +78,19 @@ export default class Post {
 				updatedAt: new Date(serverTime),
 				updatedBy: firebase.auth().currentUser.uid
 			},
-			user: firebase.auth().currentUser.uid
+			user: firebase.auth().currentUser.uid,
+			notifyUsers: notifyUsers
 		};
 		await firebase
 			.firestore()
 			.collection('posts')
 			.doc(this.postId)
 			.update({
-				comments: firebase.firestore.FieldValue.arrayUnion(comment)
+				comments: firebase.firestore.FieldValue.arrayUnion(comment),
+				//Automatically add the commenter as a subsriber of the post so they receive notifications on new replies
+				subscribers: firebase.firestore.FieldValue.arrayUnion(
+					firebase.auth().currentUser.uid
+				)
 			});
 		this.comments.push(comment);
 	}

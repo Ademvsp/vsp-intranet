@@ -26,7 +26,7 @@ import scrollToComponent from 'react-scroll-to-component';
 import PostCardMenu from './PostCardMenu';
 import Card from '../../../components/Card';
 import { LONG_DATE_TIME } from '../../../utils/date';
-import { addComment } from '../../../store/actions/product-request';
+import { addComment } from '../../../store/actions/post';
 
 const PostCard = withTheme((props) => {
 	const dispatch = useDispatch();

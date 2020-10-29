@@ -16,14 +16,11 @@ export const addProductRequest = (values, attachments) => {
 		const { vendor, vendorSku, productType, cost, description } = values;
 		const { authUser } = getState().authState;
 		const newProductRequest = new ProductRequest({
-			productRequestId: null,
-			actions: null,
 			attachments: [],
 			comments: [],
 			cost: cost,
 			description: description.trim(),
 			finalSku: '',
-			metadata: null,
 			productType: productType.name.trim(),
 			status: REQUESTED,
 			user: authUser.userId,
