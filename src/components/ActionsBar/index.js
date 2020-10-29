@@ -5,7 +5,6 @@ import {
 	IconButton,
 	Badge,
 	Button,
-	Typography,
 	withTheme
 } from '@material-ui/core';
 import ProgressWithLabel from '../ProgressWithLabel';
@@ -52,7 +51,7 @@ const ActionsBar = withTheme((props) => {
 		if (notifications.tooltip) {
 			tooltip = notifications.tooltip;
 		}
-		if (notifications.notifyUsers.length > 0) {
+		if (notifications.notifyUsers?.length > 0) {
 			tooltip = notifications.notifyUsers.map((notifyUser) => {
 				const notifyUserObject = users.find(
 					(user) => user.userId === notifyUser

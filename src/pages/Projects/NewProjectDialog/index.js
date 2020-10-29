@@ -228,7 +228,7 @@ const NewProjectDialog = withTheme((props) => {
 		let newValue;
 		if (value?.inputValue) {
 			setCustomerAdding(true);
-			const newCustomerName = newValue.inputValue.trim();
+			const newCustomerName = value.inputValue.trim();
 			const newCustomer = new Customer({ name: newCustomerName });
 			await newCustomer.save();
 			newValue = newCustomer;

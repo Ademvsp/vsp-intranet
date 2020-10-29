@@ -1,18 +1,14 @@
 import Message from '../../models/message';
 import Post from '../../models/post';
-import Notification from '../../models/notification';
 import {
 	DIALOG,
 	SNACKBAR,
 	SNACKBAR_VARIANTS,
 	SNACKBAR_SEVERITY
 } from '../../utils/constants';
-import { CREATE, SET_MESSAGE } from '../../utils/actions';
+import { SET_MESSAGE } from '../../utils/actions';
 import * as fileUtils from '../../utils/file-utils';
-import { NEW_POST_COMMENT, NEW_POST } from '../../data/notification-types';
 import { getServerTimeInMilliseconds } from '../../utils/firebase';
-import CollectionData from '../../models/collection-data';
-import { transformedRecipient } from './notification';
 let collectionDataListener;
 
 export const addPost = (values, attachments, notifyUsers) => {

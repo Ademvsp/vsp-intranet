@@ -15,35 +15,6 @@ export default class CollectionData {
 		return new CollectionData({ ...doc.data(), collection: doc.id });
 	}
 
-	static async updateCollectionData(document, docId) {
-		await firebase
-			.firestore()
-			.collection('collection-data')
-			.doc(document)
-			.set(
-				{ documents: firebase.firestore.FieldValue.arrayUnion(docId) },
-				{ merge: true }
-			);
-	}
-
-	static async updateSubCollectionData(
-		document,
-		subCollection,
-		subCollectionDoc,
-		docId
-	) {
-		await firebase
-			.firestore()
-			.collection('collection-data')
-			.doc(document)
-			.collection(subCollection)
-			.doc(subCollectionDoc)
-			.set(
-				{ documents: firebase.firestore.FieldValue.arrayUnion(docId) },
-				{ merge: true }
-			);
-	}
-
 	static getListener(document) {
 		return firebase.firestore().collection('collection-data').doc(document);
 	}

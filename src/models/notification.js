@@ -1,5 +1,4 @@
 import firebase from '../utils/firebase';
-const region = process.env.REACT_APP_FIREBASE_FUNCTIONS_REGION;
 
 export default class Notification {
 	constructor({
@@ -36,35 +35,6 @@ export default class Notification {
 			.delete();
 	}
 
-	async save() {
-		this.metadata = {
-			createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-			createdBy: firebase.auth().currentUser.uid,
-			updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-			updatedBy: firebase.auth().currentUser.uid
-		};
-		const docRef = await firebase
-			.firestore()
-			.collection('notifications-new')
-			.add(this.getDatabaseObject());
-		this.notificationId = docRef.id;
-	}
-
-	static async saveAll(notifications) {
-		const batch = firebase.firestore().batch();
-		for (const notification of notifications) {
-			notification.metadata = {
-				createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-				createdBy: firebase.auth().currentUser.uid,
-				updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-				updatedBy: firebase.auth().currentUser.uid
-			};
-			const docRef = firebase.firestore().collection('notifications-new').doc();
-			batch.set(docRef, notification.getDatabaseObject());
-		}
-		await batch.commit();
-	}
-
 	static async deleteAll(notifications) {
 		const batch = firebase.firestore().batch();
 		for (const notification of notifications) {
@@ -91,13 +61,5 @@ export default class Notification {
 			.collection('notifications-new')
 			.where('recipient', '==', userId)
 			.where('metadata.createdAt', '>=', ONE_MONTH_AGO_TIMESTAMP);
-	}
-
-	static async send(data) {
-		const functionRef = firebase
-			.app()
-			.functions(region)
-			.httpsCallable('sendNotificationNew');
-		await functionRef(data);
 	}
 }

@@ -1,8 +1,9 @@
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
 
 export default class Customer {
-	constructor({ customerId, name }) {
+	constructor({ customerId, metadata, name }) {
 		this.customerId = customerId;
+		this.metadata = metadata;
 		this.name = name;
 	}
 
@@ -24,13 +25,6 @@ export default class Customer {
 					sourceId: null
 				});
 			this.customerId = docRef.id;
-			await firebase
-				.firestore()
-				.collection('collection-data')
-				.doc('customers')
-				.update({
-					documents: firebase.firestore.FieldValue.arrayUnion(this.customerId)
-				});
 		}
 	}
 

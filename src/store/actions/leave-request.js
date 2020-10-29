@@ -119,39 +119,6 @@ export const addComment = (leaveRequest, body, attachments) => {
 			});
 			return false;
 		}
-		//Send notification, do nothing if this fails so no error is thrown
-		// try {
-		// 	const admins = await LeaveRequest.getAdmins();
-		// 	const recipients = users.filter(
-		// 		(user) =>
-		// 			admins.includes(user.userId) || user.userId === leaveRequest.user
-		// 	);
-		// 	if (recipients.length > 0) {
-		// 		const notifications = [];
-		// 		for (const recipient of recipients) {
-		// 			const senderFullName = getFullName(authUser);
-		// 			const emailData = {
-		// 				commentBody: body.trim(),
-		// 				attachments: uploadedAttachments,
-		// 				vendorSku: leaveRequest.vendorSku
-		// 			};
-		// 			const notification = new Notification({
-		// 				notificationId: null,
-		// 				emailData: emailData,
-		// 				link: `/product-requests/${leaveRequest.leaveRequestId}`,
-		// 				page: 'Leave Requests',
-		// 				recipient: transformedRecipient(recipient),
-		// 				title: `Leave Request "${leaveRequest.vendorSku}" New comment from ${senderFullName}`,
-		// 				type: NEW_PRODUCT_REQUEST_COMMENT
-		// 			});
-		// 			notifications.push(notification);
-		// 		}
-		// 		await Notification.saveAll(notifications);
-		// 	}
-		// 	return true;
-		// } catch (error) {
-		// 	return true;
-		// }
 	};
 };
 
@@ -219,27 +186,5 @@ export const rejectLeaveRequest = (leaveRequest) => {
 			});
 			return false;
 		}
-		//Send notification, do nothing if this fails so no error is thrown
-		// try {
-		// 	const recipient = users.find(
-		// 		(user) => user.userId === newLeaveRequest.user
-		// 	);
-		// 	const emailData = {
-		// 		vendorSku: newLeaveRequest.vendorSku
-		// 	};
-		// 	const notification = new Notification({
-		// 		notificationId: null,
-		// 		emailData: emailData,
-		// 		link: `/product-requests/${leaveRequest.leaveRequestId}`,
-		// 		page: 'Leave Requests',
-		// 		recipient: transformedRecipient(recipient),
-		// 		title: `Leave Request for "${leaveRequest.vendorSku}" has been rejected`,
-		// 		type: REJECTED_PRODUCT_REQUEST
-		// 	});
-		// 	await notification.save();
-		// 	return true;
-		// } catch (error) {
-		// 	return true;
-		// }
 	};
 };

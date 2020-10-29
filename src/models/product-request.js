@@ -4,7 +4,6 @@ import {
 	REQUESTED
 } from '../data/product-request-status-types';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
-import CollectionData from './collection-data';
 
 export default class ProductRequest {
 	constructor({
@@ -62,16 +61,6 @@ export default class ProductRequest {
 				.collection('product-requests')
 				.add(this.getDatabaseObject());
 			this.productRequestId = docRef.id;
-			await CollectionData.updateCollectionData(
-				'product-requests',
-				this.productRequestId
-			);
-			await CollectionData.updateSubCollectionData(
-				'product-requests',
-				'users',
-				this.user,
-				this.productRequestId
-			);
 		}
 	}
 

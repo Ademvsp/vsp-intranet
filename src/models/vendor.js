@@ -1,7 +1,8 @@
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
 
 export default class Vendor {
-	constructor({ vendorId, name }) {
+	constructor({ vendorId, metadata, name }) {
+		this.metadata = metadata;
 		this.vendorId = vendorId;
 		this.name = name;
 	}
@@ -24,13 +25,6 @@ export default class Vendor {
 					sourceId: null
 				});
 			this.vendorId = docRef.id;
-			// await firebase
-			// 	.firestore()
-			// 	.collection('collection-data')
-			// 	.doc('vendors')
-			// 	.update({
-			// 		documents: firebase.firestore.FieldValue.arrayUnion(this.vendorId)
-			// 	});
 		}
 	}
 

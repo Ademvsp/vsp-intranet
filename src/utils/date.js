@@ -1,4 +1,4 @@
-import { format } from 'date-fns-tz';
+import { utcToZonedTime } from 'date-fns-tz';
 import { set } from 'date-fns';
 
 export const LONG_DATE_TIME = 'eee, d MMM yyyy, h:mm aaa';
@@ -13,11 +13,8 @@ export const millisecondsToDate = (milliseconds) => {
 };
 
 export const transformDate = (date, allDay, timezone) => {
-	let transformedDate = millisecondsToDate(
-		format(date, MILLISECONDS, {
-			timeZone: timezone
-		})
-	);
+	const zonedDate = utcToZonedTime(date, timezone);
+	let transformedDate = millisecondsToDate(zonedDate.getTime());
 	if (allDay) {
 		transformedDate = set(new Date(transformedDate), {
 			hours: 12,
