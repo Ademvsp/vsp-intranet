@@ -84,7 +84,7 @@ const pages = [
 		name: 'Expenses',
 		description: 'Claim your company expenses here',
 		icon: ReceiptIcon,
-		link: '/expenses'
+		link: '/expense-claims'
 	},
 	{
 		name: 'Account',

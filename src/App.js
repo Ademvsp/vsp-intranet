@@ -20,11 +20,13 @@ import {
 	READ_POST,
 	READ_PRODUCT_REQUEST,
 	READ_LEAVE_REQUEST,
-	UPDATE
+	UPDATE,
+	READ_EXPENSE_CLAIM
 } from './utils/actions';
 import Dashboard from './pages/Dashboard';
 import ProductRequests from './pages/ProductRequests';
 import LeaveRequests from './pages/LeaveRequests';
+import ExpenseClaims from './pages/ExpenseClaims';
 
 const App = (props) => {
 	const dispatch = useDispatch();
@@ -119,8 +121,15 @@ const App = (props) => {
 					<Route path={'/leave-requests/:leaveRequestId'}>
 						<LeaveRequests action={READ_LEAVE_REQUEST} />
 					</Route>
+					<Route path={'/expense-claims/page/:page'}>
+						<ExpenseClaims action={READ_PAGE} />
+					</Route>
+					<Route path={'/expense-claims/:expenseClaimId'}>
+						<ExpenseClaims action={READ_EXPENSE_CLAIM} />
+					</Route>
 					<Redirect from='/product-requests' to='/product-requests/page/1' />
 					<Redirect from='/leave-requests' to='/leave-requests/page/1' />
+					<Redirect from='/expense-claims' to='/expense-claims/page/1' />
 					<Redirect from='/login' to='/' />
 					<Redirect from='/' to='/dashboard' />
 				</Switch>

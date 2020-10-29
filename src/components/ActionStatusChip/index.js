@@ -1,9 +1,10 @@
 import { Chip, Popover, Typography, withTheme } from '@material-ui/core';
 import React, { Fragment, useState } from 'react';
-import { APPROVED, REJECTED, REQUESTED } from '../../utils/constants';
+import { APPROVED, PAID, REJECTED, REQUESTED } from '../../utils/constants';
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import Avatar from '../Avatar';
 import { format } from 'date-fns';
 import { LONG_DATE_TIME } from '../../utils/date';
@@ -26,6 +27,9 @@ const ActionStatusChip = withTheme((props) => {
 			break;
 		case APPROVED:
 			ChipIcon = ThumbUpAltIcon;
+			break;
+		case PAID:
+			ChipIcon = AttachMoneyIcon;
 			break;
 		default:
 			break;

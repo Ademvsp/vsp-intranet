@@ -4,14 +4,14 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import CollectionData from '../../models/collection-data';
-import { READ_PAGE, READ_LEAVE_REQUEST } from '../../utils/actions';
+import { READ_PAGE, READ_EXPENSE_CLAIM } from '../../utils/actions';
+// import ProductRequestCard from './ProductRequestCard';
 import AddIcon from '@material-ui/icons/Add';
 import FloatingActionButton from '../../components/FloatingActionButton';
-import LeaveRequestCard from './LeaveRequestCard';
-import NewLeaveRequestDialog from './NewLeaveRequestDialog';
-import LeaveRequest from '../../models/leave-request';
+import ExpenseClaim from '../../models/expense-claim';
+// import NewProductRequestDialog from './NewProductRequestDialog';
 
-const LeaveRequests = (props) => {
+const ExpenseClaims = (props) => {
 	const dispatch = useDispatch();
 	const { authUser } = useSelector((state) => state.authState);
 	const { userId } = authUser;
@@ -27,41 +27,40 @@ const LeaveRequests = (props) => {
 	const [dataSource, setDataSource] = useState();
 
 	const [page, setPage] = useState(initialPage);
-	const [leaveRequestIds, setLeaveRequestIds] = useState();
-	const [activeLeaveRequestId, setActiveLeaveRequestId] = useState(null);
+	const [expenseClaimIds, setExpenseClaimIds] = useState();
+	const [activeExpenseClaimId, setActiveExpenseClaimId] = useState(null);
 
 	const [isAdmin, setIsAdmin] = useState();
-	const [showNewLeaveRequestDialog, setShowNewLeaveRequestDialog] = useState(
+	const [showNewExpenseClaimDialog, setShowNewExpenseClaimDialog] = useState(
 		false
 	);
-
 	//Mount and dismount, get admin status
 	useEffect(() => {
 		const asyncFunction = async () => {
-			const newIsAdmin = await LeaveRequest.isAdmin();
+			const newIsAdmin = await ExpenseClaim.isAdmin();
 			setIsAdmin(newIsAdmin);
 		};
 		asyncFunction();
 	}, []);
-	//Get leave requests based on user
+	//Get expense claims based on user
 	useEffect(() => {
 		let collectionDataListener;
 		const asyncFunction = async () => {
 			let listenerRef;
 			if (isAdmin) {
 				//Get all documents
-				listenerRef = CollectionData.getListener('leave-requests');
+				listenerRef = CollectionData.getListener('expense-claims');
 			} else {
 				//Get only documents where the user has ownership
 				listenerRef = CollectionData.getNestedListener({
-					document: 'leave-requests',
+					document: 'expense-claims',
 					subCollection: 'users',
 					subCollectionDoc: userId
 				});
 			}
 			collectionDataListener = listenerRef.onSnapshot((snapshot) => {
 				let newCollectionData = new CollectionData({
-					collection: 'leave-requests',
+					collection: 'expense-claims',
 					documents: []
 				});
 				if (snapshot.exists) {
@@ -102,33 +101,33 @@ const LeaveRequests = (props) => {
 					newPage = pageNumber;
 				} else {
 					newPage = initialPage;
-					replace(`/leave-requests/page/${initialPage}`);
+					replace(`/expense-claims/page/${initialPage}`);
 				}
-			} else if (action === READ_LEAVE_REQUEST) {
+			} else if (action === READ_EXPENSE_CLAIM) {
 				//Coming from direct link
-				const leaveRequestId = params.leaveRequestId;
+				const expenseClaimId = params.expenseClaimId;
 				const index = dataSource.findIndex(
-					(document) => document === leaveRequestId
+					(document) => document === expenseClaimId
 				);
 				if (index !== -1) {
 					newPage = Math.floor(index / MAX_PER_PAGE) + 1;
-					const newActiveLeaveRequestId = leaveRequestId;
-					setActiveLeaveRequestId(newActiveLeaveRequestId);
+					const newExpenseClaimId = expenseClaimId;
+					setActiveExpenseClaimId(newExpenseClaimId);
 				} else {
 					newPage = initialPage;
-					replace(`/leave-requests/page/${initialPage}`);
+					replace(`/expense-claims/page/${initialPage}`);
 				}
 			}
 			//Slicing the data source to only include 5 results
 			const START_INDEX = newPage * MAX_PER_PAGE - MAX_PER_PAGE;
 			const END_INDEX = START_INDEX + MAX_PER_PAGE;
-			const newLeaveRequestIds = dataSource.slice(START_INDEX, END_INDEX);
+			const newExpenseClaimIds = dataSource.slice(START_INDEX, END_INDEX);
 			setPage(newPage);
-			setLeaveRequestIds(newLeaveRequestIds);
+			setExpenseClaimIds(newExpenseClaimIds);
 		}
 	}, [dataSource, action, params, replace]);
 
-	if (!leaveRequestIds) {
+	if (!expenseClaimIds) {
 		return <CircularProgress />;
 	}
 
@@ -136,22 +135,22 @@ const LeaveRequests = (props) => {
 
 	return (
 		<Fragment>
-			<NewLeaveRequestDialog
-				open={showNewLeaveRequestDialog}
-				close={() => setShowNewLeaveRequestDialog(false)}
-			/>
+			{/* <NewLeaveRequestDialog
+				open={showNewExpenseClaimDialog}
+				close={() => setShowNewExpenseClaimDialog(false)}
+			/> */}
 			<Container disableGutters maxWidth='sm'>
 				<Grid container direction='column' spacing={2}>
 					<Grid item container direction='column' spacing={2}>
-						{leaveRequestIds.map((leaveRequestId) => {
-							const scroll = activeLeaveRequestId === leaveRequestId;
+						{expenseClaimIds.map((expenseClaimId) => {
+							const scroll = activeExpenseClaimId === expenseClaimId;
 							return (
-								<Grid item key={leaveRequestId}>
-									<LeaveRequestCard
-										leaveRequestId={leaveRequestId}
-										setActiveLeaveRequestId={setActiveLeaveRequestId}
+								<Grid item key={expenseClaimId}>
+									{/* <LeaveRequestCard
+										expenseClaimId={expenseClaimId}
+										setActiveExpenseClaimId={setActiveExpenseClaimId}
 										scroll={scroll}
-									/>
+									/> */}
 								</Grid>
 							);
 						})}
@@ -162,7 +161,7 @@ const LeaveRequests = (props) => {
 									count={count}
 									page={page}
 									onChange={(_event, value) =>
-										push(`/leave-requests/page/${value.toString()}`)
+										push(`/expense-claims/page/${value.toString()}`)
 									}
 									showFirstButton={true}
 									showLastButton={true}
@@ -174,8 +173,8 @@ const LeaveRequests = (props) => {
 			</Container>
 			<FloatingActionButton
 				color='primary'
-				tooltip='Add Leave Request'
-				onClick={() => setShowNewLeaveRequestDialog(true)}
+				tooltip='Add Expense Claim'
+				onClick={() => setShowNewExpenseClaimDialog(true)}
 			>
 				<AddIcon />
 			</FloatingActionButton>
@@ -183,4 +182,4 @@ const LeaveRequests = (props) => {
 	);
 };
 
-export default LeaveRequests;
+export default ExpenseClaims;

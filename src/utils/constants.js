@@ -6,6 +6,7 @@ export const LIGHT = 'light';
 export const REQUESTED = 'Requested';
 export const APPROVED = 'Approved';
 export const REJECTED = 'Rejected';
+export const PAID = 'Paid';
 export const SNACKBAR_VARIANTS = {
 	STANDARD: 'standard',
 	OUTLINED: 'outlined',

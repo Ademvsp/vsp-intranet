@@ -12,7 +12,6 @@ import {
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
-import LeaveRequest from '../../../models/leave-request';
 import {
 	Comment as CommentIcon,
 	MoreVert as MoreVertIcon
@@ -25,34 +24,35 @@ import Card from '../../../components/Card';
 import { LONG_DATE_TIME } from '../../../utils/date';
 import LeaveRequestForm from './LeaveRequestForm';
 import ActionButtons from './ActionButtons';
-import { addComment } from '../../../store/actions/leave-request';
+// import { addComment } from '../../../store/actions/leave-request';
+import ExpenseClaim from '../../../models/expense-claim';
 
-const LeaveRequestCard = withTheme((props) => {
+const ExpenseClaimCard = withTheme((props) => {
 	const dispatch = useDispatch();
 	const scrollRef = useRef();
 	const { authUser } = useSelector((state) => state.authState);
 	const { users } = useSelector((state) => state.dataState);
-	const { leaveRequestId, scroll, setActiveLeaveRequestId } = props;
-	const [leaveRequest, setLeaveRequest] = useState();
+	const { expenseClaimId, scroll, setActiveExpenseClaimId } = props;
+	const [expenseClaim, setExpenseClaim] = useState();
 	const [showComments, setShowComments] = useState(false);
 
 	useEffect(() => {
-		if (scroll && leaveRequest) {
+		if (scroll && expenseClaim) {
 			scrollToComponent(scrollRef.current, {
 				ease: 'linear',
 				align: 'top',
 				offset: -90,
 				duration: 500
 			});
-			setActiveLeaveRequestId(null);
+			setActiveExpenseClaimId(null);
 		}
-	}, [scroll, setActiveLeaveRequestId, leaveRequest]);
+	}, [scroll, setActiveExpenseClaimId, expenseClaim]);
 
 	useEffect(() => {
-		let leaveRequestListener;
+		let expenseClaimListener;
 		const asyncFunction = async () => {
-			leaveRequestListener = LeaveRequest.getListener(
-				leaveRequestId
+			expenseClaimListener = ExpenseClaim.getListener(
+				expenseClaimId
 			).onSnapshot((doc) => {
 				const metadata = {
 					...doc.data().metadata,
@@ -63,26 +63,27 @@ const LeaveRequestCard = withTheme((props) => {
 					...action,
 					actionedAt: action.actionedAt.toDate()
 				}));
-				const start = doc.data().start.toDate();
-				const end = doc.data().end.toDate();
-				const newLeaveRequest = new LeaveRequest({
+				const expenses = doc.data().expenses.map((expense) => ({
+					...expense,
+					date: expense.date.toDate()
+				}));
+				const newExpenseClaim = new ExpenseClaim({
 					...doc.data(),
-					leaveRequestId: doc.id,
+					expenseClaimId: doc.id,
 					actions: actions,
 					metadata: metadata,
-					start: start,
-					end: end
+					expenses: expenses
 				});
-				setLeaveRequest(newLeaveRequest);
+				setExpenseClaim(newExpenseClaim);
 			});
 		};
 		asyncFunction();
 		return () => {
-			leaveRequestListener();
+			expenseClaimListener();
 		};
-	}, [leaveRequestId, users]);
+	}, [expenseClaimId, users]);
 
-	if (!leaveRequest) {
+	if (!expenseClaim) {
 		return (
 			<Card elevation={2}>
 				<CardHeader
@@ -111,14 +112,14 @@ const LeaveRequestCard = withTheme((props) => {
 	}
 
 	const newCommentHandler = async (body, attachments) => {
-		const result = await dispatch(addComment(leaveRequest, body, attachments));
-		return result;
+		// const result = await dispatch(addComment(expenseClaim, body, attachments));
+		// return result;
 	};
 
 	const commentsClickHandler = () => {
 		setShowComments((prevState) => !prevState);
 	};
-	const commentsCount = leaveRequest.comments.length;
+	const commentsCount = expenseClaim.comments.length;
 	let commentButtonText = 'Comment';
 	if (commentsCount > 0) {
 		commentButtonText = `${commentsCount} Comment`;
@@ -127,30 +128,30 @@ const LeaveRequestCard = withTheme((props) => {
 		}
 	}
 
-	const user = users.find((user) => user.userId === leaveRequest.user);
-	const postDate = leaveRequest.metadata.createdAt;
+	const user = users.find((user) => user.userId === expenseClaim.user);
+	const postDate = expenseClaim.metadata.createdAt;
 
 	return (
 		<div ref={scrollRef}>
 			<Card elevation={2}>
 				<CardHeader
 					avatar={<Avatar user={user} clickable={true} contactCard={true} />}
-					title={leaveRequest.type}
+					title={expenseClaim.type}
 					titleTypographyProps={{
 						variant: 'body1'
 					}}
 					subheader={`${user.firstName} ${user.lastName}`}
 				/>
 				<CardContent>
-					<LeaveRequestForm leaveRequest={leaveRequest} />
+					<LeaveRequestForm expenseClaim={expenseClaim} />
 				</CardContent>
 				<CardActions style={{ padding: `${props.theme.spacing(2)}px` }}>
 					<Grid container direction='column' spacing={1}>
 						<Grid item container direction='row' justify='flex-end' spacing={1}>
 							<ActionButtons
-								leaveRequest={leaveRequest}
+								expenseClaim={expenseClaim}
 								user={user}
-								isManager={authUser.userId === leaveRequest.manager}
+								isManager={authUser.userId === expenseClaim.manager}
 							/>
 						</Grid>
 						<Grid item container direction='row' justify='space-between'>
@@ -166,7 +167,7 @@ const LeaveRequestCard = withTheme((props) => {
 									color='secondary'
 									onClick={commentsClickHandler}
 									startIcon={
-										leaveRequest.comments.length === 0 && <CommentIcon />
+										expenseClaim.comments.length === 0 && <CommentIcon />
 									}
 								>
 									{commentButtonText}
@@ -179,11 +180,11 @@ const LeaveRequestCard = withTheme((props) => {
 					<Comments
 						authUser={authUser}
 						submitHandler={newCommentHandler}
-						comments={[...leaveRequest.comments].reverse()}
+						comments={[...expenseClaim.comments].reverse()}
 						actionBarNotificationProps={{
 							enabled: true,
 							tooltip:
-								'The leave request admin, the original requester and their manager will be notified automatically',
+								'The expenses admin, the original requester and their manager will be notified automatically',
 							readOnly: true
 						}}
 					/>
@@ -193,4 +194,4 @@ const LeaveRequestCard = withTheme((props) => {
 	);
 });
 
-export default LeaveRequestCard;
+export default ExpenseClaimCard;
