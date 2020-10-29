@@ -20,6 +20,7 @@ import AttachmentsDropzone from '../AttachmentsDropZone';
 import { StyledButtonProgress } from './styled-components';
 
 const ActionsBar = withTheme((props) => {
+	const { users } = useSelector((state) => state.dataState);
 	const uploadState = useSelector((state) => state.uploadState);
 	const [notifyUsersOpen, setNotifyUsersOpen] = useState(false);
 	const [dropzoneOpen, setDropzoneOpen] = useState(false);
@@ -37,7 +38,29 @@ const ActionsBar = withTheme((props) => {
 	} = props;
 
 	function getAttachmentsTooltip(attachments) {
-		console.log(attachments);
+		let tooltip = 'Attachments';
+		if (attachments.length > 0) {
+			tooltip = attachments.map((attachment) => (
+				<div key={attachment.name}>{attachment.name}</div>
+			));
+		}
+		return tooltip;
+	}
+
+	function getNotfyUsersTooltip(notifications, users) {
+		let tooltip = 'Notify Staff';
+		if (notifications.tooltip) {
+			tooltip = notifications.tooltip;
+		}
+		if (notifications.notifyUsers.length > 0) {
+			tooltip = notifications.notifyUsers.map((notifyUser) => {
+				const notifyUserObject = users.find(
+					(user) => user.userId === notifyUser
+				);
+				return <div key={notifyUser}>{notifyUserObject.getFullName()}</div>;
+			});
+		}
+		return tooltip;
 	}
 
 	return (
@@ -78,7 +101,7 @@ const ActionsBar = withTheme((props) => {
 					{notifications?.enabled && (
 						<Grid item>
 							<Tooltip
-								title={notifications.tooltip || 'Notify staff'}
+								title={getNotfyUsersTooltip(notifications, users)}
 								placement={tooltipPlacement}
 							>
 								<IconButton
@@ -107,15 +130,7 @@ const ActionsBar = withTheme((props) => {
 					{attachments?.enabled && (
 						<Grid item>
 							<Tooltip
-								title={
-									attachments.attachments.length
-										? attachments.attachments.map((attachment) => {
-												return (
-													<div key={attachment.name}>{attachment.name}</div>
-												);
-										  })
-										: 'Attachments'
-								}
+								title={getAttachmentsTooltip(attachments.attachments)}
 								placement={tooltipPlacement}
 							>
 								<IconButton

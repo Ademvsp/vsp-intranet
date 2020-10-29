@@ -15,9 +15,6 @@ const ThemeProvider = withTheme((props) => {
 	if (authUser && authUser.settings.darkMode) {
 		type = DARK;
 	}
-
-	console.log(props.theme);
-
 	const theme = createMuiTheme({
 		palette: {
 			type: type,
