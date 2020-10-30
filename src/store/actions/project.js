@@ -191,7 +191,7 @@ export const addComment = (project, body, attachments) => {
 					})
 				);
 			}
-			await project.addComment(body.trim(), uploadedAttachments, serverTime);
+			await project.saveComment(body.trim(), uploadedAttachments, serverTime);
 			return true;
 		} catch (error) {
 			const message = new Message({

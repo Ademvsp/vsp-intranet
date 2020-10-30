@@ -68,7 +68,7 @@ export default class Post {
 		}
 	}
 
-	async addComment(body, attachments, notifyUsers, serverTime) {
+	async saveComment(body, attachments, notifyUsers, serverTime) {
 		const comment = {
 			attachments: attachments,
 			body: body,

@@ -74,7 +74,7 @@ export default class Project {
 		}
 	}
 
-	async addComment(body, attachments, serverTime) {
+	async saveComment(body, attachments, serverTime) {
 		const comment = {
 			attachments: attachments,
 			body: body,

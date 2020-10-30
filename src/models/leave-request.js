@@ -1,8 +1,4 @@
-import {
-	APPROVED,
-	REJECTED,
-	REQUESTED
-} from '../data/leave-request-status-types';
+import { REQUESTED } from '../data/leave-request-status-types';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
 
 export default class LeaveRequest {
@@ -60,7 +56,7 @@ export default class LeaveRequest {
 		}
 	}
 
-	async addComment(body, attachments, serverTime) {
+	async saveComment(body, attachments, serverTime) {
 		const comment = {
 			attachments: attachments,
 			body: body,
@@ -82,34 +78,10 @@ export default class LeaveRequest {
 		this.comments.push(comment);
 	}
 
-	async approve() {
+	async saveAction(actionType) {
 		const serverTime = await getServerTimeInMilliseconds();
 		const action = {
-			actionType: APPROVED,
-			actionedAt: new Date(serverTime),
-			actionedBy: firebase.auth().currentUser.uid
-		};
-		const metadata = {
-			...this.metadata,
-			updatedAt: new Date(serverTime),
-			updatedBy: firebase.auth().currentUser.uid
-		};
-		await firebase
-			.firestore()
-			.collection('leave-requests')
-			.doc(this.leaveRequestId)
-			.update({
-				actions: firebase.firestore.FieldValue.arrayUnion(action),
-				metadata: metadata
-			});
-		this.metadata = metadata;
-		this.actions = [...this.actions, action];
-	}
-
-	async reject() {
-		const serverTime = await getServerTimeInMilliseconds();
-		const action = {
-			actionType: REJECTED,
+			actionType: actionType,
 			actionedAt: new Date(serverTime),
 			actionedBy: firebase.auth().currentUser.uid
 		};

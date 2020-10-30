@@ -24,9 +24,9 @@ import Card from '../../../components/Card';
 import { LONG_DATE_TIME } from '../../../utils/date';
 import ExpenseClaimTable from './ExpenseClaimTable';
 import ActionButtons from './ActionButtons';
-// import { addComment } from '../../../store/actions/leave-request';
 import ExpenseClaim from '../../../models/expense-claim';
 import { toCurrency } from '../../../utils/data-transformer';
+import { addComment } from '../../../store/actions/expense-claim';
 
 const ExpenseClaimCard = withTheme((props) => {
 	const dispatch = useDispatch();
@@ -113,8 +113,8 @@ const ExpenseClaimCard = withTheme((props) => {
 	}
 
 	const newCommentHandler = async (body, attachments) => {
-		// const result = await dispatch(addComment(expenseClaim, body, attachments));
-		// return result;
+		const result = await dispatch(addComment(expenseClaim, body, attachments));
+		return result;
 	};
 
 	const commentsClickHandler = () => {

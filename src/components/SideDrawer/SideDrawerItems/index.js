@@ -90,9 +90,21 @@ const SideDrawerItems = (props) => {
 						/>
 					]}
 				/> */}
-				<SideDrawerItem Icon={DialpadIcon} text='Calculators' link='/' />
-				<SideDrawerItem Icon={LocalOfficeIcon} text='Promotions' link='/' />
-				<SideDrawerItem Icon={LanguageIcon} text='Links' link='/' />
+				<SideDrawerItem
+					Icon={DialpadIcon}
+					text='Calculators'
+					link='/calculators'
+				/>
+				<SideDrawerItem
+					Icon={LocalOfficeIcon}
+					text='Promotions'
+					link='/promotions'
+				/>
+				<SideDrawerItem
+					Icon={LanguageIcon}
+					text='Resources'
+					link='/resources'
+				/>
 				<SideDrawerItem
 					Icon={ListAltIcon}
 					text='Forms'

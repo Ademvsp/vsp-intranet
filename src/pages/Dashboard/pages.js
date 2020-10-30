@@ -61,10 +61,10 @@ const pages = [
 		link: '/promotions'
 	},
 	{
-		name: 'Links',
+		name: 'Resources',
 		description: 'Discover all the useful links to various online resources',
 		icon: LanguageIcon,
-		link: '/links'
+		link: '/resrouces'
 	},
 	{
 		name: 'Product Request Form',

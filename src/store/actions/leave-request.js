@@ -1,3 +1,4 @@
+import { APPROVED, REJECTED } from '../../data/leave-request-status-types';
 import LeaveRequest from '../../models/leave-request';
 import Message from '../../models/message';
 import { SET_MESSAGE } from '../../utils/actions';
@@ -82,7 +83,7 @@ export const addComment = (leaveRequest, body, attachments) => {
 					})
 				);
 			}
-			await leaveRequest.addComment(
+			await leaveRequest.saveComment(
 				body.trim(),
 				uploadedAttachments,
 				serverTime
@@ -107,7 +108,7 @@ export const approveLeaveRequest = (leaveRequest) => {
 	return async (dispatch, _getState) => {
 		const newLeaveRequest = new LeaveRequest({ ...leaveRequest });
 		try {
-			await newLeaveRequest.approve();
+			await newLeaveRequest.saveAction(APPROVED);
 			const message = new Message({
 				title: 'Leave Requests',
 				body: 'Leave Request approved successfully',
@@ -122,6 +123,7 @@ export const approveLeaveRequest = (leaveRequest) => {
 				type: SET_MESSAGE,
 				message
 			});
+			return true;
 		} catch (error) {
 			const message = new Message({
 				title: 'Leave Requests',
@@ -132,6 +134,7 @@ export const approveLeaveRequest = (leaveRequest) => {
 				type: SET_MESSAGE,
 				message
 			});
+			return false;
 		}
 	};
 };
@@ -140,7 +143,7 @@ export const rejectLeaveRequest = (leaveRequest) => {
 	return async (dispatch, _getState) => {
 		const newLeaveRequest = new LeaveRequest({ ...leaveRequest });
 		try {
-			await newLeaveRequest.reject();
+			await newLeaveRequest.saveAction(REJECTED);
 			const message = new Message({
 				title: 'Leave Requests',
 				body: 'Leave Request rejected successfully',
@@ -155,6 +158,7 @@ export const rejectLeaveRequest = (leaveRequest) => {
 				type: SET_MESSAGE,
 				message
 			});
+			return true;
 		} catch (error) {
 			const message = new Message({
 				title: 'Leave Requests',

@@ -64,7 +64,7 @@ export default class ProductRequest {
 		}
 	}
 
-	async addComment(body, attachments, serverTime) {
+	async saveComment(body, attachments, serverTime) {
 		const comment = {
 			attachments: attachments,
 			body: body,

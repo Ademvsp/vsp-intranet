@@ -87,7 +87,7 @@ export const addComment = (productRequest, body, attachments) => {
 					})
 				);
 			}
-			await productRequest.addComment(
+			await productRequest.saveComment(
 				body.trim(),
 				uploadedAttachments,
 				serverTime

@@ -87,7 +87,7 @@ export const addComment = (post, body, attachments, notifyUsers) => {
 					})
 				);
 			}
-			await post.addComment(
+			await post.saveComment(
 				body.trim(),
 				uploadedAttachments,
 				notifyUsers,

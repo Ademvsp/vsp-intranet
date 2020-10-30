@@ -69,4 +69,50 @@ export default class ExpenseClaim {
 			this.expenseClaimId = docRef.id;
 		}
 	}
+
+	async saveComment(body, attachments, serverTime) {
+		const comment = {
+			attachments: attachments,
+			body: body,
+			metadata: {
+				createdAt: new Date(serverTime),
+				createdBy: firebase.auth().currentUser.uid,
+				updatedAt: new Date(serverTime),
+				updatedBy: firebase.auth().currentUser.uid
+			},
+			user: firebase.auth().currentUser.uid
+		};
+		await firebase
+			.firestore()
+			.collection('expense-claims')
+			.doc(this.expenseClaimId)
+			.update({
+				comments: firebase.firestore.FieldValue.arrayUnion(comment)
+			});
+		this.comments.push(comment);
+	}
+
+	async saveAction(actionType) {
+		const serverTime = await getServerTimeInMilliseconds();
+		const action = {
+			actionType: actionType,
+			actionedAt: new Date(serverTime),
+			actionedBy: firebase.auth().currentUser.uid
+		};
+		const metadata = {
+			...this.metadata,
+			updatedAt: new Date(serverTime),
+			updatedBy: firebase.auth().currentUser.uid
+		};
+		await firebase
+			.firestore()
+			.collection('expense-claims')
+			.doc(this.expenseClaimId)
+			.update({
+				actions: firebase.firestore.FieldValue.arrayUnion(action),
+				metadata: metadata
+			});
+		this.metadata = metadata;
+		this.actions = [...this.actions, action];
+	}
 }

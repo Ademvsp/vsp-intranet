@@ -11,16 +11,17 @@ import ActionStatusChip from '../../../../components/ActionStatusChip';
 import ConfirmDialog from '../../../../components/ConfirmDialog';
 import { useDispatch } from 'react-redux';
 import {
-	approveLeaveRequest,
-	rejectLeaveRequest
-} from '../../../../store/actions/leave-request';
+	approveExpenseClaim,
+	payExpenseClaim,
+	rejectExpenseClaim
+} from '../../../../store/actions/expense-claim';
 
 const ActionButtons = withTheme((props) => {
 	const dispatch = useDispatch();
 	const [loading, setLoading] = useState(false);
 	const [showRejectDialog, setShowRejectDialog] = useState(false);
 	const [showApproveDialog, setShowApproveDialog] = useState(false);
-	const [showPaidDialog, setShowPaidDialog] = useState(false);
+	const [showPayDialog, setShowPayDialog] = useState(false);
 	const { isAdmin, isManager, user, expenseClaim } = props;
 
 	const action = [...expenseClaim.actions].pop();
@@ -32,7 +33,7 @@ const ActionButtons = withTheme((props) => {
 
 	const rejectConfirmHandler = async () => {
 		setLoading(true);
-		await dispatch(rejectLeaveRequest(expenseClaim));
+		await dispatch(rejectExpenseClaim(expenseClaim));
 		setShowRejectDialog(false);
 		setLoading(false);
 	};
@@ -43,18 +44,18 @@ const ActionButtons = withTheme((props) => {
 
 	const approveConfirmHandler = async () => {
 		setLoading(true);
-		await dispatch(approveLeaveRequest(expenseClaim));
+		await dispatch(approveExpenseClaim(expenseClaim));
 		setShowApproveDialog(false);
 		setLoading(false);
 	};
 
 	const payClickHandler = () => {
-		setShowApproveDialog(true);
+		setShowPayDialog(true);
 	};
 
 	const payConfirmHandler = async () => {
 		setLoading(true);
-		await dispatch(approveLeaveRequest(expenseClaim));
+		await dispatch(payExpenseClaim(expenseClaim));
 		setShowApproveDialog(false);
 		setLoading(false);
 	};
@@ -78,8 +79,8 @@ const ActionButtons = withTheme((props) => {
 				loading={loading}
 			/>
 			<ConfirmDialog
-				open={showPaidDialog}
-				cancel={() => setShowPaidDialog(false)}
+				open={showPayDialog}
+				cancel={() => setShowPayDialog(false)}
 				title='Confirm Approval'
 				message={`Confirm ${user.firstName}'s Expense Claim has been Paid?`}
 				confirm={payConfirmHandler}
@@ -122,7 +123,7 @@ const ActionButtons = withTheme((props) => {
 								variant='contained'
 								color='secondary'
 								startIcon={<AttachMoneyIcon />}
-								onClick={approveClickHandler}
+								onClick={payClickHandler}
 							>
 								Mark as Paid
 							</Button>
