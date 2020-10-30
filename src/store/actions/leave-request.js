@@ -1,5 +1,3 @@
-import AuthUser from '../../models/auth-user';
-import CollectionData from '../../models/collection-data';
 import LeaveRequest from '../../models/leave-request';
 import Message from '../../models/message';
 import { SET_MESSAGE } from '../../utils/actions';
@@ -12,23 +10,6 @@ import {
 import { transformDate } from '../../utils/date';
 import { upload } from '../../utils/file-utils';
 import { getServerTimeInMilliseconds } from '../../utils/firebase';
-
-export const getCollectionDataListener = async () => {
-	const isAdmin = await LeaveRequest.isAdmin();
-	if (isAdmin) {
-		return CollectionData.getListener('leave-requests');
-	} else {
-		return CollectionData.getNestedListener({
-			document: 'leave-requests',
-			subCollection: 'users',
-			subCollectionDoc: AuthUser.userId
-		});
-	}
-};
-
-export const getListener = (leaveRequestId) => {
-	return LeaveRequest.getListener(leaveRequestId);
-};
 
 export const addLeaveRequest = (values) => {
 	return async (dispatch, getState) => {
@@ -86,7 +67,7 @@ export const addLeaveRequest = (values) => {
 };
 
 export const addComment = (leaveRequest, body, attachments) => {
-	return async (dispatch, getState) => {
+	return async (dispatch, _getState) => {
 		let uploadedAttachments;
 		try {
 			const serverTime = await getServerTimeInMilliseconds();

@@ -130,11 +130,11 @@ const PostCard = withTheme((props) => {
 			<Card elevation={2}>
 				<CardHeader
 					avatar={<Avatar user={user} clickable={true} contactCard={true} />}
-					title={post.title}
+					title={user.getFullName()}
 					titleTypographyProps={{
 						variant: 'body1'
 					}}
-					subheader={`${user.firstName} ${user.lastName}`}
+					subheader={post.title}
 					action={<PostCardMenu post={post} />}
 				/>
 				<CardContent>

@@ -5,7 +5,7 @@ import * as yup from 'yup';
 const columnSchema = [
 	{
 		field: 'date',
-		title: 'Date Purchased',
+		title: 'Date',
 		type: 'date',
 		render: (rowData) => format(rowData.date, SHORT_DATE),
 		validate: (rowData) => {

@@ -1,17 +1,11 @@
 import {
-	Card,
 	Container,
 	Grid,
 	Paper,
 	TableCell,
-	TableRow,
-	TextField,
-	Typography,
 	withTheme
 } from '@material-ui/core';
 import React from 'react';
-import { format } from 'date-fns';
-import { LONG_DATE } from '../../../../utils/date';
 import MaterialTable from 'material-table';
 import tableIcons from '../../../../utils/table-icons';
 import columnSchema from './column-schema';

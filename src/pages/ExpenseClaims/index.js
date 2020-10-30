@@ -57,7 +57,7 @@ const ExpenseClaims = (props) => {
 				listenerRef = CollectionData.getNestedListener({
 					document: 'expense-claims',
 					subCollection: 'users',
-					subCollectionDoc: 'GQOQYkuXGOewtkBOXjguSn85ZgJ2'
+					subCollectionDoc: userId
 				});
 			}
 			collectionDataListener = listenerRef.onSnapshot((snapshot) => {

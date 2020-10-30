@@ -4,7 +4,10 @@ import {
 	TextField,
 	Button,
 	DialogContent,
-	Dialog
+	Dialog,
+	Grid,
+	ListItemAvatar,
+	ListItemText
 } from '@material-ui/core';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -12,6 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Autocomplete } from '@material-ui/lab';
 import { useHistory } from 'react-router-dom';
 import { searchPosts } from '../../../../store/actions/post';
+import Avatar from '../../../../components/Avatar';
 
 const SearchPostDialog = (props) => {
 	const history = useHistory();
@@ -80,7 +84,7 @@ const SearchPostDialog = (props) => {
 				/>
 				<Autocomplete
 					options={users}
-					getOptionLabel={(user) => `${user.firstName} ${user.lastName}`}
+					getOptionLabel={(user) => user.getFullName()}
 					value={formik.values.user}
 					onChange={(event, newInputValue) =>
 						formik.setFieldValue('user', newInputValue, true)
@@ -93,6 +97,18 @@ const SearchPostDialog = (props) => {
 							label='Posted by'
 							variant='standard'
 						/>
+					)}
+					renderOption={(option, _state) => (
+						<Grid container direction='row' spacing={2}>
+							<Grid item>
+								<ListItemAvatar>
+									<Avatar user={option} />
+								</ListItemAvatar>
+							</Grid>
+							<Grid item>
+								<ListItemText primary={option.getFullName()} />
+							</Grid>
+						</Grid>
 					)}
 				/>
 			</DialogContent>

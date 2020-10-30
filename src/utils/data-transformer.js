@@ -1,7 +1,7 @@
 export const toCurrency = (value, fractionDigits) => {
-	return value.toLocaleString('en-AU', {
+	return value.toLocaleString('en-US', {
 		style: 'currency',
-		currency: 'AUD',
+		currency: 'USD',
 		minimumFractionDigits: fractionDigits || 0,
 		maximumFractionDigits: fractionDigits || 0
 	});

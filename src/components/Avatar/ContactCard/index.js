@@ -9,7 +9,6 @@ import Avatar from '..';
 
 const ContactCard = (props) => {
 	const { user } = props;
-	const fullName = `${user.firstName} ${user.lastName}`;
 	return (
 		<StyledCard>
 			<StyledInnerContainer>
@@ -20,7 +19,7 @@ const ContactCard = (props) => {
 			<StyledInnerContainer>
 				<CardContent>
 					<Typography component='h5' variant='h5'>
-						{fullName}
+						{user.getFullName()}
 					</Typography>
 					<Typography variant='subtitle1' color='textSecondary'>
 						{user.title}

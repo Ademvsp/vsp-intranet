@@ -4,24 +4,20 @@ import {
 	DialogContent,
 	DialogTitle,
 	Grid,
-	MenuItem,
-	TextField,
+	Paper,
+	TableCell,
 	withTheme
 } from '@material-ui/core';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import leaveTypes from '../../../data/leave-types';
 import ActionsBar from '../../../components/ActionsBar';
-import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
-import DateFnsUtils from '@date-io/date-fns';
-import { LONG_DATE } from '../../../utils/date';
-import { isAfter } from 'date-fns';
-import { addLeaveRequest } from '../../../store/actions/leave-request';
 import columnSchema from './column-schema';
 import MaterialTable from 'material-table';
 import tableIcons from '../../../utils/table-icons';
+import { toCurrency } from '../../../utils/data-transformer';
+import { addExpense } from '../../../store/actions/expense-claim';
 
 const NewExpenseClaimDialog = withTheme((props) => {
 	const dispatch = useDispatch();
@@ -47,8 +43,10 @@ const NewExpenseClaimDialog = withTheme((props) => {
 	};
 
 	const submitHandler = async (values) => {
+		const newValues = { ...values };
+		delete newValues.tableData;
 		setLoading(true);
-		const result = await dispatch(addLeaveRequest(values));
+		const result = await dispatch(addExpense(newValues));
 		setLoading(false);
 		if (result) {
 			formik.setValues(initialValues);
@@ -62,19 +60,40 @@ const NewExpenseClaimDialog = withTheme((props) => {
 		validationSchema: validationSchema
 	});
 
-	const { validateForm, setFieldValue, values } = formik;
-	const { start, end } = values;
-	//Add 1 hour if end date is set to less than start date
-	useEffect(() => {
-		if (isAfter(start, end)) {
-			setFieldValue('end', start);
-		}
-	}, [start, end, setFieldValue]);
+	const { validateForm } = formik;
 
 	useEffect(() => {
 		validateForm();
 		setValidatedOnMount(true);
 	}, [validateForm]);
+
+	const summaryBackgroundColor = props.theme.palette.background.default;
+	const borderRadius = props.theme.spacing(1);
+
+	const totalValue = formik.values.expenses.reduce(
+		(previousValue, currentValue) => previousValue + currentValue.value,
+		0
+	);
+
+	const FlatContainer = (props) => <Paper variant='outlined' {...props} />;
+	const SummaryRow = (props) => (
+		<Grid
+			container
+			justify='flex-end'
+			style={{
+				backgroundColor: summaryBackgroundColor,
+				borderBottomRightRadius: borderRadius,
+				borderBottomLeftRadius: borderRadius
+			}}
+		>
+			<TableCell variant='body' style={{ borderBottom: 0 }}>
+				Total Value:
+			</TableCell>
+			<TableCell variant='body' style={{ borderBottom: 0 }} align='right'>
+				{toCurrency(totalValue, 2)}
+			</TableCell>
+		</Grid>
+	);
 
 	return (
 		<Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
@@ -86,9 +105,11 @@ const NewExpenseClaimDialog = withTheme((props) => {
 					icons={tableIcons}
 					options={{
 						search: false,
-						showTitle: false,
-						paging: false,
-						pageSize: formik.values.expenses.length
+						showTitle: false
+					}}
+					components={{
+						Container: FlatContainer,
+						Pagination: SummaryRow
 					}}
 					editable={{
 						onRowAdd: (newData) =>

@@ -26,6 +26,7 @@ import ExpenseClaimTable from './ExpenseClaimTable';
 import ActionButtons from './ActionButtons';
 // import { addComment } from '../../../store/actions/leave-request';
 import ExpenseClaim from '../../../models/expense-claim';
+import { toCurrency } from '../../../utils/data-transformer';
 
 const ExpenseClaimCard = withTheme((props) => {
 	const dispatch = useDispatch();
@@ -130,17 +131,21 @@ const ExpenseClaimCard = withTheme((props) => {
 
 	const user = users.find((user) => user.userId === expenseClaim.user);
 	const postDate = expenseClaim.metadata.createdAt;
+	const totalValue = expenseClaim.expenses.reduce(
+		(previousValue, currentValue) => previousValue + currentValue.value,
+		0
+	);
 
 	return (
 		<div ref={scrollRef}>
 			<Card elevation={2}>
 				<CardHeader
 					avatar={<Avatar user={user} clickable={true} contactCard={true} />}
-					title={format(postDate, LONG_DATE_TIME)}
+					title={user.getFullName()}
 					titleTypographyProps={{
 						variant: 'body1'
 					}}
-					subheader={`${user.firstName} ${user.lastName}`}
+					subheader={toCurrency(totalValue, 2)}
 				/>
 				<CardContent>
 					<ExpenseClaimTable expenseClaim={expenseClaim} />

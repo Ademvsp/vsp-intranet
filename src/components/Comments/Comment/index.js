@@ -22,7 +22,7 @@ const Comment = (props) => {
 					<Avatar user={user} clickable={true} contactCard={true} />
 				</ListItemAvatar>
 				<ListItemText
-					primary={`${user.firstName} ${user.lastName}`}
+					primary={user.getFullName()}
 					secondary={format(commentDate, LONG_DATE_TIME)}
 				/>
 			</StyledListHeader>

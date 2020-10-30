@@ -141,11 +141,11 @@ const ProductRequestCard = withTheme((props) => {
 			<Card elevation={2}>
 				<CardHeader
 					avatar={<Avatar user={user} clickable={true} contactCard={true} />}
-					title={productRequest.finalSku || productRequest.vendorSku}
+					title={user.getFullName()}
 					titleTypographyProps={{
 						variant: 'body1'
 					}}
-					subheader={`${user.firstName} ${user.lastName}`}
+					subheader={productRequest.finalSku || productRequest.vendorSku}
 				/>
 				<CardContent>
 					<Grid container direction='column' spacing={2}>

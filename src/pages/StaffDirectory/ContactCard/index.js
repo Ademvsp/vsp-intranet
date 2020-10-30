@@ -5,7 +5,6 @@ import Avatar from '../../../components/Avatar';
 
 const ContactCard = (props) => {
 	const { user } = props;
-	const fullName = `${user.firstName} ${user.lastName}`;
 	return (
 		<Paper variant='outlined'>
 			<CardContent>
@@ -21,7 +20,7 @@ const ContactCard = (props) => {
 					<Grid item container direction='column'>
 						<Grid item>
 							<Typography component='h5' variant='h5'>
-								{fullName}
+								{user.getFullName()}
 							</Typography>
 						</Grid>
 						<Grid item>

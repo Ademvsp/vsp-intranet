@@ -1,5 +1,4 @@
 import {
-	Avatar,
 	CircularProgress,
 	Dialog,
 	DialogActions,
@@ -32,6 +31,7 @@ import ActionsBar from '../../../components/ActionsBar';
 import { subscribeCustomerListener } from '../../../store/actions/customer';
 import { subscribeVendorListener } from '../../../store/actions/vendor';
 import { addProject } from '../../../store/actions/project';
+import Avatar from '../../../components/Avatar';
 const filter = createFilterOptions();
 
 const NewProjectDialog = withTheme((props) => {
@@ -318,23 +318,18 @@ const NewProjectDialog = withTheme((props) => {
 		/>
 	);
 
-	const ownersRenderOption = (option, _state) => {
-		const firstNameInitial = option.firstName.substring(0, 1);
-		const lastNameInitial = option.lastName.substring(0, 1);
-		let fallback = `${firstNameInitial}${lastNameInitial}`;
-		return (
-			<Grid container direction='row' spacing={2}>
-				<Grid item>
-					<ListItemAvatar>
-						<Avatar src={option.profilePicture}>{fallback}</Avatar>
-					</ListItemAvatar>
-				</Grid>
-				<Grid item>
-					<ListItemText primary={`${option.firstName} ${option.lastName}`} />
-				</Grid>
+	const ownersRenderOption = (option, _state) => (
+		<Grid container direction='row' spacing={2}>
+			<Grid item>
+				<ListItemAvatar>
+					<Avatar user={option} />
+				</ListItemAvatar>
 			</Grid>
-		);
-	};
+			<Grid item>
+				<ListItemText primary={option.getFullName()} />
+			</Grid>
+		</Grid>
+	);
 
 	return (
 		<Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
@@ -433,9 +428,7 @@ const NewProjectDialog = withTheme((props) => {
 								disableCloseOnSelect
 								openOnFocus
 								options={users}
-								getOptionLabel={(option) =>
-									`${option.firstName} ${option.lastName}`
-								}
+								getOptionLabel={(option) => option.getFullName()}
 								getOptionSelected={(option, value) =>
 									option.userId === value.userId
 								}
