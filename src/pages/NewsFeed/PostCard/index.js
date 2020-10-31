@@ -9,7 +9,8 @@ import {
 	CardActions,
 	withTheme,
 	Grid,
-	Badge
+	Badge,
+	Tooltip
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
@@ -128,6 +129,59 @@ const PostCard = withTheme((props) => {
 		likeIcon = <ThumbUpRoundedIcon />;
 	}
 
+	const commentToolip = () => {
+		const commentUsers = users.filter((user) => {
+			const commentUserIds = post.comments.map((comment) => comment.user);
+			return commentUserIds.includes(user.userId);
+		});
+		const tooltip = commentUsers.map((commentUser) => (
+			<div key={commentUser.userId}>{commentUser.getFullName()}</div>
+		));
+		return tooltip;
+	};
+
+	const commentButton = (
+		<Button
+			style={{ textTransform: 'unset' }}
+			size='small'
+			color='secondary'
+			onClick={commentsClickHandler}
+			startIcon={
+				<Badge color='primary' badgeContent={post.comments.length}>
+					{commentIcon}
+				</Badge>
+			}
+		>
+			Comment
+		</Button>
+	);
+
+	const likeTooltip = () => {
+		const likeUsers = users.filter((user) => {
+			return post.likes.includes(user.userId);
+		});
+		const tooltip = likeUsers.map((likeUser) => (
+			<div key={likeUser.userId}>{likeUser.getFullName()}</div>
+		));
+		return tooltip;
+	};
+
+	const likeButton = (
+		<Button
+			style={{ textTransform: 'unset' }}
+			size='small'
+			color='secondary'
+			onClick={likeClickHandler}
+			startIcon={
+				<Badge color='primary' badgeContent={post.likes.length}>
+					{likeIcon}
+				</Badge>
+			}
+		>
+			Like
+		</Button>
+	);
+
 	const user = users.find((user) => user.userId === post.user);
 	const postDate = post.metadata.createdAt;
 
@@ -164,34 +218,18 @@ const PostCard = withTheme((props) => {
 							alignItems='center'
 						>
 							<Grid item>
-								<Button
-									style={{ textTransform: 'unset' }}
-									size='small'
-									color='secondary'
-									onClick={commentsClickHandler}
-									startIcon={
-										<Badge color='primary' badgeContent={post.comments.length}>
-											{commentIcon}
-										</Badge>
-									}
-								>
-									Comment
-								</Button>
+								{post.comments.length > 0 ? (
+									<Tooltip title={commentToolip()}>{commentButton}</Tooltip>
+								) : (
+									commentButton
+								)}
 							</Grid>
 							<Grid item>
-								<Button
-									style={{ textTransform: 'unset' }}
-									size='small'
-									color='secondary'
-									onClick={likeClickHandler}
-									startIcon={
-										<Badge color='primary' badgeContent={post.likes.length}>
-											{likeIcon}
-										</Badge>
-									}
-								>
-									Like
-								</Button>
+								{post.likes.length > 0 ? (
+									<Tooltip title={likeTooltip()}>{likeButton}</Tooltip>
+								) : (
+									likeButton
+								)}
 							</Grid>
 						</Grid>
 					</Grid>

@@ -46,8 +46,6 @@ const NewComment = (props) => {
 		setValidatedOnMount(true);
 	}, [validateForm]);
 
-	console.log(formik.errors);
-
 	return (
 		<StyledContainer>
 			<ListItemAvatar>
