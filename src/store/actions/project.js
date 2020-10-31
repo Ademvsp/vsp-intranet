@@ -10,9 +10,10 @@ import {
 import * as fileUtils from '../../utils/file-utils';
 import { getServerTimeInMilliseconds } from '../../utils/firebase';
 
-export const addProject = (values, attachments) => {
+export const addProject = (values) => {
 	return async (dispatch, getState) => {
 		const {
+			attachments,
 			name,
 			description,
 			customer,
@@ -68,6 +69,7 @@ export const addProject = (values, attachments) => {
 			});
 			return true;
 		} catch (error) {
+			console.log(error);
 			const message = new Message({
 				title: 'Pojects',
 				body: 'Failed to add Project',
@@ -82,9 +84,10 @@ export const addProject = (values, attachments) => {
 	};
 };
 
-export const editProject = (project, values, attachments) => {
+export const editProject = (project, values) => {
 	return async (dispatch, getState) => {
 		const {
+			attachments,
 			name,
 			description,
 			customer,

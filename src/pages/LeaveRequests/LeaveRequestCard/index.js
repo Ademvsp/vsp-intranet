@@ -110,8 +110,8 @@ const LeaveRequestCard = withTheme((props) => {
 		);
 	}
 
-	const newCommentHandler = async (body, attachments) => {
-		const result = await dispatch(addComment(leaveRequest, body, attachments));
+	const newCommentHandler = async (values) => {
+		const result = await dispatch(addComment(leaveRequest, values));
 		return result;
 	};
 

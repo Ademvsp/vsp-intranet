@@ -19,7 +19,7 @@ export const StyledCkEditorContainer = withTheme(styled(
 		let border = '1px solid rgba(0, 0, 0, 0.2)';
 		if (props.borderChange) {
 			if (props.hover && !props.loading) {
-				border = '2px solid rgba(0, 0, 0, 0.87)';
+				border = `2px solid ${props.theme.palette.text.primary}`;
 			}
 			if (props.focus) {
 				border = `2px solid ${props.theme.palette.primary.main};`;

@@ -27,6 +27,7 @@ import ActionButtons from './ActionButtons';
 import ExpenseClaim from '../../../models/expense-claim';
 import { toCurrency } from '../../../utils/data-transformer';
 import { addComment } from '../../../store/actions/expense-claim';
+import AttachmentsContainer from '../../../components/AttachmentsContainer';
 
 const ExpenseClaimCard = withTheme((props) => {
 	const dispatch = useDispatch();
@@ -112,8 +113,8 @@ const ExpenseClaimCard = withTheme((props) => {
 		);
 	}
 
-	const newCommentHandler = async (body, attachments) => {
-		const result = await dispatch(addComment(expenseClaim, body, attachments));
+	const newCommentHandler = async (values) => {
+		const result = await dispatch(addComment(expenseClaim, values));
 		return result;
 	};
 
@@ -148,7 +149,14 @@ const ExpenseClaimCard = withTheme((props) => {
 					subheader={toCurrency(totalValue, 2)}
 				/>
 				<CardContent>
-					<ExpenseClaimTable expenseClaim={expenseClaim} />
+					<Grid container direction='column' spacing={2}>
+						<Grid item>
+							<ExpenseClaimTable expenseClaim={expenseClaim} />
+						</Grid>
+						<Grid item>
+							<AttachmentsContainer attachments={expenseClaim.attachments} />
+						</Grid>
+					</Grid>
 				</CardContent>
 				<CardActions style={{ padding: `${props.theme.spacing(2)}px` }}>
 					<Grid container direction='column' spacing={1}>

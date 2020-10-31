@@ -12,7 +12,9 @@ const BalloonEditorWrapper = (props) => {
 		loading,
 		minHeight,
 		maxHeight,
-		borderChange
+		borderChange,
+		setTouched,
+		placeholder
 	} = props;
 	const [focus, setFocus] = useState(false);
 	const [hover, setHover] = useState(false);
@@ -20,7 +22,10 @@ const BalloonEditorWrapper = (props) => {
 	return (
 		<StyledCkEditorContainer
 			onFocus={() => setFocus(true)}
-			onBlur={() => setFocus(false)}
+			onBlur={() => {
+				setTouched();
+				setFocus(false);
+			}}
 			onMouseEnter={() => setHover(true)}
 			onMouseLeave={() => setHover(false)}
 			onClick={() => editorRef.current.editor.editing.view.focus()}
@@ -44,7 +49,7 @@ const BalloonEditorWrapper = (props) => {
 				}}
 				disabled={loading}
 				config={{
-					placeholder: 'Write a comment...',
+					placeholder: placeholder,
 					toolbar: {
 						items: [
 							'heading',

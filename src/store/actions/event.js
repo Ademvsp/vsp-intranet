@@ -9,9 +9,17 @@ import Message from '../../models/message';
 import Event from '../../models/event';
 import { transformDate } from '../../utils/date';
 
-export const addEvent = (values, notifyUsers) => {
+export const addEvent = (values) => {
 	return async (dispatch, getState) => {
-		const { allDay, details, end, start, type, allCalendars } = values;
+		const {
+			notifyUsers,
+			allDay,
+			details,
+			end,
+			start,
+			type,
+			allCalendars
+		} = values;
 		const { authUser } = getState().authState;
 		const { locations: dataStateLocations } = getState().dataState;
 		let newEvent;
@@ -72,9 +80,17 @@ export const addEvent = (values, notifyUsers) => {
 	};
 };
 
-export const editEvent = (event, values, notifyUsers) => {
+export const editEvent = (event, values) => {
 	return async (dispatch, getState) => {
-		const { allDay, details, end, start, type, allCalendars } = values;
+		const {
+			notifyUsers,
+			allDay,
+			details,
+			end,
+			start,
+			type,
+			allCalendars
+		} = values;
 		const { authUser } = getState().authState;
 		const { locations: dataStateLocations } = getState().dataState;
 		let newEvent;

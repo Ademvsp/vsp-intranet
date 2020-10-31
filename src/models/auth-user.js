@@ -24,6 +24,10 @@ export default class AuthUser {
 		this.settings = settings;
 	}
 
+	getFullName() {
+		return `${this.firstName} ${this.lastName}`;
+	}
+
 	async save() {
 		const metadata = {
 			...this.metadata,

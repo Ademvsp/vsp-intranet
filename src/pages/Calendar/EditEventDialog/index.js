@@ -10,7 +10,8 @@ import {
 	FormControlLabel,
 	Checkbox,
 	Tooltip,
-	Dialog
+	Dialog,
+	withTheme
 } from '@material-ui/core';
 import ActionsBar from '../../../components/ActionsBar';
 import { useFormik } from 'formik';
@@ -30,12 +31,11 @@ import { LONG_DATE, LONG_DATE_TIME } from '../../../utils/date';
 import Event from '../../../models/event';
 import { deleteEvent, editEvent } from '../../../store/actions/event';
 
-const EditEventDialog = (props) => {
+const EditEventDialog = withTheme((props) => {
 	const dispatch = useDispatch();
 	const detailsFieldRef = useRef();
 	const { authUser } = useSelector((state) => state.authState);
 	const { users, locations } = useSelector((state) => state.dataState);
-	const [notifyUsers, setNotifyUsers] = useState([]);
 	const [editLoading, setEditLoading] = useState(false);
 	const [deleteLoading, setDeleteLoading] = useState(false);
 	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -44,6 +44,7 @@ const EditEventDialog = (props) => {
 	const { open, close, event } = props;
 
 	const initialValues = {
+		notifyUsers: [],
 		type: eventTypes.find((eventType) => eventType.name === event.type),
 		details: event.details,
 		start: event.start,
@@ -55,6 +56,7 @@ const EditEventDialog = (props) => {
 	};
 
 	const validationSchema = yup.object().shape({
+		notifyUsers: yup.array().notRequired(),
 		type: yup
 			.object()
 			.label('Event type')
@@ -78,7 +80,7 @@ const EditEventDialog = (props) => {
 
 	const submitHandler = async (values) => {
 		setEditLoading(true);
-		const result = await dispatch(editEvent(event, values, notifyUsers));
+		const result = await dispatch(editEvent(event, values));
 		setEditLoading(false);
 		if (result) {
 			close();
@@ -87,7 +89,7 @@ const EditEventDialog = (props) => {
 
 	const deleteHandler = async () => {
 		setDeleteLoading(true);
-		await dispatch(deleteEvent(event, notifyUsers));
+		await dispatch(deleteEvent(event, formik.values.notifyUsers));
 		setDeleteLoading(false);
 		close();
 	};
@@ -174,6 +176,16 @@ const EditEventDialog = (props) => {
 								value={formik.values.type}
 								onBlur={formik.handleBlur('type')}
 								onChange={formik.handleChange('type')}
+								helperText={
+									formik.errors.type && formik.touched.type
+										? formik.errors.type
+										: null
+								}
+								FormHelperTextProps={{
+									style: {
+										color: props.theme.palette.error.main
+									}
+								}}
 							>
 								{eventTypes.map((eventType) => (
 									<MenuItem key={eventType.name} value={eventType}>
@@ -192,6 +204,16 @@ const EditEventDialog = (props) => {
 									onBlur={formik.handleBlur('details')}
 									onChange={formik.handleChange('details')}
 									autoFocus={true}
+									helperText={
+										formik.errors.details && formik.touched.details
+											? formik.errors.details
+											: null
+									}
+									FormHelperTextProps={{
+										style: {
+											color: props.theme.palette.error.main
+										}
+									}}
 								/>
 							</Grid>
 						) : null}
@@ -211,6 +233,16 @@ const EditEventDialog = (props) => {
 										onBlur={formik.handleBlur('start')}
 										format={dateFormat}
 										fullWidth={true}
+										helperText={
+											formik.errors.start && formik.touched.start
+												? formik.errors.start
+												: null
+										}
+										FormHelperTextProps={{
+											style: {
+												color: props.theme.palette.error.main
+											}
+										}}
 									/>
 								</MuiPickersUtilsProvider>
 							</Grid>
@@ -224,6 +256,16 @@ const EditEventDialog = (props) => {
 										format={dateFormat}
 										fullWidth={true}
 										minDate={formik.values.start}
+										helperText={
+											formik.errors.end && formik.touched.end
+												? formik.errors.end
+												: null
+										}
+										FormHelperTextProps={{
+											style: {
+												color: props.theme.palette.error.main
+											}
+										}}
 									/>
 								</MuiPickersUtilsProvider>
 							</Grid>
@@ -268,8 +310,9 @@ const EditEventDialog = (props) => {
 					<ActionsBar
 						notifications={{
 							enabled: true,
-							notifyUsers: notifyUsers,
-							setNotifyUsers: setNotifyUsers
+							notifyUsers: formik.values.notifyUsers,
+							setNotifyUsers: (notifyUsers) =>
+								formik.setFieldValue('notifyUsers', notifyUsers)
 						}}
 						buttonLoading={editLoading}
 						loading={loading || !validatedOnMount}
@@ -289,6 +332,6 @@ const EditEventDialog = (props) => {
 			</Dialog>
 		</Fragment>
 	);
-};
+});
 
 export default EditEventDialog;

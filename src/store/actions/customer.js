@@ -11,7 +11,12 @@ export const subscribeCustomerListener = () => {
 			unsubscribeCustomerListener();
 			customersListener = Customer.getListener().onSnapshot((snapshot) => {
 				const customers = snapshot.docs.map(
-					(doc) => new Customer({ customerId: doc.id, name: doc.data().name })
+					(doc) =>
+						new Customer({
+							customerId: doc.id,
+							metadata: doc.data().metadata,
+							name: doc.data().name
+						})
 				);
 				dispatch({
 					type: SET_CUSTOMERS,

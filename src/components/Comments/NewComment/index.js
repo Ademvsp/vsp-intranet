@@ -11,27 +11,25 @@ const NewComment = (props) => {
 	const [uploading, setUploading] = useState();
 	const [loading, setLoading] = useState(false);
 	const [validatedOnMount, setValidatedOnMount] = useState(false);
-	const [attachments, setAttachments] = useState([]);
-	const [notifyUsers, setNotifyUsers] = useState([]);
 
-	const initialValues = { body: '' };
+	const initialValues = {
+		attachments: [],
+		notifyUsers: [],
+		body: ''
+	};
 
 	const validationSchema = yup.object().shape({
+		attachments: yup.array().notRequired(),
+		notifyUsers: yup.array().notRequired(),
 		body: yup.string().label('Comment').required()
 	});
 
 	const submitHandler = async (values) => {
 		setLoading(true);
-		const result = await props.submitHandler(
-			values.body,
-			attachments,
-			notifyUsers
-		);
+		const result = await props.submitHandler(values);
 		setLoading(false);
 		if (result) {
 			formik.setValues(initialValues, true);
-			setAttachments([]);
-			setNotifyUsers([]);
 		}
 	};
 
@@ -61,6 +59,7 @@ const NewComment = (props) => {
 						setUploading={setUploading}
 						loading={loading}
 						borderChange={false}
+						placeholder='Write a comment...'
 					/>
 				</Grid>
 				<Grid item>
@@ -69,13 +68,15 @@ const NewComment = (props) => {
 							enabled: props.actionBarNotificationProps.enabled,
 							tooltip: props.actionBarNotificationProps.tooltip,
 							readOnly: props.actionBarNotificationProps.readOnly,
-							notifyUsers: notifyUsers,
-							setNotifyUsers: setNotifyUsers
+							notifyUsers: formik.values.notifyUsers,
+							setNotifyUsers: (notifyUsers) =>
+								formik.setFieldValue('notifyUsers', notifyUsers)
 						}}
 						attachments={{
 							enabled: true,
-							attachments: attachments,
-							setAttachments: setAttachments
+							attachments: formik.values.attachments,
+							setAttachments: (attachments) =>
+								formik.setFieldValue('attachments', attachments)
 						}}
 						buttonLoading={loading}
 						loading={loading || uploading || !validatedOnMount}

@@ -10,7 +10,8 @@ import {
 	FormControlLabel,
 	Checkbox,
 	Tooltip,
-	Dialog
+	Dialog,
+	withTheme
 } from '@material-ui/core';
 import ActionsBar from '../../../components/ActionsBar';
 import { useFormik } from 'formik';
@@ -29,17 +30,17 @@ import { LONG_DATE, LONG_DATE_TIME } from '../../../utils/date';
 import Event from '../../../models/event';
 import { addEvent } from '../../../store/actions/event';
 
-const NewEventDialog = (props) => {
+const NewEventDialog = withTheme((props) => {
 	const dispatch = useDispatch();
 	const detailsFieldRef = useRef();
 	const { authUser } = useSelector((state) => state.authState);
 	const { users } = useSelector((state) => state.dataState);
-	const [notifyUsers, setNotifyUsers] = useState([]);
 	const [loading, setLoading] = useState();
 	const [validatedOnMount, setValidatedOnMount] = useState(false);
 	const { open, close, newEventPrefillData } = props;
 
 	const initialValues = {
+		notifyUsers: [],
 		type: eventTypes[0],
 		details: '',
 		start: newEventPrefillData
@@ -53,6 +54,7 @@ const NewEventDialog = (props) => {
 	};
 
 	const validationSchema = yup.object().shape({
+		notifyUsers: yup.array().notRequired(),
 		type: yup
 			.object()
 			.label('Event type')
@@ -76,7 +78,7 @@ const NewEventDialog = (props) => {
 
 	const submitHandler = async (values) => {
 		setLoading(true);
-		const result = await dispatch(addEvent(values, notifyUsers));
+		const result = await dispatch(addEvent(values));
 		setLoading(false);
 		if (result) {
 			formik.setValues(initialValues);
@@ -155,6 +157,16 @@ const NewEventDialog = (props) => {
 							value={formik.values.type}
 							onBlur={formik.handleBlur('type')}
 							onChange={formik.handleChange('type')}
+							helperText={
+								formik.errors.type && formik.touched.type
+									? formik.errors.type
+									: null
+							}
+							FormHelperTextProps={{
+								style: {
+									color: props.theme.palette.error.main
+								}
+							}}
 						>
 							{eventTypes.map((eventType) => (
 								<MenuItem key={eventType.name} value={eventType}>
@@ -173,6 +185,16 @@ const NewEventDialog = (props) => {
 								onBlur={formik.handleBlur('details')}
 								onChange={formik.handleChange('details')}
 								autoFocus={true}
+								helperText={
+									formik.errors.details && formik.touched.details
+										? formik.errors.details
+										: null
+								}
+								FormHelperTextProps={{
+									style: {
+										color: props.theme.palette.error.main
+									}
+								}}
 							/>
 						</Grid>
 					) : null}
@@ -192,6 +214,16 @@ const NewEventDialog = (props) => {
 									onBlur={formik.handleBlur('start')}
 									format={dateFormat}
 									fullWidth={true}
+									helperText={
+										formik.errors.start && formik.touched.start
+											? formik.errors.start
+											: null
+									}
+									FormHelperTextProps={{
+										style: {
+											color: props.theme.palette.error.main
+										}
+									}}
 								/>
 							</MuiPickersUtilsProvider>
 						</Grid>
@@ -205,6 +237,16 @@ const NewEventDialog = (props) => {
 									format={dateFormat}
 									fullWidth={true}
 									minDate={formik.values.start}
+									helperText={
+										formik.errors.end && formik.touched.end
+											? formik.errors.end
+											: null
+									}
+									FormHelperTextProps={{
+										style: {
+											color: props.theme.palette.error.main
+										}
+									}}
 								/>
 							</MuiPickersUtilsProvider>
 						</Grid>
@@ -249,8 +291,9 @@ const NewEventDialog = (props) => {
 				<ActionsBar
 					notifications={{
 						enabled: true,
-						notifyUsers: notifyUsers,
-						setNotifyUsers: setNotifyUsers
+						notifyUsers: formik.values.notifyUsers,
+						setNotifyUsers: (notifyUsers) =>
+							formik.setFieldValue('notifyUsers', notifyUsers)
 					}}
 					buttonLoading={loading}
 					loading={loading || !validatedOnMount}
@@ -262,6 +305,6 @@ const NewEventDialog = (props) => {
 			</DialogActions>
 		</Dialog>
 	);
-};
+});
 
 export default NewEventDialog;

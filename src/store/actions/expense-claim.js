@@ -72,8 +72,9 @@ export const addExpense = (values) => {
 	};
 };
 
-export const addComment = (expenseClaim, body, attachments) => {
+export const addComment = (expenseClaim, values) => {
 	return async (dispatch, _getState) => {
+		const { body, attachments } = values;
 		let uploadedAttachments;
 		try {
 			const serverTime = await getServerTimeInMilliseconds();

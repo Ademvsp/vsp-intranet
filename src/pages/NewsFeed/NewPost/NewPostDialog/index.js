@@ -6,7 +6,8 @@ import {
 	Typography,
 	TextField,
 	DialogContent,
-	Dialog
+	Dialog,
+	withTheme
 } from '@material-ui/core';
 import Avatar from '../../../../components/Avatar';
 import ActionsBar from '../../../../components/ActionsBar';
@@ -15,16 +16,20 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 import { addPost } from '../../../../store/actions/post';
-const NewPostDialog = (props) => {
+
+const NewPostDialog = withTheme((props) => {
 	const dispatch = useDispatch();
 	const { authUser, open, close, clearSearchResults } = props;
 	const history = useHistory();
 	const [loading, setLoading] = useState(false);
-	const [notifyUsers, setNotifyUsers] = useState([]);
-	const [attachments, setAttachments] = useState([]);
 	const [uploading, setUploading] = useState(false);
 	const [validatedOnMount, setValidatedOnMount] = useState(false);
-	const initialValues = { title: '', body: '' };
+	const initialValues = {
+		attachments: [],
+		notifyUsers: [],
+		title: '',
+		body: ''
+	};
 
 	const dialogCloseHandler = () => {
 		if (!loading) {
@@ -34,24 +39,21 @@ const NewPostDialog = (props) => {
 
 	const submitHandler = async (values) => {
 		setLoading(true);
-		const result = await dispatch(addPost(values, attachments, notifyUsers));
+		const result = await dispatch(addPost(values));
 		setLoading(false);
 		if (result) {
 			formik.setValues(initialValues, true);
-			setAttachments([]);
-			setNotifyUsers([]);
 			clearSearchResults();
 			close();
 			history.push('/newsfeed/page/1');
 		}
 	};
 	const validationSchema = yup.object().shape({
-		title: yup.string().label('title').required(),
-		body: yup.string().label('body').required()
+		attachments: yup.array().notRequired(),
+		notifyUsers: yup.array().notRequired(),
+		title: yup.string().label('Title').required(),
+		body: yup.string().label('Body').required()
 	});
-
-	const { firstName, lastName } = authUser;
-	const fullName = `${firstName} ${lastName}`;
 
 	const formik = useFormik({
 		initialValues: initialValues,
@@ -60,6 +62,8 @@ const NewPostDialog = (props) => {
 	});
 
 	const { validateForm } = formik;
+
+	console.log(formik);
 
 	useEffect(() => {
 		validateForm();
@@ -80,7 +84,7 @@ const NewPostDialog = (props) => {
 						<ListItemAvatar>
 							<Avatar user={authUser} />
 						</ListItemAvatar>
-						<Typography>{fullName}</Typography>
+						<Typography>{authUser.getFullName()}</Typography>
 					</Grid>
 					<Grid item>
 						<TextField
@@ -93,30 +97,58 @@ const NewPostDialog = (props) => {
 							onBlur={formik.handleBlur('title')}
 							disabled={loading}
 							autoFocus={true}
+							helperText={
+								formik.errors.title && formik.touched.title
+									? formik.errors.title
+									: null
+							}
+							FormHelperTextProps={{
+								style: {
+									color: props.theme.palette.error.main
+								}
+							}}
 						/>
 					</Grid>
-					<Grid item>
-						<BalloonEditorWrapper
-							value={formik.values.body}
-							setValue={formik.handleChange('body')}
-							setUploading={setUploading}
-							loading={loading}
-							borderChange={true}
-							minHeight={100}
-							maxHeight={300}
-						/>
+					<Grid item container direction='column'>
+						<Grid item>
+							<BalloonEditorWrapper
+								value={formik.values.body}
+								setValue={formik.handleChange('body')}
+								setTouched={() => formik.setFieldTouched('body', true)}
+								setUploading={setUploading}
+								loading={loading}
+								borderChange={true}
+								minHeight={100}
+								maxHeight={300}
+								placeholder='Write a post...'
+							/>
+						</Grid>
+						{formik.errors.body && formik.touched.body ? (
+							<Grid item>
+								<Typography
+									className='MuiFormHelperText-root MuiFormHelperText-marginDense'
+									style={{
+										color: props.theme.palette.error.main
+									}}
+								>
+									{formik.errors.body}
+								</Typography>
+							</Grid>
+						) : null}
 					</Grid>
 					<Grid item>
 						<ActionsBar
 							notifications={{
 								enabled: true,
-								notifyUsers: notifyUsers,
-								setNotifyUsers: setNotifyUsers
+								notifyUsers: formik.values.notifyUsers,
+								setNotifyUsers: (notifyUsers) =>
+									formik.setFieldValue('notifyUsers', notifyUsers)
 							}}
 							attachments={{
 								enabled: true,
-								attachments: attachments,
-								setAttachments: setAttachments
+								attachments: formik.values.attachments,
+								setAttachments: (attachments) =>
+									formik.setFieldValue('attachments', attachments)
 							}}
 							buttonLoading={loading}
 							loading={loading || uploading || !validatedOnMount}
@@ -130,6 +162,6 @@ const NewPostDialog = (props) => {
 			</DialogContent>
 		</Dialog>
 	);
-};
+});
 
 export default NewPostDialog;

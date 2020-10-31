@@ -34,7 +34,6 @@ const NewProductRequestDialog = withTheme((props) => {
 	);
 
 	const { open, close } = props;
-	const [attachments, setAttachments] = useState([]);
 	const [loading, setLoading] = useState();
 	const [validatedOnMount, setValidatedOnMount] = useState(false);
 
@@ -56,6 +55,7 @@ const NewProductRequestDialog = withTheme((props) => {
 	}, [dbVendors]);
 
 	const validationSchema = yup.object().shape({
+		attachments: yup.array().notRequired(),
 		vendor: yup
 			.object()
 			.typeError('Vendor a required field')
@@ -77,6 +77,7 @@ const NewProductRequestDialog = withTheme((props) => {
 	});
 
 	const initialValues = {
+		attachments: [],
 		vendor: null,
 		vendorSku: '',
 		productType: productTypes[0],
@@ -92,7 +93,7 @@ const NewProductRequestDialog = withTheme((props) => {
 
 	const submitHandler = async (values) => {
 		setLoading(true);
-		const result = await dispatch(addProductRequest(values, attachments));
+		const result = await dispatch(addProductRequest(values));
 		setLoading(false);
 		if (result) {
 			formik.setValues(initialValues);
@@ -351,8 +352,9 @@ const NewProductRequestDialog = withTheme((props) => {
 				<ActionsBar
 					attachments={{
 						enabled: true,
-						attachments: attachments,
-						setAttachments: setAttachments
+						attachments: formik.values.attachments,
+						setAttachments: (attachments) =>
+							formik.setFieldValue('attachments', attachments)
 					}}
 					buttonLoading={loading}
 					loading={loading || !validatedOnMount}

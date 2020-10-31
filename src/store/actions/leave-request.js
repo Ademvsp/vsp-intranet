@@ -67,8 +67,9 @@ export const addLeaveRequest = (values) => {
 	};
 };
 
-export const addComment = (leaveRequest, body, attachments) => {
+export const addComment = (leaveRequest, values) => {
 	return async (dispatch, _getState) => {
+		const { body, attachments } = values;
 		let uploadedAttachments;
 		try {
 			const serverTime = await getServerTimeInMilliseconds();

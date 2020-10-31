@@ -11,7 +11,12 @@ export const subscribeVendorListener = () => {
 			unsubscribeVendorListener();
 			vendorsListener = Vendor.getListener().onSnapshot((snapshot) => {
 				const vendors = snapshot.docs.map(
-					(doc) => new Vendor({ vendorId: doc.id, name: doc.data().name })
+					(doc) =>
+						new Vendor({
+							vendorId: doc.id,
+							metadata: doc.data().metadata,
+							name: doc.data().name
+						})
 				);
 				dispatch({
 					type: SET_VENDORS,

@@ -102,10 +102,8 @@ const PostCard = withTheme((props) => {
 		);
 	}
 
-	const newCommentHandler = async (body, attachments, notifyUsers) => {
-		const result = await dispatch(
-			addComment(post, body, attachments, notifyUsers)
-		);
+	const newCommentHandler = async (values) => {
+		const result = await dispatch(addComment(post, values));
 		return result;
 	};
 

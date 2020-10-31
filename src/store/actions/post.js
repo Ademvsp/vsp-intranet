@@ -11,9 +11,9 @@ import * as fileUtils from '../../utils/file-utils';
 import { getServerTimeInMilliseconds } from '../../utils/firebase';
 let collectionDataListener;
 
-export const addPost = (values, attachments, notifyUsers) => {
+export const addPost = (values) => {
 	return async (dispatch, getState) => {
-		const { title, body } = values;
+		const { attachments, notifyUsers, title, body } = values;
 		const { authUser } = getState().authState;
 		let newPost;
 		try {
@@ -71,8 +71,9 @@ export const addPost = (values, attachments, notifyUsers) => {
 	};
 };
 
-export const addComment = (post, body, attachments, notifyUsers) => {
+export const addComment = (post, values) => {
 	return async (dispatch, _getState) => {
+		const { body, attachments, notifyUsers } = values;
 		let uploadedAttachments;
 		try {
 			const serverTime = await getServerTimeInMilliseconds();

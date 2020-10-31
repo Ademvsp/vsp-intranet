@@ -39,7 +39,6 @@ const NewProjectDialog = withTheme((props) => {
 	const { authUser } = useSelector((state) => state.authState);
 	const { customers, vendors, users } = useSelector((state) => state.dataState);
 	const { open, close, projectNames } = props;
-	const [attachments, setAttachments] = useState([]);
 	const [loading, setLoading] = useState();
 	const [validatedOnMount, setValidatedOnMount] = useState(false);
 	//Customer field
@@ -62,6 +61,7 @@ const NewProjectDialog = withTheme((props) => {
 	}, [vendorsLoading, dispatch]);
 
 	const validationSchema = yup.object().shape({
+		attachments: yup.array().notRequired(),
 		name: yup
 			.string()
 			.label('Project Name')
@@ -138,6 +138,7 @@ const NewProjectDialog = withTheme((props) => {
 	});
 
 	const initialValues = {
+		attachments: [],
 		name: '',
 		description: '',
 		customer: null,
@@ -156,7 +157,7 @@ const NewProjectDialog = withTheme((props) => {
 
 	const submitHandler = async (values) => {
 		setLoading(true);
-		const result = await dispatch(addProject(values, attachments));
+		const result = await dispatch(addProject(values));
 		setLoading(false);
 		if (result) {
 			formik.setValues(initialValues);
@@ -535,8 +536,9 @@ const NewProjectDialog = withTheme((props) => {
 					}}
 					attachments={{
 						enabled: true,
-						attachments: attachments,
-						setAttachments: setAttachments
+						attachments: formik.values.attachments,
+						setAttachments: (attachments) =>
+							formik.setFieldValue('attachments', attachments)
 					}}
 					buttonLoading={loading}
 					loading={loading || !validatedOnMount}

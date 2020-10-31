@@ -15,9 +15,16 @@ import {
 	REQUESTED
 } from '../../data/product-request-status-types';
 
-export const addProductRequest = (values, attachments) => {
+export const addProductRequest = (values) => {
 	return async (dispatch, getState) => {
-		const { vendor, vendorSku, productType, cost, description } = values;
+		const {
+			attachments,
+			vendor,
+			vendorSku,
+			productType,
+			cost,
+			description
+		} = values;
 		const { authUser } = getState().authState;
 		const newProductRequest = new ProductRequest({
 			attachments: [],
@@ -75,8 +82,9 @@ export const addProductRequest = (values, attachments) => {
 	};
 };
 
-export const addComment = (productRequest, body, attachments) => {
+export const addComment = (productRequest, values) => {
 	return async (dispatch, _getState) => {
+		const { body, attachments } = values;
 		let uploadedAttachments;
 		try {
 			const serverTime = await getServerTimeInMilliseconds();

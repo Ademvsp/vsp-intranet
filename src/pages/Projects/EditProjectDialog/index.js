@@ -43,7 +43,6 @@ const EditProjectDialog = withTheme((props) => {
 	const { open, close, projectNames, project } = props;
 
 	const [showComments, setShowComments] = useState(false);
-	const [attachments, setAttachments] = useState(project.attachments);
 	const [loading, setLoading] = useState();
 	const [validatedOnMount, setValidatedOnMount] = useState(false);
 	//Customer field
@@ -66,6 +65,7 @@ const EditProjectDialog = withTheme((props) => {
 	}, [vendorsLoading, dispatch]);
 
 	const validationSchema = yup.object().shape({
+		attachments: yup.array().notRequired(),
 		name: yup
 			.string()
 			.label('Project Name')
@@ -130,6 +130,7 @@ const EditProjectDialog = withTheme((props) => {
 	});
 
 	const initialValues = {
+		attachments: project.attachments,
 		name: project.name,
 		description: project.description,
 		customer: new Customer({ ...project.customer }),
@@ -146,7 +147,7 @@ const EditProjectDialog = withTheme((props) => {
 
 	const submitHandler = async (values) => {
 		setLoading(true);
-		const result = await dispatch(editProject(project, values, attachments));
+		const result = await dispatch(editProject(project, values));
 		setLoading(false);
 		if (result) {
 			formik.setValues(initialValues);
@@ -154,8 +155,8 @@ const EditProjectDialog = withTheme((props) => {
 		}
 	};
 
-	const newCommentHandler = async (body, attachments) => {
-		const result = await dispatch(addComment(project, body, attachments));
+	const newCommentHandler = async (values) => {
+		const result = await dispatch(addComment(project, values));
 		return result;
 	};
 
@@ -537,8 +538,9 @@ const EditProjectDialog = withTheme((props) => {
 					}}
 					attachments={{
 						enabled: true,
-						attachments: attachments,
-						setAttachments: setAttachments
+						attachments: formik.values.attachments,
+						setAttachments: (attachments) =>
+							formik.setFieldValue('attachments', attachments)
 					}}
 					comments={{
 						enabled: true,

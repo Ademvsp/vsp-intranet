@@ -113,10 +113,8 @@ const ProductRequestCard = withTheme((props) => {
 		);
 	}
 
-	const newCommentHandler = async (body, attachments) => {
-		const result = await dispatch(
-			addComment(productRequest, body, attachments)
-		);
+	const newCommentHandler = async (values) => {
+		const result = await dispatch(addComment(productRequest, values));
 		return result;
 	};
 
