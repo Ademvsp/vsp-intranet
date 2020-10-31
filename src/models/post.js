@@ -8,6 +8,7 @@ export default class Post {
 		attachments,
 		body,
 		comments,
+		likes,
 		metadata,
 		subscribers,
 		title,
@@ -18,6 +19,7 @@ export default class Post {
 		this.attachments = attachments;
 		this.body = body;
 		this.comments = comments;
+		this.likes = likes;
 		this.metadata = metadata;
 		this.subscribers = subscribers;
 		this.title = title;
@@ -72,6 +74,7 @@ export default class Post {
 		const comment = {
 			attachments: attachments,
 			body: body,
+			likes: [],
 			metadata: {
 				createdAt: new Date(serverTime),
 				createdBy: firebase.auth().currentUser.uid,
@@ -129,6 +132,17 @@ export default class Post {
 		}
 		await firebase.firestore().collection('posts').doc(this.postId).update({
 			subscribers: dbAction
+		});
+	}
+
+	async toggleLike() {
+		const userId = firebase.auth().currentUser.uid;
+		let dbAction = firebase.firestore.FieldValue.arrayUnion(userId);
+		if (this.likes.includes(userId)) {
+			dbAction = firebase.firestore.FieldValue.arrayRemove(userId);
+		}
+		await firebase.firestore().collection('posts').doc(this.postId).update({
+			likes: dbAction
 		});
 	}
 

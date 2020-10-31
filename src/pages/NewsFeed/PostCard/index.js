@@ -8,20 +8,22 @@ import {
 	CardContent,
 	CardActions,
 	withTheme,
-	Grid
+	Grid,
+	Badge
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
 import Post from '../../../models/post';
-import {
-	Comment as CommentIcon,
-	MoreVert as MoreVertIcon
-} from '@material-ui/icons';
 import Comments from '../../../components/Comments';
 import { Skeleton } from '@material-ui/lab';
 import InnerHtml from '../../../components/InnerHtml';
 import AttachmentsContainer from '../../../components/AttachmentsContainer';
 import Avatar from '../../../components/Avatar';
+import CommentOutlinedIcon from '@material-ui/icons/CommentOutlined';
+import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
+import ThumbUpOutlinedIcon from '@material-ui/icons/ThumbUpOutlined';
+import ThumbUpRoundedIcon from '@material-ui/icons/ThumbUpRounded';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 import scrollToComponent from 'react-scroll-to-component';
 import PostCardMenu from './PostCardMenu';
 import Card from '../../../components/Card';
@@ -111,13 +113,19 @@ const PostCard = withTheme((props) => {
 		setShowComments((prevState) => !prevState);
 	};
 
-	const commentsCount = post.comments.length;
-	let commentButtonText = 'Comment';
-	if (commentsCount > 0) {
-		commentButtonText = `${commentsCount} Comment`;
-		if (commentsCount > 1) {
-			commentButtonText = `${commentButtonText}s`;
-		}
+	const likeClickHandler = async () => {
+		await post.toggleLike();
+	};
+
+	let commentIcon = <CommentOutlinedIcon />;
+	const commentUsers = post.comments.map((comment) => comment.user);
+	if (commentUsers.includes(authUser.userId)) {
+		commentIcon = <CommentRoundedIcon />;
+	}
+
+	let likeIcon = <ThumbUpOutlinedIcon />;
+	if (post.likes.includes(authUser.userId)) {
+		likeIcon = <ThumbUpRoundedIcon />;
 	}
 
 	const user = users.find((user) => user.userId === post.user);
@@ -139,21 +147,53 @@ const PostCard = withTheme((props) => {
 					<InnerHtml html={post.body} />
 					<AttachmentsContainer attachments={post.attachments} />
 				</CardContent>
-				        
 				<CardActions style={{ padding: `${props.theme.spacing(2)}px` }}>
-					<Grid container justify='space-between'>
-						<Typography color='secondary' component='span' variant='body2'>
-							{format(postDate, LONG_DATE_TIME)}
-						</Typography>
-						<Button
-							style={{ textTransform: 'unset' }}
-							size='small'
-							color='secondary'
-							onClick={commentsClickHandler}
-							startIcon={post.comments.length === 0 && <CommentIcon />}
+					<Grid container justify='space-evenly' wrap='nowrap'>
+						<Grid item container justify='flex-start' alignItems='center'>
+							<Grid item>
+								<Typography color='secondary' component='span' variant='body2'>
+									{format(postDate, LONG_DATE_TIME)}
+								</Typography>
+							</Grid>
+						</Grid>
+						<Grid
+							item
+							container
+							spacing={1}
+							justify='flex-end'
+							alignItems='center'
 						>
-							{commentButtonText}
-						</Button>
+							<Grid item>
+								<Button
+									style={{ textTransform: 'unset' }}
+									size='small'
+									color='secondary'
+									onClick={commentsClickHandler}
+									startIcon={
+										<Badge color='primary' badgeContent={post.comments.length}>
+											{commentIcon}
+										</Badge>
+									}
+								>
+									Comment
+								</Button>
+							</Grid>
+							<Grid item>
+								<Button
+									style={{ textTransform: 'unset' }}
+									size='small'
+									color='secondary'
+									onClick={likeClickHandler}
+									startIcon={
+										<Badge color='primary' badgeContent={post.likes.length}>
+											{likeIcon}
+										</Badge>
+									}
+								>
+									Like
+								</Button>
+							</Grid>
+						</Grid>
 					</Grid>
 				</CardActions>
 				<Collapse in={showComments} timeout='auto'>

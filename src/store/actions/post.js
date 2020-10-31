@@ -23,6 +23,7 @@ export const addPost = (values) => {
 				attachments: [],
 				body: body.trim(),
 				comments: [],
+				likes: [],
 				metadata: null,
 				subscribers: [authUser.userId],
 				title: title.trim(),
