@@ -56,7 +56,7 @@ const ActionButtons = withTheme((props) => {
 	const payConfirmHandler = async () => {
 		setLoading(true);
 		await dispatch(payExpenseClaim(expenseClaim));
-		setShowApproveDialog(false);
+		setShowPayDialog(false);
 		setLoading(false);
 	};
 

@@ -62,6 +62,44 @@ const ActionsBar = withTheme((props) => {
 		return tooltip;
 	}
 
+	function getCommentsButton(comments) {
+		return (
+			<IconButton disabled={loading} onClick={comments.clickHandler}>
+				<Badge badgeContent={comments.count} color='secondary'>
+					<CommentIcon />
+				</Badge>
+			</IconButton>
+		);
+	}
+
+	function getNotificationButton(notifications) {
+		return (
+			<IconButton
+				disabled={loading}
+				onClick={
+					notifications.readOnly ? null : setNotifyUsersOpen.bind(this, true)
+				}
+			>
+				<Badge
+					badgeContent={notifications.notifyUsers?.length}
+					color='secondary'
+				>
+					<PeopleIcon />
+				</Badge>
+			</IconButton>
+		);
+	}
+
+	function getAttachmentsButton(attachments) {
+		return (
+			<IconButton onClick={setDropzoneOpen.bind(this, true)} disabled={loading}>
+				<Badge badgeContent={attachments.attachments.length} color='secondary'>
+					<AttachmentIcon />
+				</Badge>
+			</IconButton>
+		);
+	}
+
 	return (
 		<Grid container direction='column'>
 			{uploadState.filesProgress && (
@@ -88,37 +126,27 @@ const ActionsBar = withTheme((props) => {
 				>
 					{comments?.enabled && (
 						<Grid item>
-							<Tooltip title='Comments' placement={tooltipPlacement}>
-								<IconButton disabled={loading} onClick={comments.clickHandler}>
-									<Badge badgeContent={comments.count} color='secondary'>
-										<CommentIcon />
-									</Badge>
-								</IconButton>
-							</Tooltip>
+							{loading ? (
+								getCommentsButton(comments)
+							) : (
+								<Tooltip title='Comments' placement={tooltipPlacement}>
+									{getCommentsButton(comments)}
+								</Tooltip>
+							)}
 						</Grid>
 					)}
 					{notifications?.enabled && (
 						<Grid item>
-							<Tooltip
-								title={getNotfyUsersTooltip(notifications, users)}
-								placement={tooltipPlacement}
-							>
-								<IconButton
-									disabled={loading}
-									onClick={
-										notifications.readOnly
-											? null
-											: setNotifyUsersOpen.bind(this, true)
-									}
+							{loading ? (
+								getNotificationButton(notifications)
+							) : (
+								<Tooltip
+									title={getNotfyUsersTooltip(notifications, users)}
+									placement={tooltipPlacement}
 								>
-									<Badge
-										badgeContent={notifications.notifyUsers?.length}
-										color='secondary'
-									>
-										<PeopleIcon />
-									</Badge>
-								</IconButton>
-							</Tooltip>
+									{getNotificationButton(notifications)}
+								</Tooltip>
+							)}
 							<NotifyUsersList
 								setNotifyUsersOpen={setNotifyUsersOpen}
 								notifyUsersOpen={notifyUsersOpen}
@@ -129,22 +157,16 @@ const ActionsBar = withTheme((props) => {
 					)}
 					{attachments?.enabled && (
 						<Grid item>
-							<Tooltip
-								title={getAttachmentsTooltip(attachments)}
-								placement={tooltipPlacement}
-							>
-								<IconButton
-									onClick={setDropzoneOpen.bind(this, true)}
-									disabled={loading}
+							{loading ? (
+								getAttachmentsButton(attachments)
+							) : (
+								<Tooltip
+									title={getAttachmentsTooltip(attachments)}
+									placement={tooltipPlacement}
 								>
-									<Badge
-										badgeContent={attachments.attachments.length}
-										color='secondary'
-									>
-										<AttachmentIcon />
-									</Badge>
-								</IconButton>
-							</Tooltip>
+									{getAttachmentsButton(attachments)}
+								</Tooltip>
+							)}
 							<AttachmentsDropzone
 								dropzoneOpen={dropzoneOpen}
 								setDropzoneOpen={setDropzoneOpen}

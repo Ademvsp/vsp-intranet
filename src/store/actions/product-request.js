@@ -9,7 +9,11 @@ import Message from '../../models/message';
 import ProductRequest from '../../models/product-request';
 import * as fileUtils from '../../utils/file-utils';
 import { getServerTimeInMilliseconds } from '../../utils/firebase';
-import { REQUESTED } from '../../data/product-request-status-types';
+import {
+	APPROVED,
+	REJECTED,
+	REQUESTED
+} from '../../data/product-request-status-types';
 
 export const addProductRequest = (values, attachments) => {
 	return async (dispatch, getState) => {
@@ -112,7 +116,7 @@ export const approveProductRequest = (productRequest, values) => {
 	return async (dispatch, _getState) => {
 		const newProductRequest = new ProductRequest({ ...productRequest });
 		try {
-			await newProductRequest.approve(values.finalSku.trim());
+			await newProductRequest.saveAction(APPROVED, values.finalSku.trim());
 			const message = new Message({
 				title: 'Product Requests',
 				body: 'Product Request approved successfully',
@@ -147,7 +151,7 @@ export const rejectProductRequest = (productRequest) => {
 	return async (dispatch, _getState) => {
 		const newProductRequest = new ProductRequest({ ...productRequest });
 		try {
-			await newProductRequest.reject();
+			await newProductRequest.saveAction(REJECTED);
 			const message = new Message({
 				title: 'Product Requests',
 				body: 'Product Request rejected successfully',

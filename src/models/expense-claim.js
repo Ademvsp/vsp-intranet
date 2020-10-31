@@ -48,7 +48,18 @@ export default class ExpenseClaim {
 
 	async save() {
 		const serverTime = await getServerTimeInMilliseconds();
-		if (!this.expenseClaimId) {
+		if (this.expenseClaimId) {
+			this.metadata = {
+				...this.metadata,
+				updatedAt: new Date(serverTime),
+				updatedBy: firebase.auth().currentUser.uid
+			};
+			await firebase
+				.firestore()
+				.collection('expense-claims')
+				.doc(this.expenseClaimId)
+				.update(this.getDatabaseObject());
+		} else {
 			this.metadata = {
 				createdAt: new Date(serverTime),
 				createdBy: firebase.auth().currentUser.uid,

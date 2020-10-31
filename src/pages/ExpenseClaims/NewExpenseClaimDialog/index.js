@@ -43,8 +43,12 @@ const NewExpenseClaimDialog = withTheme((props) => {
 	};
 
 	const submitHandler = async (values) => {
-		const newValues = { ...values };
-		delete newValues.tableData;
+		const newExpenses = values.expenses.map((expense) => ({
+			date: expense.date,
+			description: expense.description,
+			value: expense.value
+		}));
+		const newValues = { ...values, expenses: newExpenses };
 		setLoading(true);
 		const result = await dispatch(addExpense(newValues));
 		setLoading(false);
@@ -113,23 +117,31 @@ const NewExpenseClaimDialog = withTheme((props) => {
 					}}
 					editable={{
 						onRowAdd: (newData) =>
-							new Promise((resolve, _reject) => {
-								formik.setFieldValue('expenses', [
-									...formik.values.expenses,
-									newData
-								]);
-								resolve();
+							new Promise((resolve, reject) => {
+								if (!newData.date || !newData.description || !newData.value) {
+									reject();
+								} else {
+									formik.setFieldValue('expenses', [
+										...formik.values.expenses,
+										newData
+									]);
+									resolve();
+								}
 							}),
 						onRowUpdate: (newData, oldData) =>
-							new Promise((resolve, _reject) => {
-								const dataUpdate = [...formik.values.expenses];
-								const index = oldData.tableData.id;
-								dataUpdate[index] = {
-									...newData,
-									date: new Date(newData.date)
-								};
-								formik.setFieldValue('expenses', [...dataUpdate]);
-								resolve();
+							new Promise((resolve, reject) => {
+								if (!newData.date || !newData.description || !newData.value) {
+									reject();
+								} else {
+									const dataUpdate = [...formik.values.expenses];
+									const index = oldData.tableData.id;
+									dataUpdate[index] = {
+										...newData,
+										date: new Date(newData.date)
+									};
+									formik.setFieldValue('expenses', [...dataUpdate]);
+									resolve();
+								}
 							}),
 						onRowDelete: (oldData) =>
 							new Promise((resolve, _reject) => {

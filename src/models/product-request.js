@@ -42,7 +42,18 @@ export default class ProductRequest {
 
 	async save() {
 		const serverTime = await getServerTimeInMilliseconds();
-		if (!this.productRequestId) {
+		if (this.productRequestId) {
+			this.metadata = {
+				...this.metadata,
+				updatedAt: new Date(serverTime),
+				updatedBy: firebase.auth().currentUser.uid
+			};
+			await firebase
+				.firestore()
+				.collection('product-requests')
+				.doc(this.productRequestId)
+				.update(this.getDatabaseObject());
+		} else {
 			this.metadata = {
 				createdAt: new Date(serverTime),
 				createdBy: firebase.auth().currentUser.uid,
@@ -86,10 +97,10 @@ export default class ProductRequest {
 		this.comments.push(comment);
 	}
 
-	async approve(finalSku) {
+	async saveAction(actionType, finalSku) {
 		const serverTime = await getServerTimeInMilliseconds();
 		const action = {
-			actionType: APPROVED,
+			actionType: actionType,
 			actionedAt: new Date(serverTime),
 			actionedBy: firebase.auth().currentUser.uid
 		};
@@ -99,41 +110,23 @@ export default class ProductRequest {
 			updatedAt: new Date(serverTime),
 			updatedBy: firebase.auth().currentUser.uid
 		};
-		await firebase
+		const docRef = firebase
 			.firestore()
 			.collection('product-requests')
-			.doc(this.productRequestId)
-			.update({
+			.doc(this.productRequestId);
+		if (actionType === APPROVED) {
+			await docRef.update({
 				actions: firebase.firestore.FieldValue.arrayUnion(action),
 				finalSku: finalSku,
 				metadata: metadata
 			});
-		this.finalSku = finalSku;
-		this.metadata = metadata;
-		this.actions = [...this.actions, action];
-	}
-
-	async reject() {
-		const serverTime = await getServerTimeInMilliseconds();
-		const action = {
-			actionType: REJECTED,
-			actionedAt: new Date(serverTime),
-			actionedBy: firebase.auth().currentUser.uid
-		};
-		const metadata = {
-			createdAt: this.metadata.createdAt,
-			createdBy: this.metadata.createdBy,
-			updatedAt: new Date(serverTime),
-			updatedBy: firebase.auth().currentUser.uid
-		};
-		await firebase
-			.firestore()
-			.collection('product-requests')
-			.doc(this.productRequestId)
-			.update({
+			this.finalSku = finalSku;
+		} else if (actionType === REJECTED) {
+			await docRef.update({
 				actions: firebase.firestore.FieldValue.arrayUnion(action),
 				metadata: metadata
 			});
+		}
 		this.metadata = metadata;
 		this.actions = [...this.actions, action];
 	}
