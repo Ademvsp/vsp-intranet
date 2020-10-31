@@ -7,7 +7,8 @@ import {
 	Dialog,
 	Grid,
 	ListItemAvatar,
-	ListItemText
+	ListItemText,
+	withTheme
 } from '@material-ui/core';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -17,7 +18,7 @@ import { useHistory } from 'react-router-dom';
 import { searchPosts } from '../../../../store/actions/post';
 import Avatar from '../../../../components/Avatar';
 
-const SearchPostDialog = (props) => {
+const SearchPostDialog = withTheme((props) => {
 	const history = useHistory();
 	const dispatch = useDispatch();
 	const { users } = useSelector((state) => state.dataState);
@@ -48,10 +49,10 @@ const SearchPostDialog = (props) => {
 		const results = await dispatch(searchPosts(values));
 		if (results) {
 			formik.setValues(initialValues, true);
-			close();
 			setSearchResults(results);
 			history.replace('/newsfeed/page/1');
 		}
+		close();
 		setLoading(false);
 	};
 
@@ -81,6 +82,16 @@ const SearchPostDialog = (props) => {
 					onBlur={formik.handleBlur('value')}
 					disabled={loading}
 					autoFocus={true}
+					helperText={
+						formik.errors.value && formik.touched.value
+							? formik.errors.value
+							: null
+					}
+					FormHelperTextProps={{
+						style: {
+							color: props.theme.palette.error.main
+						}
+					}}
 				/>
 				<Autocomplete
 					options={users}
@@ -117,13 +128,13 @@ const SearchPostDialog = (props) => {
 					variant='outlined'
 					color='primary'
 					onClick={formik.handleSubmit}
-					disabled={!formik.isValid || loading || validatedOnMount}
+					disabled={!formik.isValid || loading || !validatedOnMount}
 				>
 					Search
 				</Button>
 			</DialogActions>
 		</Dialog>
 	);
-};
+});
 
 export default SearchPostDialog;

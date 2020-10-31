@@ -16,7 +16,7 @@ const EmailForm = withTheme((props) => {
 	const initialValues = { email: '' };
 
 	const validationSchema = yup.object().shape({
-		email: yup.string().label('Email').required().email().max(100)
+		email: yup.string().label('Email').trim().required().email().max(100)
 	});
 
 	const keyDownHandler = (event) => {

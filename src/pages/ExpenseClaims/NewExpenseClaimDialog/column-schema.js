@@ -23,7 +23,7 @@ const columnSchema = [
 		type: 'string',
 		validate: (rowData) => {
 			try {
-				yup.string().required().validateSync(rowData.description);
+				yup.string().trim().required().validateSync(rowData.description);
 				return true;
 			} catch {
 				return false;

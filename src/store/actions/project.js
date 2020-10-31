@@ -69,7 +69,6 @@ export const addProject = (values) => {
 			});
 			return true;
 		} catch (error) {
-			console.log(error);
 			const message = new Message({
 				title: 'Pojects',
 				body: 'Failed to add Project',

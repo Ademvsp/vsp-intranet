@@ -69,8 +69,8 @@ const EditEventDialog = withTheme((props) => {
 			.label('Details')
 			.when('type', {
 				is: (value) => value.detailsEditable,
-				then: yup.string().required(),
-				otherwise: yup.string().notRequired()
+				then: yup.string().trim().required(),
+				otherwise: yup.string().trim().notRequired()
 			}),
 		start: yup.date().label('Start date').required(),
 		end: yup.date().label('End date').required().min(yup.ref('start')),

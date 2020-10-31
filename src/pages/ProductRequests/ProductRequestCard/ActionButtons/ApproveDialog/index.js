@@ -25,7 +25,7 @@ const ApproveDialog = (props) => {
 	const initialValues = { finalSku: '' };
 
 	const validationSchema = yup.object().shape({
-		finalSku: yup.string().label('Vendor SKU').required()
+		finalSku: yup.string().label('Vendor SKU').trim().required()
 	});
 
 	const formik = useFormik({

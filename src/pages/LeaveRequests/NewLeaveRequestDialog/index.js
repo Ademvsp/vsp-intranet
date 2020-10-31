@@ -38,7 +38,7 @@ const NewLeaveRequestDialog = withTheme((props) => {
 			.test('isValidArrayElement', 'Leave type not valid', (value) =>
 				leaveTypes.find((leaveType) => leaveType.name === value.name)
 			),
-		reason: yup.string().label('Reason').required().max(100)
+		reason: yup.string().trim().label('Reason').required().max(100)
 	});
 
 	const initialValues = {

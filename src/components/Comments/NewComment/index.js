@@ -21,7 +21,7 @@ const NewComment = (props) => {
 	const validationSchema = yup.object().shape({
 		attachments: yup.array().notRequired(),
 		notifyUsers: yup.array().notRequired(),
-		body: yup.string().label('Comment').required()
+		body: yup.string().label('Comment').trim().required()
 	});
 
 	const submitHandler = async (values) => {
@@ -46,6 +46,8 @@ const NewComment = (props) => {
 		setValidatedOnMount(true);
 	}, [validateForm]);
 
+	console.log(formik.errors);
+
 	return (
 		<StyledContainer>
 			<ListItemAvatar>
@@ -56,6 +58,7 @@ const NewComment = (props) => {
 					<BalloonEditorWrapper
 						value={formik.values.body}
 						setValue={formik.handleChange('body')}
+						setTouched={() => {}}
 						setUploading={setUploading}
 						loading={loading}
 						borderChange={false}

@@ -74,7 +74,7 @@ const NewProjectDialog = withTheme((props) => {
 				);
 				return !projectExists;
 			}),
-		description: yup.string().label('Description').required(),
+		description: yup.string().label('Description').trim().required(),
 		customer: yup
 			.object()
 			.typeError('Customer a required field')

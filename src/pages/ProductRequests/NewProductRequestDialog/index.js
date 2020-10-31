@@ -66,14 +66,14 @@ const NewProductRequestDialog = withTheme((props) => {
 				'Vendor is not valid',
 				(value) => value instanceof Vendor
 			),
-		vendorSku: yup.string().label('Vendor SKU').required().max(100),
+		vendorSku: yup.string().label('Vendor SKU').trim().required().max(100),
 		productType: yup
 			.object()
 			.typeError('Product Type a required field')
 			.label('Product Type')
 			.required(),
 		cost: yup.number().label('Value').required().min(0).max(1000000),
-		description: yup.string().label('Description').required()
+		description: yup.string().label('Description').trim().required()
 	});
 
 	const initialValues = {

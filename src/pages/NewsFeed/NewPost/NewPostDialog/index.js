@@ -51,8 +51,8 @@ const NewPostDialog = withTheme((props) => {
 	const validationSchema = yup.object().shape({
 		attachments: yup.array().notRequired(),
 		notifyUsers: yup.array().notRequired(),
-		title: yup.string().label('Title').required(),
-		body: yup.string().label('Body').required()
+		title: yup.string().label('Title').trim().required(),
+		body: yup.string().label('Body').trim().required()
 	});
 
 	const formik = useFormik({
@@ -62,8 +62,6 @@ const NewPostDialog = withTheme((props) => {
 	});
 
 	const { validateForm } = formik;
-
-	console.log(formik);
 
 	useEffect(() => {
 		validateForm();
@@ -128,7 +126,8 @@ const NewPostDialog = withTheme((props) => {
 								<Typography
 									className='MuiFormHelperText-root MuiFormHelperText-marginDense'
 									style={{
-										color: props.theme.palette.error.main
+										color: props.theme.palette.error.main,
+										fontSize: props.theme.spacing(1.5)
 									}}
 								>
 									{formik.errors.body}
