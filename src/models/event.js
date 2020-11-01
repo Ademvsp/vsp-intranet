@@ -153,6 +153,34 @@ export default class Event {
 		}
 	}
 
+	async saveComment(body, attachments, notifyUsers, serverTime) {
+		const comment = {
+			attachments: attachments,
+			body: body,
+			likes: [],
+			metadata: {
+				createdAt: new Date(serverTime),
+				createdBy: firebase.auth().currentUser.uid,
+				updatedAt: new Date(serverTime),
+				updatedBy: firebase.auth().currentUser.uid
+			},
+			notifyUsers: notifyUsers,
+			user: firebase.auth().currentUser.uid
+		};
+		await firebase
+			.firestore()
+			.collection('events-new')
+			.doc(this.eventId)
+			.update({
+				comments: firebase.firestore.FieldValue.arrayUnion(comment),
+				//Automatically add the commenter as a subsriber of the post so they receive notifications on new replies
+				subscribers: firebase.firestore.FieldValue.arrayUnion(
+					firebase.auth().currentUser.uid
+				)
+			});
+		this.comments.push(comment);
+	}
+
 	async delete(notifyUsers) {
 		const serverTime = await getServerTimeInMilliseconds();
 		this.metadata = {
@@ -177,7 +205,11 @@ export default class Event {
 			.update(this.getDatabaseObject());
 	}
 
-	static getListener(start, end) {
+	static getEventListener(eventId) {
+		return firebase.firestore().collection('events-new').doc(eventId);
+	}
+
+	static getRangeListener(start, end) {
 		return firebase
 			.firestore()
 			.collection('events-new')

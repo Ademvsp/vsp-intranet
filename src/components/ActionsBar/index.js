@@ -62,10 +62,24 @@ const ActionsBar = withTheme((props) => {
 		return tooltip;
 	}
 
+	function getCommentsTooltip(comments, users) {
+		let tooltip = 'Comments';
+		if (comments.comments.length > 0) {
+			const commentUsers = users.filter((user) => {
+				const commentUserIds = comments.comments.map((comment) => comment.user);
+				return commentUserIds.includes(user.userId);
+			});
+			tooltip = commentUsers.map((commentUser) => (
+				<div key={commentUser.userId}>{commentUser.getFullName()}</div>
+			));
+		}
+		return tooltip;
+	}
+
 	function getCommentsButton(comments) {
 		return (
 			<IconButton disabled={loading} onClick={comments.clickHandler}>
-				<Badge badgeContent={comments.count} color='secondary'>
+				<Badge badgeContent={comments.comments.length} color='secondary'>
 					<CommentIcon />
 				</Badge>
 			</IconButton>
@@ -129,7 +143,10 @@ const ActionsBar = withTheme((props) => {
 							{loading ? (
 								getCommentsButton(comments)
 							) : (
-								<Tooltip title='Comments' placement={tooltipPlacement}>
+								<Tooltip
+									title={getCommentsTooltip(comments, users)}
+									placement={tooltipPlacement}
+								>
 									{getCommentsButton(comments)}
 								</Tooltip>
 							)}

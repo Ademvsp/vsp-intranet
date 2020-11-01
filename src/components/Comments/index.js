@@ -14,7 +14,6 @@ const Comments = (props) => {
 		<Fragment>
 			<StyledNewCommentContainer>
 				<NewComment
-					authUser={props.authUser}
 					submitHandler={submitHandler}
 					actionBarNotificationProps={actionBarNotificationProps}
 				/>

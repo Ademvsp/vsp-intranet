@@ -177,7 +177,6 @@ const LeaveRequestCard = withTheme((props) => {
 				</CardActions>
 				<Collapse in={showComments} timeout='auto'>
 					<Comments
-						authUser={authUser}
 						submitHandler={newCommentHandler}
 						comments={[...leaveRequest.comments].reverse()}
 						actionBarNotificationProps={{

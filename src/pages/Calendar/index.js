@@ -48,7 +48,7 @@ const Calendar = (props) => {
 	//Get new listener every time date range changes on calendar
 	useEffect(() => {
 		let eventsListener;
-		eventsListener = Event.getListener(range.start, range.end).onSnapshot(
+		eventsListener = Event.getRangeListener(range.start, range.end).onSnapshot(
 			(snapshot) => {
 				const newEvents = snapshot.docs.map((doc) => {
 					const metadata = {
@@ -113,6 +113,7 @@ const Calendar = (props) => {
 		};
 
 		asyncFunction();
+		//events used as a snapshot change trigger for when new comments are added
 	}, [action, push, userId, params.eventId]);
 
 	const addEventClickHandler = () => {

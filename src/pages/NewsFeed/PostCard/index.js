@@ -141,7 +141,7 @@ const PostCard = withTheme((props) => {
 			color='secondary'
 			onClick={commentsClickHandler}
 			startIcon={
-				<Badge color='primary' badgeContent={post.comments.length}>
+				<Badge color='secondary' badgeContent={post.comments.length}>
 					{commentIcon}
 				</Badge>
 			}
@@ -172,7 +172,7 @@ const PostCard = withTheme((props) => {
 			color='secondary'
 			onClick={likeClickHandler}
 			startIcon={
-				<Badge color='primary' badgeContent={post.likes.length}>
+				<Badge color='secondary' badgeContent={post.likes.length}>
 					{likeIcon}
 				</Badge>
 			}
@@ -235,7 +235,6 @@ const PostCard = withTheme((props) => {
 				</CardActions>
 				<Collapse in={showComments} timeout='auto'>
 					<Comments
-						authUser={authUser}
 						submitHandler={newCommentHandler}
 						comments={[...post.comments].reverse()}
 						actionBarNotificationProps={{

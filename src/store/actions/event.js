@@ -8,6 +8,8 @@ import { SET_MESSAGE } from '../../utils/actions';
 import Message from '../../models/message';
 import Event from '../../models/event';
 import { transformDate } from '../../utils/date';
+import { getServerTimeInMilliseconds } from '../../utils/firebase';
+import { upload } from '../../utils/file-utils';
 
 export const addEvent = (values) => {
 	return async (dispatch, getState) => {
@@ -174,6 +176,46 @@ export const deleteEvent = (event, notifyUsers) => {
 			const message = new Message({
 				title: 'Staff Calendar',
 				body: 'Failed to delete event',
+				feedback: DIALOG
+			});
+			dispatch({
+				type: SET_MESSAGE,
+				message
+			});
+			return false;
+		}
+	};
+};
+
+export const addComment = (event, values) => {
+	return async (dispatch, _getState) => {
+		const newEvent = new Event({ ...event });
+		const { body, attachments, notifyUsers } = values;
+		let uploadedAttachments;
+		try {
+			const serverTime = await getServerTimeInMilliseconds();
+			uploadedAttachments = [];
+			if (attachments.length > 0) {
+				uploadedAttachments = await dispatch(
+					upload({
+						files: attachments,
+						collection: 'events-new',
+						collectionId: event.eventId,
+						folder: serverTime.toString()
+					})
+				);
+			}
+			await newEvent.saveComment(
+				body.trim(),
+				uploadedAttachments,
+				notifyUsers,
+				serverTime
+			);
+			return true;
+		} catch (error) {
+			const message = new Message({
+				title: 'Events',
+				body: 'Comment failed to post',
 				feedback: DIALOG
 			});
 			dispatch({

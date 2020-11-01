@@ -6,8 +6,10 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import BalloonEditorWrapper from '../../BalloonEditorWrapper';
 import ActionsBar from '../../ActionsBar';
+import { useSelector } from 'react-redux';
 
 const NewComment = (props) => {
+	const { authUser } = useSelector((state) => state.authState);
 	const [uploading, setUploading] = useState();
 	const [loading, setLoading] = useState(false);
 	const [validatedOnMount, setValidatedOnMount] = useState(false);
@@ -49,7 +51,7 @@ const NewComment = (props) => {
 	return (
 		<StyledContainer>
 			<ListItemAvatar>
-				<Avatar user={props.authUser} />
+				<Avatar user={authUser} />
 			</ListItemAvatar>
 			<Grid container direction='column' spacing={1}>
 				<Grid item>

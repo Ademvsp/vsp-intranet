@@ -12,9 +12,7 @@ import {
 	Tooltip,
 	Dialog,
 	withTheme,
-	Collapse,
-	Button,
-	Badge
+	Collapse
 } from '@material-ui/core';
 import ActionsBar from '../../../components/ActionsBar';
 import { useFormik } from 'formik';
@@ -32,23 +30,51 @@ import { StyledTitle } from './styled-components';
 import ConfirmDialog from '../../../components/ConfirmDialog';
 import { LONG_DATE, LONG_DATE_TIME } from '../../../utils/date';
 import Event from '../../../models/event';
-import { deleteEvent, editEvent } from '../../../store/actions/event';
+import {
+	addComment,
+	deleteEvent,
+	editEvent
+} from '../../../store/actions/event';
 import Comments from '../../../components/Comments';
-import CommentOutlinedIcon from '@material-ui/icons/CommentOutlined';
-import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
 
 const EditEventDialog = withTheme((props) => {
 	const dispatch = useDispatch();
 	const detailsFieldRef = useRef();
 	const { authUser } = useSelector((state) => state.authState);
 	const { users, locations } = useSelector((state) => state.dataState);
+	const [commentLoading, setCommentLoading] = useState(false);
 	const [editLoading, setEditLoading] = useState(false);
 	const [deleteLoading, setDeleteLoading] = useState(false);
 	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 	const [validatedOnMount, setValidatedOnMount] = useState(false);
 	const [showComments, setShowComments] = useState(false);
-	const loading = deleteLoading || editLoading;
-	const { open, close, event } = props;
+	const loading = deleteLoading || editLoading || commentLoading;
+
+	const { open, close, event: propsEvent } = props;
+	const [event, setEvent] = useState(propsEvent);
+	//Start listener for current event, as static event is sent through props
+	//Props event is static as collection listener is only for calendar 3 month range
+	//This event could be outside that range, hence why it's static
+	useEffect(() => {
+		let eventListener;
+		const asyncFunction = async () => {
+			eventListener = await Event.getEventListener(
+				propsEvent.eventId
+			).onSnapshot((snapshot) => {
+				const newEvent = new Event({
+					eventId: snapshot.id,
+					...snapshot.data()
+				});
+				setEvent(newEvent);
+			});
+		};
+		asyncFunction();
+		return () => {
+			if (eventListener) {
+				eventListener();
+			}
+		};
+	}, [propsEvent]);
 
 	const initialValues = {
 		notifyUsers: [],
@@ -107,7 +133,12 @@ const EditEventDialog = withTheme((props) => {
 		}
 	};
 
-	const newCommentHandler = () => {};
+	const newCommentHandler = async (values) => {
+		setCommentLoading(true);
+		const result = await dispatch(addComment(event, values));
+		setCommentLoading(false);
+		return result;
+	};
 
 	const commentsClickHandler = () => {
 		setShowComments((prevState) => !prevState);
@@ -165,38 +196,6 @@ const EditEventDialog = withTheme((props) => {
 		EndPicker = DatePicker;
 		dateFormat = LONG_DATE;
 	}
-
-	let commentIcon = <CommentOutlinedIcon />;
-	const commentUsers = event.comments.map((comment) => comment.user);
-	if (commentUsers.includes(authUser.userId)) {
-		commentIcon = <CommentRoundedIcon />;
-	}
-	const commentToolip = () => {
-		const commentUsers = users.filter((user) => {
-			const commentUserIds = event.comments.map((comment) => comment.user);
-			return commentUserIds.includes(user.userId);
-		});
-		const tooltip = commentUsers.map((commentUser) => (
-			<div key={commentUser.userId}>{commentUser.getFullName()}</div>
-		));
-		return tooltip;
-	};
-
-	const commentButton = (
-		<Button
-			style={{ textTransform: 'unset' }}
-			size='small'
-			color='secondary'
-			onClick={commentsClickHandler}
-			startIcon={
-				<Badge color='primary' badgeContent={event.comments.length}>
-					{commentIcon}
-				</Badge>
-			}
-		>
-			Comment
-		</Button>
-	);
 
 	return (
 		<Fragment>
@@ -352,49 +351,41 @@ const EditEventDialog = withTheme((props) => {
 					</Grid>
 				</DialogContent>
 				<DialogActions>
-					<Grid container direction='column' spacing={1}>
-						<Grid item>
-							<ActionsBar
-								notifications={{
-									enabled: true,
-									notifyUsers: formik.values.notifyUsers,
-									setNotifyUsers: (notifyUsers) =>
-										formik.setFieldValue('notifyUsers', notifyUsers)
-								}}
-								buttonLoading={editLoading}
-								loading={loading || !validatedOnMount}
-								isValid={formik.isValid}
-								onClick={formik.handleSubmit}
-								tooltipPlacement='top'
-								actionButtonText='Update'
-								additionalButtons={[
-									{
-										buttonText: 'Delete',
-										onClick: () => setShowConfirmDialog(true),
-										buttonLoading: deleteLoading
-									}
-								]}
-							/>
-						</Grid>
-						<Grid item container justify='flex-end'>
-							{event.comments.length > 0 ? (
-								<Tooltip title={commentToolip()}>{commentButton}</Tooltip>
-							) : (
-								commentButton
-							)}
-						</Grid>
-					</Grid>
+					<ActionsBar
+						notifications={{
+							enabled: true,
+							notifyUsers: formik.values.notifyUsers,
+							setNotifyUsers: (notifyUsers) =>
+								formik.setFieldValue('notifyUsers', notifyUsers)
+						}}
+						comments={{
+							enabled: true,
+							comments: event.comments,
+							clickHandler: commentsClickHandler
+						}}
+						buttonLoading={editLoading}
+						loading={loading || !validatedOnMount}
+						isValid={formik.isValid}
+						onClick={formik.handleSubmit}
+						tooltipPlacement='top'
+						actionButtonText='Update'
+						additionalButtons={[
+							{
+								buttonText: 'Delete',
+								onClick: () => setShowConfirmDialog(true),
+								buttonLoading: deleteLoading
+							}
+						]}
+					/>
 				</DialogActions>
 				<Collapse in={showComments} timeout='auto'>
 					<Comments
-						authUser={authUser}
 						submitHandler={newCommentHandler}
 						comments={[...event.comments].reverse()}
 						actionBarNotificationProps={{
 							enabled: true,
 							tooltip:
-								'The leave request admin, the original requester and their manager will be notified automatically',
-							readOnly: true
+								'The event user, and all comment participants will be notified automatically'
 						}}
 					/>
 				</Collapse>

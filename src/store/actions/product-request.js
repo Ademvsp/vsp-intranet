@@ -7,7 +7,7 @@ import {
 import { SET_MESSAGE } from '../../utils/actions';
 import Message from '../../models/message';
 import ProductRequest from '../../models/product-request';
-import * as fileUtils from '../../utils/file-utils';
+import { upload } from '../../utils/file-utils';
 import { getServerTimeInMilliseconds } from '../../utils/firebase';
 import {
 	APPROVED,
@@ -42,7 +42,7 @@ export const addProductRequest = (values) => {
 			await newProductRequest.save();
 			if (attachments.length > 0) {
 				const uploadedAttachments = await dispatch(
-					fileUtils.upload({
+					upload({
 						files: attachments,
 						collection: 'product-requests',
 						collectionId: newProductRequest.productRequestId,
@@ -91,7 +91,7 @@ export const addComment = (productRequest, values) => {
 			uploadedAttachments = [];
 			if (attachments.length > 0) {
 				uploadedAttachments = await dispatch(
-					fileUtils.upload({
+					upload({
 						files: attachments,
 						collection: 'product-requests',
 						collectionId: productRequest.productRequestId,

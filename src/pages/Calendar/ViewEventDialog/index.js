@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
 	DialogTitle,
 	DialogContent,
@@ -8,21 +8,59 @@ import {
 	FormControlLabel,
 	Checkbox,
 	Tooltip,
-	Dialog
+	Dialog,
+	DialogActions,
+	Badge,
+	Collapse,
+	Button
 } from '@material-ui/core';
 import eventTypes from '../../../data/event-types';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { format } from 'date-fns';
 import { StyledTitle } from './styled-components';
 import { LONG_DATE_TIME, LONG_DATE } from '../../../utils/date';
 import Event from '../../../models/event';
+import CommentOutlinedIcon from '@material-ui/icons/CommentOutlined';
+import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
+import Comments from '../../../components/Comments';
+import { addComment } from '../../../store/actions/event';
 
 const ViewEventDialog = (props) => {
+	const dispatch = useDispatch();
 	const detailsFieldRef = useRef();
+	const { authUser } = useSelector((state) => state.authState);
 	const { users, locations } = useSelector((state) => state.dataState);
-	const { open, close, event } = props;
+	const [loading, setLoading] = useState(false);
+	const [showComments, setShowComments] = useState(false);
+	const { open, close, event: propsEvent } = props;
+	const [event, setEvent] = useState(propsEvent);
+	//Start listener for current event, as static event is sent through props
+	//Props event is static as collection listener is only for calendar 3 month range
+	//This event could be outside that range, hence why it's static
+	useEffect(() => {
+		let eventListener;
+		const asyncFunction = async () => {
+			eventListener = await Event.getEventListener(
+				propsEvent.eventId
+			).onSnapshot((snapshot) => {
+				const newEvent = new Event({
+					...snapshot.data(),
+					eventId: snapshot.id,
+					start: snapshot.data().start.toDate(),
+					end: snapshot.data().end.toDate()
+				});
+				setEvent(newEvent);
+			});
+		};
+		asyncFunction();
+		return () => {
+			if (eventListener) {
+				eventListener();
+			}
+		};
+	}, [propsEvent]);
 
 	const initialValues = {
 		type: eventTypes.find((eventType) => eventType.name === event.type),
@@ -47,8 +85,57 @@ const ViewEventDialog = (props) => {
 		dateFormat = LONG_DATE;
 	}
 
+	const dialogCloseHandler = () => {
+		if (!loading) {
+			close();
+		}
+	};
+
+	const commentsClickHandler = () => {
+		setShowComments((prevState) => !prevState);
+	};
+
+	const newCommentHandler = async (values) => {
+		setLoading(true);
+		const result = await dispatch(addComment(event, values));
+		setLoading(false);
+		return result;
+	};
+
+	let commentIcon = <CommentOutlinedIcon />;
+	const commentUsers = event.comments.map((comment) => comment.user);
+	if (commentUsers.includes(authUser.userId)) {
+		commentIcon = <CommentRoundedIcon />;
+	}
+	const commentToolip = () => {
+		const commentUsers = users.filter((user) => {
+			const commentUserIds = event.comments.map((comment) => comment.user);
+			return commentUserIds.includes(user.userId);
+		});
+		const tooltip = commentUsers.map((commentUser) => (
+			<div key={commentUser.userId}>{commentUser.getFullName()}</div>
+		));
+		return tooltip;
+	};
+
+	const commentButton = (
+		<Button
+			style={{ textTransform: 'unset' }}
+			size='small'
+			color='secondary'
+			onClick={commentsClickHandler}
+			startIcon={
+				<Badge color='secondary' badgeContent={event.comments.length}>
+					{commentIcon}
+				</Badge>
+			}
+		>
+			Comment
+		</Button>
+	);
+
 	return (
-		<Dialog open={open} onClose={close} fullWidth maxWidth='sm'>
+		<Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
 			<DialogTitle>
 				<StyledTitle>{eventTitle}</StyledTitle>
 			</DialogTitle>
@@ -134,6 +221,28 @@ const ViewEventDialog = (props) => {
 					</Grid>
 				</Grid>
 			</DialogContent>
+			<DialogActions>
+				<Grid item container direction='row' justify='flex-end'>
+					<Grid item>
+						{event.comments.length > 0 ? (
+							<Tooltip title={commentToolip()}>{commentButton}</Tooltip>
+						) : (
+							commentButton
+						)}
+					</Grid>
+				</Grid>
+			</DialogActions>
+			<Collapse in={showComments} timeout='auto'>
+				<Comments
+					submitHandler={newCommentHandler}
+					comments={[...event.comments].reverse()}
+					actionBarNotificationProps={{
+						enabled: true,
+						tooltip:
+							'The event user, and all comment participants will be notified automatically'
+					}}
+				/>
+			</Collapse>
 		</Dialog>
 	);
 };

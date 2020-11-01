@@ -544,7 +544,7 @@ const EditProjectDialog = withTheme((props) => {
 					}}
 					comments={{
 						enabled: true,
-						count: project.comments.length,
+						comments: project.comments,
 						clickHandler: () => setShowComments((prevState) => !prevState)
 					}}
 					buttonLoading={loading}
@@ -557,7 +557,6 @@ const EditProjectDialog = withTheme((props) => {
 			</DialogActions>
 			<Collapse in={showComments} timeout='auto'>
 				<Comments
-					authUser={authUser}
 					submitHandler={newCommentHandler}
 					comments={[...project.comments].reverse()}
 					actionBarNotificationProps={{

@@ -78,6 +78,7 @@ export default class Project {
 		const comment = {
 			attachments: attachments,
 			body: body,
+			likes: [],
 			metadata: {
 				createdAt: new Date(serverTime),
 				createdBy: firebase.auth().currentUser.uid,
