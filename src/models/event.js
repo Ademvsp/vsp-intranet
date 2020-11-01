@@ -17,6 +17,7 @@ export default class Event {
 		eventId,
 		actions,
 		allDay,
+		comments,
 		details,
 		end,
 		locations,
@@ -29,6 +30,7 @@ export default class Event {
 		this.eventId = eventId;
 		this.actions = actions;
 		this.allDay = allDay;
+		this.comments = comments;
 		this.details = details;
 		this.end = end;
 		this.locations = locations;

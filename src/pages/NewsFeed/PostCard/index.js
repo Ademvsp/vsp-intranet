@@ -123,12 +123,6 @@ const PostCard = withTheme((props) => {
 	if (commentUsers.includes(authUser.userId)) {
 		commentIcon = <CommentRoundedIcon />;
 	}
-
-	let likeIcon = <ThumbUpOutlinedIcon />;
-	if (post.likes.includes(authUser.userId)) {
-		likeIcon = <ThumbUpRoundedIcon />;
-	}
-
 	const commentToolip = () => {
 		const commentUsers = users.filter((user) => {
 			const commentUserIds = post.comments.map((comment) => comment.user);
@@ -155,6 +149,11 @@ const PostCard = withTheme((props) => {
 			Comment
 		</Button>
 	);
+
+	let likeIcon = <ThumbUpOutlinedIcon />;
+	if (post.likes.includes(authUser.userId)) {
+		likeIcon = <ThumbUpRoundedIcon />;
+	}
 
 	const likeTooltip = () => {
 		const likeUsers = users.filter((user) => {
