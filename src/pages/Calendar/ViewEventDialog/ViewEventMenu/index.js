@@ -10,22 +10,22 @@ import {
   SNACKBAR_SEVERITY
 } from '../../../../utils/constants';
 import { setMessage } from '../../../../store/actions/message';
-import Post from '../../../../models/post';
+import Event from '../../../../models/event';
 
-const PostCardMenu = (props) => {
+const ViewEvent = (props) => {
   const dispatch = useDispatch();
   const { authUser } = useSelector((state) => state.authState);
   const [anchorEl, setAnchorEl] = useState(null);
-  const { post } = props;
+  const { event } = props;
 
   let subscribeText = 'Subsrcibe';
-  if (post.subscribers.includes(authUser.userId)) {
+  if (event.subscribers.includes(authUser.userId)) {
     subscribeText = 'Unsubsribe';
   }
 
   const copyClickHandler = () => {
     const message = new Message({
-      title: 'News Feed',
+      title: 'Staff Calendar',
       body: 'Link copied to clipboard',
       feedback: SNACKBAR,
       options: {
@@ -40,10 +40,10 @@ const PostCardMenu = (props) => {
 
   const subscribeHandler = async () => {
     setAnchorEl(null);
-    const newPost = new Post({ ...post });
-    await newPost.toggleSubscribePost();
+    const newEvent = new Event({ ...event });
+    await newEvent.toggleSubscribePost();
     const message = new Message({
-      title: 'News Feed',
+      title: 'Staff Calendar',
       body: `${subscribeText}d successfully`,
       feedback: SNACKBAR,
       options: {
@@ -70,7 +70,7 @@ const PostCardMenu = (props) => {
         onClose={() => setAnchorEl(null)}
       >
         <CopyToClipboard
-          text={`${process.env.REACT_APP_BASE_URL}/newsfeed/${post.postId}`}
+          text={`${process.env.REACT_APP_BASE_URL}/calendar/${event.eventId}`}
           onCopy={copyClickHandler}
         >
           <MenuItem>Copy direct link</MenuItem>
@@ -83,4 +83,4 @@ const PostCardMenu = (props) => {
   );
 };
 
-export default PostCardMenu;
+export default ViewEvent;
