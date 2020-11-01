@@ -179,10 +179,10 @@ export const editProject = (project, values) => {
 
 export const addComment = (project, body, attachments) => {
 	return async (dispatch, _getState) => {
-		let uploadedAttachments;
+		const newProject = new Project({ ...project });
+		let uploadedAttachments = [];
 		try {
 			const serverTime = await getServerTimeInMilliseconds();
-			uploadedAttachments = [];
 			if (attachments.length > 0) {
 				uploadedAttachments = await dispatch(
 					fileUtils.upload({
@@ -193,7 +193,11 @@ export const addComment = (project, body, attachments) => {
 					})
 				);
 			}
-			await project.saveComment(body.trim(), uploadedAttachments, serverTime);
+			await newProject.saveComment(
+				body.trim(),
+				uploadedAttachments,
+				serverTime
+			);
 			return true;
 		} catch (error) {
 			const message = new Message({
@@ -208,8 +212,4 @@ export const addComment = (project, body, attachments) => {
 			return false;
 		}
 	};
-};
-
-export const getListener = (userId) => {
-	return Project.getListener(userId);
 };

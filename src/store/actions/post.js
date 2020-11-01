@@ -9,26 +9,24 @@ import {
 import { SET_MESSAGE } from '../../utils/actions';
 import * as fileUtils from '../../utils/file-utils';
 import { getServerTimeInMilliseconds } from '../../utils/firebase';
-let collectionDataListener;
 
 export const addPost = (values) => {
 	return async (dispatch, getState) => {
 		const { attachments, notifyUsers, title, body } = values;
 		const { authUser } = getState().authState;
-		let newPost;
+		const newPost = new Post({
+			//The rest of .actions will be filled out in the model
+			actions: [{ notifyUsers: notifyUsers }],
+			attachments: [],
+			body: body.trim(),
+			comments: [],
+			likes: [],
+			metadata: null,
+			subscribers: [authUser.userId],
+			title: title.trim(),
+			user: authUser.userId
+		});
 		try {
-			newPost = new Post({
-				//The rest of .actions will be filled out in the model
-				actions: [{ notifyUsers: notifyUsers }],
-				attachments: [],
-				body: body.trim(),
-				comments: [],
-				likes: [],
-				metadata: null,
-				subscribers: [authUser.userId],
-				title: title.trim(),
-				user: authUser.userId
-			});
 			await newPost.save();
 			if (attachments.length > 0) {
 				const uploadedAttachments = await dispatch(
@@ -109,10 +107,4 @@ export const addComment = (post, values) => {
 			return false;
 		}
 	};
-};
-
-export const unsubscribeCollectionDataListener = () => {
-	if (collectionDataListener) {
-		collectionDataListener();
-	}
 };
