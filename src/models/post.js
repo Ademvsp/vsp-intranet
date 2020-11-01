@@ -1,5 +1,6 @@
 import { CREATE } from '../utils/actions';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
+const collectionRef = firebase.firestore().collection('posts');
 
 export default class Post {
   constructor({
@@ -40,11 +41,7 @@ export default class Post {
         updatedAt: new Date(serverTime),
         updatedBy: firebase.auth().currentUser.uid
       };
-      await firebase
-        .firestore()
-        .collection('posts')
-        .doc(this.postId)
-        .update(this.getDatabaseObject());
+      await collectionRef.doc(this.postId).update(this.getDatabaseObject());
     } else {
       this.metadata = {
         createdAt: new Date(serverTime),
@@ -61,10 +58,7 @@ export default class Post {
           notifyUsers: this.actions[0].notifyUsers
         }
       ];
-      const docRef = await firebase
-        .firestore()
-        .collection('posts')
-        .add(this.getDatabaseObject());
+      const docRef = await collectionRef.add(this.getDatabaseObject());
       const postId = docRef.id;
       this.postId = postId;
     }
@@ -84,26 +78,18 @@ export default class Post {
       user: firebase.auth().currentUser.uid,
       notifyUsers: notifyUsers
     };
-    await firebase
-      .firestore()
-      .collection('posts')
-      .doc(this.postId)
-      .update({
-        comments: firebase.firestore.FieldValue.arrayUnion(comment),
-        //Automatically add the commenter as a subsriber of the post so they receive notifications on new replies
-        subscribers: firebase.firestore.FieldValue.arrayUnion(
-          firebase.auth().currentUser.uid
-        )
-      });
+    await collectionRef.doc(this.postId).update({
+      comments: firebase.firestore.FieldValue.arrayUnion(comment),
+      //Automatically add the commenter as a subsriber of the post so they receive notifications on new replies
+      subscribers: firebase.firestore.FieldValue.arrayUnion(
+        firebase.auth().currentUser.uid
+      )
+    });
     this.comments.push(comment);
   }
 
   static async get(postId) {
-    const doc = await firebase
-      .firestore()
-      .collection('posts')
-      .doc(postId)
-      .get();
+    const doc = await collectionRef.doc(postId).get();
     if (!doc.exists) {
       return null;
     }
@@ -120,7 +106,7 @@ export default class Post {
   }
 
   static async getAll() {
-    const collection = await firebase.firestore().collection('posts').get();
+    const collection = await collectionRef.get();
     return collection.docs;
   }
 
@@ -130,7 +116,7 @@ export default class Post {
     if (this.subscribers.includes(userId)) {
       dbAction = firebase.firestore.FieldValue.arrayRemove(userId);
     }
-    await firebase.firestore().collection('posts').doc(this.postId).update({
+    await collectionRef.doc(this.postId).update({
       subscribers: dbAction
     });
   }
@@ -141,7 +127,7 @@ export default class Post {
     if (this.likes.includes(userId)) {
       dbAction = firebase.firestore.FieldValue.arrayRemove(userId);
     }
-    await firebase.firestore().collection('posts').doc(this.postId).update({
+    await collectionRef.doc(this.postId).update({
       likes: dbAction
     });
   }
@@ -154,17 +140,17 @@ export default class Post {
     } else {
       this.comments[index].likes.splice(indexOfLike, 1);
     }
-    await firebase.firestore().collection('posts').doc(this.postId).update({
+    await collectionRef.doc(this.postId).update({
       comments: this.comments
     });
   }
 
   static getListener(postId) {
-    return firebase.firestore().collection('posts').doc(postId);
+    return collectionRef.doc(postId);
   }
 
   static async find(values) {
-    const collection = await firebase.firestore().collection('posts').get();
+    const collection = await collectionRef.get();
     const results = [];
     collection.forEach((doc) => {
       const value = values.value.trim().toLowerCase();

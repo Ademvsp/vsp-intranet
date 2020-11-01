@@ -11,7 +11,7 @@ import {
 } from '../data/event-types';
 import { CREATE, DELETE, UPDATE } from '../utils/actions';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
-
+const collectionRef = firebase.firestore().collection('events-new');
 export default class Event {
   constructor({
     eventId,
@@ -85,11 +85,7 @@ export default class Event {
   }
 
   static async get(eventId) {
-    const doc = await firebase
-      .firestore()
-      .collection('events-new')
-      .doc(eventId)
-      .get();
+    const doc = await collectionRef.doc(eventId).get();
     if (!doc.exists) {
       return null;
     }
@@ -125,11 +121,7 @@ export default class Event {
           notifyUsers: notifyUsers
         }
       ];
-      await firebase
-        .firestore()
-        .collection('events-new')
-        .doc(this.eventId)
-        .update(this.getDatabaseObject());
+      await collectionRef.doc(this.eventId).update(this.getDatabaseObject());
     } else {
       this.metadata = {
         createdAt: new Date(serverTime),
@@ -145,10 +137,7 @@ export default class Event {
           notifyUsers: notifyUsers
         }
       ];
-      const docRef = await firebase
-        .firestore()
-        .collection('events-new')
-        .add(this.getDatabaseObject());
+      const docRef = await collectionRef.add(this.getDatabaseObject());
       this.eventId = docRef.id;
     }
   }
@@ -167,17 +156,13 @@ export default class Event {
       notifyUsers: notifyUsers,
       user: firebase.auth().currentUser.uid
     };
-    await firebase
-      .firestore()
-      .collection('events-new')
-      .doc(this.eventId)
-      .update({
-        comments: firebase.firestore.FieldValue.arrayUnion(comment),
-        //Automatically add the commenter as a subsriber of the event so they receive notifications on new replies
-        subscribers: firebase.firestore.FieldValue.arrayUnion(
-          firebase.auth().currentUser.uid
-        )
-      });
+    await collectionRef.doc(this.eventId).update({
+      comments: firebase.firestore.FieldValue.arrayUnion(comment),
+      //Automatically add the commenter as a subsriber of the event so they receive notifications on new replies
+      subscribers: firebase.firestore.FieldValue.arrayUnion(
+        firebase.auth().currentUser.uid
+      )
+    });
     this.comments.push(comment);
   }
 
@@ -198,11 +183,7 @@ export default class Event {
         notifyUsers: notifyUsers
       }
     ];
-    await firebase
-      .firestore()
-      .collection('events-new')
-      .doc(this.eventId)
-      .update(this.getDatabaseObject());
+    await collectionRef.doc(this.eventId).update(this.getDatabaseObject());
   }
 
   async toggleCommentLike(index) {
@@ -213,13 +194,9 @@ export default class Event {
     } else {
       this.comments[index].likes.splice(indexOfLike, 1);
     }
-    await firebase
-      .firestore()
-      .collection('events-new')
-      .doc(this.eventId)
-      .update({
-        comments: this.comments
-      });
+    await collectionRef.doc(this.eventId).update({
+      comments: this.comments
+    });
   }
 
   async toggleSubscribePost() {
@@ -228,23 +205,17 @@ export default class Event {
     if (this.subscribers.includes(userId)) {
       dbAction = firebase.firestore.FieldValue.arrayRemove(userId);
     }
-    await firebase
-      .firestore()
-      .collection('events-new')
-      .doc(this.eventId)
-      .update({
-        subscribers: dbAction
-      });
+    await collectionRef.doc(this.eventId).update({
+      subscribers: dbAction
+    });
   }
 
   static getEventListener(eventId) {
-    return firebase.firestore().collection('events-new').doc(eventId);
+    return collectionRef.doc(eventId);
   }
 
   static getRangeListener(start, end) {
-    return firebase
-      .firestore()
-      .collection('events-new')
+    return collectionRef
       .where('start', '>=', start)
       .where('start', '<=', end)
       .orderBy('start', 'asc');
