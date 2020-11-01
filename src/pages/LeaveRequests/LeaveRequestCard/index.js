@@ -8,15 +8,13 @@ import {
 	CardContent,
 	CardActions,
 	withTheme,
-	Grid
+	Grid,
+	Badge,
+	Tooltip
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
 import LeaveRequest from '../../../models/leave-request';
-import {
-	Comment as CommentIcon,
-	MoreVert as MoreVertIcon
-} from '@material-ui/icons';
 import Comments from '../../../components/Comments';
 import { Skeleton } from '@material-ui/lab';
 import Avatar from '../../../components/Avatar';
@@ -26,6 +24,9 @@ import { LONG_DATE_TIME } from '../../../utils/date';
 import LeaveRequestForm from './LeaveRequestForm';
 import ActionButtons from './ActionButtons';
 import { addComment } from '../../../store/actions/leave-request';
+import CommentOutlinedIcon from '@material-ui/icons/CommentOutlined';
+import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 const LeaveRequestCard = withTheme((props) => {
 	const dispatch = useDispatch();
@@ -118,14 +119,40 @@ const LeaveRequestCard = withTheme((props) => {
 	const commentsClickHandler = () => {
 		setShowComments((prevState) => !prevState);
 	};
-	const commentsCount = leaveRequest.comments.length;
-	let commentButtonText = 'Comment';
-	if (commentsCount > 0) {
-		commentButtonText = `${commentsCount} Comment`;
-		if (commentsCount > 1) {
-			commentButtonText = `${commentButtonText}s`;
-		}
+
+	let commentIcon = <CommentOutlinedIcon />;
+	const commentUsers = leaveRequest.comments.map((comment) => comment.user);
+	if (commentUsers.includes(authUser.userId)) {
+		commentIcon = <CommentRoundedIcon />;
 	}
+	const commentToolip = () => {
+		const commentUsers = users.filter((user) => {
+			const commentUserIds = leaveRequest.comments.map(
+				(comment) => comment.user
+			);
+			return commentUserIds.includes(user.userId);
+		});
+		const tooltip = commentUsers.map((commentUser) => (
+			<div key={commentUser.userId}>{commentUser.getFullName()}</div>
+		));
+		return tooltip;
+	};
+
+	const commentButton = (
+		<Button
+			style={{ textTransform: 'unset' }}
+			size='small'
+			color='secondary'
+			onClick={commentsClickHandler}
+			startIcon={
+				<Badge color='secondary' badgeContent={leaveRequest.comments.length}>
+					{commentIcon}
+				</Badge>
+			}
+		>
+			Comment
+		</Button>
+	);
 
 	const user = users.find((user) => user.userId === leaveRequest.user);
 	const postDate = leaveRequest.metadata.createdAt;
@@ -145,7 +172,7 @@ const LeaveRequestCard = withTheme((props) => {
 					<LeaveRequestForm leaveRequest={leaveRequest} />
 				</CardContent>
 				<CardActions style={{ padding: `${props.theme.spacing(2)}px` }}>
-					<Grid container direction='column' spacing={1}>
+					<Grid container direction='column' spacing={2}>
 						<Grid item container direction='row' justify='flex-end' spacing={1}>
 							<ActionButtons
 								leaveRequest={leaveRequest}
@@ -160,17 +187,11 @@ const LeaveRequestCard = withTheme((props) => {
 								</Typography>
 							</Grid>
 							<Grid item>
-								<Button
-									style={{ textTransform: 'unset' }}
-									size='small'
-									color='secondary'
-									onClick={commentsClickHandler}
-									startIcon={
-										leaveRequest.comments.length === 0 && <CommentIcon />
-									}
-								>
-									{commentButtonText}
-								</Button>
+								{leaveRequest.comments.length > 0 ? (
+									<Tooltip title={commentToolip()}>{commentButton}</Tooltip>
+								) : (
+									commentButton
+								)}
 							</Grid>
 						</Grid>
 					</Grid>

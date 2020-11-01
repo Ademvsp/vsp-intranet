@@ -8,14 +8,12 @@ import {
 	CardContent,
 	CardActions,
 	withTheme,
-	Grid
+	Grid,
+	Badge,
+	Tooltip
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
-import {
-	Comment as CommentIcon,
-	MoreVert as MoreVertIcon
-} from '@material-ui/icons';
 import Comments from '../../../components/Comments';
 import { Skeleton } from '@material-ui/lab';
 import Avatar from '../../../components/Avatar';
@@ -28,6 +26,9 @@ import ExpenseClaim from '../../../models/expense-claim';
 import { toCurrency } from '../../../utils/data-transformer';
 import { addComment } from '../../../store/actions/expense-claim';
 import AttachmentsContainer from '../../../components/AttachmentsContainer';
+import CommentOutlinedIcon from '@material-ui/icons/CommentOutlined';
+import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 const ExpenseClaimCard = withTheme((props) => {
 	const dispatch = useDispatch();
@@ -121,14 +122,40 @@ const ExpenseClaimCard = withTheme((props) => {
 	const commentsClickHandler = () => {
 		setShowComments((prevState) => !prevState);
 	};
-	const commentsCount = expenseClaim.comments.length;
-	let commentButtonText = 'Comment';
-	if (commentsCount > 0) {
-		commentButtonText = `${commentsCount} Comment`;
-		if (commentsCount > 1) {
-			commentButtonText = `${commentButtonText}s`;
-		}
+
+	let commentIcon = <CommentOutlinedIcon />;
+	const commentUsers = expenseClaim.comments.map((comment) => comment.user);
+	if (commentUsers.includes(authUser.userId)) {
+		commentIcon = <CommentRoundedIcon />;
 	}
+	const commentToolip = () => {
+		const commentUsers = users.filter((user) => {
+			const commentUserIds = expenseClaim.comments.map(
+				(comment) => comment.user
+			);
+			return commentUserIds.includes(user.userId);
+		});
+		const tooltip = commentUsers.map((commentUser) => (
+			<div key={commentUser.userId}>{commentUser.getFullName()}</div>
+		));
+		return tooltip;
+	};
+
+	const commentButton = (
+		<Button
+			style={{ textTransform: 'unset' }}
+			size='small'
+			color='secondary'
+			onClick={commentsClickHandler}
+			startIcon={
+				<Badge color='secondary' badgeContent={expenseClaim.comments.length}>
+					{commentIcon}
+				</Badge>
+			}
+		>
+			Comment
+		</Button>
+	);
 
 	const user = users.find((user) => user.userId === expenseClaim.user);
 	const postDate = expenseClaim.metadata.createdAt;
@@ -159,7 +186,7 @@ const ExpenseClaimCard = withTheme((props) => {
 					</Grid>
 				</CardContent>
 				<CardActions style={{ padding: `${props.theme.spacing(2)}px` }}>
-					<Grid container direction='column' spacing={1}>
+					<Grid container direction='column' spacing={2}>
 						<Grid item container direction='row' justify='flex-end' spacing={1}>
 							<ActionButtons
 								expenseClaim={expenseClaim}
@@ -175,17 +202,11 @@ const ExpenseClaimCard = withTheme((props) => {
 								</Typography>
 							</Grid>
 							<Grid item>
-								<Button
-									style={{ textTransform: 'unset' }}
-									size='small'
-									color='secondary'
-									onClick={commentsClickHandler}
-									startIcon={
-										expenseClaim.comments.length === 0 && <CommentIcon />
-									}
-								>
-									{commentButtonText}
-								</Button>
+								{expenseClaim.comments.length > 0 ? (
+									<Tooltip title={commentToolip()}>{commentButton}</Tooltip>
+								) : (
+									commentButton
+								)}
 							</Grid>
 						</Grid>
 					</Grid>
