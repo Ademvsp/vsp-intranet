@@ -31,9 +31,9 @@ import ActionsBar from '../../../components/ActionsBar';
 import Comments from '../../../components/Comments';
 import { subscribeCustomerListener } from '../../../store/actions/customer';
 import { subscribeVendorListener } from '../../../store/actions/vendor';
-import { editProject } from '../../../store/actions/project';
-import { addComment } from '../../../store/actions/product-request';
+import { addComment, editProject } from '../../../store/actions/project';
 import Avatar from '../../../components/Avatar';
+import Project from '../../../models/project';
 const filter = createFilterOptions();
 
 const EditProjectDialog = withTheme((props) => {
@@ -158,6 +158,13 @@ const EditProjectDialog = withTheme((props) => {
 	const newCommentHandler = async (values) => {
 		const result = await dispatch(addComment(project, values));
 		return result;
+	};
+
+	const commentLikeClickHandler = async (reverseIndex) => {
+		//Comments get reversed to display newest first, need to switch it back
+		const index = project.comments.length - reverseIndex - 1;
+		const newProject = new Project({ ...project });
+		await newProject.toggleCommentLike(index);
 	};
 
 	const formik = useFormik({
@@ -564,6 +571,7 @@ const EditProjectDialog = withTheme((props) => {
 						tooltip: 'All project owners will be notified',
 						readOnly: true
 					}}
+					commentLikeClickHandler={commentLikeClickHandler}
 				/>
 			</Collapse>
 		</Dialog>

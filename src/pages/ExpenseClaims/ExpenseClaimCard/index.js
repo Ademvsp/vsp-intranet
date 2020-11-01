@@ -123,6 +123,13 @@ const ExpenseClaimCard = withTheme((props) => {
 		setShowComments((prevState) => !prevState);
 	};
 
+	const commentLikeClickHandler = async (reverseIndex) => {
+		//Comments get reversed to display newest first, need to switch it back
+		const index = expenseClaim.comments.length - reverseIndex - 1;
+		const newExpenseClaim = new ExpenseClaim({ ...expenseClaim });
+		await newExpenseClaim.toggleCommentLike(index);
+	};
+
 	let commentIcon = <CommentOutlinedIcon />;
 	const commentUsers = expenseClaim.comments.map((comment) => comment.user);
 	if (commentUsers.includes(authUser.userId)) {
@@ -221,6 +228,7 @@ const ExpenseClaimCard = withTheme((props) => {
 								'The expenses admin, the original requester and their manager will be notified automatically',
 							readOnly: true
 						}}
+						commentLikeClickHandler={commentLikeClickHandler}
 					/>
 				</Collapse>
 			</Card>

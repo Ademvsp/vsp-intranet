@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { StyledContainer } from './styled-components';
 import { ListItemAvatar, Grid } from '@material-ui/core';
 import Avatar from '../../Avatar';
 import { useFormik } from 'formik';
@@ -49,12 +48,14 @@ const NewComment = (props) => {
 	}, [validateForm]);
 
 	return (
-		<StyledContainer>
-			<ListItemAvatar>
-				<Avatar user={authUser} />
-			</ListItemAvatar>
-			<Grid container direction='column' spacing={1}>
+		<Grid container direction='column' spacing={1}>
+			<Grid item container alignItems='center'>
 				<Grid item>
+					<ListItemAvatar>
+						<Avatar user={authUser} />
+					</ListItemAvatar>
+				</Grid>
+				<Grid item style={{ flexGrow: 1 }}>
 					<BalloonEditorWrapper
 						value={formik.values.body}
 						setValue={formik.handleChange('body')}
@@ -65,32 +66,32 @@ const NewComment = (props) => {
 						placeholder='Write a comment...'
 					/>
 				</Grid>
-				<Grid item>
-					<ActionsBar
-						notifications={{
-							enabled: props.actionBarNotificationProps.enabled,
-							tooltip: props.actionBarNotificationProps.tooltip,
-							readOnly: props.actionBarNotificationProps.readOnly,
-							notifyUsers: formik.values.notifyUsers,
-							setNotifyUsers: (notifyUsers) =>
-								formik.setFieldValue('notifyUsers', notifyUsers)
-						}}
-						attachments={{
-							enabled: true,
-							attachments: formik.values.attachments,
-							setAttachments: (attachments) =>
-								formik.setFieldValue('attachments', attachments)
-						}}
-						buttonLoading={loading}
-						loading={loading || uploading || !validatedOnMount}
-						isValid={formik.isValid}
-						onClick={formik.handleSubmit}
-						tooltipPlacement='bottom'
-						actionButtonText='Comment'
-					/>
-				</Grid>
 			</Grid>
-		</StyledContainer>
+			<Grid item>
+				<ActionsBar
+					notifications={{
+						enabled: props.actionBarNotificationProps.enabled,
+						tooltip: props.actionBarNotificationProps.tooltip,
+						readOnly: props.actionBarNotificationProps.readOnly,
+						notifyUsers: formik.values.notifyUsers,
+						setNotifyUsers: (notifyUsers) =>
+							formik.setFieldValue('notifyUsers', notifyUsers)
+					}}
+					attachments={{
+						enabled: true,
+						attachments: formik.values.attachments,
+						setAttachments: (attachments) =>
+							formik.setFieldValue('attachments', attachments)
+					}}
+					buttonLoading={loading}
+					loading={loading || uploading || !validatedOnMount}
+					isValid={formik.isValid}
+					onClick={formik.handleSubmit}
+					tooltipPlacement='bottom'
+					actionButtonText='Comment'
+				/>
+			</Grid>
+		</Grid>
 	);
 };
 

@@ -102,6 +102,13 @@ const ViewEventDialog = (props) => {
 		return result;
 	};
 
+	const commentLikeClickHandler = async (reverseIndex) => {
+		//Comments get reversed to display newest first, need to switch it back
+		const index = event.comments.length - reverseIndex - 1;
+		const newEvent = new Event({ ...event });
+		await newEvent.toggleCommentLike(index);
+	};
+
 	let commentIcon = <CommentOutlinedIcon />;
 	const commentUsers = event.comments.map((comment) => comment.user);
 	if (commentUsers.includes(authUser.userId)) {
@@ -241,6 +248,7 @@ const ViewEventDialog = (props) => {
 						tooltip:
 							'The event user, and all comment participants will be notified automatically'
 					}}
+					commentLikeClickHandler={commentLikeClickHandler}
 				/>
 			</Collapse>
 		</Dialog>

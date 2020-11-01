@@ -123,6 +123,13 @@ const ProductRequestCard = withTheme((props) => {
 		setShowComments((prevState) => !prevState);
 	};
 
+	const commentLikeClickHandler = async (reverseIndex) => {
+		//Comments get reversed to display newest first, need to switch it back
+		const index = productRequest.comments.length - reverseIndex - 1;
+		const newEvent = new ProductRequest({ ...productRequest });
+		await newEvent.toggleCommentLike(index);
+	};
+
 	let commentIcon = <CommentOutlinedIcon />;
 	const commentUsers = productRequest.comments.map((comment) => comment.user);
 	if (commentUsers.includes(authUser.userId)) {
@@ -215,6 +222,7 @@ const ProductRequestCard = withTheme((props) => {
 								'The product request admin and the original requester will be notified automatically',
 							readOnly: true
 						}}
+						commentLikeClickHandler={commentLikeClickHandler}
 					/>
 				</Collapse>
 			</Card>

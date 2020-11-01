@@ -1,5 +1,5 @@
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
-
+const collectionRef = firebase.firestore().collection('projects-new');
 export default class Project {
 	constructor({
 		projectId,
@@ -46,11 +46,7 @@ export default class Project {
 				updatedBy: firebase.auth().currentUser.uid
 			};
 			this.actions[this.actions.length - 1].actionedAt = new Date(serverTime);
-			await firebase
-				.firestore()
-				.collection('projects-new')
-				.doc(this.projectId)
-				.update(this.getDatabaseObject());
+			await collectionRef.doc(this.projectId).update(this.getDatabaseObject());
 		} else {
 			this.metadata = {
 				createdAt: new Date(serverTime),
@@ -66,10 +62,7 @@ export default class Project {
 					actionedBy: firebase.auth().currentUser.uid
 				}
 			];
-			const docRef = await firebase
-				.firestore()
-				.collection('projects-new')
-				.add(this.getDatabaseObject());
+			const docRef = await collectionRef.add(this.getDatabaseObject());
 			this.projectId = docRef.id;
 		}
 	}
@@ -87,20 +80,27 @@ export default class Project {
 			},
 			user: firebase.auth().currentUser.uid
 		};
-		await firebase
-			.firestore()
-			.collection('projects-new')
-			.doc(this.projectId)
-			.update({
-				comments: firebase.firestore.FieldValue.arrayUnion(comment)
-			});
+		await collectionRef.doc(this.projectId).update({
+			comments: firebase.firestore.FieldValue.arrayUnion(comment)
+		});
 		this.comments.push(comment);
 	}
 
+	async toggleCommentLike(index) {
+		const userId = firebase.auth().currentUser.uid;
+		const indexOfLike = this.comments[index].likes.indexOf(userId);
+		if (indexOfLike === -1) {
+			this.comments[index].likes.push(userId);
+		} else {
+			this.comments[index].likes.splice(indexOfLike, 1);
+		}
+		await collectionRef.doc(this.projectId).update({
+			comments: this.comments
+		});
+	}
+
 	static getListener(userId) {
-		return firebase
-			.firestore()
-			.collection('projects-new')
+		return collectionRef
 			.where('owners', 'array-contains', userId)
 			.orderBy('metadata.createdAt', 'desc');
 	}

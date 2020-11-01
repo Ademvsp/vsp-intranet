@@ -98,6 +98,23 @@ export default class ProductRequest {
 		this.comments.push(comment);
 	}
 
+	async toggleCommentLike(index) {
+		const userId = firebase.auth().currentUser.uid;
+		const indexOfLike = this.comments[index].likes.indexOf(userId);
+		if (indexOfLike === -1) {
+			this.comments[index].likes.push(userId);
+		} else {
+			this.comments[index].likes.splice(indexOfLike, 1);
+		}
+		await firebase
+			.firestore()
+			.collection('product-requests')
+			.doc(this.productRequestId)
+			.update({
+				comments: this.comments
+			});
+	}
+
 	async saveAction(actionType, finalSku) {
 		const serverTime = await getServerTimeInMilliseconds();
 		const action = {

@@ -37,6 +37,7 @@ const PostCard = withTheme((props) => {
 	const { authUser } = useSelector((state) => state.authState);
 	const { users } = useSelector((state) => state.dataState);
 	const { postId, scroll, setActivePostId } = props;
+	const [loading, setLoading] = useState(false);
 	const [post, setPost] = useState();
 	const [showComments, setShowComments] = useState(false);
 
@@ -115,7 +116,17 @@ const PostCard = withTheme((props) => {
 	};
 
 	const likeClickHandler = async () => {
-		await post.toggleLike();
+		setLoading(true);
+		const newPost = new Post({ ...post });
+		await newPost.toggleLike();
+		setLoading(false);
+	};
+
+	const commentLikeClickHandler = async (reverseIndex) => {
+		//Comments get reversed to display newest first, need to switch it back
+		const index = post.comments.length - reverseIndex - 1;
+		const newPost = new Post({ ...post });
+		await newPost.toggleCommentLike(index);
 	};
 
 	let commentIcon = <CommentOutlinedIcon />;
@@ -171,6 +182,7 @@ const PostCard = withTheme((props) => {
 			size='small'
 			color='secondary'
 			onClick={likeClickHandler}
+			disabled={loading}
 			startIcon={
 				<Badge color='secondary' badgeContent={post.likes.length}>
 					{likeIcon}
@@ -224,7 +236,7 @@ const PostCard = withTheme((props) => {
 								)}
 							</Grid>
 							<Grid item>
-								{post.likes.length > 0 ? (
+								{post.likes.length > 0 && !loading ? (
 									<Tooltip title={likeTooltip()}>{likeButton}</Tooltip>
 								) : (
 									likeButton
@@ -241,6 +253,7 @@ const PostCard = withTheme((props) => {
 							enabled: true,
 							tooltip: 'All post participants will be notified automatically'
 						}}
+						commentLikeClickHandler={commentLikeClickHandler}
 					/>
 				</Collapse>
 			</Card>

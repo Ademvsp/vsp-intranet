@@ -144,6 +144,13 @@ const EditEventDialog = withTheme((props) => {
 		setShowComments((prevState) => !prevState);
 	};
 
+	const commentLikeClickHandler = async (reverseIndex) => {
+		//Comments get reversed to display newest first, need to switch it back
+		const index = event.comments.length - reverseIndex - 1;
+		const newEvent = new Event({ ...event });
+		await newEvent.toggleCommentLike(index);
+	};
+
 	const formik = useFormik({
 		initialValues: initialValues,
 		onSubmit: submitHandler,
@@ -387,6 +394,7 @@ const EditEventDialog = withTheme((props) => {
 							tooltip:
 								'The event user, and all comment participants will be notified automatically'
 						}}
+						commentLikeClickHandler={commentLikeClickHandler}
 					/>
 				</Collapse>
 			</Dialog>

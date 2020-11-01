@@ -103,6 +103,23 @@ export default class LeaveRequest {
 		this.actions = [...this.actions, action];
 	}
 
+	async toggleCommentLike(index) {
+		const userId = firebase.auth().currentUser.uid;
+		const indexOfLike = this.comments[index].likes.indexOf(userId);
+		if (indexOfLike === -1) {
+			this.comments[index].likes.push(userId);
+		} else {
+			this.comments[index].likes.splice(indexOfLike, 1);
+		}
+		await firebase
+			.firestore()
+			.collection('leave-requests')
+			.doc(this.leaveRequestId)
+			.update({
+				comments: this.comments
+			});
+	}
+
 	static async getAdmins() {
 		const collection = await firebase
 			.firestore()

@@ -177,9 +177,10 @@ export const editProject = (project, values) => {
 	};
 };
 
-export const addComment = (project, body, attachments) => {
+export const addComment = (project, values) => {
 	return async (dispatch, _getState) => {
 		const newProject = new Project({ ...project });
+		const { body, attachments } = values;
 		let uploadedAttachments = [];
 		try {
 			const serverTime = await getServerTimeInMilliseconds();

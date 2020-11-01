@@ -146,6 +146,19 @@ export default class Post {
 		});
 	}
 
+	async toggleCommentLike(index) {
+		const userId = firebase.auth().currentUser.uid;
+		const indexOfLike = this.comments[index].likes.indexOf(userId);
+		if (indexOfLike === -1) {
+			this.comments[index].likes.push(userId);
+		} else {
+			this.comments[index].likes.splice(indexOfLike, 1);
+		}
+		await firebase.firestore().collection('posts').doc(this.postId).update({
+			comments: this.comments
+		});
+	}
+
 	static getListener(postId) {
 		return firebase.firestore().collection('posts').doc(postId);
 	}

@@ -127,4 +127,21 @@ export default class ExpenseClaim {
 		this.metadata = metadata;
 		this.actions = [...this.actions, action];
 	}
+
+	async toggleCommentLike(index) {
+		const userId = firebase.auth().currentUser.uid;
+		const indexOfLike = this.comments[index].likes.indexOf(userId);
+		if (indexOfLike === -1) {
+			this.comments[index].likes.push(userId);
+		} else {
+			this.comments[index].likes.splice(indexOfLike, 1);
+		}
+		await firebase
+			.firestore()
+			.collection('expense-claims')
+			.doc(this.expenseClaimId)
+			.update({
+				comments: this.comments
+			});
+	}
 }

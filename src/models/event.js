@@ -173,7 +173,7 @@ export default class Event {
 			.doc(this.eventId)
 			.update({
 				comments: firebase.firestore.FieldValue.arrayUnion(comment),
-				//Automatically add the commenter as a subsriber of the post so they receive notifications on new replies
+				//Automatically add the commenter as a subsriber of the event so they receive notifications on new replies
 				subscribers: firebase.firestore.FieldValue.arrayUnion(
 					firebase.auth().currentUser.uid
 				)
@@ -203,6 +203,23 @@ export default class Event {
 			.collection('events-new')
 			.doc(this.eventId)
 			.update(this.getDatabaseObject());
+	}
+
+	async toggleCommentLike(index) {
+		const userId = firebase.auth().currentUser.uid;
+		const indexOfLike = this.comments[index].likes.indexOf(userId);
+		if (indexOfLike === -1) {
+			this.comments[index].likes.push(userId);
+		} else {
+			this.comments[index].likes.splice(indexOfLike, 1);
+		}
+		await firebase
+			.firestore()
+			.collection('events-new')
+			.doc(this.eventId)
+			.update({
+				comments: this.comments
+			});
 	}
 
 	static getEventListener(eventId) {
