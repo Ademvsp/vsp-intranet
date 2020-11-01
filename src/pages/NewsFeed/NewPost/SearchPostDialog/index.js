@@ -12,15 +12,14 @@ import {
 } from '@material-ui/core';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Autocomplete } from '@material-ui/lab';
 import { useHistory } from 'react-router-dom';
-import { searchPosts } from '../../../../store/actions/post';
 import Avatar from '../../../../components/Avatar';
+import Post from '../../../../models/post';
 
 const SearchPostDialog = withTheme((props) => {
 	const history = useHistory();
-	const dispatch = useDispatch();
 	const { users } = useSelector((state) => state.dataState);
 	const [loading, setLoading] = useState(false);
 	const [validatedOnMount, setValidatedOnMount] = useState(false);
@@ -46,7 +45,7 @@ const SearchPostDialog = withTheme((props) => {
 
 	const submitHandler = async (values) => {
 		setLoading(true);
-		const results = await dispatch(searchPosts(values));
+		const results = await Post.find(values);
 		if (results) {
 			formik.setValues(initialValues, true);
 			setSearchResults(results);
@@ -105,7 +104,7 @@ const SearchPostDialog = withTheme((props) => {
 						<TextField
 							{...params}
 							fullWidth={true}
-							label='Posted by'
+							label='Posted or Commented by'
 							variant='standard'
 						/>
 					)}

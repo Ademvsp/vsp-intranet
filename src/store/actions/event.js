@@ -24,33 +24,26 @@ export const addEvent = (values) => {
 		} = values;
 		const { authUser } = getState().authState;
 		const { locations: dataStateLocations } = getState().dataState;
-		let newEvent;
+		const userLocation = dataStateLocations.find(
+			(dataStateLocation) => dataStateLocation.locationId === authUser.location
+		);
+		let locations = [authUser.location];
+		if (allCalendars) {
+			locations = dataStateLocations.map((location) => location.locationId);
+		}
+		let startTransformed = transformDate(start, allDay, userLocation.timezone);
+		let endTransformed = transformDate(end, allDay, userLocation.timezone);
+		const newEvent = new Event({
+			allDay: allDay,
+			details: details,
+			end: endTransformed,
+			locations: locations,
+			start: startTransformed,
+			subscribers: [authUser.userId],
+			type: type.name,
+			user: authUser.userId
+		});
 		try {
-			const userLocation = dataStateLocations.find(
-				(dataStateLocation) =>
-					dataStateLocation.locationId === authUser.location
-			);
-			let locations = [authUser.location];
-			if (allCalendars) {
-				locations = dataStateLocations.map((location) => location.locationId);
-			}
-			let startTransformed = transformDate(
-				start,
-				allDay,
-				userLocation.timezone
-			);
-			let endTransformed = transformDate(end, allDay, userLocation.timezone);
-
-			newEvent = new Event({
-				allDay: allDay,
-				details: details,
-				end: endTransformed,
-				locations: locations,
-				start: startTransformed,
-				subscribers: [authUser.userId],
-				type: type.name,
-				user: authUser.userId
-			});
 			await newEvent.save(notifyUsers);
 			const message = new Message({
 				title: 'Staff Calendar',
@@ -95,32 +88,25 @@ export const editEvent = (event, values) => {
 		} = values;
 		const { authUser } = getState().authState;
 		const { locations: dataStateLocations } = getState().dataState;
-		let newEvent;
+		const userLocation = dataStateLocations.find(
+			(dataStateLocation) => dataStateLocation.locationId === authUser.location
+		);
+		let locations = [authUser.location];
+		if (allCalendars) {
+			locations = dataStateLocations.map((location) => location.locationId);
+		}
+		let startTransformed = transformDate(start, allDay, userLocation.timezone);
+		let endTransformed = transformDate(end, allDay, userLocation.timezone);
+		const newEvent = new Event({
+			...event,
+			allDay: allDay,
+			details: details,
+			end: endTransformed,
+			locations: locations,
+			start: startTransformed,
+			type: type.name
+		});
 		try {
-			const userLocation = dataStateLocations.find(
-				(dataStateLocation) =>
-					dataStateLocation.locationId === authUser.location
-			);
-			let locations = [authUser.location];
-			if (allCalendars) {
-				locations = dataStateLocations.map((location) => location.locationId);
-			}
-			let startTransformed = transformDate(
-				start,
-				allDay,
-				userLocation.timezone
-			);
-			let endTransformed = transformDate(end, allDay, userLocation.timezone);
-
-			newEvent = new Event({
-				...event,
-				allDay: allDay,
-				details: details,
-				end: endTransformed,
-				locations: locations,
-				start: startTransformed,
-				type: type.name
-			});
 			await newEvent.save(notifyUsers);
 			const message = new Message({
 				title: 'Staff Calendar',

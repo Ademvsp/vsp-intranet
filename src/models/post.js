@@ -149,4 +149,59 @@ export default class Post {
 	static getListener(postId) {
 		return firebase.firestore().collection('posts').doc(postId);
 	}
+
+	static async find(values) {
+		const collection = await firebase.firestore().collection('posts').get();
+		const results = [];
+		collection.forEach((doc) => {
+			const value = values.value.trim().toLowerCase();
+			const userId = values.user?.userId;
+			const post = new Post({
+				...doc.data(),
+				postId: doc.id
+			});
+			if (this.getSearchMatch(post, value, userId)) {
+				results.push(post.postId);
+			}
+		});
+		//If no results found OR all results returned
+		if (results.length === 0 || results.length === collection.length) {
+			return null;
+		}
+		return results;
+	}
+
+	static getSearchMatch(post, value, userId) {
+		if (post.title.toLowerCase().includes(value)) {
+			if (userId) {
+				if (userId === post.user) {
+					return true;
+				}
+			} else {
+				return true;
+			}
+		}
+		if (post.body.toLowerCase().includes(value)) {
+			if (userId) {
+				if (userId === post.user) {
+					return true;
+				}
+			} else {
+				return true;
+			}
+		}
+		const commentMatch = post.comments.find((comment) =>
+			comment.body.toLowerCase().includes(value)
+		);
+		if (commentMatch) {
+			if (userId) {
+				if (userId === commentMatch.user) {
+					return true;
+				}
+			} else {
+				return true;
+			}
+		}
+		return false;
+	}
 }

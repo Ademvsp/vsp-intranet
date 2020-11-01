@@ -74,11 +74,11 @@ export const addPost = (values) => {
 
 export const addComment = (post, values) => {
 	return async (dispatch, _getState) => {
+		const newPost = new Post({ ...post });
 		const { body, attachments, notifyUsers } = values;
-		let uploadedAttachments;
+		let uploadedAttachments = [];
 		try {
 			const serverTime = await getServerTimeInMilliseconds();
-			uploadedAttachments = [];
 			if (attachments.length > 0) {
 				uploadedAttachments = await dispatch(
 					fileUtils.upload({
@@ -89,7 +89,7 @@ export const addComment = (post, values) => {
 					})
 				);
 			}
-			await post.saveComment(
+			await newPost.saveComment(
 				body.trim(),
 				uploadedAttachments,
 				notifyUsers,
@@ -109,74 +109,6 @@ export const addComment = (post, values) => {
 			return false;
 		}
 	};
-};
-
-export const searchPosts = (values) => {
-	return async (dispatch, _getState) => {
-		try {
-			const posts = await Post.getAll();
-			const results = [];
-			posts.forEach((doc) => {
-				const value = values.value.trim().toLowerCase();
-				const userId = values.user ? values.user.userId : null;
-				const post = new Post({
-					...doc.data(),
-					postId: doc.id
-				});
-				if (getSearchMatch(post, value, userId)) {
-					results.push(post.postId);
-				}
-			});
-			if (results.length === 0 || results.length === posts.length) {
-				return null;
-			}
-			return results;
-		} catch (error) {
-			const message = new Message({
-				title: 'News Feed',
-				body: 'Search failed',
-				feedback: DIALOG
-			});
-			dispatch({
-				type: SET_MESSAGE,
-				message
-			});
-		}
-	};
-};
-
-const getSearchMatch = (post, value, userId) => {
-	if (post.title.toLowerCase().includes(value)) {
-		if (userId) {
-			if (userId === post.createdBy) {
-				return true;
-			}
-		} else {
-			return true;
-		}
-	}
-	if (post.body.toLowerCase().includes(value)) {
-		if (userId) {
-			if (userId === post.createdBy) {
-				return true;
-			}
-		} else {
-			return true;
-		}
-	}
-	const commentMatch = post.comments.find((comment) =>
-		comment.body.toLowerCase().includes(value)
-	);
-	if (commentMatch) {
-		if (userId) {
-			if (userId === commentMatch.createdBy) {
-				return true;
-			}
-		} else {
-			return true;
-		}
-	}
-	return false;
 };
 
 export const unsubscribeCollectionDataListener = () => {

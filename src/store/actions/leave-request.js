@@ -70,10 +70,10 @@ export const addLeaveRequest = (values) => {
 export const addComment = (leaveRequest, values) => {
 	return async (dispatch, _getState) => {
 		const { body, attachments } = values;
-		let uploadedAttachments;
+		let uploadedAttachments = [];
+		const newLeaveRequest = new LeaveRequest({ ...leaveRequest });
 		try {
 			const serverTime = await getServerTimeInMilliseconds();
-			uploadedAttachments = [];
 			if (attachments.length > 0) {
 				uploadedAttachments = await dispatch(
 					upload({
@@ -84,7 +84,7 @@ export const addComment = (leaveRequest, values) => {
 					})
 				);
 			}
-			await leaveRequest.saveComment(
+			await newLeaveRequest.saveComment(
 				body.trim(),
 				uploadedAttachments,
 				serverTime

@@ -75,10 +75,10 @@ export const addExpense = (values) => {
 export const addComment = (expenseClaim, values) => {
 	return async (dispatch, _getState) => {
 		const { body, attachments } = values;
-		let uploadedAttachments;
+		const newExpenseClaim = new ExpenseClaim({ ...expenseClaim });
+		let uploadedAttachments = [];
 		try {
 			const serverTime = await getServerTimeInMilliseconds();
-			uploadedAttachments = [];
 			if (attachments.length > 0) {
 				uploadedAttachments = await dispatch(
 					upload({
@@ -89,7 +89,7 @@ export const addComment = (expenseClaim, values) => {
 					})
 				);
 			}
-			await expenseClaim.saveComment(
+			await newExpenseClaim.saveComment(
 				body.trim(),
 				uploadedAttachments,
 				serverTime
