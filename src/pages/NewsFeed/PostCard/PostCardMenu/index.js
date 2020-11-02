@@ -73,7 +73,7 @@ const PostCardMenu = (props) => {
           text={`${process.env.REACT_APP_BASE_URL}/newsfeed/${post.postId}`}
           onCopy={copyClickHandler}
         >
-          <MenuItem>Copy direct link</MenuItem>
+          <MenuItem>Copy Direct Link</MenuItem>
         </CopyToClipboard>
         <MenuItem onClick={subscribeHandler}>
           {`${subscribeText} to notifications`}

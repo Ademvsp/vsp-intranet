@@ -1,77 +1,55 @@
 import { CircularProgress, Container, Grid } from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
 import React, { Fragment, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import CollectionData from '../../models/collection-data';
-import { READ_PAGE, READ_EXPENSE_CLAIM } from '../../utils/actions';
-// import ProductRequestCard from './ProductRequestCard';
+import Promotion from '../../models/promotion';
+import { READ_PAGE, READ_PROMOTION } from '../../utils/actions';
 import AddIcon from '@material-ui/icons/Add';
 import FloatingActionButton from '../../components/FloatingActionButton';
-import ExpenseClaim from '../../models/expense-claim';
-import ExpenseClaimCard from './ExpenseClaimCard';
-import NewExpenseClaimDialog from './NewExpenseClaimDialog';
-// import NewProductRequestDialog from './NewProductRequestDialog';
+import PromotionCard from './PromotionCard';
 
-const ExpenseClaims = (props) => {
-  const dispatch = useDispatch();
-  const { authUser } = useSelector((state) => state.authState);
-  const { userId } = authUser;
-
-  const params = useParams();
-  const { action } = props;
-  const { replace, push } = useHistory();
-
+const Promotions = (props) => {
   const initialPage = 1;
   const MAX_PER_PAGE = 5;
 
+  const { replace, push } = useHistory();
+  const params = useParams();
+  const { action } = props;
+
+  const dispatch = useDispatch();
+
   const [collectionData, setCollectionData] = useState();
-  const [dataSource, setDataSource] = useState();
-
   const [page, setPage] = useState(initialPage);
-  const [expenseClaimIds, setExpenseClaimIds] = useState();
-  const [activeExpenseClaimId, setActiveExpenseClaimId] = useState(null);
-
-  const [isAdmin, setIsAdmin] = useState();
-  const [showNewExpenseClaimDialog, setShowNewExpenseClaimDialog] = useState(
+  const [dataSource, setDataSource] = useState();
+  const [promotionIds, setPromotionIds] = useState();
+  const [activePromotionId, setActivePromotionId] = useState(null);
+  const [setShowNewPromotionDialog, setSetShowNewPromotionDialog] = useState(
     false
   );
+  const [isAdmin, setIsAdmin] = useState();
+
   //Mount and dismount, get admin status
   useEffect(() => {
     const asyncFunction = async () => {
-      const newIsAdmin = await ExpenseClaim.isAdmin();
+      const newIsAdmin = await Promotion.isAdmin();
       setIsAdmin(newIsAdmin);
     };
     asyncFunction();
   }, []);
-  //Get expense claims based on user
+  //Effect after checking isAdmin
   useEffect(() => {
     let collectionDataListener;
     if (isAdmin !== undefined) {
-      let listenerRef;
-      if (isAdmin) {
-        //Get all documents
-        listenerRef = CollectionData.getListener('expense-claims');
-      } else {
-        //Get only documents where the user has ownership
-        listenerRef = CollectionData.getNestedListener({
-          document: 'expense-claims',
-          subCollection: 'users',
-          subCollectionDoc: userId
+      collectionDataListener = CollectionData.getListener(
+        'promotions'
+      ).onSnapshot((snapshot) => {
+        const newPostsCollectionData = new CollectionData({
+          ...snapshot.data(),
+          collection: snapshot.id
         });
-      }
-      collectionDataListener = listenerRef.onSnapshot((snapshot) => {
-        let newCollectionData = new CollectionData({
-          collection: 'expense-claims',
-          documents: []
-        });
-        if (snapshot.exists) {
-          newCollectionData = new CollectionData({
-            ...snapshot.data(),
-            collection: snapshot.id
-          });
-        }
-        setCollectionData(newCollectionData);
+        setCollectionData(newPostsCollectionData);
       });
     }
     return () => {
@@ -79,8 +57,8 @@ const ExpenseClaims = (props) => {
         collectionDataListener();
       }
     };
-  }, [dispatch, isAdmin, userId]);
-  //If results change or collectionData changes, update the data source
+  }, [dispatch, isAdmin]);
+  //If collectionData changes, update the data source
   useEffect(() => {
     if (collectionData) {
       let newDataSource = [...collectionData.documents].reverse();
@@ -100,33 +78,33 @@ const ExpenseClaims = (props) => {
           newPage = pageNumber;
         } else {
           newPage = initialPage;
-          replace(`/expense-claims/page/${initialPage}`);
+          replace(`/promotions/page/${initialPage}`);
         }
-      } else if (action === READ_EXPENSE_CLAIM) {
+      } else if (action === READ_PROMOTION) {
         //Coming from direct link
-        const expenseClaimId = params.expenseClaimId;
+        const promotionId = params.promotionId;
         const index = dataSource.findIndex(
-          (document) => document === expenseClaimId
+          (document) => document === promotionId
         );
         if (index !== -1) {
           newPage = Math.floor(index / MAX_PER_PAGE) + 1;
-          const newExpenseClaimId = expenseClaimId;
-          setActiveExpenseClaimId(newExpenseClaimId);
+          const newPromotionId = promotionId;
+          setActivePromotionId(newPromotionId);
         } else {
           newPage = initialPage;
-          replace(`/expense-claims/page/${initialPage}`);
+          replace(`/promotions/page/${initialPage}`);
         }
       }
       //Slicing the data source to only include 5 results
       const START_INDEX = newPage * MAX_PER_PAGE - MAX_PER_PAGE;
       const END_INDEX = START_INDEX + MAX_PER_PAGE;
-      const newExpenseClaimIds = dataSource.slice(START_INDEX, END_INDEX);
+      const newPromotionIds = dataSource.slice(START_INDEX, END_INDEX);
       setPage(newPage);
-      setExpenseClaimIds(newExpenseClaimIds);
+      setPromotionIds(newPromotionIds);
     }
   }, [dataSource, action, params, replace]);
 
-  if (!expenseClaimIds) {
+  if (!promotionIds) {
     return <CircularProgress />;
   }
 
@@ -134,20 +112,20 @@ const ExpenseClaims = (props) => {
 
   return (
     <Fragment>
-      <NewExpenseClaimDialog
+      {/* <NewExpenseClaimDialog
         open={showNewExpenseClaimDialog}
         close={() => setShowNewExpenseClaimDialog(false)}
-      />
+      /> */}
       <Container disableGutters maxWidth='sm'>
         <Grid container direction='column' spacing={2}>
           <Grid item container direction='column' spacing={2}>
-            {expenseClaimIds.map((expenseClaimId) => {
-              const scroll = activeExpenseClaimId === expenseClaimId;
+            {promotionIds.map((promotionId) => {
+              const scroll = activePromotionId === promotionId;
               return (
-                <Grid item key={expenseClaimId}>
-                  <ExpenseClaimCard
-                    expenseClaimId={expenseClaimId}
-                    setActiveExpenseClaimId={setActiveExpenseClaimId}
+                <Grid item key={promotionId}>
+                  <PromotionCard
+                    promotionId={promotionId}
+                    setActivePromotionId={setActivePromotionId}
                     scroll={scroll}
                     isAdmin={isAdmin}
                   />
@@ -161,7 +139,7 @@ const ExpenseClaims = (props) => {
                   count={count}
                   page={page}
                   onChange={(_event, value) =>
-                    push(`/expense-claims/page/${value.toString()}`)
+                    push(`/promotions/page/${value.toString()}`)
                   }
                   showFirstButton={true}
                   showLastButton={true}
@@ -171,15 +149,17 @@ const ExpenseClaims = (props) => {
           </Grid>
         </Grid>
       </Container>
-      <FloatingActionButton
-        color='primary'
-        tooltip='Add Expense Claim'
-        onClick={() => setShowNewExpenseClaimDialog(true)}
-      >
-        <AddIcon />
-      </FloatingActionButton>
+      {isAdmin && (
+        <FloatingActionButton
+          color='primary'
+          tooltip='Add Promotion'
+          onClick={() => setShowNewPromotionDialog(true)}
+        >
+          <AddIcon />
+        </FloatingActionButton>
+      )}
     </Fragment>
   );
 };
 
-export default ExpenseClaims;
+export default Promotions;

@@ -7,19 +7,19 @@ import Settings from './Settings';
 import Logout from './Logout';
 
 const Account = (props) => {
-	const { authUser } = useSelector((state) => state.authState);
+  const { authUser } = useSelector((state) => state.authState);
 
-	return (
-		<Container disableGutters maxWidth='xs'>
-			<Card>
-				<CardContent>
-					<Avatar authUser={authUser} />
-					<Settings authUser={authUser} />
-					<Logout />
-				</CardContent>
-			</Card>
-		</Container>
-	);
+  return (
+    <Container disableGutters maxWidth='xs'>
+      <Card>
+        <CardContent>
+          <Avatar authUser={authUser} />
+          <Settings authUser={authUser} />
+          <Logout />
+        </CardContent>
+      </Card>
+    </Container>
+  );
 };
 
 export default Account;

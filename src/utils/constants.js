@@ -9,13 +9,13 @@ export const APPROVED = 'Approved';
 export const REJECTED = 'Rejected';
 export const PAID = 'Paid';
 export const SNACKBAR_VARIANTS = {
-	STANDARD: 'standard',
-	OUTLINED: 'outlined',
-	FILLED: 'filled'
+  STANDARD: 'standard',
+  OUTLINED: 'outlined',
+  FILLED: 'filled'
 };
 export const SNACKBAR_SEVERITY = {
-	ERROR: 'error',
-	WARNING: 'warning',
-	INFO: 'info',
-	SUCCESS: 'success'
+  ERROR: 'error',
+  WARNING: 'warning',
+  INFO: 'info',
+  SUCCESS: 'success'
 };

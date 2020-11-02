@@ -10,22 +10,17 @@ import {
   SNACKBAR_SEVERITY
 } from '../../../../utils/constants';
 import { setMessage } from '../../../../store/actions/message';
-import Event from '../../../../models/event';
+import Post from '../../../../models/promotion';
 
-const ViewEvent = (props) => {
+const PostCardMenu = (props) => {
   const dispatch = useDispatch();
   const { authUser } = useSelector((state) => state.authState);
   const [anchorEl, setAnchorEl] = useState(null);
-  const { event } = props;
-
-  let subscribeText = 'Subsrcibe';
-  if (event.subscribers.includes(authUser.userId)) {
-    subscribeText = 'Unsubsribe';
-  }
+  const { promotion, isAdmin } = props;
 
   const copyClickHandler = () => {
     const message = new Message({
-      title: 'Staff Calendar',
+      title: 'News Feed',
       body: 'Link copied to clipboard',
       feedback: SNACKBAR,
       options: {
@@ -38,22 +33,6 @@ const ViewEvent = (props) => {
     setAnchorEl(null);
   };
 
-  const subscribeHandler = async () => {
-    setAnchorEl(null);
-    const newEvent = new Event({ ...event });
-    await newEvent.toggleSubscribePost();
-    const message = new Message({
-      title: 'Staff Calendar',
-      body: `${subscribeText}d successfully`,
-      feedback: SNACKBAR,
-      options: {
-        duration: 2000,
-        variant: SNACKBAR_VARIANTS.FILLED,
-        severity: SNACKBAR_SEVERITY.INFO
-      }
-    });
-    dispatch(setMessage(message));
-  };
   return (
     <Fragment>
       <IconButton
@@ -70,17 +49,16 @@ const ViewEvent = (props) => {
         onClose={() => setAnchorEl(null)}
       >
         <CopyToClipboard
-          text={`${process.env.REACT_APP_BASE_URL}/calendar/${event.eventId}`}
+          text={`${process.env.REACT_APP_BASE_URL}/promotions/${promotion.promotionId}`}
           onCopy={copyClickHandler}
         >
           <MenuItem>Copy Direct Link</MenuItem>
         </CopyToClipboard>
-        <MenuItem onClick={subscribeHandler}>
-          {`${subscribeText} to notifications`}
-        </MenuItem>
+        {isAdmin && <MenuItem onClick={() => {}}>Edit Promotion</MenuItem>}
+        {isAdmin && <MenuItem onClick={() => {}}>Delete Promotion</MenuItem>}
       </Menu>
     </Fragment>
   );
 };
 
-export default ViewEvent;
+export default PostCardMenu;

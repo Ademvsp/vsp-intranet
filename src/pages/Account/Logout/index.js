@@ -6,33 +6,33 @@ import { useDispatch } from 'react-redux';
 import { logoutAll } from '../../../store/actions/auth-user';
 
 const Logout = (props) => {
-	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-	const dispatch = useDispatch();
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const dispatch = useDispatch();
 
-	const cancelClickHandler = () => {
-		setShowConfirmDialog(false);
-	};
+  const cancelClickHandler = () => {
+    setShowConfirmDialog(false);
+  };
 
-	const confirmClickHandler = async () => {
-		await dispatch(logoutAll());
-	};
+  const confirmClickHandler = async () => {
+    await dispatch(logoutAll());
+  };
 
-	return (
-		<Fragment>
-			<ConfirmDialog
-				open={showConfirmDialog}
-				cancel={cancelClickHandler}
-				confirm={confirmClickHandler}
-				title='Logout'
-				message='This will log you out of all devices in case you have lost or misplaced a device.'
-			/>
-			<StyledButtonContainer>
-				<Button onClick={setShowConfirmDialog.bind(this, true)}>
-					Log out of all devices
-				</Button>
-			</StyledButtonContainer>
-		</Fragment>
-	);
+  return (
+    <Fragment>
+      <ConfirmDialog
+        open={showConfirmDialog}
+        cancel={cancelClickHandler}
+        confirm={confirmClickHandler}
+        title='Logout'
+        message='This will log you out of all devices in case you have lost or misplaced a device.'
+      />
+      <StyledButtonContainer>
+        <Button onClick={setShowConfirmDialog.bind(this, true)}>
+          Log out of all devices
+        </Button>
+      </StyledButtonContainer>
+    </Fragment>
+  );
 };
 
 export default Logout;

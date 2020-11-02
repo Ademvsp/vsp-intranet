@@ -4,6 +4,7 @@ export const UPDATE = 'UPDATE';
 export const DELETE = 'DELETE';
 export const READ_PAGE = 'READ_PAGE';
 export const READ_POST = 'READ_POST';
+export const READ_PROMOTION = 'READ_PROMOTION';
 export const READ_PRODUCT_REQUEST = 'READ_PRODUCT_REQUEST';
 export const READ_LEAVE_REQUEST = 'READ_LEAVE_REQUEST';
 export const READ_EXPENSE_CLAIM = 'READ_EXPENSE_CLAIM';
