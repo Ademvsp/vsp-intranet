@@ -30,8 +30,9 @@ export const addExpense = (values) => {
 
     try {
       await newExpenseClaim.save();
+      let uploadedAttachments = [];
       if (attachments.length > 0) {
-        const uploadedAttachments = await dispatch(
+        uploadedAttachments = await dispatch(
           upload({
             files: attachments,
             collection: 'expense-claims',
@@ -39,9 +40,9 @@ export const addExpense = (values) => {
             folder: newExpenseClaim.metadata.createdAt.getTime().toString()
           })
         );
-        newExpenseClaim.attachments = uploadedAttachments;
-        await newExpenseClaim.save();
       }
+      newExpenseClaim.attachments = uploadedAttachments;
+      await newExpenseClaim.save();
       const message = new Message({
         title: 'Expense Claims',
         body: 'Expense Claim submitted successfully',

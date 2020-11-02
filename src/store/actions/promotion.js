@@ -20,15 +20,16 @@ export const addPromotion = (values) => {
       attachments: [],
       body: body.trim(),
       comments: [],
+      expiry: values.expiry,
       likes: [],
       title: title.trim(),
-      user: authUser.userId,
-      notifyUsers: notifyUsers
+      user: authUser.userId
     });
     try {
       await newPromotion.save();
+      let uploadedAttachments = [];
       if (attachments.length > 0) {
-        const uploadedAttachments = await dispatch(
+        uploadedAttachments = await dispatch(
           upload({
             files: attachments,
             collection: 'promotions',
@@ -36,12 +37,12 @@ export const addPromotion = (values) => {
             folder: newPromotion.metadata.createdAt.getTime().toString()
           })
         );
-        newPromotion.attachments = uploadedAttachments;
-        await newPromotion.save();
       }
+      newPromotion.attachments = uploadedAttachments;
+      await newPromotion.save();
       const message = new Message({
         title: 'Promotions',
-        body: 'Post created successfully',
+        body: 'Promotion created successfully',
         feedback: SNACKBAR,
         options: {
           duration: 5000,
@@ -57,7 +58,7 @@ export const addPromotion = (values) => {
     } catch (error) {
       const message = new Message({
         title: 'Promotions',
-        body: 'Post failed to post',
+        body: 'Promotion failed to post',
         feedback: DIALOG
       });
       dispatch({
@@ -68,6 +69,7 @@ export const addPromotion = (values) => {
     }
   };
 };
+
 export const addComment = (promotion, values) => {
   return async (dispatch, _getState) => {
     const { body, attachments, notifyUsers } = values;

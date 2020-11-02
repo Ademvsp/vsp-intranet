@@ -28,8 +28,9 @@ export const addPost = (values) => {
     });
     try {
       await newPost.save();
+      let uploadedAttachments = [];
       if (attachments.length > 0) {
-        const uploadedAttachments = await dispatch(
+        uploadedAttachments = await dispatch(
           fileUtils.upload({
             files: attachments,
             collection: 'posts',
@@ -37,9 +38,9 @@ export const addPost = (values) => {
             folder: newPost.metadata.createdAt.getTime().toString()
           })
         );
-        newPost.attachments = uploadedAttachments;
-        await newPost.save();
       }
+      newPost.attachments = uploadedAttachments;
+      await newPost.save();
       const message = new Message({
         title: 'News Feed',
         body: 'Post created successfully',
