@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Grid,
   ListItemAvatar,
@@ -9,26 +9,32 @@ import {
   Dialog,
   withTheme
 } from '@material-ui/core';
-import Avatar from '../../../../components/Avatar';
-import ActionsBar from '../../../../components/ActionsBar';
-import BalloonEditorWrapper from '../../../../components/BalloonEditorWrapper';
+import Avatar from '../../../components/Avatar';
+import ActionsBar from '../../../components/ActionsBar';
+import BalloonEditorWrapper from '../../../components/BalloonEditorWrapper';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
-import { addPost } from '../../../../store/actions/post';
+import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import DateFnsUtils from '@date-io/date-fns';
+import { LONG_DATE } from '../../../utils/date';
+import { addPromotion } from '../../../store/actions/promotion';
 
-const NewPostDialog = withTheme((props) => {
+const NewPromotionDialog = withTheme((props) => {
   const dispatch = useDispatch();
-  const { authUser, open, close, clearSearchResults } = props;
+  const { authUser } = useSelector((state) => state.authState);
+  const { open, close } = props;
   const history = useHistory();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [validatedOnMount, setValidatedOnMount] = useState(false);
+
   const initialValues = {
     attachments: [],
     notifyUsers: [],
     title: '',
-    body: ''
+    body: '',
+    expiry: null
   };
 
   const dialogCloseHandler = () => {
@@ -39,20 +45,20 @@ const NewPostDialog = withTheme((props) => {
 
   const submitHandler = async (values) => {
     setLoading(true);
-    const result = await dispatch(addPost(values));
+    const result = await dispatch(addPromotion(values));
     setLoading(false);
     if (result) {
       formik.setValues(initialValues, true);
-      clearSearchResults();
       close();
-      history.push('/newsfeed/page/1');
+      history.push('/promotions/page/1');
     }
   };
   const validationSchema = yup.object().shape({
     attachments: yup.array().notRequired(),
     notifyUsers: yup.array().notRequired(),
     title: yup.string().label('Title').trim().required(),
-    body: yup.string().label('Post Content').trim().required()
+    body: yup.string().label('Promotion Details').trim().required(),
+    expiry: yup.date().label('Expiry Date').nullable()
   });
 
   const formik = useFormik({
@@ -118,7 +124,7 @@ const NewPostDialog = withTheme((props) => {
                 borderChange={true}
                 minHeight={100}
                 maxHeight={300}
-                placeholder='Write a post...'
+                placeholder='Promotion details...'
               />
             </Grid>
             {formik.errors.body && formik.touched.body ? (
@@ -134,6 +140,43 @@ const NewPostDialog = withTheme((props) => {
                 </Typography>
               </Grid>
             ) : null}
+          </Grid>
+          <Grid item container direction='column' spacing={1}>
+            <Grid item>
+              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <DatePicker
+                  label='Expiry Date'
+                  fullWidth
+                  value={formik.values.expiry}
+                  onChange={(value) => formik.setFieldValue('expiry', value)}
+                  onBlur={formik.handleBlur('expiry')}
+                  format={LONG_DATE}
+                  clearable
+                  clearLabel='clear'
+                  helperText={
+                    formik.errors.expiry && formik.touched.expiry
+                      ? formik.errors.expiry
+                      : null
+                  }
+                  FormHelperTextProps={{
+                    style: {
+                      color: props.theme.palette.error.main
+                    }
+                  }}
+                />
+              </MuiPickersUtilsProvider>
+            </Grid>
+            <Grid item>
+              <Typography
+                className='MuiFormHelperText-root MuiFormHelperText-marginDense'
+                style={{
+                  color: props.theme.palette.text.secondary,
+                  fontSize: props.theme.spacing(1.5)
+                }}
+              >
+                Leave blank if there is no expiry date
+              </Typography>
+            </Grid>
           </Grid>
           <Grid item>
             <ActionsBar
@@ -163,4 +206,4 @@ const NewPostDialog = withTheme((props) => {
   );
 });
 
-export default NewPostDialog;
+export default NewPromotionDialog;

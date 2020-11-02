@@ -1,9 +1,11 @@
+import { CREATE } from '../utils/actions';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
 const collectionRef = firebase.firestore().collection('promotions-new');
 
 export default class Promotion {
   constructor({
     promotionId,
+    actions,
     attachments,
     body,
     comments,
@@ -13,6 +15,7 @@ export default class Promotion {
     title,
     user
   }) {
+    this.actions = actions;
     this.promotionId = promotionId;
     this.attachments = attachments;
     this.body = body;
@@ -22,6 +25,12 @@ export default class Promotion {
     this.metadata = metadata;
     this.title = title;
     this.user = user;
+  }
+
+  getDatabaseObject() {
+    const databaseObject = { ...this };
+    delete databaseObject.promotionId;
+    return databaseObject;
   }
 
   static getListener(promotionId) {
@@ -37,6 +46,39 @@ export default class Promotion {
       .doc(firebase.auth().currentUser.uid)
       .get();
     return docRef.exists;
+  }
+
+  async save() {
+    const serverTime = await getServerTimeInMilliseconds();
+    if (this.promotionId) {
+      this.metadata = {
+        ...this.metadata,
+        updatedAt: new Date(serverTime),
+        updatedBy: firebase.auth().currentUser.uid
+      };
+      await collectionRef
+        .doc(this.promotionId)
+        .update(this.getDatabaseObject());
+    } else {
+      this.metadata = {
+        createdAt: new Date(serverTime),
+        createdBy: firebase.auth().currentUser.uid,
+        updatedAt: new Date(serverTime),
+        updatedBy: firebase.auth().currentUser.uid
+      };
+      this.actions = [
+        {
+          actionType: CREATE,
+          actionedAt: new Date(serverTime),
+          actionedBy: firebase.auth().currentUser.uid,
+          //notifyUsers from the post actions
+          notifyUsers: this.actions[0].notifyUsers
+        }
+      ];
+      const docRef = await collectionRef.add(this.getDatabaseObject());
+      const promotionId = docRef.id;
+      this.promotionId = promotionId;
+    }
   }
 
   async saveComment(body, attachments, notifyUsers, serverTime) {

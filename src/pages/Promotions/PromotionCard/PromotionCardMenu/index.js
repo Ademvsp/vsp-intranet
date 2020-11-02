@@ -2,7 +2,7 @@ import React, { useState, Fragment } from 'react';
 import { Menu, MenuItem, IconButton } from '@material-ui/core';
 import { MoreVert as MoreVertIcon } from '@material-ui/icons';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Message from '../../../../models/message';
 import {
   SNACKBAR,
@@ -10,11 +10,9 @@ import {
   SNACKBAR_SEVERITY
 } from '../../../../utils/constants';
 import { setMessage } from '../../../../store/actions/message';
-import Post from '../../../../models/promotion';
 
 const PostCardMenu = (props) => {
   const dispatch = useDispatch();
-  const { authUser } = useSelector((state) => state.authState);
   const [anchorEl, setAnchorEl] = useState(null);
   const { promotion, isAdmin } = props;
 

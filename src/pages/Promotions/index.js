@@ -9,6 +9,7 @@ import { READ_PAGE, READ_PROMOTION } from '../../utils/actions';
 import AddIcon from '@material-ui/icons/Add';
 import FloatingActionButton from '../../components/FloatingActionButton';
 import PromotionCard from './PromotionCard';
+import NewPromotionDialog from './NewPromotionDialog';
 
 const Promotions = (props) => {
   const initialPage = 1;
@@ -25,9 +26,7 @@ const Promotions = (props) => {
   const [dataSource, setDataSource] = useState();
   const [promotionIds, setPromotionIds] = useState();
   const [activePromotionId, setActivePromotionId] = useState(null);
-  const [setShowNewPromotionDialog, setSetShowNewPromotionDialog] = useState(
-    false
-  );
+  const [showNewPromotionDialog, setShowNewPromotionDialog] = useState(false);
   const [isAdmin, setIsAdmin] = useState();
 
   //Mount and dismount, get admin status
@@ -112,10 +111,10 @@ const Promotions = (props) => {
 
   return (
     <Fragment>
-      {/* <NewExpenseClaimDialog
-        open={showNewExpenseClaimDialog}
-        close={() => setShowNewExpenseClaimDialog(false)}
-      /> */}
+      <NewPromotionDialog
+        open={showNewPromotionDialog}
+        close={() => setShowNewPromotionDialog(false)}
+      />
       <Container disableGutters maxWidth='sm'>
         <Grid container direction='column' spacing={2}>
           <Grid item container direction='column' spacing={2}>
