@@ -161,9 +161,9 @@ const ViewEventDialog = (props) => {
           <Grid item>
             <TextField
               label='Event type'
-              fullWidth={true}
+              fullWidth
               value={initialValues.type.name}
-              readOnly={true}
+              readOnly
             />
           </Grid>
           {initialValues.type.detailsEditable ? (

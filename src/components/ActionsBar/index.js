@@ -28,7 +28,7 @@ const ActionsBar = withTheme((props) => {
     attachments,
     comments,
     buttonLoading,
-    loading,
+    disabled,
     isValid,
     onClick,
     tooltipPlacement,
@@ -78,7 +78,7 @@ const ActionsBar = withTheme((props) => {
 
   function getCommentsButton(comments) {
     return (
-      <IconButton disabled={loading} onClick={comments.clickHandler}>
+      <IconButton disabled={disabled} onClick={comments.clickHandler}>
         <Badge badgeContent={comments.comments.length} color='secondary'>
           <CommentIcon />
         </Badge>
@@ -89,7 +89,7 @@ const ActionsBar = withTheme((props) => {
   function getNotificationButton(notifications) {
     return (
       <IconButton
-        disabled={loading}
+        disabled={disabled}
         onClick={
           notifications.readOnly ? null : setNotifyUsersOpen.bind(this, true)
         }
@@ -106,7 +106,10 @@ const ActionsBar = withTheme((props) => {
 
   function getAttachmentsButton(attachments) {
     return (
-      <IconButton onClick={setDropzoneOpen.bind(this, true)} disabled={loading}>
+      <IconButton
+        onClick={setDropzoneOpen.bind(this, true)}
+        disabled={disabled}
+      >
         <Badge badgeContent={attachments.attachments.length} color='secondary'>
           <AttachmentIcon />
         </Badge>
@@ -140,7 +143,7 @@ const ActionsBar = withTheme((props) => {
         >
           {comments?.enabled && (
             <Grid item>
-              {loading ? (
+              {disabled ? (
                 getCommentsButton(comments)
               ) : (
                 <Tooltip
@@ -154,7 +157,7 @@ const ActionsBar = withTheme((props) => {
           )}
           {notifications?.enabled && (
             <Grid item>
-              {loading ? (
+              {disabled ? (
                 getNotificationButton(notifications)
               ) : (
                 <Tooltip
@@ -174,7 +177,7 @@ const ActionsBar = withTheme((props) => {
           )}
           {attachments?.enabled && (
             <Grid item>
-              {loading ? (
+              {disabled ? (
                 getAttachmentsButton(attachments)
               ) : (
                 <Tooltip
@@ -217,7 +220,7 @@ const ActionsBar = withTheme((props) => {
                   variant='outlined'
                   color='primary'
                   onClick={additionalButton.onClick}
-                  disabled={additionalButton.buttonDisabled || loading}
+                  disabled={additionalButton.buttonDisabled || disabled}
                 >
                   {additionalButton.buttonText}
                 </Button>
@@ -237,7 +240,7 @@ const ActionsBar = withTheme((props) => {
               variant='outlined'
               color='primary'
               onClick={onClick}
-              disabled={!isValid || loading}
+              disabled={!isValid || disabled}
             >
               {actionButtonText}
             </Button>

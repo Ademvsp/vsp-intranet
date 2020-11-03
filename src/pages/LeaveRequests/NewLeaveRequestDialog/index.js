@@ -189,7 +189,7 @@ const NewLeaveRequestDialog = withTheme((props) => {
       <DialogActions>
         <ActionsBar
           buttonLoading={loading}
-          loading={loading || !validatedOnMount}
+          disabled={loading || !validatedOnMount}
           isValid={formik.isValid}
           onClick={formik.handleSubmit}
           tooltipPlacement='top'

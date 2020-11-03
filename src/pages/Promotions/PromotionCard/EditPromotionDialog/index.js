@@ -192,7 +192,7 @@ const EditPromotionDialog = withTheme((props) => {
                   formik.setFieldValue('attachments', attachments)
               }}
               buttonLoading={loading}
-              loading={loading || uploading || !validatedOnMount}
+              disabled={loading || uploading || !validatedOnMount}
               isValid={formik.isValid}
               onClick={formik.handleSubmit}
               tooltipPlacement='top'

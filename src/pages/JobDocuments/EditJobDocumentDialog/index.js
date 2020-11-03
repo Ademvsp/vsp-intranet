@@ -288,8 +288,8 @@ const EditProjectDialog = withTheme((props) => {
               <TextField
                 label='Notes'
                 multiline
-                rows={3}
-                rowsMax={3}
+                rows={5}
+                rowsMax={5}
                 fullWidth
                 value={formik.values.body}
                 onChange={formik.handleChange('body')}
@@ -328,8 +328,8 @@ const EditProjectDialog = withTheme((props) => {
               comments: jobDocument.comments,
               clickHandler: () => setShowComments((prevState) => !prevState)
             }}
-            buttonLoading={loading}
-            loading={loading || !validatedOnMount}
+            buttonLoading={editLoading || deleteLoading}
+            disabled={loading || !validatedOnMount}
             isValid={formik.isValid}
             onClick={formik.handleSubmit}
             tooltipPlacement='top'

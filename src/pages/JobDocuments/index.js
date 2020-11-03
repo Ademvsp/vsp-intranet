@@ -8,43 +8,62 @@ import tableColumns from '../../utils/table-icons';
 import columnSchema from './column-schema';
 import NewJobDocumentDialog from './NewJobDocumentDialog';
 import EditJobDocumentDialog from './EditJobDocumentDialog';
+import ViewJobDocumentDialog from './ViewJobDocumentDialog';
 import { useHistory, useParams } from 'react-router-dom';
 import { READ, UPDATE } from '../../utils/actions';
 
 const JobDocuments = (props) => {
-  const { push } = useHistory();
+  const { push, replace } = useHistory();
   const params = useParams();
   const { action } = props;
+  const [isAdmin, setIsAdmin] = useState();
   const [jobDocuments, setJobDocuments] = useState();
   const [selectedJobDocument, setSelectedJobDocument] = useState();
-  const [newJobDocumentDialogOpen, setNewJobDocumentDialogOpen] = useState(
+  const [showAddJobDocumentDialog, setShowAddJobDocumentDialogOpen] = useState(
+    false
+  );
+  const [showEditJobDocumentDialog, setShowEditJobDocumentDialog] = useState(
+    false
+  );
+  const [showViewJobDocumentDialog, setShowViewJobDocumentDialog] = useState(
     false
   );
 
   useEffect(() => {
-    let jobDocumentsListener = JobDocument.getListener().onSnapshot(
-      (snapshot) => {
-        const newJobDocuments = snapshot.docs.map((doc) => {
-          const metadata = {
-            ...doc.data().metadata,
-            createdAt: doc.data().metadata.createdAt.toDate(),
-            updatedAt: doc.data().metadata.updatedAt.toDate()
-          };
-          return new JobDocument({
-            ...doc.data(),
-            jobDocumentId: doc.id,
-            metadata: metadata
+    const asyncFunction = async () => {
+      const newIsAdmin = await JobDocument.isAdmin();
+      setIsAdmin(newIsAdmin);
+    };
+    asyncFunction();
+  }, []);
+
+  useEffect(() => {
+    let jobDocumentsListener;
+    if (isAdmin !== undefined) {
+      jobDocumentsListener = JobDocument.getListener().onSnapshot(
+        (snapshot) => {
+          const newJobDocuments = snapshot.docs.map((doc) => {
+            const metadata = {
+              ...doc.data().metadata,
+              createdAt: doc.data().metadata.createdAt.toDate(),
+              updatedAt: doc.data().metadata.updatedAt.toDate()
+            };
+            return new JobDocument({
+              ...doc.data(),
+              jobDocumentId: doc.id,
+              metadata: metadata
+            });
           });
-        });
-        setJobDocuments(newJobDocuments);
-      }
-    );
+          setJobDocuments(newJobDocuments);
+        }
+      );
+    }
     return () => {
       if (jobDocumentsListener) {
         jobDocumentsListener();
       }
     };
-  }, []);
+  }, [isAdmin]);
 
   useEffect(() => {
     if (jobDocuments) {
@@ -54,23 +73,47 @@ const JobDocuments = (props) => {
         const newSelectedJobDocument = jobDocuments.find(
           (jobDocument) => jobDocument.jobDocumentId === params.jobDocumentId
         );
-        setSelectedJobDocument(newSelectedJobDocument);
+        if (newSelectedJobDocument) {
+          if (isAdmin) {
+            setShowEditJobDocumentDialog(true);
+          } else {
+            setShowViewJobDocumentDialog(true);
+          }
+          setSelectedJobDocument(newSelectedJobDocument);
+        } else {
+          push('/job-documents');
+        }
       }
     }
-  }, [action, jobDocuments, params.jobDocumentId]);
+  }, [action, jobDocuments, params.jobDocumentId, isAdmin, push]);
+
+  const closeDialogHandler = () => {
+    setSelectedJobDocument(null);
+    setShowAddJobDocumentDialogOpen(false);
+    setShowViewJobDocumentDialog(false);
+    setShowEditJobDocumentDialog(false);
+    replace('/job-documents');
+  };
 
   return (
     <Fragment>
       <NewJobDocumentDialog
-        open={newJobDocumentDialogOpen}
-        close={() => setNewJobDocumentDialogOpen(false)}
+        open={showAddJobDocumentDialog}
+        close={closeDialogHandler}
       />
       {selectedJobDocument && (
-        <EditJobDocumentDialog
-          open={!!selectedJobDocument}
-          close={() => push('/job-documents')}
-          jobDocument={selectedJobDocument}
-        />
+        <Fragment>
+          <EditJobDocumentDialog
+            open={showEditJobDocumentDialog}
+            close={closeDialogHandler}
+            jobDocument={selectedJobDocument}
+          />
+          <ViewJobDocumentDialog
+            open={showViewJobDocumentDialog}
+            close={closeDialogHandler}
+            jobDocument={selectedJobDocument}
+          />
+        </Fragment>
       )}
       {/* <NewProjectDialog
       open={newProjectDialogOpen}
@@ -100,7 +143,7 @@ const JobDocuments = (props) => {
       <FloatingActionButton
         color='primary'
         tooltip='Add Job Document'
-        onClick={() => setNewJobDocumentDialogOpen(true)}
+        onClick={() => setShowAddJobDocumentDialogOpen(true)}
       >
         <AddIcon />
       </FloatingActionButton>

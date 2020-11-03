@@ -43,7 +43,9 @@ const EditProjectDialog = withTheme((props) => {
   const { open, close, projectNames, project } = props;
 
   const [showComments, setShowComments] = useState(false);
-  const [loading, setLoading] = useState();
+  const [editLoading, setEditLoading] = useState();
+  const [commentLoading, setCommentLoading] = useState(false);
+
   const [validatedOnMount, setValidatedOnMount] = useState(false);
   //Customer field
   const [customersOpen, setCustomersOpen] = useState(false);
@@ -58,6 +60,10 @@ const EditProjectDialog = withTheme((props) => {
   const [vendorsOpen, setVendorsOpen] = useState(false);
   const [vendorAdding, setVendorAdding] = useState(false);
   const vendorsLoading = (vendorsOpen && !vendors) || vendorAdding;
+
+  const loading =
+    editLoading || commentLoading || customersLoading || vendorsLoading;
+
   useEffect(() => {
     if (vendorsLoading) {
       dispatch(subscribeVendorListener());
@@ -145,10 +151,16 @@ const EditProjectDialog = withTheme((props) => {
     value: project.value
   };
 
+  const dialogCloseHandler = () => {
+    if (!loading) {
+      close();
+    }
+  };
+
   const submitHandler = async (values) => {
-    setLoading(true);
+    setEditLoading(true);
     const result = await dispatch(editProject(project, values));
-    setLoading(false);
+    setEditLoading(false);
     if (result) {
       formik.setValues(initialValues);
       close();
@@ -156,7 +168,9 @@ const EditProjectDialog = withTheme((props) => {
   };
 
   const newCommentHandler = async (values) => {
+    setCommentLoading(true);
     const result = await dispatch(addComment(project, values));
+    setCommentLoading(false);
     return result;
   };
 
@@ -335,12 +349,7 @@ const EditProjectDialog = withTheme((props) => {
   );
 
   return (
-    <Dialog
-      open={open}
-      onClose={loading ? null : close}
-      fullWidth
-      maxWidth='sm'
-    >
+    <Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
       <DialogTitle>Edit Project</DialogTitle>
       <DialogContent>
         <Grid container direction='column' spacing={1}>
@@ -554,8 +563,8 @@ const EditProjectDialog = withTheme((props) => {
             comments: project.comments,
             clickHandler: () => setShowComments((prevState) => !prevState)
           }}
-          buttonLoading={loading}
-          loading={loading || !validatedOnMount}
+          buttonLoading={editLoading}
+          disabled={loading || !validatedOnMount}
           isValid={formik.isValid}
           onClick={formik.handleSubmit}
           tooltipPlacement='top'

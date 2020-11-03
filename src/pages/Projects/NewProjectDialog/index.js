@@ -541,7 +541,7 @@ const NewProjectDialog = withTheme((props) => {
               formik.setFieldValue('attachments', attachments)
           }}
           buttonLoading={loading}
-          loading={loading || !validatedOnMount}
+          disabled={loading || !validatedOnMount}
           isValid={formik.isValid}
           onClick={formik.handleSubmit}
           tooltipPlacement='top'

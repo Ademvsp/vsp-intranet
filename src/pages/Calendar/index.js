@@ -21,175 +21,177 @@ import AddIcon from '@material-ui/icons/Add';
 export const EventContext = createContext();
 
 const Calendar = (props) => {
-	const { action } = props;
-	const initalRange = {
-		startOfMonth: startOfMonth(new Date()),
-		start: sub(startOfMonth(new Date()), { months: 1 }),
-		end: add(startOfMonth(new Date()), { months: 1 })
-	};
-	const params = useParams();
-	const { push, replace } = useHistory();
-	const { authUser } = useSelector((state) => state.authState);
-	const { userId } = authUser;
-	const [events, setEvents] = useState();
-	const [newEventPrefillData, setNewEventPrefillData] = useState();
-	const [showAddEventDialog, setShowAddEventDialog] = useState(false);
-	const [filteredEvents, setFilteredEvents] = useState();
-	const [selectedLocations, setSelectedLocations] = useState([
-		authUser.location
-	]);
-	const [selectedEventTypes, setSelectedEventTypes] = useState(
-		eventTypes.map((eventType) => eventType.name)
-	);
-	const [showViewEventDialog, setShowViewEventDialog] = useState(false);
-	const [showEditEventDialog, setShowEditEventDialog] = useState(false);
-	const [selectedEvent, setSelectedEvent] = useState();
-	const [range, setRange] = useState(initalRange);
-	//Get new listener every time date range changes on calendar
-	useEffect(() => {
-		let eventsListener;
-		eventsListener = Event.getRangeListener(range.start, range.end).onSnapshot(
-			(snapshot) => {
-				const newEvents = snapshot.docs.map((doc) => {
-					const metadata = {
-						...doc.data().metadata,
-						createdAt: doc.data().metadata.createdAt.toDate(),
-						updatedAt: doc.data().metadata.updatedAt.toDate()
-					};
-					return new Event({
-						...doc.data(),
-						eventId: doc.id,
-						metadata: metadata,
-						start: doc.data().start.toDate(),
-						end: doc.data().end.toDate()
-					});
-				});
-				setEvents(newEvents);
-			}
-		);
-		return () => {
-			if (eventsListener) {
-				eventsListener();
-			}
-		};
-	}, [range]);
-	//Set filtered events based on selections
-	useEffect(() => {
-		if (events) {
-			const newFilteredEvents = [];
-			events.forEach((event) => {
-				const locationMatch = event.locations.some((eventLocation) =>
-					selectedLocations.includes(eventLocation)
-				);
-				const eventTypeMatch = selectedEventTypes.includes(event.type);
-				if (locationMatch && eventTypeMatch) {
-					newFilteredEvents.push(event);
-				}
-				setFilteredEvents(newFilteredEvents);
-			});
-		}
-	}, [events, selectedLocations, selectedEventTypes]);
+  const { action } = props;
+  const initalRange = {
+    startOfMonth: startOfMonth(new Date()),
+    start: sub(startOfMonth(new Date()), { months: 1 }),
+    end: add(startOfMonth(new Date()), { months: 1 })
+  };
+  const params = useParams();
+  const { push, replace } = useHistory();
+  const { authUser } = useSelector((state) => state.authState);
+  const { userId } = authUser;
+  const [events, setEvents] = useState();
+  const [newEventPrefillData, setNewEventPrefillData] = useState();
+  const [showAddEventDialog, setShowAddEventDialog] = useState(false);
+  const [filteredEvents, setFilteredEvents] = useState();
+  const [selectedLocations, setSelectedLocations] = useState([
+    authUser.location
+  ]);
+  const [selectedEventTypes, setSelectedEventTypes] = useState(
+    eventTypes.map((eventType) => eventType.name)
+  );
+  const [showViewEventDialog, setShowViewEventDialog] = useState(false);
+  const [showEditEventDialog, setShowEditEventDialog] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState();
+  const [range, setRange] = useState(initalRange);
+  //Get new listener every time date range changes on calendar
+  useEffect(() => {
+    let eventsListener;
+    eventsListener = Event.getRangeListener(range.start, range.end).onSnapshot(
+      (snapshot) => {
+        const newEvents = snapshot.docs.map((doc) => {
+          const metadata = {
+            ...doc.data().metadata,
+            createdAt: doc.data().metadata.createdAt.toDate(),
+            updatedAt: doc.data().metadata.updatedAt.toDate()
+          };
+          return new Event({
+            ...doc.data(),
+            eventId: doc.id,
+            metadata: metadata,
+            start: doc.data().start.toDate(),
+            end: doc.data().end.toDate()
+          });
+        });
+        setEvents(newEvents);
+      }
+    );
+    return () => {
+      if (eventsListener) {
+        eventsListener();
+      }
+    };
+  }, [range]);
+  //Set filtered events based on selections
+  useEffect(() => {
+    if (events) {
+      const newFilteredEvents = [];
+      events.forEach((event) => {
+        const locationMatch = event.locations.some((eventLocation) =>
+          selectedLocations.includes(eventLocation)
+        );
+        const eventTypeMatch = selectedEventTypes.includes(event.type);
+        if (locationMatch && eventTypeMatch) {
+          newFilteredEvents.push(event);
+        }
+        setFilteredEvents(newFilteredEvents);
+      });
+    }
+  }, [events, selectedLocations, selectedEventTypes]);
 
-	useEffect(() => {
-		const asyncFunction = async () => {
-			if (action === UPDATE) {
-				const eventId = params.eventId;
-				if (eventId) {
-					const event = await Event.get(eventId);
-					if (event) {
-						setSelectedEvent(event);
-						if (event.user === userId) {
-							setShowEditEventDialog(true);
-						} else {
-							setShowViewEventDialog(true);
-						}
-					} else {
-						push('/calendar');
-					}
-				} else {
-					push('/calendar');
-				}
-			}
-		};
+  useEffect(() => {
+    const asyncFunction = async () => {
+      if (action === UPDATE) {
+        const eventId = params.eventId;
+        if (eventId) {
+          const event = await Event.get(eventId);
+          if (event) {
+            setSelectedEvent(event);
+            if (event.user === userId) {
+              setShowEditEventDialog(true);
+            } else {
+              setShowViewEventDialog(true);
+            }
+          } else {
+            push('/calendar');
+          }
+        } else {
+          push('/calendar');
+        }
+      }
+    };
 
-		asyncFunction();
-		//events used as a snapshot change trigger for when new comments are added
-	}, [action, push, userId, params.eventId]);
+    asyncFunction();
+    //events used as a snapshot change trigger for when new comments are added
+  }, [action, push, userId, params.eventId]);
 
-	const addEventClickHandler = () => {
-		setNewEventPrefillData(null);
-		setShowAddEventDialog(true);
-	};
+  const addEventClickHandler = () => {
+    setNewEventPrefillData(null);
+    setShowAddEventDialog(true);
+  };
 
-	const closeDialogHandler = () => {
-		setSelectedEvent(null);
-		setShowEditEventDialog(false);
-		replace('/calendar');
-	};
+  const closeDialogHandler = () => {
+    setSelectedEvent(null);
+    setShowAddEventDialog(false);
+    setShowViewEventDialog(false);
+    setShowEditEventDialog(false);
+    replace('/calendar');
+  };
 
-	const sidePanelSkeleton = (
-		<Grid container direction='column' spacing={1}>
-			<Grid item>
-				<Skeleton animation='pulse' variant='rect' height={40} />
-			</Grid>
-			<Grid item>
-				<Skeleton animation='pulse' variant='rect' height={20} />
-			</Grid>
-		</Grid>
-	);
+  const sidePanelSkeleton = (
+    <Grid container direction='column' spacing={1}>
+      <Grid item>
+        <Skeleton animation='pulse' variant='rect' height={40} />
+      </Grid>
+      <Grid item>
+        <Skeleton animation='pulse' variant='rect' height={20} />
+      </Grid>
+    </Grid>
+  );
 
-	return (
-		<EventContext.Provider
-			value={{
-				selectedLocations,
-				setSelectedLocations,
-				selectedEventTypes,
-				setSelectedEventTypes,
-				events
-			}}
-		>
-			{showAddEventDialog && (
-				<NewEventDialog
-					open={showAddEventDialog}
-					close={() => setShowAddEventDialog(false)}
-					newEventPrefillData={newEventPrefillData}
-				/>
-			)}
-			{selectedEvent && (
-				<Fragment>
-					<ViewEventDialog
-						open={showViewEventDialog}
-						close={closeDialogHandler}
-						event={selectedEvent}
-					/>
-					<EditEventDialog
-						open={showEditEventDialog}
-						close={closeDialogHandler}
-						event={selectedEvent}
-					/>
-				</Fragment>
-			)}
-			<Container disableGutters maxWidth='xl'>
-				<Grid container direction='row' spacing={1} justify='center'>
-					<Grid item>
-						<StyledCalendarCard elevation={2}>
-							<CalendarContainer
-								events={filteredEvents}
-								setShowAddEventDialog={setShowAddEventDialog}
-								setNewEventPrefillData={setNewEventPrefillData}
-								range={range}
-								setRange={setRange}
-							/>
-						</StyledCalendarCard>
-					</Grid>
-					<Grid item>
-						<StyledSidePanelCard elevation={2}>
-							<CardContent>
-								<Grid container direction='column' spacing={1}>
-									{filteredEvents ? (
-										<Fragment>
-											<Grid item>
-												{/* <Button
+  return (
+    <EventContext.Provider
+      value={{
+        selectedLocations,
+        setSelectedLocations,
+        selectedEventTypes,
+        setSelectedEventTypes,
+        events
+      }}
+    >
+      {showAddEventDialog && (
+        <NewEventDialog
+          open={showAddEventDialog}
+          close={closeDialogHandler}
+          newEventPrefillData={newEventPrefillData}
+        />
+      )}
+      {selectedEvent && (
+        <Fragment>
+          <ViewEventDialog
+            open={showViewEventDialog}
+            close={closeDialogHandler}
+            event={selectedEvent}
+          />
+          <EditEventDialog
+            open={showEditEventDialog}
+            close={closeDialogHandler}
+            event={selectedEvent}
+          />
+        </Fragment>
+      )}
+      <Container disableGutters maxWidth='xl'>
+        <Grid container direction='row' spacing={1} justify='center'>
+          <Grid item>
+            <StyledCalendarCard elevation={2}>
+              <CalendarContainer
+                events={filteredEvents}
+                setShowAddEventDialog={setShowAddEventDialog}
+                setNewEventPrefillData={setNewEventPrefillData}
+                range={range}
+                setRange={setRange}
+              />
+            </StyledCalendarCard>
+          </Grid>
+          <Grid item>
+            <StyledSidePanelCard elevation={2}>
+              <CardContent>
+                <Grid container direction='column' spacing={1}>
+                  {filteredEvents ? (
+                    <Fragment>
+                      <Grid item>
+                        {/* <Button
 													fullWidth
 													variant='contained'
 													color='primary'
@@ -199,32 +201,32 @@ const Calendar = (props) => {
 												>
 													Add event
 												</Button> */}
-											</Grid>
-											<Grid item>
-												<WorkFromHomeSwitch />
-											</Grid>
-										</Fragment>
-									) : (
-										sidePanelSkeleton
-									)}
-									<Grid item>
-										<ExpandableItems />
-									</Grid>
-								</Grid>
-							</CardContent>
-						</StyledSidePanelCard>
-					</Grid>
-				</Grid>
-				<FloatingActionButton
-					color='primary'
-					tooltip='Add Event'
-					onClick={addEventClickHandler}
-				>
-					<AddIcon />
-				</FloatingActionButton>
-			</Container>
-		</EventContext.Provider>
-	);
+                      </Grid>
+                      <Grid item>
+                        <WorkFromHomeSwitch />
+                      </Grid>
+                    </Fragment>
+                  ) : (
+                    sidePanelSkeleton
+                  )}
+                  <Grid item>
+                    <ExpandableItems />
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </StyledSidePanelCard>
+          </Grid>
+        </Grid>
+        <FloatingActionButton
+          color='primary'
+          tooltip='Add Event'
+          onClick={addEventClickHandler}
+        >
+          <AddIcon />
+        </FloatingActionButton>
+      </Container>
+    </EventContext.Provider>
+  );
 };
 
 export default Calendar;

@@ -165,18 +165,6 @@ export const deleteJobDocument = (jobDocument) => {
     try {
       const newJobDocument = new JobDocument({ ...jobDocument });
       const promises = [];
-      //Delete any attachments from storage as well as the document
-      promises.push(
-        compareAndDelete({
-          oldAttachments: jobDocument.attachments,
-          newAttachments: [],
-          collection: 'job-documents',
-          collectionId: jobDocument.jobDocumentId,
-          folder: jobDocument.metadata.createdAt.getTime().toString()
-        })
-      );
-      //NEED TO LOOP THROUGH COMMENTS TO DELETE COMMENT ATTACHMENTS
-      //Delete attachments logic
       promises.push(newJobDocument.delete());
       await Promise.all(promises);
       const message = new Message({

@@ -169,7 +169,7 @@ const NewExpenseClaimDialog = withTheme((props) => {
             tooltip: 'Your manager will be notified automatically'
           }}
           buttonLoading={loading}
-          loading={loading || !validatedOnMount}
+          disabled={loading || !validatedOnMount}
           isValid={formik.isValid}
           onClick={formik.handleSubmit}
           tooltipPlacement='top'

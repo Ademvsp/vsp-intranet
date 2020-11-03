@@ -7,7 +7,7 @@ import {
   SNACKBAR_SEVERITY,
   SNACKBAR_VARIANTS
 } from '../../utils/constants';
-import * as fileUtils from '../../utils/file-utils';
+import { upload, compareAndDelete } from '../../utils/file-utils';
 import { getServerTimeInMilliseconds } from '../../utils/firebase';
 
 export const addProject = (values) => {
@@ -50,7 +50,7 @@ export const addProject = (values) => {
       let uploadedAttachments = [];
       if (attachments.length > 0) {
         uploadedAttachments = await dispatch(
-          fileUtils.upload({
+          upload({
             files: attachments,
             collection: 'projects-new',
             collectionId: newProject.projectId,
@@ -108,7 +108,7 @@ export const editProject = (project, values) => {
     let existingAttachments = attachments.filter(
       (attachment) => !(attachment instanceof File)
     );
-    await fileUtils.compareAndDelete({
+    await compareAndDelete({
       oldAttachments: project.attachments,
       newAttachments: existingAttachments,
       collection: 'projects-new',
@@ -122,7 +122,7 @@ export const editProject = (project, values) => {
     let uploadedAttachments = [];
     if (toBeUploadedAttachments.length > 0) {
       uploadedAttachments = await dispatch(
-        fileUtils.upload({
+        upload({
           files: toBeUploadedAttachments,
           collection: 'projects-new',
           collectionId: project.projectId,
@@ -194,7 +194,7 @@ export const addComment = (project, values) => {
       const serverTime = await getServerTimeInMilliseconds();
       if (attachments.length > 0) {
         uploadedAttachments = await dispatch(
-          fileUtils.upload({
+          upload({
             files: attachments,
             collection: 'projects-new',
             collectionId: project.projectId,

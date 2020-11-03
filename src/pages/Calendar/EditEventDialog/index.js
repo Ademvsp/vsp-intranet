@@ -371,7 +371,7 @@ const EditEventDialog = withTheme((props) => {
               clickHandler: commentsClickHandler
             }}
             buttonLoading={editLoading}
-            loading={loading || !validatedOnMount}
+            disabled={loading || !validatedOnMount}
             isValid={formik.isValid}
             onClick={formik.handleSubmit}
             tooltipPlacement='top'
