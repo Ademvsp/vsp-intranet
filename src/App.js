@@ -29,6 +29,7 @@ import ProductRequests from './pages/ProductRequests';
 import LeaveRequests from './pages/LeaveRequests';
 import ExpenseClaims from './pages/ExpenseClaims';
 import Promotions from './pages/Promotions';
+import JobDocuments from './pages/JobDocuments';
 
 const App = (props) => {
   const dispatch = useDispatch();
@@ -134,6 +135,12 @@ const App = (props) => {
           </Route>
           <Route path={'/promotions/:promotionId'}>
             <Promotions action={READ_PROMOTION} />
+          </Route>
+          <Route path='/job-documents/:jobDocumentId'>
+            <JobDocuments action={UPDATE} />
+          </Route>
+          <Route path='/job-documents'>
+            <JobDocuments action={READ} />
           </Route>
           <Redirect from='/product-requests' to='/product-requests/page/1' />
           <Redirect from='/leave-requests' to='/leave-requests/page/1' />

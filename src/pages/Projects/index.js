@@ -27,30 +27,28 @@ const Projects = (props) => {
     let projectsListener;
     if (usersData && users) {
       if (users.length === usersData.documents.length) {
-        projectsListener = Project.getListener(authUser.userId).onSnapshot(
-          (snapshot) => {
-            const newProjects = snapshot.docs.map((doc) => {
-              const owners = doc
-                .data()
-                .owners.map((owner) =>
-                  users.find((user) => user.userId === owner)
-                );
-              const metadata = {
-                ...doc.data().metadata,
-                createdAt: doc.data().metadata.createdAt.toDate(),
-                updatedAt: doc.data().metadata.updatedAt.toDate()
-              };
-              return new Project({
-                ...doc.data(),
-                projectId: doc.id,
-                owners: owners,
-                metadata: metadata,
-                reminder: doc.data().reminder.toDate()
-              });
+        projectsListener = Project.getListener().onSnapshot((snapshot) => {
+          const newProjects = snapshot.docs.map((doc) => {
+            const owners = doc
+              .data()
+              .owners.map((owner) =>
+                users.find((user) => user.userId === owner)
+              );
+            const metadata = {
+              ...doc.data().metadata,
+              createdAt: doc.data().metadata.createdAt.toDate(),
+              updatedAt: doc.data().metadata.updatedAt.toDate()
+            };
+            return new Project({
+              ...doc.data(),
+              projectId: doc.id,
+              owners: owners,
+              metadata: metadata,
+              reminder: doc.data().reminder.toDate()
             });
-            setProjects(newProjects);
-          }
-        );
+          });
+          setProjects(newProjects);
+        });
       }
     }
     return () => {
@@ -109,7 +107,7 @@ const Projects = (props) => {
           project={selectedProject}
         />
       )}
-      <Container disableGutters maxWidth='lg' style={{ height: 500 }}>
+      <Container disableGutters maxWidth='lg'>
         <MaterialTable
           isLoading={!projects}
           icons={tableColumns}

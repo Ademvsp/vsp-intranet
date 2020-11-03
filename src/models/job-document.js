@@ -1,52 +1,71 @@
+import { CREATE, UPDATE } from '../utils/actions';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
-const collectionRef = firebase.firestore().collection('projects-new');
-export default class Project {
+const collectionRef = firebase.firestore().collection('job-documents');
+
+export default class JobDocument {
   constructor({
-    projectId,
+    jobDocumentId,
     actions,
     attachments,
+    body,
     comments,
     customer,
-    description,
     metadata,
-    name,
-    owners,
-    reminder,
-    user,
-    value,
-    vendors
+    salesOrder,
+    siteReference,
+    user
   }) {
-    this.projectId = projectId;
+    this.jobDocumentId = jobDocumentId;
     this.actions = actions;
     this.attachments = attachments;
+    this.body = body;
     this.comments = comments;
     this.customer = customer;
-    this.description = description;
     this.metadata = metadata;
-    this.name = name;
-    this.owners = owners;
-    this.reminder = reminder;
+    this.salesOrder = salesOrder;
+    this.siteReference = siteReference;
     this.user = user;
-    this.value = value;
-    this.vendors = vendors;
   }
 
   getDatabaseObject() {
     const databaseObject = { ...this };
-    delete databaseObject.projectId;
+    delete databaseObject.jobDocumentId;
     return databaseObject;
+  }
+
+  static getListener() {
+    return collectionRef.orderBy('metadata.createdAt', 'desc');
+  }
+
+  static async isAdmin() {
+    const docRef = await firebase
+      .firestore()
+      .collection('permissions')
+      .doc('job-documents')
+      .collection('admins')
+      .doc(firebase.auth().currentUser.uid)
+      .get();
+    return docRef.exists;
   }
 
   async save() {
     const serverTime = await getServerTimeInMilliseconds();
-    if (this.projectId) {
+    if (this.jobDocumentId) {
       this.metadata = {
         ...this.metadata,
         updatedAt: new Date(serverTime),
         updatedBy: firebase.auth().currentUser.uid
       };
-      this.actions[this.actions.length - 1].actionedAt = new Date(serverTime);
-      await collectionRef.doc(this.projectId).update(this.getDatabaseObject());
+      this.actions[this.actions.length - 1] = {
+        actionType: UPDATE,
+        actionedAt: new Date(serverTime),
+        actionedBy: firebase.auth().currentUser.uid,
+        //notifyUsers from the job-document actions
+        notifyUsers: this.actions[this.actions.length - 1].notifyUsers
+      };
+      await collectionRef
+        .doc(this.jobDocumentId)
+        .update(this.getDatabaseObject());
     } else {
       this.metadata = {
         createdAt: new Date(serverTime),
@@ -56,18 +75,20 @@ export default class Project {
       };
       this.actions = [
         {
-          //Extract status.name from project actions
-          actionType: this.actions[0].actionType,
+          actionType: CREATE,
           actionedAt: new Date(serverTime),
-          actionedBy: firebase.auth().currentUser.uid
+          actionedBy: firebase.auth().currentUser.uid,
+          //notifyUsers from the job-documents actions
+          notifyUsers: this.actions[0].notifyUsers
         }
       ];
       const docRef = await collectionRef.add(this.getDatabaseObject());
-      this.projectId = docRef.id;
+      const jobDocumentId = docRef.id;
+      this.jobDocumentId = jobDocumentId;
     }
   }
 
-  async saveComment(body, attachments, serverTime) {
+  async saveComment(body, attachments, notifyUsers, serverTime) {
     const comment = {
       attachments: attachments,
       body: body,
@@ -78,12 +99,17 @@ export default class Project {
         updatedAt: new Date(serverTime),
         updatedBy: firebase.auth().currentUser.uid
       },
+      notifyUsers: notifyUsers,
       user: firebase.auth().currentUser.uid
     };
-    await collectionRef.doc(this.projectId).update({
+    await collectionRef.doc(this.jobDocumentId).update({
       comments: firebase.firestore.FieldValue.arrayUnion(comment)
     });
     this.comments.push(comment);
+  }
+
+  async delete() {
+    await collectionRef.doc(this.jobDocumentId).delete();
   }
 
   async toggleCommentLike(index) {
@@ -94,15 +120,8 @@ export default class Project {
     } else {
       this.comments[index].likes.splice(indexOfLike, 1);
     }
-    await collectionRef.doc(this.projectId).update({
+    await collectionRef.doc(this.jobDocumentId).update({
       comments: this.comments
     });
-  }
-
-  static getListener() {
-    const userId = firebase.auth().currentUser.uid;
-    return collectionRef
-      .where('owners', 'array-contains', userId)
-      .orderBy('metadata.createdAt', 'desc');
   }
 }

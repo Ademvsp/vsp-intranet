@@ -29,7 +29,10 @@ export const addProject = (values) => {
       actions: [{ actionType: status.name }],
       attachments: [],
       comments: [],
-      customer: { ...customer },
+      customer: {
+        customerId: customer.customerId,
+        name: customer.name
+      },
       description: description.trim(),
       metadata: null,
       name: name.trim(),
@@ -37,7 +40,10 @@ export const addProject = (values) => {
       reminder: reminder,
       user: authUser.userId,
       value: value,
-      vendors: vendors.map((vendor) => ({ ...vendor }))
+      vendors: vendors.map((vendor) => ({
+        vendorId: vendor.customerId,
+        name: vendor.name
+      }))
     });
     try {
       await newProject.save();
@@ -99,11 +105,12 @@ export const editProject = (project, values) => {
     } = values;
     const { authUser } = getState().authState;
     //Handle any attachment deletions
-    let existingAttachments = await fileUtils.compareAndDelete({
+    let existingAttachments = attachments.filter(
+      (attachment) => !(attachment instanceof File)
+    );
+    await fileUtils.compareAndDelete({
       oldAttachments: project.attachments,
-      newAttachments: attachments.filter(
-        (attachment) => !(attachment instanceof File)
-      ),
+      newAttachments: existingAttachments,
       collection: 'projects-new',
       collectionId: project.projectId,
       folder: project.metadata.createdAt.getTime().toString()

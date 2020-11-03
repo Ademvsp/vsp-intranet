@@ -1,5 +1,4 @@
 import Message from '../../models/message';
-import Promotion from '../../models/promotion';
 import { SET_MESSAGE } from '../../utils/actions';
 import {
   DIALOG,
@@ -8,46 +7,57 @@ import {
   SNACKBAR_VARIANTS
 } from '../../utils/constants';
 import { compareAndDelete, upload } from '../../utils/file-utils';
+import JobDocument from '../../models/job-document';
 import { getServerTimeInMilliseconds } from '../../utils/firebase';
 
-export const addPromotion = (values) => {
+export const addJobDocument = (values) => {
   return async (dispatch, getState) => {
-    const { attachments, notifyUsers, title, body } = values;
+    const {
+      attachments,
+      notifyUsers,
+      salesOrder,
+      siteReference,
+      customer,
+      body
+    } = values;
     const { authUser } = getState().authState;
-    const newPromotion = new Promotion({
-      //The rest of .actions will be filled out in the model
+    const newJobDocument = new JobDocument({
+      //The rest of .actions will be filled out in the model when you .save()
       actions: [{ notifyUsers: notifyUsers }],
       attachments: [],
       body: body.trim(),
       comments: [],
-      expiry: values.expiry,
-      likes: [],
-      title: title.trim(),
+      customer: {
+        customerId: customer.customerId,
+        name: customer.name
+      },
+      salesOrder: salesOrder,
+      siteReference: siteReference.trim(),
       user: authUser.userId
     });
     try {
-      await newPromotion.save();
+      await newJobDocument.save();
       let uploadedAttachments = [];
       if (attachments.length > 0) {
         uploadedAttachments = await dispatch(
           upload({
             files: attachments,
-            collection: 'promotions',
-            collectionId: newPromotion.promotionId,
-            folder: newPromotion.metadata.createdAt.getTime().toString()
+            collection: 'job-documents',
+            collectionId: newJobDocument.jobDocumentId,
+            folder: newJobDocument.metadata.createdAt.getTime().toString()
           })
         );
       }
-      newPromotion.attachments = uploadedAttachments;
-      await newPromotion.save();
+      newJobDocument.attachments = uploadedAttachments;
+      await newJobDocument.save();
       const message = new Message({
-        title: 'Promotions',
-        body: 'Promotion created successfully',
+        title: 'Job Documents',
+        body: 'Job Document added successfully',
         feedback: SNACKBAR,
         options: {
           duration: 5000,
           variant: SNACKBAR_VARIANTS.FILLED,
-          severity: SNACKBAR_SEVERITY.INFO
+          severity: SNACKBAR_SEVERITY.SUCCESS
         }
       });
       dispatch({
@@ -57,8 +67,8 @@ export const addPromotion = (values) => {
       return true;
     } catch (error) {
       const message = new Message({
-        title: 'Promotions',
-        body: 'Promotion failed to post',
+        title: 'Job Documents',
+        body: 'Failed to add Job Document',
         feedback: DIALOG
       });
       dispatch({
@@ -70,19 +80,26 @@ export const addPromotion = (values) => {
   };
 };
 
-export const editPromotion = (promotion, values) => {
+export const editJobDocument = (jobDocument, values) => {
   return async (dispatch, _getState) => {
-    const { attachments, notifyUsers, title, body, expiry } = values;
+    const {
+      attachments,
+      notifyUsers,
+      salesOrder,
+      siteReference,
+      customer,
+      body
+    } = values;
     //Handle any attachment deletions
     const existingAttachments = attachments.filter(
       (attachment) => !(attachment instanceof File)
     );
     await compareAndDelete({
-      oldAttachments: promotion.attachments,
+      oldAttachments: jobDocument.attachments,
       newAttachments: existingAttachments,
-      collection: 'promotions-new',
-      collectionId: promotion.promotionId,
-      folder: promotion.metadata.createdAt.getTime().toString()
+      collection: 'job-documents',
+      collectionId: jobDocument.jobDocumentId,
+      folder: jobDocument.metadata.createdAt.getTime().toString()
     });
     //Handle new attachments to be uploaded
     const toBeUploadedAttachments = attachments.filter(
@@ -93,29 +110,29 @@ export const editPromotion = (promotion, values) => {
       uploadedAttachments = await dispatch(
         upload({
           files: toBeUploadedAttachments,
-          collection: 'promotions-new',
-          collectionId: promotion.promotionId,
-          folder: promotion.metadata.createdAt.getTime().toString()
+          collection: 'job-documents',
+          collectionId: jobDocument.jobDocumentId,
+          folder: jobDocument.metadata.createdAt.getTime().toString()
         })
       );
     }
-    const newPromotion = new Promotion({
-      promotionId: promotion.promotionId,
-      actions: [...promotion.actions, { notifyUsers: notifyUsers }],
+    const newJobDocument = new JobDocument({
+      jobDocumentId: jobDocument.jobDocumentId,
+      actions: [...jobDocument.actions, { notifyUsers: notifyUsers }],
       attachments: [...existingAttachments, ...uploadedAttachments],
       body: body.trim(),
-      comments: promotion.comments,
-      expiry: expiry,
-      likes: promotion.likes,
-      metadata: promotion.metadata,
-      title: title.trim(),
-      user: promotion.user
+      comments: jobDocument.comments,
+      customer: { ...customer },
+      metadata: jobDocument.metadata,
+      salesOrder: salesOrder,
+      siteReference: siteReference.trim(),
+      user: jobDocument.user
     });
     try {
-      await newPromotion.save();
+      await newJobDocument.save();
       const message = new Message({
-        title: 'Promotions',
-        body: 'Promotion updated successfully',
+        title: 'Job Documents',
+        body: 'Job Document updated successfully',
         feedback: SNACKBAR,
         options: {
           duration: 5000,
@@ -130,8 +147,8 @@ export const editPromotion = (promotion, values) => {
       return true;
     } catch (error) {
       const message = new Message({
-        title: 'Promotion',
-        body: 'Failed to update promotion',
+        title: 'Job Document',
+        body: 'Failed to update Job Document',
         feedback: DIALOG
       });
       dispatch({
@@ -143,14 +160,28 @@ export const editPromotion = (promotion, values) => {
   };
 };
 
-export const deletePromotion = (promotion) => {
+export const deleteJobDocument = (jobDocument) => {
   return async (dispatch, _getState) => {
     try {
-      const newPromotion = new Promotion({ ...promotion });
-      await newPromotion.delete();
+      const newJobDocument = new JobDocument({ ...jobDocument });
+      const promises = [];
+      //Delete any attachments from storage as well as the document
+      promises.push(
+        compareAndDelete({
+          oldAttachments: jobDocument.attachments,
+          newAttachments: [],
+          collection: 'job-documents',
+          collectionId: jobDocument.jobDocumentId,
+          folder: jobDocument.metadata.createdAt.getTime().toString()
+        })
+      );
+      //NEED TO LOOP THROUGH COMMENTS TO DELETE COMMENT ATTACHMENTS
+      //Delete attachments logic
+      promises.push(newJobDocument.delete());
+      await Promise.all(promises);
       const message = new Message({
-        title: 'Promotions',
-        body: 'Promotion deleted successfully',
+        title: 'Job Documents',
+        body: 'Job Document deleted successfully',
         feedback: SNACKBAR,
         options: {
           duration: 5000,
@@ -165,8 +196,8 @@ export const deletePromotion = (promotion) => {
       return true;
     } catch (error) {
       const message = new Message({
-        title: 'Promotions',
-        body: 'Failed to delete Promotion',
+        title: 'Job Documents',
+        body: 'Failed to delete Job Document',
         feedback: DIALOG
       });
       dispatch({
@@ -178,10 +209,10 @@ export const deletePromotion = (promotion) => {
   };
 };
 
-export const addComment = (promotion, values) => {
+export const addComment = (jobDocument, values) => {
   return async (dispatch, _getState) => {
     const { body, attachments, notifyUsers } = values;
-    const newPromotion = new Promotion({ ...promotion });
+    const newJobDocument = new JobDocument({ ...jobDocument });
     let uploadedAttachments = [];
     try {
       const serverTime = await getServerTimeInMilliseconds();
@@ -189,13 +220,13 @@ export const addComment = (promotion, values) => {
         uploadedAttachments = await dispatch(
           upload({
             files: attachments,
-            collection: 'promotions-new',
-            collectionId: promotion.promotionId,
+            collection: 'job-documents',
+            collectionId: jobDocument.jobDocumentId,
             folder: serverTime.toString()
           })
         );
       }
-      await newPromotion.saveComment(
+      await newJobDocument.saveComment(
         body.trim(),
         uploadedAttachments,
         notifyUsers,
@@ -204,7 +235,7 @@ export const addComment = (promotion, values) => {
       return true;
     } catch (error) {
       const message = new Message({
-        title: 'Promotions',
+        title: 'Job Documents',
         body: 'Comment failed to post',
         feedback: DIALOG
       });
