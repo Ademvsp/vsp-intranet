@@ -9,18 +9,18 @@ import {
   Dialog,
   withTheme
 } from '@material-ui/core';
-import Avatar from '../../../components/Avatar';
-import ActionsBar from '../../../components/ActionsBar';
-import BalloonEditorWrapper from '../../../components/BalloonEditorWrapper';
+import Avatar from '../../../../components/Avatar';
+import ActionsBar from '../../../../components/ActionsBar';
+import BalloonEditorWrapper from '../../../../components/BalloonEditorWrapper';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
-import { LONG_DATE } from '../../../utils/date';
-import { addPromotion } from '../../../store/actions/promotion';
+import { LONG_DATE } from '../../../../utils/date';
+import { editPromotion } from '../../../../store/actions/promotion';
 
-const NewPromotionDialog = withTheme((props) => {
+const EditPromotionDialog = withTheme((props) => {
   const dispatch = useDispatch();
   const { authUser } = useSelector((state) => state.authState);
   const { open, close, promotion } = props;
@@ -45,10 +45,9 @@ const NewPromotionDialog = withTheme((props) => {
 
   const submitHandler = async (values) => {
     setLoading(true);
-    const result = await dispatch(addPromotion(values));
+    const result = await dispatch(editPromotion(promotion, values));
     setLoading(false);
     if (result) {
-      formik.setValues(initialValues, true);
       close();
       history.push('/promotions/page/1');
     }
@@ -197,7 +196,7 @@ const NewPromotionDialog = withTheme((props) => {
               isValid={formik.isValid}
               onClick={formik.handleSubmit}
               tooltipPlacement='top'
-              actionButtonText='Post'
+              actionButtonText='Update'
             />
           </Grid>
         </Grid>
@@ -206,4 +205,4 @@ const NewPromotionDialog = withTheme((props) => {
   );
 });
 
-export default NewPromotionDialog;
+export default EditPromotionDialog;

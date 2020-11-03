@@ -1,4 +1,4 @@
-import { CREATE } from '../utils/actions';
+import { CREATE, UPDATE } from '../utils/actions';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
 const collectionRef = firebase.firestore().collection('promotions-new');
 
@@ -56,6 +56,13 @@ export default class Promotion {
         updatedAt: new Date(serverTime),
         updatedBy: firebase.auth().currentUser.uid
       };
+      this.actions[this.actions.length - 1] = {
+        actionType: UPDATE,
+        actionedAt: new Date(serverTime),
+        actionedBy: firebase.auth().currentUser.uid,
+        //notifyUsers from the post actions
+        notifyUsers: this.actions[this.actions.length - 1].notifyUsers
+      };
       await collectionRef
         .doc(this.promotionId)
         .update(this.getDatabaseObject());
@@ -71,7 +78,7 @@ export default class Promotion {
           actionType: CREATE,
           actionedAt: new Date(serverTime),
           actionedBy: firebase.auth().currentUser.uid,
-          //notifyUsers from the post actions
+          //notifyUsers from the promotion actions
           notifyUsers: this.actions[0].notifyUsers
         }
       ];

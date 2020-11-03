@@ -14,7 +14,7 @@ import { setMessage } from '../../../../store/actions/message';
 const PostCardMenu = (props) => {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
-  const { promotion, isAdmin } = props;
+  const { promotion, isAdmin, setShowEditPromotionDialog } = props;
 
   const copyClickHandler = () => {
     const message = new Message({
@@ -28,6 +28,11 @@ const PostCardMenu = (props) => {
       }
     });
     dispatch(setMessage(message));
+    setAnchorEl(null);
+  };
+
+  const editClickHandler = () => {
+    setShowEditPromotionDialog(true);
     setAnchorEl(null);
   };
 
@@ -50,10 +55,12 @@ const PostCardMenu = (props) => {
           text={`${process.env.REACT_APP_BASE_URL}/promotions/${promotion.promotionId}`}
           onCopy={copyClickHandler}
         >
-          <MenuItem>Copy Direct Link</MenuItem>
+          <MenuItem>Copy direct link</MenuItem>
         </CopyToClipboard>
-        {isAdmin && <MenuItem onClick={() => {}}>Edit Promotion</MenuItem>}
-        {isAdmin && <MenuItem onClick={() => {}}>Delete Promotion</MenuItem>}
+        {isAdmin && (
+          <MenuItem onClick={editClickHandler}>Edit promotion</MenuItem>
+        )}
+        {isAdmin && <MenuItem onClick={() => {}}>Delete promotion</MenuItem>}
       </Menu>
     </Fragment>
   );

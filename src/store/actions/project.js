@@ -71,7 +71,7 @@ export const addProject = (values) => {
       return true;
     } catch (error) {
       const message = new Message({
-        title: 'Pojects',
+        title: 'Projects',
         body: 'Failed to add Project',
         feedback: DIALOG
       });
@@ -165,7 +165,7 @@ export const editProject = (project, values) => {
       return true;
     } catch (error) {
       const message = new Message({
-        title: 'Pojects',
+        title: 'Projects',
         body: 'Failed to update project',
         feedback: DIALOG
       });

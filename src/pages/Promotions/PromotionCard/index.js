@@ -27,6 +27,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Promotion from '../../../models/promotion';
 import InnerHtml from '../../../components/InnerHtml';
 import PromotionCardMenu from './PromotionCardMenu';
+import EditPromotionDialog from './EditPromotionDialog';
 import { addComment } from '../../../store/actions/promotion';
 
 const PromotionCard = withTheme((props) => {
@@ -37,6 +38,7 @@ const PromotionCard = withTheme((props) => {
   const { promotionId, scroll, setActivePromotionId, isAdmin } = props;
   const [promotion, setPromotion] = useState();
   const [showComments, setShowComments] = useState(false);
+  const [showEditPromotionDialog, setShowEditPromotionDialog] = useState(false);
 
   useEffect(() => {
     if (scroll && promotion) {
@@ -60,7 +62,10 @@ const PromotionCard = withTheme((props) => {
             createdAt: doc.data().metadata.createdAt.toDate(),
             updatedAt: doc.data().metadata.updatedAt.toDate()
           };
-          const expiry = doc.data().expiry?.toDate();
+          let expiry = null;
+          if (doc.data().expiry) {
+            expiry = doc.data().expiry.toDate();
+          }
           const newPromotion = new Promotion({
             ...doc.data(),
             promotionId: doc.id,
@@ -171,6 +176,11 @@ const PromotionCard = withTheme((props) => {
 
   return (
     <div ref={scrollRef}>
+      <EditPromotionDialog
+        open={showEditPromotionDialog}
+        close={() => setShowEditPromotionDialog(false)}
+        promotion={promotion}
+      />
       <Card elevation={2}>
         <CardHeader
           avatar={<Avatar user={user} clickable={true} contactCard={true} />}
@@ -181,7 +191,11 @@ const PromotionCard = withTheme((props) => {
           subheader={promotion.title}
           action={
             isAdmin ? (
-              <PromotionCardMenu promotion={promotion} isAdmin={isAdmin} />
+              <PromotionCardMenu
+                promotion={promotion}
+                isAdmin={isAdmin}
+                setShowEditPromotionDialog={setShowEditPromotionDialog}
+              />
             ) : null
           }
         />
@@ -239,10 +253,7 @@ const PromotionCard = withTheme((props) => {
             submitHandler={newCommentHandler}
             comments={[...promotion.comments].reverse()}
             actionBarNotificationProps={{
-              enabled: true,
-              tooltip:
-                'The expenses admin, the original requester and their manager will be notified automatically',
-              readOnly: true
+              enabled: true
             }}
             commentLikeClickHandler={commentLikeClickHandler}
           />

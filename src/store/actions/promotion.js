@@ -7,7 +7,7 @@ import {
   SNACKBAR_SEVERITY,
   SNACKBAR_VARIANTS
 } from '../../utils/constants';
-import { upload } from '../../utils/file-utils';
+import { compareAndDelete, upload } from '../../utils/file-utils';
 import { getServerTimeInMilliseconds } from '../../utils/firebase';
 
 export const addPromotion = (values) => {
@@ -59,6 +59,79 @@ export const addPromotion = (values) => {
       const message = new Message({
         title: 'Promotions',
         body: 'Promotion failed to post',
+        feedback: DIALOG
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        message
+      });
+      return false;
+    }
+  };
+};
+
+export const editPromotion = (promotion, values) => {
+  return async (dispatch, _getState) => {
+    const { attachments, notifyUsers, title, body, expiry } = values;
+    //Handle any attachment deletions
+    let existingAttachments = await compareAndDelete({
+      oldAttachments: promotion.attachments,
+      newAttachments: attachments.filter(
+        (attachment) => !(attachment instanceof File)
+      ),
+      collection: 'promotions-new',
+      collectionId: promotion.promotionId,
+      folder: promotion.metadata.createdAt.getTime().toString()
+    });
+    //Handle new attachments to be uploaded
+    const toBeUploadedAttachments = attachments.filter(
+      (attachment) => attachment instanceof File
+    );
+    let uploadedAttachments = [];
+    if (toBeUploadedAttachments.length > 0) {
+      uploadedAttachments = await dispatch(
+        upload({
+          files: toBeUploadedAttachments,
+          collection: 'promotions-new',
+          collectionId: promotion.promotionId,
+          folder: promotion.metadata.createdAt.getTime().toString()
+        })
+      );
+    }
+    const newPromotion = new Promotion({
+      promotionId: promotion.promotionId,
+      actions: [...promotion.actions, { notifyUsers: notifyUsers }],
+      attachments: [...existingAttachments, ...uploadedAttachments],
+      body: body.trim(),
+      comments: promotion.comments,
+      expiry: expiry,
+      likes: promotion.likes,
+      metadata: promotion.metadata,
+      title: title.trim(),
+      user: promotion.user
+    });
+    try {
+      await newPromotion.save();
+      const message = new Message({
+        title: 'Promotions',
+        body: 'Promotion updated successfully',
+        feedback: SNACKBAR,
+        options: {
+          duration: 5000,
+          variant: SNACKBAR_VARIANTS.FILLED,
+          severity: SNACKBAR_SEVERITY.SUCCESS
+        }
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        message
+      });
+      return true;
+    } catch (error) {
+      console.log(error);
+      const message = new Message({
+        title: 'Promotion',
+        body: 'Failed to update promotion',
         feedback: DIALOG
       });
       dispatch({
