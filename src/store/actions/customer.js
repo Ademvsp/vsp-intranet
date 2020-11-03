@@ -6,39 +6,39 @@ import { SNACKBAR } from '../../utils/constants';
 let customersListener;
 
 export const subscribeCustomerListener = () => {
-	return async (dispatch, _getState) => {
-		try {
-			unsubscribeCustomerListener();
-			customersListener = Customer.getListener().onSnapshot((snapshot) => {
-				const customers = snapshot.docs.map(
-					(doc) =>
-						new Customer({
-							customerId: doc.id,
-							metadata: doc.data().metadata,
-							name: doc.data().name
-						})
-				);
-				dispatch({
-					type: SET_CUSTOMERS,
-					customers: customers
-				});
-			});
-		} catch (error) {
-			const message = new Message({
-				title: 'Customers',
-				body: 'Failed to retrieve customers',
-				feedback: SNACKBAR
-			});
-			dispatch({
-				type: SET_MESSAGE,
-				message
-			});
-		}
-	};
+  return async (dispatch, _getState) => {
+    try {
+      unsubscribeCustomerListener();
+      customersListener = Customer.getListener().onSnapshot((snapshot) => {
+        const customers = snapshot.docs.map(
+          (doc) =>
+            new Customer({
+              customerId: doc.id,
+              metadata: doc.data().metadata,
+              name: doc.data().name
+            })
+        );
+        dispatch({
+          type: SET_CUSTOMERS,
+          customers: customers
+        });
+      });
+    } catch (error) {
+      const message = new Message({
+        title: 'Customers',
+        body: 'Failed to retrieve customers',
+        feedback: SNACKBAR
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        message
+      });
+    }
+  };
 };
 
 export const unsubscribeCustomerListener = () => {
-	if (customersListener) {
-		customersListener();
-	}
+  if (customersListener) {
+    customersListener();
+  }
 };

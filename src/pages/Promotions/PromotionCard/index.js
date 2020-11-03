@@ -28,7 +28,8 @@ import Promotion from '../../../models/promotion';
 import InnerHtml from '../../../components/InnerHtml';
 import PromotionCardMenu from './PromotionCardMenu';
 import EditPromotionDialog from './EditPromotionDialog';
-import { addComment } from '../../../store/actions/promotion';
+import { addComment, deletePromotion } from '../../../store/actions/promotion';
+import ConfirmDialog from '../../../components/ConfirmDialog';
 
 const PromotionCard = withTheme((props) => {
   const dispatch = useDispatch();
@@ -36,9 +37,11 @@ const PromotionCard = withTheme((props) => {
   const { authUser } = useSelector((state) => state.authState);
   const { users } = useSelector((state) => state.dataState);
   const { promotionId, scroll, setActivePromotionId, isAdmin } = props;
+  const [loading, setLoading] = useState(false);
   const [promotion, setPromotion] = useState();
   const [showComments, setShowComments] = useState(false);
   const [showEditPromotionDialog, setShowEditPromotionDialog] = useState(false);
+  const [showDeleteConfirmDialog, setShowDeleteConfirmDialog] = useState(false);
 
   useEffect(() => {
     if (scroll && promotion) {
@@ -57,21 +60,25 @@ const PromotionCard = withTheme((props) => {
     const asyncFunction = async () => {
       promotionListener = Promotion.getListener(promotionId).onSnapshot(
         (doc) => {
-          const metadata = {
-            ...doc.data().metadata,
-            createdAt: doc.data().metadata.createdAt.toDate(),
-            updatedAt: doc.data().metadata.updatedAt.toDate()
-          };
-          let expiry = null;
-          if (doc.data().expiry) {
-            expiry = doc.data().expiry.toDate();
+          let newPromotion;
+          if (doc.exists) {
+            //This will handle for when promotion gets deleted
+            const metadata = {
+              ...doc.data().metadata,
+              createdAt: doc.data().metadata.createdAt.toDate(),
+              updatedAt: doc.data().metadata.updatedAt.toDate()
+            };
+            let expiry = null;
+            if (doc.data().expiry) {
+              expiry = doc.data().expiry.toDate();
+            }
+            newPromotion = new Promotion({
+              ...doc.data(),
+              promotionId: doc.id,
+              metadata: metadata,
+              expiry: expiry
+            });
           }
-          const newPromotion = new Promotion({
-            ...doc.data(),
-            promotionId: doc.id,
-            metadata: metadata,
-            expiry: expiry
-          });
           setPromotion(newPromotion);
         }
       );
@@ -111,6 +118,13 @@ const PromotionCard = withTheme((props) => {
       </Card>
     );
   }
+
+  const deletePromotionHandler = async () => {
+    setLoading(true);
+    await dispatch(deletePromotion(promotion));
+    setShowDeleteConfirmDialog(false);
+    setLoading(false);
+  };
 
   const newCommentHandler = async (values) => {
     const result = await dispatch(addComment(promotion, values));
@@ -181,6 +195,14 @@ const PromotionCard = withTheme((props) => {
         close={() => setShowEditPromotionDialog(false)}
         promotion={promotion}
       />
+      <ConfirmDialog
+        open={showDeleteConfirmDialog}
+        cancel={() => setShowDeleteConfirmDialog(false)}
+        title='Promotions'
+        message={`Are you sure you want to delete "${promotion.title}"?`}
+        confirm={deletePromotionHandler}
+        loading={loading}
+      />
       <Card elevation={2}>
         <CardHeader
           avatar={<Avatar user={user} clickable={true} contactCard={true} />}
@@ -195,6 +217,7 @@ const PromotionCard = withTheme((props) => {
                 promotion={promotion}
                 isAdmin={isAdmin}
                 setShowEditPromotionDialog={setShowEditPromotionDialog}
+                setShowDeleteConfirmDialog={setShowDeleteConfirmDialog}
               />
             ) : null
           }

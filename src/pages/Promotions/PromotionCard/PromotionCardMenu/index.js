@@ -14,7 +14,12 @@ import { setMessage } from '../../../../store/actions/message';
 const PostCardMenu = (props) => {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
-  const { promotion, isAdmin, setShowEditPromotionDialog } = props;
+  const {
+    promotion,
+    isAdmin,
+    setShowEditPromotionDialog,
+    setShowDeleteConfirmDialog
+  } = props;
 
   const copyClickHandler = () => {
     const message = new Message({
@@ -33,6 +38,11 @@ const PostCardMenu = (props) => {
 
   const editClickHandler = () => {
     setShowEditPromotionDialog(true);
+    setAnchorEl(null);
+  };
+
+  const deleteClickHandler = () => {
+    setShowDeleteConfirmDialog(true);
     setAnchorEl(null);
   };
 
@@ -60,7 +70,9 @@ const PostCardMenu = (props) => {
         {isAdmin && (
           <MenuItem onClick={editClickHandler}>Edit promotion</MenuItem>
         )}
-        {isAdmin && <MenuItem onClick={() => {}}>Delete promotion</MenuItem>}
+        {isAdmin && (
+          <MenuItem onClick={deleteClickHandler}>Delete promotion</MenuItem>
+        )}
       </Menu>
     </Fragment>
   );

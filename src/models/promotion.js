@@ -108,6 +108,10 @@ export default class Promotion {
     this.comments.push(comment);
   }
 
+  async delete() {
+    await collectionRef.doc(this.promotionId).delete();
+  }
+
   async toggleCommentLike(index) {
     const userId = firebase.auth().currentUser.uid;
     const indexOfLike = this.comments[index].likes.indexOf(userId);

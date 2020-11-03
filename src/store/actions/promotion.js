@@ -143,6 +143,42 @@ export const editPromotion = (promotion, values) => {
   };
 };
 
+export const deletePromotion = (promotion) => {
+  return async (dispatch, _getState) => {
+    try {
+      const newPromotion = new Promotion({ ...promotion });
+      await newPromotion.delete();
+      const message = new Message({
+        title: 'Promotions',
+        body: 'Promotion deleted successfully',
+        feedback: SNACKBAR,
+        options: {
+          duration: 5000,
+          variant: SNACKBAR_VARIANTS.FILLED,
+          severity: SNACKBAR_SEVERITY.SUCCESS
+        }
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        message
+      });
+      return true;
+    } catch (error) {
+      console.log('error', error);
+      const message = new Message({
+        title: 'Promotions',
+        body: 'Failed to delete Promotion',
+        feedback: DIALOG
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        message
+      });
+      return false;
+    }
+  };
+};
+
 export const addComment = (promotion, values) => {
   return async (dispatch, _getState) => {
     const { body, attachments, notifyUsers } = values;
