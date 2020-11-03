@@ -21,7 +21,7 @@ import { subscribeCustomerListener } from '../../../store/actions/customer';
 import { addJobDocument } from '../../../store/actions/job-document';
 const filter = createFilterOptions();
 
-const NewProjectDialog = withTheme((props) => {
+const NewJobDocumentDialog = withTheme((props) => {
   const dispatch = useDispatch();
   const { customers } = useSelector((state) => state.dataState);
   const { open, close } = props;
@@ -281,4 +281,4 @@ const NewProjectDialog = withTheme((props) => {
   );
 });
 
-export default NewProjectDialog;
+export default NewJobDocumentDialog;

@@ -1,4 +1,4 @@
-import { Container } from '@material-ui/core';
+import { CardContent, Container } from '@material-ui/core';
 import MaterialTable from 'material-table';
 import React, { Fragment, useEffect, useState } from 'react';
 import FloatingActionButton from '../../components/FloatingActionButton';
@@ -12,6 +12,7 @@ import ViewJobDocumentDialog from './ViewJobDocumentDialog';
 import { useHistory, useParams } from 'react-router-dom';
 import { READ, UPDATE } from '../../utils/actions';
 import { useSelector } from 'react-redux';
+import AttachmentsContainer from '../../components/AttachmentsContainer';
 
 const JobDocuments = (props) => {
   const { push, replace } = useHistory();
@@ -118,12 +119,6 @@ const JobDocuments = (props) => {
           />
         </Fragment>
       )}
-      {/* <NewProjectDialog
-      open={newProjectDialogOpen}
-      close={() => setNewProjectDialogOpen(false)}
-      projectNames={projects.map((project) => project.name)}
-    />
-     */}
       <Container disableGutters maxWidth='lg'>
         <MaterialTable
           isLoading={!jobDocuments}
@@ -141,6 +136,13 @@ const JobDocuments = (props) => {
           onRowClick={(event, rowData) =>
             push(`/job-documents/${rowData.jobDocumentId}`)
           }
+          detailPanel={(rowData) => {
+            return (
+              <CardContent>
+                <AttachmentsContainer attachments={rowData.attachments} />
+              </CardContent>
+            );
+          }}
         />
       </Container>
       <FloatingActionButton

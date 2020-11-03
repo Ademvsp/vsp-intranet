@@ -30,6 +30,7 @@ import LeaveRequests from './pages/LeaveRequests';
 import ExpenseClaims from './pages/ExpenseClaims';
 import Promotions from './pages/Promotions';
 import JobDocuments from './pages/JobDocuments';
+import Firmware from './pages/Firmware';
 
 const App = (props) => {
   const dispatch = useDispatch();
@@ -141,6 +142,12 @@ const App = (props) => {
           </Route>
           <Route path='/job-documents'>
             <JobDocuments action={READ} />
+          </Route>
+          <Route path='/firmware/:firmwareId'>
+            <Firmware action={UPDATE} />
+          </Route>
+          <Route path='/firmware'>
+            <Firmware action={READ} />
           </Route>
           <Redirect from='/product-requests' to='/product-requests/page/1' />
           <Redirect from='/leave-requests' to='/leave-requests/page/1' />

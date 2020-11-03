@@ -22,7 +22,7 @@ import CommentOutlinedIcon from '@material-ui/icons/CommentOutlined';
 import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
 import Avatar from '../../../components/Avatar';
 
-const ViewProjectDialog = withTheme((props) => {
+const ViewJobDocumentDialog = withTheme((props) => {
   const dispatch = useDispatch();
   const { authUser } = useSelector((state) => state.authState);
   const { users } = useSelector((state) => state.dataState);
@@ -185,4 +185,4 @@ const ViewProjectDialog = withTheme((props) => {
   );
 });
 
-export default ViewProjectDialog;
+export default ViewJobDocumentDialog;

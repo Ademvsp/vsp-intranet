@@ -30,7 +30,7 @@ import ConfirmDialog from '../../../components/ConfirmDialog';
 import Avatar from '../../../components/Avatar';
 const filter = createFilterOptions();
 
-const EditProjectDialog = withTheme((props) => {
+const EditJobDocumentDialog = withTheme((props) => {
   const dispatch = useDispatch();
   const { customers, users } = useSelector((state) => state.dataState);
   const { open, close, jobDocument } = props;
@@ -358,4 +358,4 @@ const EditProjectDialog = withTheme((props) => {
   );
 });
 
-export default EditProjectDialog;
+export default EditJobDocumentDialog;
