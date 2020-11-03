@@ -11,12 +11,15 @@ import EditJobDocumentDialog from './EditJobDocumentDialog';
 import ViewJobDocumentDialog from './ViewJobDocumentDialog';
 import { useHistory, useParams } from 'react-router-dom';
 import { READ, UPDATE } from '../../utils/actions';
+import { useSelector } from 'react-redux';
 
 const JobDocuments = (props) => {
   const { push, replace } = useHistory();
   const params = useParams();
   const { action } = props;
-  const [isAdmin, setIsAdmin] = useState();
+  const { authUser } = useSelector((state) => state.authState);
+  const { userId } = authUser;
+  const [permissions, setPermissions] = useState();
   const [jobDocuments, setJobDocuments] = useState();
   const [selectedJobDocument, setSelectedJobDocument] = useState();
   const [showAddJobDocumentDialog, setShowAddJobDocumentDialogOpen] = useState(
@@ -31,15 +34,15 @@ const JobDocuments = (props) => {
 
   useEffect(() => {
     const asyncFunction = async () => {
-      const newIsAdmin = await JobDocument.isAdmin();
-      setIsAdmin(newIsAdmin);
+      const admin = await JobDocument.isAdmin();
+      setPermissions({ admin: admin });
     };
     asyncFunction();
   }, []);
 
   useEffect(() => {
     let jobDocumentsListener;
-    if (isAdmin !== undefined) {
+    if (permissions !== undefined) {
       jobDocumentsListener = JobDocument.getListener().onSnapshot(
         (snapshot) => {
           const newJobDocuments = snapshot.docs.map((doc) => {
@@ -63,7 +66,7 @@ const JobDocuments = (props) => {
         jobDocumentsListener();
       }
     };
-  }, [isAdmin]);
+  }, [permissions]);
 
   useEffect(() => {
     if (jobDocuments) {
@@ -74,7 +77,7 @@ const JobDocuments = (props) => {
           (jobDocument) => jobDocument.jobDocumentId === params.jobDocumentId
         );
         if (newSelectedJobDocument) {
-          if (isAdmin) {
+          if (permissions.admin || userId === newSelectedJobDocument.user) {
             setShowEditJobDocumentDialog(true);
           } else {
             setShowViewJobDocumentDialog(true);
@@ -85,7 +88,7 @@ const JobDocuments = (props) => {
         }
       }
     }
-  }, [action, jobDocuments, params.jobDocumentId, isAdmin, push]);
+  }, [action, jobDocuments, params.jobDocumentId, permissions, push, userId]);
 
   const closeDialogHandler = () => {
     setSelectedJobDocument(null);

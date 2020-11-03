@@ -20,6 +20,7 @@ import JobDocument from '../../../models/job-document';
 import AttachmentsContainer from '../../../components/AttachmentsContainer';
 import CommentOutlinedIcon from '@material-ui/icons/CommentOutlined';
 import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
+import Avatar from '../../../components/Avatar';
 
 const ViewProjectDialog = withTheme((props) => {
   const dispatch = useDispatch();
@@ -28,6 +29,10 @@ const ViewProjectDialog = withTheme((props) => {
   const { open, close, jobDocument } = props;
   const [showComments, setShowComments] = useState(false);
   const [commentLoading, setCommentLoading] = useState(false);
+
+  const jobDocumentUser = users.find(
+    (user) => user.userId === jobDocument.user
+  );
 
   const initialValues = {
     attachments: jobDocument.attachments,
@@ -98,7 +103,14 @@ const ViewProjectDialog = withTheme((props) => {
 
   return (
     <Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
-      <DialogTitle>View Job Document</DialogTitle>
+      <DialogTitle>
+        <Grid container alignItems='center' spacing={1}>
+          <Grid item>
+            <Avatar user={jobDocumentUser} />
+          </Grid>
+          <Grid item>View Job Document</Grid>
+        </Grid>
+      </DialogTitle>
       <DialogContent>
         <Grid container direction='column' spacing={1}>
           <Grid item container spacing={2}>

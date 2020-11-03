@@ -27,11 +27,12 @@ import {
 import Comments from '../../../components/Comments';
 import JobDocument from '../../../models/job-document';
 import ConfirmDialog from '../../../components/ConfirmDialog';
+import Avatar from '../../../components/Avatar';
 const filter = createFilterOptions();
 
 const EditProjectDialog = withTheme((props) => {
   const dispatch = useDispatch();
-  const { customers } = useSelector((state) => state.dataState);
+  const { customers, users } = useSelector((state) => state.dataState);
   const { open, close, jobDocument } = props;
   const [validatedOnMount, setValidatedOnMount] = useState(false);
   const [showComments, setShowComments] = useState(false);
@@ -45,6 +46,11 @@ const EditProjectDialog = withTheme((props) => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [commentLoading, setCommentLoading] = useState(false);
   const loading = deleteLoading || editLoading || commentLoading;
+
+  const jobDocumentUser = users.find(
+    (user) => user.userId === jobDocument.user
+  );
+
   useEffect(() => {
     if (customersLoading) {
       dispatch(subscribeCustomerListener());
@@ -194,22 +200,6 @@ const EditProjectDialog = withTheme((props) => {
     formik.setFieldValue('customer', newValue, true);
   };
 
-  // let commentIcon = <CommentOutlinedIcon />;
-  // const commentUsers = event.comments.map((comment) => comment.user);
-  // if (commentUsers.includes(authUser.userId)) {
-  //   commentIcon = <CommentRoundedIcon />;
-  // }
-  // const commentToolip = () => {
-  //   const commentUsers = users.filter((user) => {
-  //     const commentUserIds = event.comments.map((comment) => comment.user);
-  //     return commentUserIds.includes(user.userId);
-  //   });
-  //   const tooltip = commentUsers.map((commentUser) => (
-  //     <div key={commentUser.userId}>{commentUser.getFullName()}</div>
-  //   ));
-  //   return tooltip;
-  // };
-
   return (
     <Fragment>
       <ConfirmDialog
@@ -220,9 +210,16 @@ const EditProjectDialog = withTheme((props) => {
         message='Are you sure you want to delete this Job Document?'
       />
       <Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
-        <DialogTitle>New Job Document</DialogTitle>
+        <DialogTitle>
+          <Grid container alignItems='center' spacing={1}>
+            <Grid item>
+              <Avatar user={jobDocumentUser} />
+            </Grid>
+            <Grid item>Edit Job Document</Grid>
+          </Grid>
+        </DialogTitle>
         <DialogContent>
-          <Grid container direction='column' spacing={1}>
+          <Grid container direction='column' spacing={2}>
             <Grid item container spacing={2}>
               <Grid item xs={6}>
                 <TextField
