@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Collapse,
   Dialog,
   DialogActions,
@@ -25,11 +24,12 @@ import {
 import Comments from '../../../components/Comments';
 import Firmware from '../../../models/firmware';
 import ConfirmDialog from '../../../components/ConfirmDialog';
+import Avatar from '../../../components/Avatar';
 const filter = createFilterOptions();
 
 const EditFirmwareDialog = withTheme((props) => {
   const dispatch = useDispatch();
-  const { customers, users } = useSelector((state) => state.dataState);
+  const { users } = useSelector((state) => state.dataState);
   const { open, close, firmware } = props;
   const [validatedOnMount, setValidatedOnMount] = useState(false);
 
@@ -150,7 +150,7 @@ const EditFirmwareDialog = withTheme((props) => {
         <DialogTitle>
           <Grid container alignItems='center' spacing={1}>
             <Grid item>
-              <Avatar user={firmwareUser} />
+              <Avatar user={firmwareUser} clickable contactCard />
             </Grid>
             <Grid item>Edit Firmware</Grid>
           </Grid>
@@ -181,7 +181,7 @@ const EditFirmwareDialog = withTheme((props) => {
               <Autocomplete
                 filterSelectedOptions
                 multiple
-                options={customers || []}
+                options={[]}
                 getOptionLabel={(option) => option}
                 getOptionSelected={(option, value) => option === value}
                 value={formik.values.products}

@@ -214,7 +214,7 @@ const EditJobDocumentDialog = withTheme((props) => {
         <DialogTitle>
           <Grid container alignItems='center' spacing={1}>
             <Grid item>
-              <Avatar user={jobDocumentUser} />
+              <Avatar user={jobDocumentUser} clickable contactCard />
             </Grid>
             <Grid item>Edit Job Document</Grid>
           </Grid>

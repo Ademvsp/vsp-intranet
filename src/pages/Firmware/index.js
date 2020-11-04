@@ -6,14 +6,13 @@ import AddIcon from '@material-ui/icons/Add';
 import Firmware from '../../models/firmware';
 import tableColumns from '../../utils/table-icons';
 import columnSchema from './column-schema';
-// import EditFirmwareDialog from './EditFirmwareDialog';
-// import ViewFirmwareDialog from './ViewFirmwareDialog';
+import EditFirmwareDialog from './EditFirmwareDialog';
+import ViewFirmwareDialog from './ViewFirmwareDialog';
 import { useHistory, useParams } from 'react-router-dom';
 import { READ, UPDATE } from '../../utils/actions';
 import { useSelector } from 'react-redux';
 import AttachmentsContainer from '../../components/AttachmentsContainer';
 import NewFirmwareDialog from './NewFirmwareDialog';
-import EditFirmwareDialog from './EditFirmwareDialog';
 
 const FirmwarePage = (props) => {
   const { push, replace } = useHistory();
@@ -72,9 +71,9 @@ const FirmwarePage = (props) => {
         );
         if (newSelectedFirmware) {
           if (permissions.admin || userId === newSelectedFirmware.user) {
-            setShowEditFirmwareDialog(true);
-          } else {
             setShowViewFirmwareDialog(true);
+          } else {
+            setShowEditFirmwareDialog(true);
           }
           setSelectedFirmware(newSelectedFirmware);
         } else {
@@ -99,11 +98,18 @@ const FirmwarePage = (props) => {
         close={closeDialogHandler}
       />
       {selectedFirmware && (
-        <EditFirmwareDialog
-          open={showEditFirmwareDialog}
-          close={closeDialogHandler}
-          firmware={selectedFirmware}
-        />
+        <Fragment>
+          <EditFirmwareDialog
+            open={showEditFirmwareDialog}
+            close={closeDialogHandler}
+            firmware={selectedFirmware}
+          />
+          <ViewFirmwareDialog
+            open={showViewFirmwareDialog}
+            close={closeDialogHandler}
+            firmware={selectedFirmware}
+          />
+        </Fragment>
       )}
       {/* <NewFirmwareDialog
         open={showAddFirmwareDialog}

@@ -11,36 +11,34 @@ import {
   Tooltip,
   withTheme
 } from '@material-ui/core';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Customer from '../../../models/customer';
-import { addComment } from '../../../store/actions/job-document';
+import { addComment } from '../../../store/actions/firmware';
 import Comments from '../../../components/Comments';
-import JobDocument from '../../../models/job-document';
-import AttachmentsContainer from '../../../components/AttachmentsContainer';
+import Firmware from '../../../models/firmware';
 import CommentOutlinedIcon from '@material-ui/icons/CommentOutlined';
 import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
+import AttachmentsContainer from '../../../components/AttachmentsContainer';
 import Avatar from '../../../components/Avatar';
 
-const ViewJobDocumentDialog = withTheme((props) => {
+const ViewFirmwareDialog = withTheme((props) => {
   const dispatch = useDispatch();
   const { authUser } = useSelector((state) => state.authState);
   const { users } = useSelector((state) => state.dataState);
-  const { open, close, jobDocument } = props;
+  const { open, close, firmware } = props;
+
   const [showComments, setShowComments] = useState(false);
+
   const [commentLoading, setCommentLoading] = useState(false);
 
-  const jobDocumentUser = users.find(
-    (user) => user.userId === jobDocument.user
-  );
+  const firmwareUser = users.find((user) => user.userId === firmware.user);
 
   const initialValues = {
-    attachments: jobDocument.attachments,
-    notifyUsers: [],
-    salesOrder: jobDocument.salesOrder,
-    siteReference: jobDocument.siteReference,
-    customer: new Customer({ ...jobDocument.customer }),
-    body: jobDocument.body
+    attachments: firmware.attachments,
+    title: firmware.title,
+    products: firmware.products,
+    body: firmware.body
   };
 
   const dialogCloseHandler = () => {
@@ -51,32 +49,30 @@ const ViewJobDocumentDialog = withTheme((props) => {
 
   const newCommentHandler = async (values) => {
     setCommentLoading(true);
-    const result = await dispatch(addComment(jobDocument, values));
+    const result = await dispatch(addComment(firmware, values));
     setCommentLoading(false);
     return result;
+  };
+
+  const commentLikeClickHandler = async (reverseIndex) => {
+    //Comments get reversed to display newest first, need to switch it back
+    const index = firmware.comments.length - reverseIndex - 1;
+    const newFirmware = new Firmware({ ...firmware });
+    await newFirmware.toggleCommentLike(index);
   };
 
   const commentsClickHandler = () => {
     setShowComments((prevState) => !prevState);
   };
 
-  const commentLikeClickHandler = async (reverseIndex) => {
-    //Comments get reversed to display newest first, need to switch it back
-    const index = jobDocument.comments.length - reverseIndex - 1;
-    const newJobDocument = new JobDocument({ ...jobDocument });
-    await newJobDocument.toggleCommentLike(index);
-  };
-
   let commentIcon = <CommentOutlinedIcon />;
-  const commentUsers = jobDocument.comments.map((comment) => comment.user);
+  const commentUsers = firmware.comments.map((comment) => comment.user);
   if (commentUsers.includes(authUser.userId)) {
     commentIcon = <CommentRoundedIcon />;
   }
   const commentToolip = () => {
     const commentUsers = users.filter((user) => {
-      const commentUserIds = jobDocument.comments.map(
-        (comment) => comment.user
-      );
+      const commentUserIds = firmware.comments.map((comment) => comment.user);
       return commentUserIds.includes(user.userId);
     });
     const tooltip = commentUsers.map((commentUser) => (
@@ -92,7 +88,7 @@ const ViewJobDocumentDialog = withTheme((props) => {
       color='secondary'
       onClick={commentsClickHandler}
       startIcon={
-        <Badge color='secondary' badgeContent={jobDocument.comments.length}>
+        <Badge color='secondary' badgeContent={firmware.comments.length}>
           {commentIcon}
         </Badge>
       }
@@ -101,54 +97,52 @@ const ViewJobDocumentDialog = withTheme((props) => {
     </Button>
   );
 
+  const productRenderInput = (params) => (
+    <TextField {...params} label='Products Affected' disabled fullWidth />
+  );
+
   return (
     <Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
       <DialogTitle>
         <Grid container alignItems='center' spacing={1}>
           <Grid item>
-            <Avatar user={jobDocumentUser} clickable contactCard />
+            <Avatar user={firmwareUser} clickable contactCard />
           </Grid>
-          <Grid item>View Job Document</Grid>
+          <Grid item>View Firmware</Grid>
         </Grid>
       </DialogTitle>
       <DialogContent>
         <Grid container direction='column' spacing={1}>
-          <Grid item container spacing={2}>
-            <Grid item xs={6}>
-              <TextField
-                label='Sales Order'
-                type='number'
-                value={initialValues.salesOrder}
-                fullWidth
-                readOnly
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                label='Site Reference'
-                value={initialValues.siteReference}
-                fullWidth
-                readOnly
-              />
-            </Grid>
-          </Grid>
           <Grid item>
             <TextField
-              label='Customer'
-              value={initialValues.customer.name}
+              label='Title'
               fullWidth
+              value={initialValues.title}
+              readOnly
+              autoFocus
+            />
+          </Grid>
+          <Grid item>
+            <Autocomplete
+              filterSelectedOptions
+              multiple
+              options={[]}
+              getOptionLabel={(option) => option}
+              getOptionSelected={(option, value) => option === value}
+              value={initialValues.products}
+              renderInput={productRenderInput}
               readOnly
             />
           </Grid>
           {initialValues.body && (
             <Grid item>
               <TextField
-                label='Notes'
+                label='Release Notes'
                 multiline
                 rows={5}
                 rowsMax={5}
-                value={initialValues.body}
                 fullWidth
+                value={initialValues.body}
                 readOnly
               />
             </Grid>
@@ -161,7 +155,7 @@ const ViewJobDocumentDialog = withTheme((props) => {
       <DialogActions>
         <Grid item container direction='row' justify='flex-end'>
           <Grid item>
-            {jobDocument.comments.length > 0 ? (
+            {firmware.comments.length > 0 ? (
               <Tooltip title={commentToolip()}>{commentButton}</Tooltip>
             ) : (
               commentButton
@@ -172,11 +166,11 @@ const ViewJobDocumentDialog = withTheme((props) => {
       <Collapse in={showComments} timeout='auto'>
         <Comments
           submitHandler={newCommentHandler}
-          comments={[...jobDocument.comments].reverse()}
+          comments={[...firmware.comments].reverse()}
           actionBarNotificationProps={{
             enabled: true,
             tooltip:
-              'The Job Document creator, and all comment participants will be notified automatically'
+              'The Firmware creator, and all comment participants will be notified automatically'
           }}
           commentLikeClickHandler={commentLikeClickHandler}
         />
@@ -185,4 +179,4 @@ const ViewJobDocumentDialog = withTheme((props) => {
   );
 });
 
-export default ViewJobDocumentDialog;
+export default ViewFirmwareDialog;
