@@ -31,6 +31,7 @@ import ExpenseClaims from './pages/ExpenseClaims';
 import Promotions from './pages/Promotions';
 import JobDocuments from './pages/JobDocuments';
 import Firmware from './pages/Firmware';
+import Resources from './pages/Resources';
 
 const App = (props) => {
   const dispatch = useDispatch();
@@ -148,6 +149,9 @@ const App = (props) => {
           </Route>
           <Route path='/firmware'>
             <Firmware action={READ} />
+          </Route>
+          <Route path='/resources'>
+            <Resources />
           </Route>
           <Redirect from='/product-requests' to='/product-requests/page/1' />
           <Redirect from='/leave-requests' to='/leave-requests/page/1' />
