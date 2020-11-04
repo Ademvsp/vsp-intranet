@@ -101,6 +101,7 @@ const EditJobDocumentDialog = withTheme((props) => {
     setDeleteLoading(false);
     close();
   };
+
   const newCommentHandler = async (values) => {
     setCommentLoading(true);
     const result = await dispatch(addComment(jobDocument, values));

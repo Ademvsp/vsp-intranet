@@ -6,15 +6,14 @@ import AddIcon from '@material-ui/icons/Add';
 import Firmware from '../../models/firmware';
 import tableColumns from '../../utils/table-icons';
 import columnSchema from './column-schema';
-// import NewFirmwareDialog from './NewFirmwareDialog';
 // import EditFirmwareDialog from './EditFirmwareDialog';
 // import ViewFirmwareDialog from './ViewFirmwareDialog';
 import { useHistory, useParams } from 'react-router-dom';
 import { READ, UPDATE } from '../../utils/actions';
 import { useSelector } from 'react-redux';
-import InnerHtml from '../../components/InnerHtml';
 import AttachmentsContainer from '../../components/AttachmentsContainer';
 import NewFirmwareDialog from './NewFirmwareDialog';
+import EditFirmwareDialog from './EditFirmwareDialog';
 
 const FirmwarePage = (props) => {
   const { push, replace } = useHistory();
@@ -99,6 +98,13 @@ const FirmwarePage = (props) => {
         open={showAddFirmwareDialog}
         close={closeDialogHandler}
       />
+      {selectedFirmware && (
+        <EditFirmwareDialog
+          open={showEditFirmwareDialog}
+          close={closeDialogHandler}
+          firmware={selectedFirmware}
+        />
+      )}
       {/* <NewFirmwareDialog
         open={showAddFirmwareDialog}
         close={closeDialogHandler}
@@ -140,7 +146,7 @@ const FirmwarePage = (props) => {
                 <Grid container direction='column' spacing={1}>
                   {rowData.body && (
                     <Grid item>
-                      <InnerHtml html={rowData.body} />
+                      <Typography>{rowData.body}</Typography>
                     </Grid>
                   )}
                   <Grid item>

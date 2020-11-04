@@ -24,7 +24,6 @@ const NewFirmwareDialog = withTheme((props) => {
   const { open, close } = props;
   const [loading, setLoading] = useState();
   const [validatedOnMount, setValidatedOnMount] = useState(false);
-  const [product, setProduct] = useState('');
 
   const validationSchema = yup.object().shape({
     attachments: yup.array().required().min(1),
