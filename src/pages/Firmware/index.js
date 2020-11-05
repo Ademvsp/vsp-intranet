@@ -23,7 +23,7 @@ const FirmwarePage = (props) => {
   const [permissions, setPermissions] = useState();
   const [firmwares, setFirmwares] = useState();
   const [selectedFirmware, setSelectedFirmware] = useState();
-  const [showAddFirmwareDialog, setShowAddFirmwareDialogOpen] = useState(false);
+  const [showNewFirmwareDialog, setShowNewFirmwareDialogOpen] = useState(false);
   const [showEditFirmwareDialog, setShowEditFirmwareDialog] = useState(false);
   const [showViewFirmwareDialog, setShowViewFirmwareDialog] = useState(false);
 
@@ -85,7 +85,7 @@ const FirmwarePage = (props) => {
 
   const closeDialogHandler = () => {
     setSelectedFirmware(null);
-    setShowAddFirmwareDialogOpen(false);
+    setShowNewFirmwareDialogOpen(false);
     setShowViewFirmwareDialog(false);
     setShowEditFirmwareDialog(false);
     replace('/firmware');
@@ -94,7 +94,7 @@ const FirmwarePage = (props) => {
   return (
     <Fragment>
       <NewFirmwareDialog
-        open={showAddFirmwareDialog}
+        open={showNewFirmwareDialog}
         close={closeDialogHandler}
       />
       {selectedFirmware && (
@@ -111,24 +111,6 @@ const FirmwarePage = (props) => {
           />
         </Fragment>
       )}
-      {/* <NewFirmwareDialog
-        open={showAddFirmwareDialog}
-        close={closeDialogHandler}
-      />
-      {selectedFirmware && (
-        <Fragment>
-          <EditFirmwareDialog
-            open={showEditFirmwareDialog}
-            close={closeDialogHandler}
-            firmware={selectedFirmware}
-          />
-          <ViewFirmwareDialog
-            open={showViewFirmwareDialog}
-            close={closeDialogHandler}
-            firmware={selectedFirmware}
-          />
-        </Fragment>
-      )} */}
       <Container disableGutters maxWidth='lg'>
         <MaterialTable
           isLoading={!firmwares}
@@ -167,7 +149,7 @@ const FirmwarePage = (props) => {
       <FloatingActionButton
         color='primary'
         tooltip='Add Firmware'
-        onClick={() => setShowAddFirmwareDialogOpen(true)}
+        onClick={() => setShowNewFirmwareDialogOpen(true)}
       >
         <AddIcon />
       </FloatingActionButton>
