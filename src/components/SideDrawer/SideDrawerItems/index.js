@@ -22,6 +22,7 @@ import DateRangeIcon from '@material-ui/icons/DateRange';
 import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 import SideDrawerItem from './SideDrawerItem';
 import BuildIcon from '@material-ui/icons/Build';
+import GetAppIcon from '@material-ui/icons/GetApp';
 
 const SideDrawerItems = (props) => {
   return (
@@ -69,40 +70,33 @@ const SideDrawerItems = (props) => {
           link='/job-documents'
         />
         <SideDrawerItem
-          Icon={BuildIcon}
+          Icon={GetAppIcon}
           text='Firmware & Software'
           link='/firmware'
         />
-        {/* <SideDrawerItem
-					Icon={CloudDownloadIcon}
-					text='Fileshare'
-					subItems={[
-						<SideDrawerItem
-							key='0'
-							Icon={PermMediaIcon}
-							text='File Explorer'
-							link='/calendar'
-							subItem={true}
-						/>,
-						<SideDrawerItem
-							key='1'
-							Icon={MoneyIcon}
-							text='Pricelists'
-							link='/calendar'
-							subItem={true}
-						/>,
-						<SideDrawerItem
-							key='2'
-							Icon={DescriptionIcon}
-							text='Technical Documents'
-							link='/calendar'
-							subItem={true}
-						/>
-					]}
-				/> */}
+        <SideDrawerItem
+          Icon={BuildIcon}
+          text='Sales Tools'
+          subItems={[
+            <SideDrawerItem
+              key='0'
+              Icon={EventIcon}
+              text='Staff Calendar'
+              link='/calendar'
+              subItem={true}
+            />,
+            <SideDrawerItem
+              key='1'
+              Icon={SchoolIcon}
+              text='Training Schedule'
+              link='/calendar'
+              subItem={true}
+            />
+          ]}
+        />
         <SideDrawerItem
           Icon={DialpadIcon}
-          text='Calculators'
+          text='Sales Tools'
           link='/calculators'
         />
         <SideDrawerItem

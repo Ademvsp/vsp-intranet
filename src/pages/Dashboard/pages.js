@@ -21,6 +21,7 @@ import ReceiptIcon from '@material-ui/icons/Receipt';
 import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 import BuildIcon from '@material-ui/icons/Build';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import GetAppIcon from '@material-ui/icons/GetApp';
 
 const pages = [
   {
@@ -55,13 +56,6 @@ const pages = [
     link: '/projects'
   },
   {
-    name: 'Calculators',
-    description:
-      'Use the pre-sales calculators to calculate storage, bandwidth, resources etc.',
-    icon: DialpadIcon,
-    link: '/calculators'
-  },
-  {
     name: 'Promotions',
     description: 'See all the upcoming company promotions and when they expire',
     icon: LocalOfferIcon,
@@ -76,7 +70,7 @@ const pages = [
   {
     name: 'Firmware & Software',
     description: 'Download the latest product firmware and software',
-    icon: BuildIcon,
+    icon: GetAppIcon,
     link: '/firmware'
   },
   {
@@ -104,6 +98,34 @@ const pages = [
     description: 'Claim your company expenses here',
     icon: ReceiptIcon,
     link: '/expense-claims'
+  },
+  {
+    name: 'Pricing Calculator',
+    description:
+      'Use the pricing calculator to calculate the cost of goods, profit, margin etc.',
+    icon: DialpadIcon,
+    link: '/pricing-calculator'
+  },
+  {
+    name: 'Storage Calculator',
+    description:
+      'Use the storage calculator to determine the storage and bandwidth required for your CCTV solution.',
+    icon: DialpadIcon,
+    link: '/storage-calculator'
+  },
+  {
+    name: 'Motion Calculator',
+    description:
+      'Use the motion calculator to determine the overall motion percentage of a site based on its scene activity.',
+    icon: DialpadIcon,
+    link: '/motion-calculator'
+  },
+  {
+    name: 'RAID Calculator',
+    description:
+      'Use the RAID calculator to calculate the quantity and capacity of hard drives required.',
+    icon: DialpadIcon,
+    link: '/raid-calculator'
   },
   {
     name: 'Account',
