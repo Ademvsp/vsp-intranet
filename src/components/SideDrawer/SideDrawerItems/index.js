@@ -4,25 +4,22 @@ import { StyledListContainer } from './styled-components';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import RssFeedIcon from '@material-ui/icons/RssFeed';
 import EventIcon from '@material-ui/icons/Event';
-import SchoolIcon from '@material-ui/icons/School';
 import ContactPhoneIcon from '@material-ui/icons/ContactPhone';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
-// import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
-// import MoneyIcon from '@material-ui/icons/Money';
-// import DescriptionIcon from '@material-ui/icons/Description';
-import DialpadIcon from '@material-ui/icons/Dialpad';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import LanguageIcon from '@material-ui/icons/Language';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
-import DirectionsWalkIcon from '@material-ui/icons/DirectionsWalk';
 import ReceiptIcon from '@material-ui/icons/Receipt';
-// import PermMediaIcon from '@material-ui/icons/PermMedia';
-import DateRangeIcon from '@material-ui/icons/DateRange';
+import DataUsageIcon from '@material-ui/icons/DataUsage';
 import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 import SideDrawerItem from './SideDrawerItem';
 import BuildIcon from '@material-ui/icons/Build';
 import GetAppIcon from '@material-ui/icons/GetApp';
+import TimelineIcon from '@material-ui/icons/Timeline';
+import StorageIcon from '@material-ui/icons/Storage';
+import TransferWithinAStationIcon from '@material-ui/icons/TransferWithinAStation';
+import SlowMotionVideoIcon from '@material-ui/icons/SlowMotionVideo';
 
 const SideDrawerItems = (props) => {
   return (
@@ -35,35 +32,16 @@ const SideDrawerItems = (props) => {
         />
         <SideDrawerItem Icon={RssFeedIcon} text='News Feed' link='/newsfeed' />
         <SideDrawerItem
-          Icon={DateRangeIcon}
-          text='Calendar'
-          subItems={[
-            <SideDrawerItem
-              key='0'
-              Icon={EventIcon}
-              text='Staff Calendar'
-              link='/calendar'
-              subItem={true}
-            />,
-            <SideDrawerItem
-              key='1'
-              Icon={SchoolIcon}
-              text='Training Schedule'
-              link='/calendar'
-              subItem={true}
-            />
-          ]}
+          Icon={EventIcon}
+          text='Staff Calendar'
+          link='/calendar'
         />
         <SideDrawerItem
           Icon={ContactPhoneIcon}
           text='Staff Directory'
           link='/directory'
         />
-        <SideDrawerItem
-          Icon={AttachMoneyIcon}
-          text='Projects'
-          link='/projects'
-        />
+        <SideDrawerItem Icon={TimelineIcon} text='Projects' link='/projects' />
         <SideDrawerItem
           Icon={PlaylistAddCheckIcon}
           text='Job Documents'
@@ -80,24 +58,33 @@ const SideDrawerItems = (props) => {
           subItems={[
             <SideDrawerItem
               key='0'
-              Icon={EventIcon}
-              text='Staff Calendar'
-              link='/calendar'
+              Icon={AttachMoneyIcon}
+              text='Pricing Calculator'
+              link='/pricing-calculator'
               subItem={true}
             />,
             <SideDrawerItem
               key='1'
-              Icon={SchoolIcon}
-              text='Training Schedule'
-              link='/calendar'
+              Icon={StorageIcon}
+              text='Storage Calculator'
+              link='/storage-calculator'
+              subItem={true}
+            />,
+            <SideDrawerItem
+              key='2'
+              Icon={SlowMotionVideoIcon}
+              text='Motion Calculator'
+              link='/motion-calculator'
+              subItem={true}
+            />,
+            <SideDrawerItem
+              key='3'
+              Icon={DataUsageIcon}
+              text='RAID Calculator'
+              link='/raid-calculator'
               subItem={true}
             />
           ]}
-        />
-        <SideDrawerItem
-          Icon={DialpadIcon}
-          text='Sales Tools'
-          link='/calculators'
         />
         <SideDrawerItem
           Icon={LocalOfferIcon}
@@ -122,7 +109,7 @@ const SideDrawerItems = (props) => {
             />,
             <SideDrawerItem
               key='1'
-              Icon={DirectionsWalkIcon}
+              Icon={TransferWithinAStationIcon}
               text='Leave Request'
               link='/leave-requests'
               subItem={true}

@@ -1,27 +1,22 @@
 /* eslint-disable quotes */
 
-// import DashboardIcon from '@material-ui/icons/Dashboard';
 import RssFeedIcon from '@material-ui/icons/RssFeed';
 import EventIcon from '@material-ui/icons/Event';
 import SchoolIcon from '@material-ui/icons/School';
 import ContactPhoneIcon from '@material-ui/icons/ContactPhone';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
-// import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
-// import MoneyIcon from '@material-ui/icons/Money';
-// import DescriptionIcon from '@material-ui/icons/Description';
-import DialpadIcon from '@material-ui/icons/Dialpad';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import LanguageIcon from '@material-ui/icons/Language';
-// import ListAltIcon from '@material-ui/icons/ListAlt';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
-import DirectionsWalkIcon from '@material-ui/icons/DirectionsWalk';
 import ReceiptIcon from '@material-ui/icons/Receipt';
-// import PermMediaIcon from '@material-ui/icons/PermMedia';
-// import DateRangeIcon from '@material-ui/icons/DateRange';
 import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
-import BuildIcon from '@material-ui/icons/Build';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import GetAppIcon from '@material-ui/icons/GetApp';
+import TimelineIcon from '@material-ui/icons/Timeline';
+import StorageIcon from '@material-ui/icons/Storage';
+import TransferWithinAStationIcon from '@material-ui/icons/TransferWithinAStation';
+import SlowMotionVideoIcon from '@material-ui/icons/SlowMotionVideo';
+import DataUsageIcon from '@material-ui/icons/DataUsage';
 
 const pages = [
   {
@@ -52,7 +47,7 @@ const pages = [
   {
     name: 'Projects',
     description: 'Register and manage your project opportunities',
-    icon: AttachMoneyIcon,
+    icon: TimelineIcon,
     link: '/projects'
   },
   {
@@ -90,7 +85,7 @@ const pages = [
     name: 'Leave Request Form',
     description:
       'Apply for annual leave, sick leave or any other type of leave here',
-    icon: DirectionsWalkIcon,
+    icon: TransferWithinAStationIcon,
     link: '/leave-requests'
   },
   {
@@ -103,28 +98,28 @@ const pages = [
     name: 'Pricing Calculator',
     description:
       'Use the pricing calculator to calculate the cost of goods, profit, margin etc.',
-    icon: DialpadIcon,
+    icon: AttachMoneyIcon,
     link: '/pricing-calculator'
   },
   {
     name: 'Storage Calculator',
     description:
       'Use the storage calculator to determine the storage and bandwidth required for your CCTV solution.',
-    icon: DialpadIcon,
+    icon: StorageIcon,
     link: '/storage-calculator'
   },
   {
     name: 'Motion Calculator',
     description:
       'Use the motion calculator to determine the overall motion percentage of a site based on its scene activity.',
-    icon: DialpadIcon,
+    icon: SlowMotionVideoIcon,
     link: '/motion-calculator'
   },
   {
     name: 'RAID Calculator',
     description:
       'Use the RAID calculator to calculate the quantity and capacity of hard drives required.',
-    icon: DialpadIcon,
+    icon: DataUsageIcon,
     link: '/raid-calculator'
   },
   {

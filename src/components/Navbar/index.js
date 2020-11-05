@@ -13,15 +13,15 @@ import NotificationsPopover from './NotificationsPopover';
 import { useHistory } from 'react-router-dom';
 import { SideDrawerContext } from '../AppContainer';
 import DarkModeIcon from './DarkModeIcon';
-import AppsIcon from '@material-ui/icons/Apps';
 import MenuIcon from '@material-ui/icons/Menu';
+import ViewComfyIcon from '@material-ui/icons/ViewComfy';
 
 const Navbar = withTheme((props) => {
   const { push } = useHistory();
   const { setDrawerOpen } = useContext(SideDrawerContext);
   const { authUser } = useSelector((state) => state.authState);
   const menuButtonSize = `${props.theme.spacing(6)}px`;
-  const appDrawerButtonSize = `${props.theme.spacing(5)}px`;
+  const appDrawerButtonSize = `${props.theme.spacing(5.5)}px`;
 
   return (
     <AppBar position='sticky'>
@@ -58,7 +58,7 @@ const Navbar = withTheme((props) => {
                     color='inherit'
                     onClick={() => push('/dashboard')}
                   >
-                    <AppsIcon style={{ fontSize: appDrawerButtonSize }} />
+                    <ViewComfyIcon style={{ fontSize: appDrawerButtonSize }} />
                   </IconButton>
                 </Tooltip>
               </Grid>
@@ -71,7 +71,7 @@ const Navbar = withTheme((props) => {
               spacing={2}
               wrap='nowrap'
             >
-              <Grid item container justify='flex-end'>
+              <Grid item container justify='flex-end' wrap='nowrap'>
                 <Grid item>
                   <DarkModeIcon />
                 </Grid>
