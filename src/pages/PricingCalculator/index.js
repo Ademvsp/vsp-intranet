@@ -16,10 +16,10 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import freightTypes, { PERCENTAGE } from '../../data/freight-types';
 import { toCurrency, toPercentage } from '../../utils/data-transformer';
+const DOLLAR_MAX = 10000000;
+const PERCENTAGE_MAX = 100;
 
 const PricingCalculator = withTheme((props) => {
-  const DOLLAR_MAX = 10000000;
-  const PERCENTAGE_MAX = 100;
   const [result, setResult] = useState({
     cost: 0,
     freight: 0,
@@ -109,8 +109,8 @@ const PricingCalculator = withTheme((props) => {
             <Grid item>
               <TextField
                 type='number'
-                autoFocus
                 label='Cost'
+                autoFocus
                 fullWidth
                 value={formik.values.cost}
                 onChange={formik.handleChange('cost')}
@@ -143,6 +143,16 @@ const PricingCalculator = withTheme((props) => {
                 fullWidth
                 value={formik.values.freightType}
                 onChange={formik.handleChange('freightType')}
+                helperText={
+                  formik.errors.freightType && formik.touched.freightType
+                    ? formik.errors.freightType
+                    : null
+                }
+                FormHelperTextProps={{
+                  style: {
+                    color: props.theme.palette.error.main
+                  }
+                }}
               >
                 {freightTypes.map((freightType) => (
                   <MenuItem key={freightType} value={freightType}>
@@ -209,7 +219,7 @@ const PricingCalculator = withTheme((props) => {
             </Grid>
             <Grid item>
               <Paper variant='outlined'>
-                <CardHeader title='Summary' />
+                <CardHeader title='Summary' style={{ paddingBottom: 0 }} />
                 <CardContent>
                   <Grid container direction='column' spacing={1}>
                     <Grid item container justify='space-between'>

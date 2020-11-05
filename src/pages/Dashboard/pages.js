@@ -2,7 +2,6 @@
 
 import RssFeedIcon from '@material-ui/icons/RssFeed';
 import EventIcon from '@material-ui/icons/Event';
-import SchoolIcon from '@material-ui/icons/School';
 import ContactPhoneIcon from '@material-ui/icons/ContactPhone';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
@@ -31,12 +30,6 @@ const pages = [
     description: "See all staff member's movements and schedule events.",
     icon: EventIcon,
     link: '/calendar'
-  },
-  {
-    name: 'Training Schedule',
-    description: 'See all upcoming training sessions from our vendors.',
-    icon: SchoolIcon,
-    link: '/training'
   },
   {
     name: 'Staff Directory',

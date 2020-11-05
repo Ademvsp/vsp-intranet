@@ -1,4 +1,7 @@
 export const toCurrency = (value, fractionDigits) => {
+  if (!value) {
+    return value;
+  }
   return value.toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -8,6 +11,9 @@ export const toCurrency = (value, fractionDigits) => {
 };
 
 export const toDecimal = (value, fractionDigits) => {
+  if (!value) {
+    return value;
+  }
   return value.toLocaleString('en-AU', {
     style: 'decimal',
     minimumFractionDigits: fractionDigits || 0,
@@ -16,6 +22,9 @@ export const toDecimal = (value, fractionDigits) => {
 };
 
 export const toPercentage = (value, fractionDigits) => {
+  if (!value) {
+    return value;
+  }
   const newValue = value / 100;
   return newValue.toLocaleString('en-AU', {
     style: 'percent',
