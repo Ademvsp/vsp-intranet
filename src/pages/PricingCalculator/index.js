@@ -14,17 +14,22 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import freightTypes, {
-  FIXED_PRICE,
-  PERCENTAGE
-} from '../../data/freight-types';
+import freightTypes, { PERCENTAGE } from '../../data/freight-types';
+import { toCurrency, toPercentage } from '../../utils/data-transformer';
 
 const PricingCalculator = withTheme((props) => {
   const DOLLAR_MAX = 10000000;
   const PERCENTAGE_MAX = 100;
+  const [result, setResult] = useState({
+    cost: 0,
+    freight: 0,
+    markup: 0,
+    profit: 0,
+    sell: 0
+  });
 
   const validationSchema = yup.object().shape({
-    cost: yup.number().label('Cost Price').required().min(0).max(DOLLAR_MAX),
+    cost: yup.number().label('Cost').required().min(0).max(DOLLAR_MAX),
     freightType: yup
       .string()
       .label('Freight Type')
@@ -45,7 +50,12 @@ const PricingCalculator = withTheme((props) => {
         .min(0)
         .max(DOLLAR_MAX)
     }),
-    margin: yup.number().label('Margin').required().min(0).max(PERCENTAGE_MAX)
+    margin: yup
+      .number()
+      .label('Margin')
+      .required()
+      .min(0)
+      .max(PERCENTAGE_MAX - 1)
   });
 
   const initialValues = {
@@ -60,7 +70,7 @@ const PricingCalculator = withTheme((props) => {
     validationSchema: validationSchema
   });
 
-  const { validateForm } = formik;
+  const { validateForm, values } = formik;
 
   useEffect(() => {
     validateForm();
@@ -77,6 +87,20 @@ const PricingCalculator = withTheme((props) => {
     freightMax = PERCENTAGE_MAX;
   }
 
+  useEffect(() => {
+    let freight = values.freight;
+    if (values.freightType === PERCENTAGE) {
+      freight = values.cost * (values.freight / 100);
+    }
+    const cost = values.cost + freight;
+    const marginDecimal = values.margin / 100;
+    const markupDecimal = marginDecimal / (1 - marginDecimal);
+    const markup = markupDecimal * 100;
+    const sell = cost / (1 - marginDecimal);
+    const profit = sell - cost;
+    setResult({ freight, markup, profit, sell });
+  }, [values]);
+
   return (
     <Container disableGutters maxWidth='xs'>
       <Card>
@@ -86,7 +110,7 @@ const PricingCalculator = withTheme((props) => {
               <TextField
                 type='number'
                 autoFocus
-                label='Cost Price'
+                label='Cost'
                 fullWidth
                 value={formik.values.cost}
                 onChange={formik.handleChange('cost')}
@@ -178,7 +202,7 @@ const PricingCalculator = withTheme((props) => {
                   ),
                   inputProps: {
                     min: 0,
-                    max: PERCENTAGE_MAX
+                    max: PERCENTAGE_MAX - 1
                   }
                 }}
               />
@@ -189,24 +213,28 @@ const PricingCalculator = withTheme((props) => {
                 <CardContent>
                   <Grid container direction='column' spacing={1}>
                     <Grid item container justify='space-between'>
-                      <Typography>Cost Price</Typography>
-                      <Typography>$0</Typography>
+                      <Typography>Cost</Typography>
+                      <Typography>{toCurrency(values.cost, 2)}</Typography>
+                    </Grid>
+                    <Grid item container justify='space-between'>
+                      <Typography>Freight</Typography>
+                      <Typography>{toCurrency(result.freight, 2)}</Typography>
                     </Grid>
                     <Grid item container justify='space-between'>
                       <Typography>Markup</Typography>
-                      <Typography>$0</Typography>
+                      <Typography>{toPercentage(result.markup, 2)}</Typography>
                     </Grid>
                     <Grid item container justify='space-between'>
                       <Typography>Margin</Typography>
-                      <Typography>$0</Typography>
+                      <Typography>{toPercentage(values.margin, 2)}</Typography>
                     </Grid>
                     <Grid item container justify='space-between'>
                       <Typography>Profit</Typography>
-                      <Typography>$0</Typography>
+                      <Typography>{toCurrency(result.profit, 2)}</Typography>
                     </Grid>
                     <Grid item container justify='space-between'>
-                      <Typography>Sell Price</Typography>
-                      <Typography>$0</Typography>
+                      <Typography>Sell</Typography>
+                      <Typography>{toCurrency(result.sell, 2)}</Typography>
                     </Grid>
                   </Grid>
                 </CardContent>
