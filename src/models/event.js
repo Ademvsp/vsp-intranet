@@ -84,6 +84,29 @@ export default class Event {
     }
   }
 
+  static async isAdmin() {
+    const docRef = await firebase
+      .firestore()
+      .collection('permissions')
+      .doc('events')
+      .collection('admins')
+      .doc(firebase.auth().currentUser.uid)
+      .get();
+    console.log(docRef);
+    return docRef.exists;
+  }
+
+  static async isManager() {
+    const docRef = await firebase
+      .firestore()
+      .collection('permissions')
+      .doc('events')
+      .collection('managers')
+      .doc(firebase.auth().currentUser.uid)
+      .get();
+    return docRef.exists;
+  }
+
   static async get(eventId) {
     const doc = await collectionRef.doc(eventId).get();
     if (!doc.exists) {

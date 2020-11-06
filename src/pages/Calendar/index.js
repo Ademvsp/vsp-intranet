@@ -29,6 +29,7 @@ const Calendar = (props) => {
   };
   const params = useParams();
   const { push, replace } = useHistory();
+  const { users } = useSelector((state) => state.dataState);
   const { authUser } = useSelector((state) => state.authState);
   const { userId } = authUser;
   const [events, setEvents] = useState();
@@ -45,11 +46,26 @@ const Calendar = (props) => {
   const [showEditEventDialog, setShowEditEventDialog] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState();
   const [range, setRange] = useState(initalRange);
+  const [permissions, setPermissions] = useState();
+
+  console.log(permissions);
+
+  useEffect(() => {
+    const asyncFunction = async () => {
+      const admin = await Event.isAdmin();
+      const manager = await Event.isManager();
+      setPermissions({ admin: admin, manager: manager });
+    };
+    asyncFunction();
+  }, []);
   //Get new listener every time date range changes on calendar
   useEffect(() => {
     let eventsListener;
-    eventsListener = Event.getRangeListener(range.start, range.end).onSnapshot(
-      (snapshot) => {
+    if (permissions !== undefined) {
+      eventsListener = Event.getRangeListener(
+        range.start,
+        range.end
+      ).onSnapshot((snapshot) => {
         const newEvents = snapshot.docs.map((doc) => {
           const metadata = {
             ...doc.data().metadata,
@@ -65,14 +81,14 @@ const Calendar = (props) => {
           });
         });
         setEvents(newEvents);
-      }
-    );
+      });
+    }
     return () => {
       if (eventsListener) {
         eventsListener();
       }
     };
-  }, [range]);
+  }, [range, permissions]);
   //Set filtered events based on selections
   useEffect(() => {
     if (events) {
@@ -94,11 +110,17 @@ const Calendar = (props) => {
     const asyncFunction = async () => {
       if (action === UPDATE) {
         const eventId = params.eventId;
-        if (eventId) {
+        if (eventId && users && permissions) {
           const event = await Event.get(eventId);
           if (event) {
+            //Can edit if you are the event user, you are the manager of the event user of if you are admin
+            const eventUser = users.find((user) => user.userId === event.user);
+            const isEventUser = eventUser.userId === userId;
+            const isEventUserManager =
+              permissions.manager && eventUser.manager === userId;
+            const isEventAdmin = permissions.admin;
             setSelectedEvent(event);
-            if (event.user === userId) {
+            if (isEventUser || isEventUserManager || isEventAdmin) {
               setShowEditEventDialog(true);
             } else {
               setShowViewEventDialog(true);
@@ -114,7 +136,7 @@ const Calendar = (props) => {
 
     asyncFunction();
     //events used as a snapshot change trigger for when new comments are added
-  }, [action, push, userId, params.eventId]);
+  }, [action, push, userId, params.eventId, permissions, users]);
 
   const addEventClickHandler = () => {
     setNewEventPrefillData(null);
@@ -155,6 +177,7 @@ const Calendar = (props) => {
           open={showAddEventDialog}
           close={closeDialogHandler}
           newEventPrefillData={newEventPrefillData}
+          permissions={permissions}
         />
       )}
       {selectedEvent && (
@@ -168,6 +191,7 @@ const Calendar = (props) => {
             open={showEditEventDialog}
             close={closeDialogHandler}
             event={selectedEvent}
+            permissions={permissions}
           />
         </Fragment>
       )}
@@ -190,18 +214,7 @@ const Calendar = (props) => {
                 <Grid container direction='column' spacing={1}>
                   {filteredEvents ? (
                     <Fragment>
-                      <Grid item>
-                        {/* <Button
-													fullWidth
-													variant='contained'
-													color='primary'
-													startIcon={<AddIcon />}
-													size='large'
-													onClick={addEventClickHandler}
-												>
-													Add event
-												</Button> */}
-                      </Grid>
+                      <Grid item></Grid>
                       <Grid item>
                         <WorkFromHomeSwitch />
                       </Grid>

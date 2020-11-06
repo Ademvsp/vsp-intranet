@@ -20,7 +20,8 @@ export const addEvent = (values) => {
       end,
       start,
       type,
-      allCalendars
+      allCalendars,
+      user
     } = values;
     const { authUser } = getState().authState;
     const { locations: dataStateLocations } = getState().dataState;
@@ -35,13 +36,14 @@ export const addEvent = (values) => {
     let endTransformed = transformDate(end, allDay, userLocation.timezone);
     const newEvent = new Event({
       allDay: allDay,
+      comments: [],
       details: details,
       end: endTransformed,
       locations: locations,
       start: startTransformed,
-      subscribers: [authUser.userId],
+      subscribers: [user],
       type: type.name,
-      user: authUser.userId
+      user: user
     });
     try {
       await newEvent.save(notifyUsers);
@@ -61,6 +63,7 @@ export const addEvent = (values) => {
       });
       return true;
     } catch (error) {
+      console.log(error);
       const message = new Message({
         title: 'Staff Calendar',
         body: 'Failed to add event',
@@ -84,7 +87,8 @@ export const editEvent = (event, values) => {
       end,
       start,
       type,
-      allCalendars
+      allCalendars,
+      user
     } = values;
     const { authUser } = getState().authState;
     const { locations: dataStateLocations } = getState().dataState;
@@ -104,7 +108,8 @@ export const editEvent = (event, values) => {
       end: endTransformed,
       locations: locations,
       start: startTransformed,
-      type: type.name
+      type: type.name,
+      user: user
     });
     try {
       await newEvent.save(notifyUsers);

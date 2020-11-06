@@ -71,7 +71,7 @@ const NewPostDialog = withTheme((props) => {
   return (
     <Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
       <DialogContent>
-        <Grid container direction='column' spacing={1}>
+        <Grid container direction='column' spacing={2}>
           <Grid
             item
             container

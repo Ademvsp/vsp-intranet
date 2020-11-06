@@ -112,7 +112,7 @@ const ViewFirmwareDialog = withTheme((props) => {
         </Grid>
       </DialogTitle>
       <DialogContent>
-        <Grid container direction='column' spacing={1}>
+        <Grid container direction='column' spacing={2}>
           <Grid item>
             <TextField
               label='Title'

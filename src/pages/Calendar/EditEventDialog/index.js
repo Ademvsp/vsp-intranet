@@ -12,7 +12,9 @@ import {
   Tooltip,
   Dialog,
   withTheme,
-  Collapse
+  Collapse,
+  ListItemAvatar,
+  ListItemText
 } from '@material-ui/core';
 import ActionsBar from '../../../components/ActionsBar';
 import { useFormik } from 'formik';
@@ -36,12 +38,15 @@ import {
   editEvent
 } from '../../../store/actions/event';
 import Comments from '../../../components/Comments';
+import Avatar from '../../../components/Avatar';
 
 const EditEventDialog = withTheme((props) => {
   const dispatch = useDispatch();
   const detailsFieldRef = useRef();
   const { authUser } = useSelector((state) => state.authState);
-  const { users, locations } = useSelector((state) => state.dataState);
+  const { users, activeUsers, locations } = useSelector(
+    (state) => state.dataState
+  );
   const [commentLoading, setCommentLoading] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -50,7 +55,7 @@ const EditEventDialog = withTheme((props) => {
   const [showComments, setShowComments] = useState(false);
   const loading = deleteLoading || editLoading || commentLoading;
 
-  const { open, close, event: propsEvent } = props;
+  const { open, close, event: propsEvent, permissions } = props;
   const [event, setEvent] = useState(propsEvent);
   //Start listener for current event, as static event is sent through props
   //Props event is static as collection listener is only for calendar 3 month range
@@ -85,7 +90,8 @@ const EditEventDialog = withTheme((props) => {
     allDay: event.allDay,
     allCalendars: locations.every((location) =>
       event.locations.includes(location.locationId)
-    )
+    ),
+    user: event.user
   };
 
   const validationSchema = yup.object().shape({
@@ -108,7 +114,14 @@ const EditEventDialog = withTheme((props) => {
     start: yup.date().label('Start date').required(),
     end: yup.date().label('End date').required().min(yup.ref('start')),
     allDay: yup.boolean().label('All day').required(),
-    allCalendars: yup.boolean().label('allCalendars').required()
+    allCalendars: yup.boolean().label('allCalendars').required(),
+    user: yup
+      .string()
+      .label('User')
+      .required()
+      .test('isValidArrayElement', 'User is invalid', (value) =>
+        activeUsers.map((user) => user.userId).includes(value)
+      )
   });
 
   const submitHandler = async (values) => {
@@ -188,10 +201,59 @@ const EditEventDialog = withTheme((props) => {
     }
   }, [start, end, setFieldValue]);
 
+  const userField = () => {
+    let usersSource = activeUsers;
+    if (permissions.manager) {
+      usersSource = activeUsers.filter(
+        (user) =>
+          user.manager === authUser.userId || user.userId === authUser.userId
+      );
+      console.log(usersSource);
+    }
+    if (permissions.admin) {
+      //If admin user & manager, admin gets priority
+      usersSource = activeUsers;
+    }
+    return (
+      <TextField
+        label='Staff Member'
+        select={true}
+        fullWidth={true}
+        value={formik.values.user}
+        onBlur={formik.handleBlur('user')}
+        onChange={formik.handleChange('user')}
+        helperText={
+          formik.errors.user && formik.touched.user ? formik.errors.user : null
+        }
+        FormHelperTextProps={{
+          style: {
+            color: props.theme.palette.error.main
+          }
+        }}
+      >
+        {usersSource.map((user) => (
+          <MenuItem key={user.userId} value={user.userId}>
+            <Grid container direction='row' spacing={1}>
+              <Grid item>
+                <ListItemAvatar>
+                  <Avatar user={user} />
+                </ListItemAvatar>
+              </Grid>
+              <Grid item>
+                <ListItemText primary={user.getFullName()} />
+              </Grid>
+            </Grid>
+          </MenuItem>
+        ))}
+      </TextField>
+    );
+  };
+  const showUserField = permissions.admin || permissions.manager;
+
   const tempEvent = new Event({
     details: formik.values.details,
     type: formik.values.type.name,
-    user: authUser.userId
+    user: formik.values.user
   });
   const eventTitle = tempEvent.getEventTitle(users);
 
@@ -218,7 +280,8 @@ const EditEventDialog = withTheme((props) => {
           <StyledTitle>{`Title Preview: ${eventTitle}`}</StyledTitle>
         </DialogTitle>
         <DialogContent>
-          <Grid container direction='column' spacing={1}>
+          <Grid container direction='column' spacing={2}>
+            {showUserField && <Grid item>{userField()}</Grid>}
             <Grid item>
               <TextField
                 label='Event type'

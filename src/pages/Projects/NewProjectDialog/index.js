@@ -336,7 +336,7 @@ const NewProjectDialog = withTheme((props) => {
     <Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
       <DialogTitle>New Project</DialogTitle>
       <DialogContent>
-        <Grid container direction='column' spacing={1}>
+        <Grid container direction='column' spacing={2}>
           <Grid item>
             <TextField
               label='Project Name'

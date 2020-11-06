@@ -11,7 +11,9 @@ import {
   Checkbox,
   Tooltip,
   Dialog,
-  withTheme
+  withTheme,
+  ListItemAvatar,
+  ListItemText
 } from '@material-ui/core';
 import ActionsBar from '../../../components/ActionsBar';
 import { useFormik } from 'formik';
@@ -29,15 +31,16 @@ import { StyledTitle } from './styled-components';
 import { LONG_DATE, LONG_DATE_TIME } from '../../../utils/date';
 import Event from '../../../models/event';
 import { addEvent } from '../../../store/actions/event';
+import Avatar from '../../../components/Avatar';
 
 const NewEventDialog = withTheme((props) => {
   const dispatch = useDispatch();
   const detailsFieldRef = useRef();
   const { authUser } = useSelector((state) => state.authState);
-  const { users } = useSelector((state) => state.dataState);
+  const { users, activeUsers } = useSelector((state) => state.dataState);
   const [loading, setLoading] = useState();
   const [validatedOnMount, setValidatedOnMount] = useState(false);
-  const { open, close, newEventPrefillData } = props;
+  const { open, close, newEventPrefillData, permissions } = props;
 
   const initialValues = {
     notifyUsers: [],
@@ -50,7 +53,8 @@ const NewEventDialog = withTheme((props) => {
       ? newEventPrefillData.end
       : set(new Date(), { hours: 9, minutes: 0 }),
     allDay: false,
-    allCalendars: false
+    allCalendars: false,
+    user: authUser.userId
   };
 
   const validationSchema = yup.object().shape({
@@ -73,7 +77,14 @@ const NewEventDialog = withTheme((props) => {
     start: yup.date().label('Start date').required(),
     end: yup.date().label('End date').required().min(yup.ref('start')),
     allDay: yup.boolean().label('All day').required(),
-    allCalendars: yup.boolean().label('allCalendars').required()
+    allCalendars: yup.boolean().label('All Calendars').required(),
+    user: yup
+      .string()
+      .label('User')
+      .required()
+      .test('isValidArrayElement', 'User is invalid', (value) =>
+        activeUsers.map((user) => user.userId).includes(value)
+      )
   });
 
   const submitHandler = async (values) => {
@@ -126,10 +137,59 @@ const NewEventDialog = withTheme((props) => {
     }
   }, [start, end, setFieldValue]);
 
+  const userField = () => {
+    let usersSource = activeUsers;
+    if (permissions.manager) {
+      usersSource = activeUsers.filter(
+        (user) =>
+          user.manager === authUser.userId || user.userId === authUser.userId
+      );
+      console.log(usersSource);
+    }
+    if (permissions.admin) {
+      //If admin user & manager, admin gets priority
+      usersSource = activeUsers;
+    }
+    return (
+      <TextField
+        label='Staff Member'
+        select={true}
+        fullWidth={true}
+        value={formik.values.user}
+        onBlur={formik.handleBlur('user')}
+        onChange={formik.handleChange('user')}
+        helperText={
+          formik.errors.user && formik.touched.user ? formik.errors.user : null
+        }
+        FormHelperTextProps={{
+          style: {
+            color: props.theme.palette.error.main
+          }
+        }}
+      >
+        {usersSource.map((user) => (
+          <MenuItem key={user.userId} value={user.userId}>
+            <Grid container direction='row' spacing={1}>
+              <Grid item>
+                <ListItemAvatar>
+                  <Avatar user={user} />
+                </ListItemAvatar>
+              </Grid>
+              <Grid item>
+                <ListItemText primary={user.getFullName()} />
+              </Grid>
+            </Grid>
+          </MenuItem>
+        ))}
+      </TextField>
+    );
+  };
+  const showUserField = permissions.admin || permissions.manager;
+
   const tempEvent = new Event({
     details: formik.values.details,
     type: formik.values.type.name,
-    user: authUser.userId
+    user: formik.values.user
   });
   const eventTitle = tempEvent.getEventTitle(users);
 
@@ -148,7 +208,8 @@ const NewEventDialog = withTheme((props) => {
         <StyledTitle>{`Title Preview: ${eventTitle}`}</StyledTitle>
       </DialogTitle>
       <DialogContent>
-        <Grid container direction='column' spacing={1}>
+        <Grid container direction='column' spacing={2}>
+          {showUserField && <Grid item>{userField()}</Grid>}
           <Grid item>
             <TextField
               label='Event type'
