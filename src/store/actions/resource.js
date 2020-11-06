@@ -94,10 +94,8 @@ export const editResource = (resource, values) => {
 export const deleteResource = (resource) => {
   return async (dispatch, _getState) => {
     try {
-      console.log('1');
       const newResource = new Resource({ ...resource });
       await newResource.delete();
-      console.log('2');
       const message = new Message({
         title: 'Resources',
         body: 'Resource deleted successfully',

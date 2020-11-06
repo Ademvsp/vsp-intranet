@@ -2,47 +2,29 @@ import React, { Fragment, useEffect, useState } from 'react';
 import MaterialTable from 'material-table';
 import {
   Box,
-  Button,
   CardContent,
   CardHeader,
   Container,
   Grid,
   Paper,
   Slider,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
   Typography,
   withTheme
 } from '@material-ui/core';
 import tableIcons from '../../utils/table-icons';
-import { actions, detailsPanelHandler, columnSchema } from './table-data';
+import { detailsPanelHandler, columnSchema } from './table-data';
 import FloatingActionButton from '../../components/FloatingActionButton';
 import AddIcon from '@material-ui/icons/Add';
 import { toDecimal, toPercentage } from '../../utils/data-transformer';
 import AddCamerasDialog from './AddCamerasDialog';
-import { MOTION } from '../../data/record-types';
+import EditCamerasDialog from './EditCamerasDialog';
 
 const StorageCalculator = withTheme((props) => {
   const [showAddCamerasDialog, setShowAddCamerasDialog] = useState(false);
   const [overhead, setOverhead] = useState(0);
   const [result, setResult] = useState();
-  const [cameraGroups, setCameraGroups] = useState([
-    {
-      quantity: 1,
-      resolution: '6MP',
-      compression: 'H.265',
-      recordType: MOTION,
-      motion: 50,
-      continuousFrameRate: 12,
-      motionFrameRate: 12,
-      bitrate: 5.4,
-      bitrateTotal: 10.8,
-      storage: 10,
-      storageTotal: 20
-    }
-  ]);
+  const [selectedCameraGroup, setSelectedCameraGroup] = useState();
+  const [cameraGroups, setCameraGroups] = useState([]);
 
   useEffect(() => {
     const newResult = cameraGroups.reduce(
@@ -63,13 +45,29 @@ const StorageCalculator = withTheme((props) => {
     setResult(newResult);
   }, [cameraGroups, overhead]);
 
+  const addCameraGroupHandler = (cameraData) => {
+    const newCameraGroups = [...cameraGroups, cameraData];
+    setCameraGroups(newCameraGroups);
+  };
+
   const deleteClickHandler = (rowData) => {
     const newCameraGroup = [...cameraGroups];
     newCameraGroup.splice(rowData.tableData.id, 1);
     setCameraGroups(newCameraGroup);
   };
 
-  const editClickHandler = (rowData) => console.log(rowData.cameraGroups);
+  const editClickHandler = (rowData) => {
+    setSelectedCameraGroup(rowData);
+  };
+
+  const editCameraGroupHandler = (cameraGroup) => {
+    const cameraGroupIndex = cameraGroups.findIndex(
+      (cg) => cg.tableData.id === cameraGroup.tableData.id
+    );
+    const newCameraGroups = [...cameraGroups];
+    newCameraGroups.splice(cameraGroupIndex, 1, cameraGroup);
+    setCameraGroups(newCameraGroups);
+  };
 
   const duplicateClickHandler = (rowData) => {
     const newRowData = { ...rowData };
@@ -83,7 +81,16 @@ const StorageCalculator = withTheme((props) => {
       <AddCamerasDialog
         open={showAddCamerasDialog}
         close={() => setShowAddCamerasDialog(false)}
+        addCameraGroupHandler={addCameraGroupHandler}
       />
+      {selectedCameraGroup && (
+        <EditCamerasDialog
+          open={!!selectedCameraGroup}
+          close={() => setSelectedCameraGroup(null)}
+          cameraGroup={selectedCameraGroup}
+          editCameraGroupHandler={editCameraGroupHandler}
+        />
+      )}
       <Container disableGutters maxWidth='lg'>
         <Grid container direction='column' spacing={2}>
           <Grid item>
@@ -121,7 +128,7 @@ const StorageCalculator = withTheme((props) => {
             />
           </Grid>
           <Grid item container direction='column' alignItems='flex-end'>
-            <Box width={'25%'}>
+            <Box width={'35%'}>
               <Paper variant='outlined'>
                 <CardHeader title='Summary' style={{ paddingBottom: 0 }} />
                 <CardContent>

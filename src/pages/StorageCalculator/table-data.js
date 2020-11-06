@@ -1,5 +1,4 @@
 import { toDecimal, toPercentage } from '../../utils/data-transformer';
-import tableIcons from '../../utils/table-icons';
 import {
   CardContent,
   Grid,
@@ -17,13 +16,13 @@ export const columnSchema = [
     align: 'center'
   },
   {
-    field: 'resolution',
+    field: 'resolution.name',
     title: 'Resolution',
     type: 'string',
     align: 'center'
   },
   {
-    field: 'compression',
+    field: 'compression.name',
     title: 'Compression',
     type: 'string',
     align: 'center'
@@ -42,17 +41,17 @@ export const columnSchema = [
     align: 'center'
   },
   {
-    field: 'continuousFrameRate',
+    field: 'continuousFramerate',
     title: 'Continuous Framerate',
     type: 'numeric',
-    render: (rowData) => `${rowData.continuousFrameRate} fps`,
+    render: (rowData) => `${rowData.continuousFramerate} fps`,
     align: 'center'
   },
   {
-    field: 'motionFrameRate',
+    field: 'motionFramerate',
     title: 'Motion Framerate',
     type: 'numeric',
-    render: (rowData) => `${rowData.motionFrameRate} fps`,
+    render: (rowData) => `${rowData.motionFramerate} fps`,
     align: 'center'
   },
   {

@@ -30,8 +30,8 @@ const B_TO_MB = 1024;
 const KB_TO_TB = 1073741824;
 const SECONDS_IN_A_DAY = 86400;
 
-const AddCamerasDialog = withTheme((props) => {
-  const { open, close, addCameraGroupHandler } = props;
+const EditCamerasDialog = withTheme((props) => {
+  const { open, close, cameraGroup, editCameraGroupHandler } = props;
   const [result, setResult] = useState({
     frameSize: 0,
     bitrate: 0,
@@ -92,24 +92,24 @@ const AddCamerasDialog = withTheme((props) => {
   });
 
   const initialValues = {
-    quantity: 1,
-    retention: 30,
-    compression: compressionTypes[0],
-    resolution: videoResolutions[0],
-    recordType: recordTypes[0],
-    motion: 50,
-    motionFramerate: 12,
-    continuousFramerate: 12,
-    adjustment: 0
+    quantity: cameraGroup.quantity,
+    retention: cameraGroup.retention,
+    compression: cameraGroup.compression,
+    resolution: cameraGroup.resolution,
+    recordType: cameraGroup.recordType,
+    motion: cameraGroup.motion,
+    motionFramerate: cameraGroup.motionFramerate,
+    continuousFramerate: cameraGroup.continuousFramerate,
+    adjustment: cameraGroup.adjustment
   };
 
   const submitHandler = (values) => {
-    addCameraGroupHandler({
+    editCameraGroupHandler({
+      ...cameraGroup,
       ...values,
       bitrate: result.bitrate,
       storage: result.storage
     });
-    formik.setValues(initialValues, true);
     close();
   };
 
@@ -199,7 +199,7 @@ const AddCamerasDialog = withTheme((props) => {
 
   return (
     <Dialog open={open} onClose={close} maxWidth='xs' fullWidth>
-      <DialogTitle>Add Cameras</DialogTitle>
+      <DialogTitle>Edit Cameras</DialogTitle>
       <DialogContent>
         <Grid container direction='column' spacing={2}>
           <Grid item container spacing={2}>
@@ -468,4 +468,4 @@ const AddCamerasDialog = withTheme((props) => {
   );
 });
 
-export default AddCamerasDialog;
+export default EditCamerasDialog;
