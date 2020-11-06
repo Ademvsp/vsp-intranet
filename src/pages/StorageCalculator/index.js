@@ -12,7 +12,7 @@ import {
   withTheme
 } from '@material-ui/core';
 import tableIcons from '../../utils/table-icons';
-import { detailsPanelHandler, columnSchema } from './table-data';
+import { detailPanelHandler, columnSchema } from './table-data';
 import FloatingActionButton from '../../components/FloatingActionButton';
 import AddIcon from '@material-ui/icons/Add';
 import { toDecimal, toPercentage } from '../../utils/data-transformer';
@@ -124,7 +124,7 @@ const StorageCalculator = withTheme((props) => {
                   onClick: (event, rowData) => duplicateClickHandler(rowData)
                 }
               ]}
-              detailPanel={detailsPanelHandler}
+              detailPanel={detailPanelHandler}
             />
           </Grid>
           <Grid item container direction='column' alignItems='flex-end'>

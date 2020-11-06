@@ -70,7 +70,7 @@ export const columnSchema = [
   }
 ];
 
-export const detailsPanelHandler = (rowData) => {
+export const detailPanelHandler = (rowData) => {
   const bitrateTotal = rowData.bitrate * rowData.quantity;
   const storageTotal = rowData.storage * rowData.quantity;
   const bitrateText = `${toDecimal(bitrateTotal, 2)} Mbps`;
