@@ -35,6 +35,7 @@ import Resources from './pages/Resources';
 import PricingCalculator from './pages/PricingCalculator';
 import StorageCalculator from './pages/StorageCalculator';
 import MotionCalculator from './pages/MotionCalculator';
+import RAIDCalculator from './pages/RAIDCalculator';
 
 const App = (props) => {
   const dispatch = useDispatch();
@@ -164,6 +165,9 @@ const App = (props) => {
           </Route>
           <Route path='/motion-calculator'>
             <MotionCalculator />
+          </Route>
+          <Route path='/raid-calculator'>
+            <RAIDCalculator />
           </Route>
           <Redirect from='/product-requests' to='/product-requests/page/1' />
           <Redirect from='/leave-requests' to='/leave-requests/page/1' />
