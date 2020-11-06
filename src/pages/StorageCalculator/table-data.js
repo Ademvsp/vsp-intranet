@@ -23,13 +23,6 @@ export const columnSchema = [
     align: 'center'
   },
   {
-    field: 'frameRate',
-    title: 'Frame Rate',
-    type: 'numeric',
-    render: (rowData) => `${rowData.frameRate} fps`,
-    align: 'center'
-  },
-  {
     field: 'compression',
     title: 'Compression',
     type: 'string',
@@ -40,6 +33,26 @@ export const columnSchema = [
     title: 'Motion',
     type: 'numeric',
     render: (rowData) => toPercentage(rowData.motion),
+    align: 'center'
+  },
+  {
+    field: 'recordType',
+    title: 'Record Type',
+    type: 'string',
+    align: 'center'
+  },
+  {
+    field: 'continuousFrameRate',
+    title: 'Continuous Framerate',
+    type: 'numeric',
+    render: (rowData) => `${rowData.continuousFrameRate} fps`,
+    align: 'center'
+  },
+  {
+    field: 'motionFrameRate',
+    title: 'Motion Framerate',
+    type: 'numeric',
+    render: (rowData) => `${rowData.motionFrameRate} fps`,
     align: 'center'
   },
   {

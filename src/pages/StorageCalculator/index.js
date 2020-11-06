@@ -22,6 +22,7 @@ import FloatingActionButton from '../../components/FloatingActionButton';
 import AddIcon from '@material-ui/icons/Add';
 import { toDecimal, toPercentage } from '../../utils/data-transformer';
 import AddCamerasDialog from './AddCamerasDialog';
+import { MOTION } from '../../data/record-types';
 
 const StorageCalculator = withTheme((props) => {
   const [showAddCamerasDialog, setShowAddCamerasDialog] = useState(false);
@@ -31,9 +32,11 @@ const StorageCalculator = withTheme((props) => {
     {
       quantity: 1,
       resolution: '6MP',
-      frameRate: 12,
       compression: 'H.265',
+      recordType: MOTION,
       motion: 50,
+      continuousFrameRate: 12,
+      motionFrameRate: 12,
       bitrate: 5.4,
       bitrateTotal: 10.8,
       storage: 10,
