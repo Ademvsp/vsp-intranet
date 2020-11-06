@@ -10,18 +10,15 @@ import {
 import { useSelector } from 'react-redux';
 import NavbarAvatar from './NavbarAvatar';
 import NotificationsPopover from './NotificationsPopover';
-import { useHistory } from 'react-router-dom';
 import { SideDrawerContext } from '../AppContainer';
 import DarkModeIcon from './DarkModeIcon';
 import MenuIcon from '@material-ui/icons/Menu';
-import ViewComfyIcon from '@material-ui/icons/ViewComfy';
+import DashBoardIcon from './DashboardIcon';
 
 const Navbar = withTheme((props) => {
-  const { push } = useHistory();
   const { setDrawerOpen } = useContext(SideDrawerContext);
   const { authUser } = useSelector((state) => state.authState);
   const menuButtonSize = `${props.theme.spacing(6)}px`;
-  const appDrawerButtonSize = `${props.theme.spacing(5.5)}px`;
 
   return (
     <AppBar position='sticky'>
@@ -33,35 +30,16 @@ const Navbar = withTheme((props) => {
             alignItems='center'
             wrap='nowrap'
           >
-            <Grid
-              item
-              container
-              justify='flex-start'
-              alignItems='center'
-              wrap='nowrap'
-            >
-              <Grid item>
-                <Tooltip title='Menu'>
-                  <IconButton
-                    edge='start'
-                    color='inherit'
-                    onClick={() => setDrawerOpen(true)}
-                  >
-                    <MenuIcon style={{ fontSize: menuButtonSize }} />
-                  </IconButton>
-                </Tooltip>
-              </Grid>
-              <Grid item>
-                <Tooltip title='Dashboard'>
-                  <IconButton
-                    edge='start'
-                    color='inherit'
-                    onClick={() => push('/dashboard')}
-                  >
-                    <ViewComfyIcon style={{ fontSize: appDrawerButtonSize }} />
-                  </IconButton>
-                </Tooltip>
-              </Grid>
+            <Grid item>
+              <Tooltip title='Menu'>
+                <IconButton
+                  edge='start'
+                  color='inherit'
+                  onClick={() => setDrawerOpen(true)}
+                >
+                  <MenuIcon style={{ fontSize: menuButtonSize }} />
+                </IconButton>
+              </Tooltip>
             </Grid>
             <Grid
               item
@@ -72,6 +50,9 @@ const Navbar = withTheme((props) => {
               wrap='nowrap'
             >
               <Grid item container justify='flex-end' wrap='nowrap'>
+                <Grid item>
+                  <DashBoardIcon />
+                </Grid>
                 <Grid item>
                   <DarkModeIcon />
                 </Grid>
