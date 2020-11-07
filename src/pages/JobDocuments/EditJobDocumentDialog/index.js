@@ -209,6 +209,7 @@ const EditJobDocumentDialog = withTheme((props) => {
         confirm={deleteHandler}
         title='Job Documents'
         message='Are you sure you want to delete this Job Document?'
+        loading={deleteLoading}
       />
       <Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
         <DialogTitle>

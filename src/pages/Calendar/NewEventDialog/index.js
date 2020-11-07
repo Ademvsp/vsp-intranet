@@ -36,6 +36,9 @@ import Event from '../../../models/event';
 import { addEvent } from '../../../store/actions/event';
 import Avatar from '../../../components/Avatar';
 import { useHistory } from 'react-router-dom';
+import Message from '../../../models/message';
+import { DIALOG } from '../../../utils/constants';
+import { setMessage } from '../../../store/actions/message';
 
 const NewEventDialog = withTheme((props) => {
   const dispatch = useDispatch();
@@ -138,10 +141,18 @@ const NewEventDialog = withTheme((props) => {
         type.name === ANNUAL_LEAVE || type.name === OTHER_LEAVE;
       const isAdmin = permissions.admin;
       if (isLeaveType && !isAdmin) {
-        push('/leave-requests');
+        const message = new Message({
+          title: 'Staff Calendar',
+          body: 'You will now be redirected to the Leave Requests page.',
+          feedback: DIALOG,
+          options: {
+            closeAction: () => push('/leave-requests')
+          }
+        });
+        dispatch(setMessage(message));
       }
     }
-  }, [type, setFieldValue, push, permissions]);
+  }, [type, setFieldValue, push, permissions, dispatch]);
   //Add 1 hour if end date is set to less than start date
   useEffect(() => {
     if (isAfter(start, end)) {

@@ -49,13 +49,11 @@ export default class ExpenseClaim {
     const milliseconds = days * DAY_IN_MILLISECONDS;
     const daysAgoInMilliseconds = serverTimeInMilliseconds - milliseconds;
     const daysAgoDate = new Date(daysAgoInMilliseconds);
-    console.log(daysAgoDate);
     const daysAgoTimestamp = firebase.firestore.Timestamp.fromDate(daysAgoDate);
     const collection = await collectionRef
       .where('user', '==', firebase.auth().currentUser.uid)
       .where('metadata.createdAt', '>=', daysAgoTimestamp)
       .get();
-    console.log(collection.docs);
     return collection.docs.length > 0;
   }
 

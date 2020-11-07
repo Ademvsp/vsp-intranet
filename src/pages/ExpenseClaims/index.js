@@ -11,6 +11,9 @@ import FloatingActionButton from '../../components/FloatingActionButton';
 import ExpenseClaim from '../../models/expense-claim';
 import ExpenseClaimCard from './ExpenseClaimCard';
 import NewExpenseClaimDialog from './NewExpenseClaimDialog';
+import Message from '../../models/message';
+import { DIALOG } from '../../utils/constants';
+import { setMessage } from '../../store/actions/message';
 // import NewProductRequestDialog from './NewProductRequestDialog';
 
 const ExpenseClaims = (props) => {
@@ -32,20 +35,16 @@ const ExpenseClaims = (props) => {
   const [expenseClaimIds, setExpenseClaimIds] = useState();
   const [activeExpenseClaimId, setActiveExpenseClaimId] = useState(null);
 
-  const [isWithinDays, setIsWithinDays] = useState();
+  const [loading, setLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState();
   const [showNewExpenseClaimDialog, setShowNewExpenseClaimDialog] = useState(
     false
   );
-  console.log(isWithinDays);
-  console.log(isWithinDays === undefined || isWithinDays === true);
   //Mount and dismount, get admin status
   useEffect(() => {
     const asyncFunction = async () => {
       const newIsAdmin = await ExpenseClaim.isAdmin();
-      const newIsWithinDays = await ExpenseClaim.isWithinDays(6);
       setIsAdmin(newIsAdmin);
-      setIsWithinDays(newIsWithinDays);
     };
     asyncFunction();
   }, []);
@@ -135,6 +134,24 @@ const ExpenseClaims = (props) => {
     return <CircularProgress />;
   }
 
+  const newExpenseClickHandler = async () => {
+    setLoading(true);
+    const isWithinDays = await ExpenseClaim.isWithinDays(6);
+
+    if (isWithinDays) {
+      const message = new Message({
+        title: 'Expense Claims',
+        body:
+          'You have already submitted an expense in the last 7 days. Please compile all your expenses into a single claim and submit it once a week.',
+        feedback: DIALOG
+      });
+      dispatch(setMessage(message));
+    } else {
+      setShowNewExpenseClaimDialog(true);
+    }
+    setLoading(false);
+  };
+
   const count = Math.ceil(dataSource.length / MAX_PER_PAGE);
 
   return (
@@ -177,12 +194,12 @@ const ExpenseClaims = (props) => {
         </Grid>
       </Container>
       <FloatingActionButton
-        disabled={isWithinDays === undefined || isWithinDays === true}
         color='primary'
         tooltip='Add Expense Claim'
-        onClick={() => setShowNewExpenseClaimDialog(true)}
+        onClick={newExpenseClickHandler}
+        disabled={loading}
       >
-        <AddIcon />
+        {loading ? <CircularProgress /> : <AddIcon />}
       </FloatingActionButton>
     </Fragment>
   );

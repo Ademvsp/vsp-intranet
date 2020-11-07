@@ -145,6 +145,7 @@ const EditFirmwareDialog = withTheme((props) => {
         confirm={deleteHandler}
         title='Firmwares'
         message='Are you sure you want to delete this Firmwares?'
+        loading={deleteLoading}
       />
       <Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
         <DialogTitle>

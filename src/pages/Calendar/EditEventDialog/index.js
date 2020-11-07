@@ -273,6 +273,7 @@ const EditEventDialog = withTheme((props) => {
         confirm={deleteHandler}
         title='Staff Calendar'
         message='Are you sure you want to delete this event?'
+        loading={deleteLoading}
       />
       <Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
         <DialogTitle>
@@ -307,7 +308,7 @@ const EditEventDialog = withTheme((props) => {
                 ))}
               </TextField>
             </Grid>
-            {formik.values.type.detailsEditable ? (
+            {formik.values.type.detailsEditable && (
               <Grid item>
                 <TextField
                   inputRef={detailsFieldRef}
@@ -329,7 +330,7 @@ const EditEventDialog = withTheme((props) => {
                   }}
                 />
               </Grid>
-            ) : null}
+            )}
             <Grid
               item
               container
