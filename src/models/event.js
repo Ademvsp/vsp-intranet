@@ -92,7 +92,6 @@ export default class Event {
       .collection('admins')
       .doc(firebase.auth().currentUser.uid)
       .get();
-    console.log(docRef);
     return docRef.exists;
   }
 

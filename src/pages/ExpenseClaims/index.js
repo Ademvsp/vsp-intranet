@@ -32,15 +32,20 @@ const ExpenseClaims = (props) => {
   const [expenseClaimIds, setExpenseClaimIds] = useState();
   const [activeExpenseClaimId, setActiveExpenseClaimId] = useState(null);
 
+  const [isWithinDays, setIsWithinDays] = useState();
   const [isAdmin, setIsAdmin] = useState();
   const [showNewExpenseClaimDialog, setShowNewExpenseClaimDialog] = useState(
     false
   );
+  console.log(isWithinDays);
+  console.log(isWithinDays === undefined || isWithinDays === true);
   //Mount and dismount, get admin status
   useEffect(() => {
     const asyncFunction = async () => {
       const newIsAdmin = await ExpenseClaim.isAdmin();
+      const newIsWithinDays = await ExpenseClaim.isWithinDays(6);
       setIsAdmin(newIsAdmin);
+      setIsWithinDays(newIsWithinDays);
     };
     asyncFunction();
   }, []);
@@ -172,6 +177,7 @@ const ExpenseClaims = (props) => {
         </Grid>
       </Container>
       <FloatingActionButton
+        disabled={isWithinDays === undefined || isWithinDays === true}
         color='primary'
         tooltip='Add Expense Claim'
         onClick={() => setShowNewExpenseClaimDialog(true)}

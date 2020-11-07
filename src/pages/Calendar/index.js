@@ -48,8 +48,6 @@ const Calendar = (props) => {
   const [range, setRange] = useState(initalRange);
   const [permissions, setPermissions] = useState();
 
-  console.log(permissions);
-
   useEffect(() => {
     const asyncFunction = async () => {
       const admin = await Event.isAdmin();

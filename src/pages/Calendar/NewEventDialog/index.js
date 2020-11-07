@@ -18,7 +18,10 @@ import {
 import ActionsBar from '../../../components/ActionsBar';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import eventTypes from '../../../data/event-types';
+import eventTypes, {
+  ANNUAL_LEAVE,
+  OTHER_LEAVE
+} from '../../../data/event-types';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   DateTimePicker,
@@ -32,9 +35,11 @@ import { LONG_DATE, LONG_DATE_TIME } from '../../../utils/date';
 import Event from '../../../models/event';
 import { addEvent } from '../../../store/actions/event';
 import Avatar from '../../../components/Avatar';
+import { useHistory } from 'react-router-dom';
 
 const NewEventDialog = withTheme((props) => {
   const dispatch = useDispatch();
+  const { push } = useHistory();
   const detailsFieldRef = useRef();
   const { authUser } = useSelector((state) => state.authState);
   const { users, activeUsers } = useSelector((state) => state.dataState);
@@ -128,8 +133,15 @@ const NewEventDialog = withTheme((props) => {
       if (type.allCalendars) {
         setFieldValue('allCalendars', type.allCalendars);
       }
+      //If Annual Leave or Other Leave, and not Admin, push to Leave Request Page
+      const isLeaveType =
+        type.name === ANNUAL_LEAVE || type.name === OTHER_LEAVE;
+      const isAdmin = permissions.admin;
+      if (isLeaveType && !isAdmin) {
+        push('/leave-requests');
+      }
     }
-  }, [type, setFieldValue]);
+  }, [type, setFieldValue, push, permissions]);
   //Add 1 hour if end date is set to less than start date
   useEffect(() => {
     if (isAfter(start, end)) {
@@ -144,7 +156,6 @@ const NewEventDialog = withTheme((props) => {
         (user) =>
           user.manager === authUser.userId || user.userId === authUser.userId
       );
-      console.log(usersSource);
     }
     if (permissions.admin) {
       //If admin user & manager, admin gets priority
@@ -236,7 +247,7 @@ const NewEventDialog = withTheme((props) => {
               ))}
             </TextField>
           </Grid>
-          {formik.values.type.detailsEditable ? (
+          {formik.values.type.detailsEditable && (
             <Grid item>
               <TextField
                 inputRef={detailsFieldRef}
@@ -258,7 +269,7 @@ const NewEventDialog = withTheme((props) => {
                 }}
               />
             </Grid>
-          ) : null}
+          )}
           <Grid
             item
             container

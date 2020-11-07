@@ -1,4 +1,5 @@
 import { SUBMITTED } from '../data/expense-claim-status-types';
+import { DAY_IN_MILLISECONDS } from '../utils/date';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
 const collectionRef = firebase.firestore().collection('expense-claims');
 export default class ExpenseClaim {
@@ -41,6 +42,21 @@ export default class ExpenseClaim {
 
   static getListener(expenseClaimId) {
     return collectionRef.doc(expenseClaimId);
+  }
+
+  static async isWithinDays(days) {
+    const serverTimeInMilliseconds = await getServerTimeInMilliseconds();
+    const milliseconds = days * DAY_IN_MILLISECONDS;
+    const daysAgoInMilliseconds = serverTimeInMilliseconds - milliseconds;
+    const daysAgoDate = new Date(daysAgoInMilliseconds);
+    console.log(daysAgoDate);
+    const daysAgoTimestamp = firebase.firestore.Timestamp.fromDate(daysAgoDate);
+    const collection = await collectionRef
+      .where('user', '==', firebase.auth().currentUser.uid)
+      .where('metadata.createdAt', '>=', daysAgoTimestamp)
+      .get();
+    console.log(collection.docs);
+    return collection.docs.length > 0;
   }
 
   async save() {

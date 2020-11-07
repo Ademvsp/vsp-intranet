@@ -208,7 +208,6 @@ const EditEventDialog = withTheme((props) => {
         (user) =>
           user.manager === authUser.userId || user.userId === authUser.userId
       );
-      console.log(usersSource);
     }
     if (permissions.admin) {
       //If admin user & manager, admin gets priority
