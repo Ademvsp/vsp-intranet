@@ -441,6 +441,7 @@ const EditCamerasDialog = withTheme((props) => {
               formik.values.adjustment
             )}`}</Typography>
             <Slider
+              valueLabelDisplay='auto'
               marks={[{ value: 0 }]}
               min={-100}
               max={100}

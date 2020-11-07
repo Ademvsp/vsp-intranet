@@ -194,6 +194,7 @@ const ExpenseClaims = (props) => {
         </Grid>
       </Container>
       <FloatingActionButton
+        style={{ zIndex: 100 }}
         color='primary'
         tooltip='Add Expense Claim'
         onClick={newExpenseClickHandler}

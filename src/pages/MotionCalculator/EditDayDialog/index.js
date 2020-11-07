@@ -46,6 +46,7 @@ const EditDayDialog = (props) => {
                 <Grid item>
                   <Slider
                     value={motionValue}
+                    valueLabelDisplay='auto'
                     onChange={(_event, newValue) =>
                       motionValueUpdateHandler(index, newValue)
                     }

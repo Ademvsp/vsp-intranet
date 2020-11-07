@@ -147,6 +147,7 @@ const FirmwarePage = (props) => {
         />
       </Container>
       <FloatingActionButton
+        style={{ zIndex: 100 }}
         color='primary'
         tooltip='Add Firmware'
         onClick={() => setShowNewFirmwareDialogOpen(true)}

@@ -229,6 +229,7 @@ const Calendar = (props) => {
           </Grid>
         </Grid>
         <FloatingActionButton
+          style={{ zIndex: 100 }}
           color='primary'
           tooltip='Add Event'
           onClick={addEventClickHandler}

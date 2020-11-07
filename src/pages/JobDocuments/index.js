@@ -146,6 +146,7 @@ const JobDocuments = (props) => {
         />
       </Container>
       <FloatingActionButton
+        style={{ zIndex: 100 }}
         color='primary'
         tooltip='Add Job Document'
         onClick={() => setShowAddJobDocumentDialogOpen(true)}

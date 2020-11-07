@@ -9,7 +9,8 @@ import {
   Paper,
   Slider,
   Typography,
-  withTheme
+  withTheme,
+  useMediaQuery
 } from '@material-ui/core';
 import tableIcons from '../../utils/table-icons';
 import { detailPanelHandler, columnSchema } from './table-data';
@@ -25,6 +26,7 @@ const StorageCalculator = withTheme((props) => {
   const [result, setResult] = useState();
   const [selectedCameraGroup, setSelectedCameraGroup] = useState();
   const [cameraGroups, setCameraGroups] = useState([]);
+  const mobile = useMediaQuery('(max-width: 767px)');
 
   useEffect(() => {
     const newResult = cameraGroups.reduce(
@@ -93,7 +95,7 @@ const StorageCalculator = withTheme((props) => {
       )}
       <Container disableGutters maxWidth='lg'>
         <Grid container direction='column' spacing={2}>
-          <Grid item>
+          <Grid item style={{ width: '-webkit-fill-available' }}>
             <MaterialTable
               icons={tableIcons}
               columns={columnSchema}
@@ -128,7 +130,7 @@ const StorageCalculator = withTheme((props) => {
             />
           </Grid>
           <Grid item container direction='column' alignItems='flex-end'>
-            <Box width={'35%'}>
+            <Box width={mobile ? '100%' : '35%'}>
               <Paper variant='outlined'>
                 <CardHeader title='Summary' style={{ paddingBottom: 0 }} />
                 <CardContent>
@@ -138,6 +140,7 @@ const StorageCalculator = withTheme((props) => {
                         overhead
                       )}`}</Typography>
                       <Slider
+                        valueLabelDisplay='auto'
                         value={overhead}
                         onChange={(_event, newValue) => setOverhead(newValue)}
                       />
@@ -168,6 +171,7 @@ const StorageCalculator = withTheme((props) => {
         </Grid>
       </Container>
       <FloatingActionButton
+        style={{ zIndex: 100 }}
         color='primary'
         tooltip='Add Cameras'
         onClick={() => setShowAddCamerasDialog(true)}

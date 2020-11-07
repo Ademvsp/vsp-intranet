@@ -10,7 +10,8 @@ import {
   withTheme,
   Grid,
   Badge,
-  Tooltip
+  Tooltip,
+  useMediaQuery
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
@@ -38,6 +39,7 @@ const ExpenseClaimCard = withTheme((props) => {
   const { expenseClaimId, scroll, setActiveExpenseClaimId, isAdmin } = props;
   const [expenseClaim, setExpenseClaim] = useState();
   const [showComments, setShowComments] = useState(false);
+  const mobile = useMediaQuery('(max-width: 767px)');
 
   useEffect(() => {
     if (scroll && expenseClaim) {
@@ -186,7 +188,10 @@ const ExpenseClaimCard = withTheme((props) => {
         />
         <CardContent>
           <Grid container direction='column' spacing={2}>
-            <Grid item>
+            <Grid
+              item
+              style={{ width: mobile ? window.innerWidth * 0.85 : 'unset' }}
+            >
               <ExpenseClaimTable expenseClaim={expenseClaim} />
             </Grid>
             <Grid item>

@@ -150,6 +150,7 @@ const Promotions = (props) => {
       </Container>
       {isAdmin && (
         <FloatingActionButton
+          style={{ zIndex: 100 }}
           color='primary'
           tooltip='Add Promotion'
           onClick={() => setShowNewPromotionDialog(true)}

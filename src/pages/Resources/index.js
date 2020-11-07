@@ -191,7 +191,7 @@ const Resources = withTheme((props) => {
                         </ListItem>
                       ))}
                     </List>
-                    {index !== array.length - 1 && <Divider />}
+                    {index !== array.length - 1 && <Divider variant='middle' />}
                   </Fragment>
                 );
               })}
@@ -201,6 +201,7 @@ const Resources = withTheme((props) => {
       </Container>
       {permissions.admin && (
         <FloatingActionButton
+          style={{ zIndex: 100 }}
           color='primary'
           tooltip='Add Resource'
           onClick={() => setShowNewResourceDialog(true)}

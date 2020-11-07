@@ -10,7 +10,8 @@ import {
   Paper,
   TextField,
   Typography,
-  withTheme
+  withTheme,
+  useMediaQuery
 } from '@material-ui/core';
 import tableIcons from '../../utils/table-icons';
 import {
@@ -27,6 +28,7 @@ const MotionCalculator = withTheme((props) => {
   const [motionValues, setMotionValues] = useState(initialValues);
   const [selectedPreset, setSelectedPreset] = useState('');
   const [selectedDay, setSelectedDay] = useState();
+  const mobile = useMediaQuery('(max-width: 767px)');
 
   useEffect(() => {
     if (selectedPreset) {
@@ -71,7 +73,7 @@ const MotionCalculator = withTheme((props) => {
       )}
       <Container disableGutters maxWidth='lg'>
         <Grid container direction='column' spacing={2}>
-          <Grid item>
+          <Grid item style={{ width: '-webkit-fill-available' }}>
             <MaterialTable
               icons={tableIcons}
               columns={columnSchema}
@@ -110,7 +112,7 @@ const MotionCalculator = withTheme((props) => {
             />
           </Grid>
           <Grid item container direction='column' alignItems='flex-end'>
-            <Box width={'35%'}>
+            <Box width={mobile ? '100%' : '35%'}>
               <Paper variant='outlined'>
                 <CardHeader title='Summary' style={{ paddingBottom: 0 }} />
                 <CardContent>

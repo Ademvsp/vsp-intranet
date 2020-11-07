@@ -13,7 +13,7 @@ import NotificationsPopover from './NotificationsPopover';
 import { SideDrawerContext } from '../AppContainer';
 import DarkModeIcon from './DarkModeIcon';
 import MenuIcon from '@material-ui/icons/Menu';
-import DashBoardIcon from './DashboardIcon';
+import HomeIcon from './HomeIcon';
 
 const Navbar = withTheme((props) => {
   const { setDrawerOpen } = useContext(SideDrawerContext);
@@ -51,7 +51,7 @@ const Navbar = withTheme((props) => {
             >
               <Grid item container justify='flex-end' wrap='nowrap'>
                 <Grid item>
-                  <DashBoardIcon />
+                  <HomeIcon />
                 </Grid>
                 <Grid item>
                   <DarkModeIcon />

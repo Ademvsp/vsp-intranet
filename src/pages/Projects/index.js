@@ -127,6 +127,7 @@ const Projects = (props) => {
         />
       </Container>
       <FloatingActionButton
+        style={{ zIndex: 100 }}
         color='primary'
         tooltip='Add Project'
         onClick={() => setNewProjectDialogOpen(true)}
