@@ -1,4 +1,10 @@
-import { SILENT } from '../../utils/constants';
+import {
+  DIALOG,
+  SILENT,
+  SNACKBAR,
+  SNACKBAR_SEVERITY,
+  SNACKBAR_VARIANTS
+} from '../../utils/constants';
 import {
   SET_MESSAGE,
   SET_USERS,
@@ -94,4 +100,121 @@ export const unsubscribeUsersListener = () => {
   if (activeUsersDataListener) {
     activeUsersDataListener();
   }
+};
+
+export const getUserAuthData = (userId) => {
+  return async (dispatch, _getState) => {
+    try {
+      return await User.getUserAuthData(userId);
+    } catch (error) {
+      const message = new Message({
+        title: 'Admin Panel',
+        body: 'Failed to retrieve user',
+        feedback: DIALOG
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        message
+      });
+      return false;
+    }
+  };
+};
+
+export const revokeRefreshTokens = (userId) => {
+  return async (dispatch, _getState) => {
+    try {
+      await User.revokeRefreshTokens(userId);
+      const message = new Message({
+        title: 'Admin Panel',
+        body:
+          'Refresh Token revoked successfully. This may take up to an hour to take effect.',
+        feedback: SNACKBAR,
+        options: {
+          duration: 5000,
+          variant: SNACKBAR_VARIANTS.FILLED,
+          severity: SNACKBAR_SEVERITY.INFO
+        }
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        message: message
+      });
+      return true;
+    } catch (error) {
+      const message = new Message({
+        title: 'Admin Panel',
+        body: 'Failed to retrieve user',
+        feedback: DIALOG
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        message: message
+      });
+      return false;
+    }
+  };
+};
+
+export const addUser = (values) => {
+  return async (dispatch, _getState) => {
+    try {
+      const updatedValues = {
+        admin: values.admin,
+        active: values.active,
+        firstName: values.firstName.trim(),
+        lastName: values.lastName.trim(),
+        email: values.email.trim(),
+        authPhone: values.authPhone.trim(),
+        phone: values.phone.trim(),
+        extension: values.extension.trim(),
+        title: values.title.trim(),
+        location: values.location,
+        manager: values.manager
+      };
+      return await User.create(updatedValues);
+    } catch (error) {
+      const message = new Message({
+        title: 'Admin Panel',
+        body: 'Failed to create user',
+        feedback: DIALOG
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        message
+      });
+    }
+  };
+};
+
+export const editUser = (userId, values) => {
+  return async (dispatch, _getState) => {
+    try {
+      const updatedValues = {
+        admin: values.admin,
+        active: values.active,
+        firstName: values.firstName.trim(),
+        lastName: values.lastName.trim(),
+        email: values.email.trim(),
+        authPhone: values.authPhone.trim(),
+        phone: values.phone.trim(),
+        extension: values.extension.trim(),
+        title: values.title.trim(),
+        location: values.location,
+        manager: values.manager
+      };
+      const result = await User.update(userId, updatedValues);
+      return result;
+    } catch (error) {
+      const message = new Message({
+        title: 'Admin Panel',
+        body: 'Failed to update user',
+        feedback: DIALOG
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        message
+      });
+    }
+  };
 };

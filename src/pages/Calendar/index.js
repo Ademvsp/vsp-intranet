@@ -108,7 +108,7 @@ const Calendar = (props) => {
     const asyncFunction = async () => {
       if (action === UPDATE) {
         const eventId = params.eventId;
-        if (eventId && users && permissions) {
+        if (users && permissions) {
           const event = await Event.get(eventId);
           if (event) {
             //Can edit if you are the event user, you are the manager of the event user of if you are admin
@@ -126,8 +126,6 @@ const Calendar = (props) => {
           } else {
             push('/calendar');
           }
-        } else {
-          push('/calendar');
         }
       }
     };

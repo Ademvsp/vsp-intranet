@@ -1,7 +1,6 @@
 import React, { useState, Fragment } from 'react';
 import { Menu, MenuItem, IconButton } from '@material-ui/core';
 import { MoreVert as MoreVertIcon } from '@material-ui/icons';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../../../../models/message';
 import {
@@ -24,6 +23,9 @@ const PostCardMenu = (props) => {
   }
 
   const copyClickHandler = () => {
+    navigator.clipboard.writeText(
+      `${process.env.REACT_APP_BASE_URL}/newsfeed/${post.postId}`
+    );
     const message = new Message({
       title: 'News Feed',
       body: 'Link copied to clipboard',
@@ -69,12 +71,7 @@ const PostCardMenu = (props) => {
         open={!!anchorEl}
         onClose={() => setAnchorEl(null)}
       >
-        <CopyToClipboard
-          text={`${process.env.REACT_APP_BASE_URL}/newsfeed/${post.postId}`}
-          onCopy={copyClickHandler}
-        >
-          <MenuItem>Copy Direct Link</MenuItem>
-        </CopyToClipboard>
+        <MenuItem onClick={copyClickHandler}>Copy Direct Link</MenuItem>
         <MenuItem onClick={subscribeHandler}>
           {`${subscribeText} to notifications`}
         </MenuItem>

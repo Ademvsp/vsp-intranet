@@ -36,6 +36,7 @@ import PricingCalculator from './pages/PricingCalculator';
 import StorageCalculator from './pages/StorageCalculator';
 import MotionCalculator from './pages/MotionCalculator';
 import RAIDCalculator from './pages/RAIDCalculator';
+import AdminPanel from './pages/AdminPanel';
 
 const App = (props) => {
   const dispatch = useDispatch();
@@ -90,6 +91,11 @@ const App = (props) => {
     if (authState.authUser && dataState.users) {
       children = (
         <Switch>
+          {authState.authUser.admin && (
+            <Route path='/admin'>
+              <AdminPanel />
+            </Route>
+          )}
           <Route path='/dashboard'>
             <Dashboard />
           </Route>

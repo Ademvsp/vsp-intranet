@@ -1,7 +1,6 @@
 import React, { useState, Fragment } from 'react';
 import { Menu, MenuItem, IconButton } from '@material-ui/core';
 import { MoreVert as MoreVertIcon } from '@material-ui/icons';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch } from 'react-redux';
 import Message from '../../../../models/message';
 import {
@@ -22,6 +21,9 @@ const PostCardMenu = (props) => {
   } = props;
 
   const copyClickHandler = () => {
+    navigator.clipboard.writeText(
+      `${process.env.REACT_APP_BASE_URL}/promotions/${promotion.promotionId}`
+    );
     const message = new Message({
       title: 'News Feed',
       body: 'Link copied to clipboard',
@@ -61,12 +63,7 @@ const PostCardMenu = (props) => {
         open={!!anchorEl}
         onClose={() => setAnchorEl(null)}
       >
-        <CopyToClipboard
-          text={`${process.env.REACT_APP_BASE_URL}/promotions/${promotion.promotionId}`}
-          onCopy={copyClickHandler}
-        >
-          <MenuItem>Copy direct link</MenuItem>
-        </CopyToClipboard>
+        <MenuItem onClick={copyClickHandler}>Copy direct link</MenuItem>
         {isAdmin && (
           <MenuItem onClick={editClickHandler}>Edit promotion</MenuItem>
         )}

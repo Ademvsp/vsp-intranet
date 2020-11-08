@@ -12,10 +12,12 @@ import FilterList from '@material-ui/icons/FilterList';
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 import FirstPage from '@material-ui/icons/FirstPage';
 import LastPage from '@material-ui/icons/LastPage';
+import LockIcon from '@material-ui/icons/Lock';
 import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -27,12 +29,14 @@ const tableIcons = {
   )),
   Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
   Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
+  FileCopy: forwardRef((props, ref) => <FileCopyIcon {...props} ref={ref} />),
   Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
   FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
   LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
   LibraryAdd: forwardRef((props, ref) => (
     <LibraryAddIcon {...props} ref={ref} />
   )),
+  Lock: forwardRef((props, ref) => <LockIcon {...props} ref={ref} />),
   NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
   PreviousPage: forwardRef((props, ref) => (
     <ChevronLeft {...props} ref={ref} />

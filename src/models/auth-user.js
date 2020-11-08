@@ -4,6 +4,7 @@ const collectionRef = firebase.firestore().collection('users-new');
 export default class AuthUser {
   constructor({
     userId,
+    admin,
     email,
     firstName,
     lastName,
@@ -14,6 +15,7 @@ export default class AuthUser {
     settings
   }) {
     this.userId = userId;
+    this.admin = admin;
     this.email = email;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -95,7 +97,7 @@ export default class AuthUser {
     const functionRef = firebase
       .app()
       .functions(region)
-      .httpsCallable('getPhoneNumberNew');
+      .httpsCallable('authFunctions.getAuthPhoneNumber');
     const result = await functionRef({ email });
     return result.data;
   }

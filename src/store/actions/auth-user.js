@@ -23,62 +23,44 @@ export const verifyAuth = () => {
   return async (dispatch, getState) => {
     AuthUser.getAuth().onAuthStateChanged(async (firebaseAuthUser) => {
       if (firebaseAuthUser) {
-        const loggedInAuthUser = await AuthUser.get(firebaseAuthUser.uid);
-        if (loggedInAuthUser.settings.forceLogout) {
-          dispatch(logout());
-        } else {
-          const settings = {
-            ...loggedInAuthUser.settings,
-            forceLogout: false
-          };
-          const metadata = {
-            ...loggedInAuthUser.metadata,
-            loggedInAt: AuthUser.getServerTimestamp()
-          };
-          loggedInAuthUser.settings = settings;
-          loggedInAuthUser.metadata = metadata;
-          await loggedInAuthUser.save();
-          authUserListener = AuthUser.getAuthListener(
-            firebaseAuthUser.uid
-          ).onSnapshot(async (snapshot) => {
-            const authUser = new AuthUser({
-              ...snapshot.data(),
-              userId: snapshot.id
-            });
-            if (authUser.settings.forceLogout) {
-              dispatch(logout());
-            } else {
-              const actions = [
-                {
-                  type: SET_AUTH_USER,
-                  authUser
-                }
-              ];
-              if (!getState().authState.touched) {
-                const message = new Message({
-                  title: 'Login Success',
-                  body: `Welcome back ${authUser.firstName}`,
-                  feedback: SNACKBAR,
-                  options: {
-                    duration: 5000,
-                    variant: SNACKBAR_VARIANTS.FILLED,
-                    severity: SNACKBAR_SEVERITY.INFO
-                  }
-                });
-                actions.push(
-                  {
-                    type: SET_AUTH_TOUCHED
-                  },
-                  {
-                    type: SET_MESSAGE,
-                    message
-                  }
-                );
-              }
-              dispatch(actions);
-            }
+        authUserListener = AuthUser.getAuthListener(
+          firebaseAuthUser.uid
+        ).onSnapshot(async (snapshot) => {
+          const idTokenResult = await firebaseAuthUser.getIdTokenResult();
+          const authUser = new AuthUser({
+            ...snapshot.data(),
+            userId: snapshot.id,
+            admin: !!idTokenResult.claims.admin
           });
-        }
+          const actions = [
+            {
+              type: SET_AUTH_USER,
+              authUser
+            }
+          ];
+          if (!getState().authState.touched) {
+            const message = new Message({
+              title: 'Login Success',
+              body: `Welcome back ${authUser.firstName}`,
+              feedback: SNACKBAR,
+              options: {
+                duration: 5000,
+                variant: SNACKBAR_VARIANTS.FILLED,
+                severity: SNACKBAR_SEVERITY.INFO
+              }
+            });
+            actions.push(
+              {
+                type: SET_AUTH_TOUCHED
+              },
+              {
+                type: SET_MESSAGE,
+                message
+              }
+            );
+          }
+          dispatch(actions);
+        });
       } else {
         dispatch({ type: SET_AUTH_TOUCHED });
       }

@@ -4,7 +4,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import FloatingActionButton from '../../components/FloatingActionButton';
 import AddIcon from '@material-ui/icons/Add';
 import Firmware from '../../models/firmware';
-import tableColumns from '../../utils/table-icons';
+import tableIcons from '../../utils/table-icons';
 import columnSchema from './column-schema';
 import EditFirmwareDialog from './EditFirmwareDialog';
 import ViewFirmwareDialog from './ViewFirmwareDialog';
@@ -114,7 +114,7 @@ const FirmwarePage = (props) => {
       <Container disableGutters maxWidth='lg'>
         <MaterialTable
           isLoading={!firmwares}
-          icons={tableColumns}
+          icons={tableIcons}
           columns={columnSchema}
           data={firmwares}
           options={{

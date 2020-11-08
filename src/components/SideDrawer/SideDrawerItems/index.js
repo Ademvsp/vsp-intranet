@@ -20,11 +20,21 @@ import TimelineIcon from '@material-ui/icons/Timeline';
 import StorageIcon from '@material-ui/icons/Storage';
 import TransferWithinAStationIcon from '@material-ui/icons/TransferWithinAStation';
 import SlowMotionVideoIcon from '@material-ui/icons/SlowMotionVideo';
+import SettingsIcon from '@material-ui/icons/Settings';
+import { useSelector } from 'react-redux';
 
 const SideDrawerItems = (props) => {
+  const { authUser } = useSelector((state) => state.authState);
   return (
     <StyledListContainer disableGutters>
       <List>
+        {authUser.admin && (
+          <SideDrawerItem
+            Icon={SettingsIcon}
+            text='Admin Panel'
+            link='/admin'
+          />
+        )}
         <SideDrawerItem
           Icon={DashboardIcon}
           text='Dashboard'
