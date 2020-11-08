@@ -16,8 +16,7 @@ import {
 } from '@material-ui/core';
 import ActionsBar from '../../../../components/ActionsBar';
 import { useDispatch, useSelector } from 'react-redux';
-import { editUser } from '../../../../store/actions/user';
-import User from '../../../../models/user';
+import { addUser } from '../../../../store/actions/user';
 
 const NewUserDialog = withTheme((props) => {
   const dispatch = useDispatch();
@@ -74,13 +73,13 @@ const NewUserDialog = withTheme((props) => {
 
   const submitHandler = async (values) => {
     setLoading(true);
-    await User.revokeRefreshTokens('q0diJBFSgUhDQtGb32HMB4IZXll1');
-    // const result = await dispatch(editUser(userData.userId, values));
+    const result = await dispatch(addUser(values));
+    console.log(result);
     setLoading(false);
-    // if (result) {
-    //    formik.setValues(initialValues, true)
-    //   dialogCloseHander();
-    // }
+    if (result) {
+      formik.setValues(initialValues, true);
+      dialogCloseHander();
+    }
   };
 
   const formik = useFormik({
@@ -98,7 +97,7 @@ const NewUserDialog = withTheme((props) => {
 
   return (
     <Dialog open={open} onClose={dialogCloseHander} maxWidth='sm' fullWidth>
-      <DialogTitle>Edit User</DialogTitle>
+      <DialogTitle>New User</DialogTitle>
       <DialogContent>
         <Grid container direction='column' spacing={2}>
           <Grid item container spacing={2}>
@@ -106,6 +105,7 @@ const NewUserDialog = withTheme((props) => {
               <TextField
                 type='text'
                 label='First Name'
+                autoFocus
                 fullWidth
                 value={formik.values.firstName}
                 onChange={formik.handleChange('firstName')}
@@ -335,7 +335,7 @@ const NewUserDialog = withTheme((props) => {
           isValid={formik.isValid}
           onClick={formik.handleSubmit}
           tooltipPlacement='top'
-          actionButtonText='Update'
+          actionButtonText='Submit'
         />
       </DialogActions>
     </Dialog>

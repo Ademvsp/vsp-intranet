@@ -1,14 +1,5 @@
-import {
-  Card,
-  CardContent,
-  Container,
-  Paper,
-  Tab,
-  Tabs,
-  useMediaQuery
-} from '@material-ui/core';
-import { TabContext, TabPanel } from '@material-ui/lab';
-import React, { useEffect } from 'react';
+import { Container, Paper, Tab, Tabs, useMediaQuery } from '@material-ui/core';
+import React from 'react';
 import { useState } from 'react';
 import Users from './Users';
 

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import {
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -94,6 +93,7 @@ const EditUserDialog = withTheme((props) => {
               <TextField
                 type='text'
                 label='First Name'
+                autoFocus
                 fullWidth
                 value={formik.values.firstName}
                 onChange={formik.handleChange('firstName')}

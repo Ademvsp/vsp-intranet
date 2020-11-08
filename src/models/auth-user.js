@@ -68,10 +68,7 @@ export default class AuthUser {
     const metadata = {
       ...doc.data().metadata,
       createdAt: doc.data().metadata.createdAt.toDate(),
-      updatedAt: doc.data().metadata.updatedAt.toDate(),
-      loggedInAt: doc.data().metadata.loggedInAt
-        ? doc.data().metadata.loggedInAt.toDate()
-        : null
+      updatedAt: doc.data().metadata.updatedAt.toDate()
     };
 
     return new AuthUser({

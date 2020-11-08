@@ -96,7 +96,7 @@ const Users = (props) => {
       />
       <NewUserDialog
         open={showNewUserDialog}
-        close={() => setShowNewUserDialog(null)}
+        close={() => setShowNewUserDialog(false)}
       />
       {selectedUserData && (
         <EditUserDialog

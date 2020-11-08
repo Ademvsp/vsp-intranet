@@ -24,7 +24,7 @@ const Logout = (props) => {
         cancel={cancelClickHandler}
         confirm={confirmClickHandler}
         title='Logout'
-        message='This will log you out of all devices in case you have lost or misplaced a device.'
+        message='This will log you out of all devices in case you have lost or misplaced a device (It may take up to an hour to take effect).'
       />
       <StyledButtonContainer>
         <Button onClick={setShowConfirmDialog.bind(this, true)}>
