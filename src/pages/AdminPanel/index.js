@@ -1,12 +1,13 @@
-import { Container, Paper, Tab, Tabs, useMediaQuery } from '@material-ui/core';
+import { Card, Container, Tab, Tabs, useMediaQuery } from '@material-ui/core';
 import React from 'react';
 import { useState } from 'react';
+import Permissions from './Permissions';
 import Users from './Users';
 
 const AdminPanel = (props) => {
   const tabs = [
     { name: 'Users', Component: Users },
-    { name: 'Permissions', Component: null },
+    { name: 'Permissions', Component: Permissions },
     { name: 'Customers', Component: null },
     { name: 'Vendors', Component: null }
   ];
@@ -16,7 +17,7 @@ const AdminPanel = (props) => {
 
   return (
     <Container disableGutters maxWidth='lg'>
-      <Paper variant='outlined'>
+      <Card>
         <Tabs
           variant={mobile ? 'scrollable' : 'fullWidth'}
           centered
@@ -28,7 +29,7 @@ const AdminPanel = (props) => {
           ))}
         </Tabs>
         <ActiveComponent />
-      </Paper>
+      </Card>
     </Container>
   );
 };

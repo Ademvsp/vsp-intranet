@@ -12,6 +12,11 @@ import AddIcon from '@material-ui/icons/Add';
 import FloatingActionButton from '../../../components/FloatingActionButton';
 import NewUserDialog from './NewUserDialog';
 import ConfirmDialog from '../../../components/ConfirmDialog';
+import { Paper } from '@material-ui/core';
+
+const FlatContainer = (props) => (
+  <Paper {...props} variant='outlined' style={{ border: 0 }} />
+);
 
 const Users = (props) => {
   const dispatch = useDispatch();
@@ -136,7 +141,9 @@ const Users = (props) => {
             onClick: revokeRefreshTokenClickHandler
           }
         ]}
-        // onRowClick={rowClickHandler}
+        components={{
+          Container: FlatContainer
+        }}
       />
       <FloatingActionButton
         style={{ zIndex: 100 }}
