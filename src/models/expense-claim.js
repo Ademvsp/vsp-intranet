@@ -1,6 +1,7 @@
 import { SUBMITTED } from '../data/expense-claim-status-types';
 import { DAY_IN_MILLISECONDS } from '../utils/date';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
+import Permission from './permission';
 const collectionRef = firebase.firestore().collection('expense-claims');
 export default class ExpenseClaim {
   constructor({
@@ -29,15 +30,13 @@ export default class ExpenseClaim {
     return databaseObject;
   }
 
-  static async isAdmin() {
-    const docRef = await firebase
-      .firestore()
-      .collection('permissions')
-      .doc('expense-claims')
-      .collection('admins')
-      .doc(firebase.auth().currentUser.uid)
-      .get();
-    return docRef.exists;
+  static async getPermissions() {
+    const userId = firebase.auth().currentUser.uid;
+    const permissions = await Permission.get('expense-claims');
+    for (const group in permissions.groups) {
+      permissions.groups[group] = permissions.groups[group].includes(userId);
+    }
+    return permissions.groups;
   }
 
   static getListener(expenseClaimId) {

@@ -1,5 +1,6 @@
 import { CREATE, UPDATE } from '../utils/actions';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
+import Permission from './permission';
 const collectionRef = firebase.firestore().collection('promotions-new');
 
 export default class Promotion {
@@ -37,15 +38,13 @@ export default class Promotion {
     return collectionRef.doc(promotionId);
   }
 
-  static async isAdmin() {
-    const docRef = await firebase
-      .firestore()
-      .collection('permissions')
-      .doc('promotions')
-      .collection('admins')
-      .doc(firebase.auth().currentUser.uid)
-      .get();
-    return docRef.exists;
+  static async getPermissions() {
+    const userId = firebase.auth().currentUser.uid;
+    const permissions = await Permission.get('promotions');
+    for (const group in permissions.groups) {
+      permissions.groups[group] = permissions.groups[group].includes(userId);
+    }
+    return permissions.groups;
   }
 
   async save() {

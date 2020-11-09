@@ -4,6 +4,7 @@ import {
   REQUESTED
 } from '../data/product-request-status-types';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
+import Permission from './permission';
 const collectionRef = firebase.firestore().collection('product-requests');
 
 export default class ProductRequest {
@@ -134,25 +135,13 @@ export default class ProductRequest {
     this.actions = [...this.actions, action];
   }
 
-  static async getAdmins() {
-    const collection = await firebase
-      .firestore()
-      .collection('permissions')
-      .doc('product-requests')
-      .collection('admins')
-      .get();
-    return collection.docs.map((doc) => doc.id);
-  }
-
-  static async isAdmin() {
-    const docRef = await firebase
-      .firestore()
-      .collection('permissions')
-      .doc('product-requests')
-      .collection('admins')
-      .doc(firebase.auth().currentUser.uid)
-      .get();
-    return docRef.exists;
+  static async getPermissions() {
+    const userId = firebase.auth().currentUser.uid;
+    const permissions = await Permission.get('product-requests');
+    for (const group in permissions.groups) {
+      permissions.groups[group] = permissions.groups[group].includes(userId);
+    }
+    return permissions.groups;
   }
 
   static getListener(productRequestId) {

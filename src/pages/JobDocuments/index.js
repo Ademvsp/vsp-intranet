@@ -35,8 +35,8 @@ const JobDocuments = (props) => {
 
   useEffect(() => {
     const asyncFunction = async () => {
-      const admin = await JobDocument.isAdmin();
-      setPermissions({ admin: admin });
+      const newPermissions = await JobDocument.getPermissions();
+      setPermissions(newPermissions);
     };
     asyncFunction();
   }, []);
@@ -78,7 +78,7 @@ const JobDocuments = (props) => {
           (jobDocument) => jobDocument.jobDocumentId === params.jobDocumentId
         );
         if (newSelectedJobDocument) {
-          if (permissions.admin || userId === newSelectedJobDocument.user) {
+          if (permissions.admins || userId === newSelectedJobDocument.user) {
             setShowEditJobDocumentDialog(true);
           } else {
             setShowViewJobDocumentDialog(true);

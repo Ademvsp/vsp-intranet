@@ -50,9 +50,8 @@ const Calendar = (props) => {
 
   useEffect(() => {
     const asyncFunction = async () => {
-      const admin = await Event.isAdmin();
-      const manager = await Event.isManager();
-      setPermissions({ admin: admin, manager: manager });
+      const newPermissions = await Event.getPermissions();
+      setPermissions(newPermissions);
     };
     asyncFunction();
   }, []);
@@ -115,8 +114,8 @@ const Calendar = (props) => {
             const eventUser = users.find((user) => user.userId === event.user);
             const isEventUser = eventUser.userId === userId;
             const isEventUserManager =
-              permissions.manager && eventUser.manager === userId;
-            const isEventAdmin = permissions.admin;
+              permissions.managers && eventUser.manager === userId;
+            const isEventAdmin = permissions.admins;
             setSelectedEvent(event);
             if (isEventUser || isEventUserManager || isEventAdmin) {
               setShowEditEventDialog(true);

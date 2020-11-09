@@ -64,8 +64,8 @@ const Resources = withTheme((props) => {
 
   useEffect(() => {
     const asyncFunction = async () => {
-      const admin = await Resource.isAdmin();
-      setPermissions({ admin: admin });
+      const newPermissions = await Resource.getPermissions();
+      setPermissions(newPermissions);
     };
     asyncFunction();
   }, []);
@@ -171,7 +171,7 @@ const Resources = withTheme((props) => {
                             <LanguageIcon />
                           </ListItemIcon>
                           <ListItemText primary={resource.name} />
-                          {permissions.admin && (
+                          {permissions.admins && (
                             <ListItemSecondaryAction>
                               <IconButton
                                 onClick={editClickHandler.bind(this, resource)}
@@ -199,7 +199,7 @@ const Resources = withTheme((props) => {
           </CardContent>
         </Card>
       </Container>
-      {permissions.admin && (
+      {permissions.admins && (
         <FloatingActionButton
           style={{ zIndex: 100 }}
           color='primary'

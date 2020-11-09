@@ -27,20 +27,20 @@ const Promotions = (props) => {
   const [promotionIds, setPromotionIds] = useState();
   const [activePromotionId, setActivePromotionId] = useState(null);
   const [showNewPromotionDialog, setShowNewPromotionDialog] = useState(false);
-  const [isAdmin, setIsAdmin] = useState();
+  const [permissions, setPermissions] = useState();
 
   //Mount and dismount, get admin status
   useEffect(() => {
     const asyncFunction = async () => {
-      const newIsAdmin = await Promotion.isAdmin();
-      setIsAdmin(newIsAdmin);
+      const newPermissions = await Promotion.getPermissions();
+      setPermissions(newPermissions);
     };
     asyncFunction();
   }, []);
-  //Effect after checking isAdmin
+  //Effect after checking permissions
   useEffect(() => {
     let collectionDataListener;
-    if (isAdmin !== undefined) {
+    if (permissions !== undefined) {
       collectionDataListener = CollectionData.getListener(
         'promotions'
       ).onSnapshot((snapshot) => {
@@ -56,7 +56,7 @@ const Promotions = (props) => {
         collectionDataListener();
       }
     };
-  }, [dispatch, isAdmin]);
+  }, [dispatch, permissions]);
   //If collectionData changes, update the data source
   useEffect(() => {
     if (collectionData) {
@@ -126,7 +126,7 @@ const Promotions = (props) => {
                     promotionId={promotionId}
                     setActivePromotionId={setActivePromotionId}
                     scroll={scroll}
-                    isAdmin={isAdmin}
+                    permissions={permissions}
                   />
                 </Grid>
               );
@@ -148,7 +148,7 @@ const Promotions = (props) => {
           </Grid>
         </Grid>
       </Container>
-      {isAdmin && (
+      {permissions?.admins && (
         <FloatingActionButton
           style={{ zIndex: 100 }}
           color='primary'

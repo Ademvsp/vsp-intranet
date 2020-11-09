@@ -139,7 +139,7 @@ const NewEventDialog = withTheme((props) => {
       //If Annual Leave or Other Leave, and not Admin, push to Leave Request Page
       const isLeaveType =
         type.name === ANNUAL_LEAVE || type.name === OTHER_LEAVE;
-      const isAdmin = permissions.admin;
+      const isAdmin = permissions.admins;
       if (isLeaveType && !isAdmin) {
         const message = new Message({
           title: 'Staff Calendar',
@@ -162,13 +162,13 @@ const NewEventDialog = withTheme((props) => {
 
   const userField = () => {
     let usersSource = activeUsers;
-    if (permissions.manager) {
+    if (permissions.managers) {
       usersSource = activeUsers.filter(
         (user) =>
           user.manager === authUser.userId || user.userId === authUser.userId
       );
     }
-    if (permissions.admin) {
+    if (permissions.admins) {
       //If admin user & manager, admin gets priority
       usersSource = activeUsers;
     }
@@ -206,7 +206,7 @@ const NewEventDialog = withTheme((props) => {
       </TextField>
     );
   };
-  const showUserField = permissions.admin || permissions.manager;
+  const showUserField = permissions.admins || permissions.managers;
 
   const tempEvent = new Event({
     details: formik.values.details,

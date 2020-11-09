@@ -1,5 +1,6 @@
 import { REQUESTED } from '../data/leave-request-status-types';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
+import Permission from './permission';
 const collectionRef = firebase.firestore().collection('leave-requests');
 
 export default class LeaveRequest {
@@ -106,25 +107,13 @@ export default class LeaveRequest {
     });
   }
 
-  static async getAdmins() {
-    const collection = await firebase
-      .firestore()
-      .collection('permissions')
-      .doc('leave-requests')
-      .collection('admins')
-      .get();
-    return collection.docs.map((doc) => doc.id);
-  }
-
-  static async isAdmin() {
-    const docRef = await firebase
-      .firestore()
-      .collection('permissions')
-      .doc('leave-requests')
-      .collection('admins')
-      .doc(firebase.auth().currentUser.uid)
-      .get();
-    return docRef.exists;
+  static async getPermissions() {
+    const userId = firebase.auth().currentUser.uid;
+    const permissions = await Permission.get('leave-requests');
+    for (const group in permissions.groups) {
+      permissions.groups[group] = permissions.groups[group].includes(userId);
+    }
+    return permissions.groups;
   }
 
   static getListener(leaveRequestId) {

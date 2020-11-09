@@ -36,24 +36,25 @@ const ExpenseClaims = (props) => {
   const [activeExpenseClaimId, setActiveExpenseClaimId] = useState(null);
 
   const [loading, setLoading] = useState(false);
-  const [isAdmin, setIsAdmin] = useState();
+  const [permissions, setPermissions] = useState();
+
   const [showNewExpenseClaimDialog, setShowNewExpenseClaimDialog] = useState(
     false
   );
   //Mount and dismount, get admin status
   useEffect(() => {
     const asyncFunction = async () => {
-      const newIsAdmin = await ExpenseClaim.isAdmin();
-      setIsAdmin(newIsAdmin);
+      const newPermissions = await ExpenseClaim.getPermissions();
+      setPermissions(newPermissions);
     };
     asyncFunction();
   }, []);
   //Get expense claims based on user
   useEffect(() => {
     let collectionDataListener;
-    if (isAdmin !== undefined) {
+    if (permissions !== undefined) {
       let listenerRef;
-      if (isAdmin) {
+      if (permissions.admins) {
         //Get all documents
         listenerRef = CollectionData.getListener('expense-claims');
       } else {
@@ -83,7 +84,7 @@ const ExpenseClaims = (props) => {
         collectionDataListener();
       }
     };
-  }, [dispatch, isAdmin, userId]);
+  }, [dispatch, permissions, userId]);
   //If results change or collectionData changes, update the data source
   useEffect(() => {
     if (collectionData) {
@@ -171,7 +172,7 @@ const ExpenseClaims = (props) => {
                     expenseClaimId={expenseClaimId}
                     setActiveExpenseClaimId={setActiveExpenseClaimId}
                     scroll={scroll}
-                    isAdmin={isAdmin}
+                    permissions={permissions}
                   />
                 </Grid>
               );

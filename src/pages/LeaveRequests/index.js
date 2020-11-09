@@ -30,7 +30,7 @@ const LeaveRequests = (props) => {
   const [leaveRequestIds, setLeaveRequestIds] = useState();
   const [activeLeaveRequestId, setActiveLeaveRequestId] = useState(null);
 
-  const [isAdmin, setIsAdmin] = useState();
+  const [permissions, setPermissions] = useState();
   const [showNewLeaveRequestDialog, setShowNewLeaveRequestDialog] = useState(
     false
   );
@@ -38,8 +38,8 @@ const LeaveRequests = (props) => {
   //Mount and dismount, get admin status
   useEffect(() => {
     const asyncFunction = async () => {
-      const newIsAdmin = await LeaveRequest.isAdmin();
-      setIsAdmin(newIsAdmin);
+      const newPermissions = await LeaveRequest.getPermissions();
+      setPermissions(newPermissions);
     };
     asyncFunction();
   }, []);
@@ -48,7 +48,7 @@ const LeaveRequests = (props) => {
     let collectionDataListener;
     const asyncFunction = async () => {
       let listenerRef;
-      if (isAdmin) {
+      if (permissions.admins) {
         //Get all documents
         listenerRef = CollectionData.getListener('leave-requests');
       } else {
@@ -73,7 +73,7 @@ const LeaveRequests = (props) => {
         setCollectionData(newCollectionData);
       });
     };
-    if (isAdmin !== undefined) {
+    if (permissions !== undefined) {
       asyncFunction();
     }
     return () => {
@@ -81,7 +81,7 @@ const LeaveRequests = (props) => {
         collectionDataListener();
       }
     };
-  }, [dispatch, isAdmin, userId]);
+  }, [dispatch, permissions, userId]);
   //If results change or collectionData changes, update the data source
   useEffect(() => {
     if (collectionData) {

@@ -30,7 +30,7 @@ const ProductRequests = (props) => {
   const [productRequestIds, setProductRequestIds] = useState();
   const [activeProductRequestId, setActiveProductRequestId] = useState(null);
 
-  const [isAdmin, setIsAdmin] = useState();
+  const [permissions, setPermissions] = useState();
   const [
     showNewProductRequestDialog,
     setShowNewProductRequestDialog
@@ -39,8 +39,8 @@ const ProductRequests = (props) => {
   //Mount and dismount, get admin status
   useEffect(() => {
     const asyncFunction = async () => {
-      const newIsAdmin = await ProductRequest.isAdmin();
-      setIsAdmin(newIsAdmin);
+      const newPermissions = await ProductRequest.getPermissions();
+      setPermissions(newPermissions);
     };
     asyncFunction();
   }, []);
@@ -49,7 +49,7 @@ const ProductRequests = (props) => {
     let collectionDataListener;
     const asyncFunction = async () => {
       let listenerRef;
-      if (isAdmin) {
+      if (permissions.admins) {
         //Get all documents
         listenerRef = CollectionData.getListener('product-requests');
       } else {
@@ -74,7 +74,7 @@ const ProductRequests = (props) => {
         setCollectionData(newCollectionData);
       });
     };
-    if (isAdmin !== undefined) {
+    if (permissions !== undefined) {
       asyncFunction();
     }
     return () => {
@@ -82,7 +82,7 @@ const ProductRequests = (props) => {
         collectionDataListener();
       }
     };
-  }, [dispatch, isAdmin, userId]);
+  }, [dispatch, permissions, userId]);
   //If results change or collectionData changes, update the data source
   useEffect(() => {
     if (collectionData) {
@@ -152,7 +152,7 @@ const ProductRequests = (props) => {
                     productRequestId={productRequestId}
                     setActiveProductRequestId={setActiveProductRequestId}
                     scroll={scroll}
-                    isAdmin={isAdmin}
+                    permissions={permissions}
                   />
                 </Grid>
               );

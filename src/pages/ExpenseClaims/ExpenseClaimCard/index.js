@@ -36,7 +36,12 @@ const ExpenseClaimCard = withTheme((props) => {
   const scrollRef = useRef();
   const { authUser } = useSelector((state) => state.authState);
   const { users } = useSelector((state) => state.dataState);
-  const { expenseClaimId, scroll, setActiveExpenseClaimId, isAdmin } = props;
+  const {
+    expenseClaimId,
+    scroll,
+    setActiveExpenseClaimId,
+    permissions
+  } = props;
   const [expenseClaim, setExpenseClaim] = useState();
   const [showComments, setShowComments] = useState(false);
   const mobile = useMediaQuery('(max-width: 767px)');
@@ -205,7 +210,7 @@ const ExpenseClaimCard = withTheme((props) => {
               <ActionButtons
                 expenseClaim={expenseClaim}
                 user={user}
-                isAdmin={isAdmin}
+                permissions={permissions}
                 isManager={authUser.userId === expenseClaim.manager}
               />
             </Grid>

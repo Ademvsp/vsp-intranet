@@ -11,6 +11,7 @@ import {
 } from '../data/event-types';
 import { CREATE, DELETE, UPDATE } from '../utils/actions';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
+import Permission from './permission';
 const collectionRef = firebase.firestore().collection('events-new');
 export default class Event {
   constructor({
@@ -84,26 +85,13 @@ export default class Event {
     }
   }
 
-  static async isAdmin() {
-    const docRef = await firebase
-      .firestore()
-      .collection('permissions')
-      .doc('events')
-      .collection('admins')
-      .doc(firebase.auth().currentUser.uid)
-      .get();
-    return docRef.exists;
-  }
-
-  static async isManager() {
-    const docRef = await firebase
-      .firestore()
-      .collection('permissions')
-      .doc('events')
-      .collection('managers')
-      .doc(firebase.auth().currentUser.uid)
-      .get();
-    return docRef.exists;
+  static async getPermissions() {
+    const userId = firebase.auth().currentUser.uid;
+    const permissions = await Permission.get('events');
+    for (const group in permissions.groups) {
+      permissions.groups[group] = permissions.groups[group].includes(userId);
+    }
+    return permissions.groups;
   }
 
   static async get(eventId) {

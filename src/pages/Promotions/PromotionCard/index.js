@@ -36,7 +36,7 @@ const PromotionCard = withTheme((props) => {
   const scrollRef = useRef();
   const { authUser } = useSelector((state) => state.authState);
   const { users } = useSelector((state) => state.dataState);
-  const { promotionId, scroll, setActivePromotionId, isAdmin } = props;
+  const { promotionId, scroll, setActivePromotionId, permissions } = props;
   const [loading, setLoading] = useState(false);
   const [promotion, setPromotion] = useState();
   const [showComments, setShowComments] = useState(false);
@@ -212,10 +212,10 @@ const PromotionCard = withTheme((props) => {
           }}
           subheader={promotion.title}
           action={
-            isAdmin ? (
+            permissions.admins ? (
               <PromotionCardMenu
                 promotion={promotion}
-                isAdmin={isAdmin}
+                permissions={permissions}
                 setShowEditPromotionDialog={setShowEditPromotionDialog}
                 setShowDeleteConfirmDialog={setShowDeleteConfirmDialog}
               />

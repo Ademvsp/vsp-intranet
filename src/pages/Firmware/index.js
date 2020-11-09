@@ -29,8 +29,9 @@ const FirmwarePage = (props) => {
 
   useEffect(() => {
     const asyncFunction = async () => {
-      const admin = await Firmware.isAdmin();
-      setPermissions({ admin: admin });
+      const newPermissions = await Firmware.getPermissions();
+      console.log(newPermissions);
+      setPermissions(newPermissions);
     };
     asyncFunction();
   }, []);
@@ -70,10 +71,10 @@ const FirmwarePage = (props) => {
           (firmware) => firmware.firmwareId === params.firmwareId
         );
         if (newSelectedFirmware) {
-          if (permissions.admin || userId === newSelectedFirmware.user) {
-            setShowViewFirmwareDialog(true);
-          } else {
+          if (permissions.admins || userId === newSelectedFirmware.user) {
             setShowEditFirmwareDialog(true);
+          } else {
+            setShowViewFirmwareDialog(true);
           }
           setSelectedFirmware(newSelectedFirmware);
         } else {

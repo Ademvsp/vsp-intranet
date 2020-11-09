@@ -203,13 +203,13 @@ const EditEventDialog = withTheme((props) => {
 
   const userField = () => {
     let usersSource = activeUsers;
-    if (permissions.manager) {
+    if (permissions.managers) {
       usersSource = activeUsers.filter(
         (user) =>
           user.manager === authUser.userId || user.userId === authUser.userId
       );
     }
-    if (permissions.admin) {
+    if (permissions.admins) {
       //If admin user & manager, admin gets priority
       usersSource = activeUsers;
     }
@@ -247,7 +247,7 @@ const EditEventDialog = withTheme((props) => {
       </TextField>
     );
   };
-  const showUserField = permissions.admin || permissions.manager;
+  const showUserField = permissions.admins || permissions.managers;
 
   const tempEvent = new Event({
     details: formik.values.details,

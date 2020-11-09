@@ -15,7 +15,7 @@ const PostCardMenu = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const {
     promotion,
-    isAdmin,
+    permissions,
     setShowEditPromotionDialog,
     setShowDeleteConfirmDialog
   } = props;
@@ -64,10 +64,10 @@ const PostCardMenu = (props) => {
         onClose={() => setAnchorEl(null)}
       >
         <MenuItem onClick={copyClickHandler}>Copy direct link</MenuItem>
-        {isAdmin && (
+        {permissions.admins && (
           <MenuItem onClick={editClickHandler}>Edit promotion</MenuItem>
         )}
-        {isAdmin && (
+        {permissions.admins && (
           <MenuItem onClick={deleteClickHandler}>Delete promotion</MenuItem>
         )}
       </Menu>

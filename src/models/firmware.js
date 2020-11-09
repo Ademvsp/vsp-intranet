@@ -1,5 +1,6 @@
 import { CREATE, UPDATE } from '../utils/actions';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
+import Permission from './permission';
 const collectionRef = firebase.firestore().collection('firmwares-new');
 
 export default class Firmware {
@@ -33,6 +34,15 @@ export default class Firmware {
 
   static getListener() {
     return collectionRef.orderBy('metadata.createdAt', 'desc');
+  }
+
+  static async getPermissions() {
+    const userId = firebase.auth().currentUser.uid;
+    const permissions = await Permission.get('firmwares');
+    for (const group in permissions.groups) {
+      permissions.groups[group] = permissions.groups[group].includes(userId);
+    }
+    return permissions.groups;
   }
 
   static async isAdmin() {
