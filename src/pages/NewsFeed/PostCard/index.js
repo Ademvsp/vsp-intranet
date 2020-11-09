@@ -10,7 +10,8 @@ import {
   withTheme,
   Grid,
   Badge,
-  Tooltip
+  Tooltip,
+  Card
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
@@ -27,7 +28,6 @@ import ThumbUpRoundedIcon from '@material-ui/icons/ThumbUpRounded';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import scrollToComponent from 'react-scroll-to-component';
 import PostCardMenu from './PostCardMenu';
-import Card from '../../../components/Card';
 import { LONG_DATE_TIME } from '../../../utils/date';
 import { addComment } from '../../../store/actions/post';
 

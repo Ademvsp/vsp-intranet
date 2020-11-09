@@ -1,6 +1,5 @@
 import React from 'react';
-import Card from '../../components/Card';
-import { CardContent, Container } from '@material-ui/core';
+import { Card, CardContent, Container } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import Avatar from './AccountAvatar';
 import Settings from './Settings';

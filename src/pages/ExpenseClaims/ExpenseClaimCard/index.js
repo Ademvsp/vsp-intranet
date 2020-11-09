@@ -11,7 +11,8 @@ import {
   Grid,
   Badge,
   Tooltip,
-  useMediaQuery
+  useMediaQuery,
+  Card
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
@@ -19,7 +20,6 @@ import Comments from '../../../components/Comments';
 import { Skeleton } from '@material-ui/lab';
 import Avatar from '../../../components/Avatar';
 import scrollToComponent from 'react-scroll-to-component';
-import Card from '../../../components/Card';
 import { LONG_DATE_TIME } from '../../../utils/date';
 import ExpenseClaimTable from './ExpenseClaimTable';
 import ActionButtons from './ActionButtons';

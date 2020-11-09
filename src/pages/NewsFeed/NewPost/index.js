@@ -1,13 +1,18 @@
 import React, { Fragment, useState } from 'react';
 import { StyledChip } from '../styled-components';
-import { Grid, CardContent, IconButton, Tooltip } from '@material-ui/core';
+import {
+  Grid,
+  CardContent,
+  IconButton,
+  Tooltip,
+  Card
+} from '@material-ui/core';
 import Avatar from '../../../components/Avatar';
 import { useSelector } from 'react-redux';
 import { Search as SearchIcon, Clear as ClearIcon } from '@material-ui/icons';
 import NewPostDialog from './NewPostDialog';
 import SearchPostDialog from './SearchPostDialog';
 import { useHistory } from 'react-router-dom';
-import Card from '../../../components/Card';
 import FloatingActionButton from '../../../components/FloatingActionButton';
 import AddIcon from '@material-ui/icons/Add';
 

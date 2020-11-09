@@ -4,10 +4,10 @@ import { Snackbar as MaterialSnackbar } from '@material-ui/core';
 
 // eslint-disable-next-line no-unused-vars
 const Snackbar = styled(({ hover, ...otherProps }) => (
-	<MaterialSnackbar {...otherProps} />
+  <MaterialSnackbar {...otherProps} />
 ))`
-	&:hover {
-		cursor: ${(props) => (props.hover ? 'pointer' : 'default')};
-	}
+  &:hover {
+    cursor: ${(props) => (props.hover ? 'pointer' : 'default')};
+  }
 `;
 export default Snackbar;

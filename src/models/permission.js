@@ -7,6 +7,17 @@ export default class Permission {
     this.groups = groups;
   }
 
+  static getListener() {
+    return firebase.firestore().collection('permissions');
+  }
+
+  static async set(collection, group, members) {
+    await collectionRef.doc(collection).update({
+      [group]: members
+    });
+    return true;
+  }
+
   static async get(collection) {
     const doc = await collectionRef.doc(collection).get();
     const permission = new Permission({
@@ -19,7 +30,7 @@ export default class Permission {
   static async getAll() {
     const collection = await collectionRef.get();
     const permissions = collection.docs.map(
-      (doc) => new Permission({ collection: doc.id, ...doc.data() })
+      (doc) => new Permission({ collection: doc.id, groups: doc.data() })
     );
     return permissions;
   }

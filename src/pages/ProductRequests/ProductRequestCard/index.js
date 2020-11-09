@@ -10,7 +10,8 @@ import {
   withTheme,
   Grid,
   Badge,
-  Tooltip
+  Tooltip,
+  Card
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
@@ -20,8 +21,6 @@ import { Skeleton } from '@material-ui/lab';
 import AttachmentsContainer from '../../../components/AttachmentsContainer';
 import Avatar from '../../../components/Avatar';
 import scrollToComponent from 'react-scroll-to-component';
-// import PostCardMenu from './PostCardMenu';
-import Card from '../../../components/Card';
 import { LONG_DATE_TIME } from '../../../utils/date';
 import ProductRequestForm from './ProductRequestForm';
 import ActionButtons from './ActionButtons';

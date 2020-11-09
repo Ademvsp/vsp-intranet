@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
-  Button,
   List,
   ListItemAvatar,
   ListItemText,
@@ -14,29 +13,41 @@ import {
   ListItem,
   DialogContent
 } from '@material-ui/core';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { AvatarGroup } from '@material-ui/lab';
-import Avatar from '../Avatar';
+import Avatar from '../../../../components/Avatar';
+import { setPermissions } from '../../../../store/actions/permission';
+import ActionsBar from '../../../../components/ActionsBar';
 
-const NotifyUsersList = withTheme((props) => {
-  const { open, close, notifyUsers, setNotifyUsers } = props;
-  const { activeUsers: users } = useSelector((state) => state.dataState);
-  const [checkedUsers, setCheckedUsers] = useState([]);
-
-  useEffect(() => {
-    if (notifyUsers) {
-      setCheckedUsers(notifyUsers);
-    }
-  }, [open, notifyUsers]);
+const MembersDialog = withTheme((props) => {
+  const { open, close, selectedPermission } = props;
+  const { users } = useSelector((state) => state.dataState);
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState();
+  const [checkedUsers, setCheckedUsers] = useState(
+    selectedPermission.members.map((member) => member.userId)
+  );
 
   const closeHandler = () => {
-    close();
+    if (!loading) {
+      close();
+    }
   };
 
-  const confirmClickHandler = () => {
-    setNotifyUsers(checkedUsers);
-    setCheckedUsers([]);
-    close();
+  const confirmClickHandler = async () => {
+    setLoading(true);
+    const result = await dispatch(
+      setPermissions(
+        selectedPermission.collection,
+        selectedPermission.group,
+        checkedUsers
+      )
+    );
+    setLoading(false);
+    if (result) {
+      setCheckedUsers([]);
+      close();
+    }
   };
 
   const checkHandler = (userId, checked) => () => {
@@ -131,19 +142,17 @@ const NotifyUsersList = withTheme((props) => {
         </List>
       </DialogContent>
       <DialogActions>
-        <Button onClick={closeHandler} color='primary' variant='outlined'>
-          Cancel
-        </Button>
-        <Button
+        <ActionsBar
+          buttonLoading={loading}
+          disabled={loading}
+          isValid={true}
           onClick={confirmClickHandler}
-          color='primary'
-          variant='contained'
-        >
-          Confirm
-        </Button>
+          tooltipPlacement='top'
+          actionButtonText='Update'
+        />
       </DialogActions>
     </Dialog>
   );
 });
 
-export default NotifyUsersList;
+export default MembersDialog;

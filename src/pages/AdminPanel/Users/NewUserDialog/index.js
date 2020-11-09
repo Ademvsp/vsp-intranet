@@ -74,7 +74,6 @@ const NewUserDialog = withTheme((props) => {
   const submitHandler = async (values) => {
     setLoading(true);
     const result = await dispatch(addUser(values));
-    console.log(result);
     setLoading(false);
     if (result) {
       formik.setValues(initialValues, true);

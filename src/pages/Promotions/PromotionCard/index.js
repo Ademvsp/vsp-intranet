@@ -10,7 +10,8 @@ import {
   withTheme,
   Grid,
   Badge,
-  Tooltip
+  Tooltip,
+  Card
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { format, startOfDay } from 'date-fns';
@@ -18,7 +19,6 @@ import Comments from '../../../components/Comments';
 import { Skeleton } from '@material-ui/lab';
 import Avatar from '../../../components/Avatar';
 import scrollToComponent from 'react-scroll-to-component';
-import Card from '../../../components/Card';
 import { LONG_DATE } from '../../../utils/date';
 import AttachmentsContainer from '../../../components/AttachmentsContainer';
 import CommentOutlinedIcon from '@material-ui/icons/CommentOutlined';

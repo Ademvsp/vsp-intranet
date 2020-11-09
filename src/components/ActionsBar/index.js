@@ -5,7 +5,8 @@ import {
   IconButton,
   Badge,
   Button,
-  withTheme
+  withTheme,
+  CircularProgress
 } from '@material-ui/core';
 import ProgressWithLabel from '../ProgressWithLabel';
 import { useSelector } from 'react-redux';
@@ -16,7 +17,6 @@ import {
 } from '@material-ui/icons';
 import NotifyUsersList from '../NotifyUsersList';
 import AttachmentsDropzone from '../AttachmentsDropZone';
-import { StyledButtonProgress } from './styled-components';
 
 const ActionsBar = withTheme((props) => {
   const { users } = useSelector((state) => state.dataState);
@@ -168,8 +168,8 @@ const ActionsBar = withTheme((props) => {
                 </Tooltip>
               )}
               <NotifyUsersList
-                setNotifyUsersOpen={setNotifyUsersOpen}
-                notifyUsersOpen={notifyUsersOpen}
+                close={() => setNotifyUsersOpen(false)}
+                open={notifyUsersOpen}
                 setNotifyUsers={notifications.setNotifyUsers}
                 notifyUsers={notifications.notifyUsers}
               />
@@ -225,7 +225,10 @@ const ActionsBar = withTheme((props) => {
                   {additionalButton.buttonText}
                 </Button>
                 {additionalButton.buttonLoading && (
-                  <StyledButtonProgress size={25} />
+                  <CircularProgress
+                    style={{ position: 'absolute' }}
+                    size={25}
+                  />
                 )}
               </Grid>
             ))}
@@ -244,7 +247,9 @@ const ActionsBar = withTheme((props) => {
             >
               {actionButtonText}
             </Button>
-            {buttonLoading && <StyledButtonProgress size={25} />}
+            {buttonLoading && (
+              <CircularProgress style={{ position: 'absolute' }} size={25} />
+            )}
           </Grid>
         </Grid>
       </Grid>

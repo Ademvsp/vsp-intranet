@@ -1,7 +1,6 @@
 import styled from 'styled-components';
-import { Card as MaterialCard } from '@material-ui/core';
+import { Card, Card as MaterialCard } from '@material-ui/core';
 import colors from '../../utils/colors';
-import Card from '../../components/Card';
 
 export const StyledCalendarCard = styled(MaterialCard)`
   padding: 16px;
@@ -24,6 +23,7 @@ export const StyledCalendarCard = styled(MaterialCard)`
 
 export const StyledSidePanelCard = styled(Card)`
   width: 350px;
+  height: ${window.innerHeight - 200}px;
   @media (max-width: 767px) {
     width: ${window.innerWidth * 0.9}px;
   }

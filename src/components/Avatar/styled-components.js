@@ -10,23 +10,23 @@ const HEIGHT = 40; //px
 
 // eslint-disable-next-line no-unused-vars
 export const StyledAvatar = styled(
-	({
-		darkMode,
-		clickable,
-		contactCard,
-		iconFallback,
-		customFallback,
-		...otherProps
-	}) => <Avatar {...otherProps} />
+  ({
+    darkMode,
+    clickable,
+    contactCard,
+    iconFallback,
+    customFallback,
+    ...otherProps
+  }) => <Avatar {...otherProps} />
 )`
-	width: ${(props) => props.size && `${WIDTH * props.size}px`};
-	height: ${(props) => props.size && `${HEIGHT * props.size}px`};
-	font-size: ${(props) => props.size && `${FONT_SIZE * props.size}rem`};
-	background-color: ${(props) =>
-		props.darkMode
-			? colors.default.secondary.light
-			: colors.default.secondary.dark};
-	&:hover {
-		cursor: ${(props) => props.clickable && 'pointer'};
-	}
+  width: ${(props) => props.size && `${WIDTH * props.size}px`};
+  height: ${(props) => props.size && `${HEIGHT * props.size}px`};
+  font-size: ${(props) => props.size && `${FONT_SIZE * props.size}rem`};
+  background-color: ${(props) =>
+    props.darkMode
+      ? colors.default.secondary.light
+      : colors.default.secondary.dark};
+  &:hover {
+    cursor: ${(props) => props.clickable && 'pointer'};
+  }
 `;

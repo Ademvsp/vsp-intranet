@@ -30,7 +30,6 @@ const FirmwarePage = (props) => {
   useEffect(() => {
     const asyncFunction = async () => {
       const newPermissions = await Firmware.getPermissions();
-      console.log(newPermissions);
       setPermissions(newPermissions);
     };
     asyncFunction();
