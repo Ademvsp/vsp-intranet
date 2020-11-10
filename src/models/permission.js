@@ -15,7 +15,6 @@ export default class Permission {
     await collectionRef.doc(collection).update({
       [group]: members
     });
-    return true;
   }
 
   static async get(collection) {

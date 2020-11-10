@@ -14,9 +14,6 @@ import AuthUser from '../../models/auth-user';
 import Message from '../../models/message';
 import { unsubscribeNotificationsListener } from './notification';
 import { unsubscribeUsersListener } from '../../store/actions/user';
-import * as pictureUtils from '../../utils/picture-utils';
-import * as fileUtils from '../../utils/file-utils';
-
 let authUserListener;
 
 export const verifyAuth = () => {
@@ -183,6 +180,7 @@ export const updateSettings = (settings) => {
       const { authUser } = getState().authState;
       const newAuthUser = new AuthUser({ ...authUser, settings });
       await newAuthUser.save();
+      return true;
     } catch (error) {
       const message = new Message({
         title: 'Update Settings',
@@ -193,6 +191,7 @@ export const updateSettings = (settings) => {
         type: SET_MESSAGE,
         message
       });
+      return false;
     }
   };
 };
@@ -201,17 +200,11 @@ export const uploadPicture = (file) => {
   return async (dispatch, getState) => {
     try {
       const { authUser } = getState().authState;
-      const profilePicture = await pictureUtils.upload({
-        file: file,
-        collection: 'users',
-        collectionId: authUser.userId,
-        folder: 'profilePicture'
-      });
       const newAuthUser = new AuthUser({
-        ...authUser,
-        profilePicture: profilePicture
+        ...authUser
       });
-      await newAuthUser.save();
+      await newAuthUser.uploadProfilePicture(file);
+      return true;
     } catch (error) {
       const message = new Message({
         title: 'Profile Picture',
@@ -222,6 +215,7 @@ export const uploadPicture = (file) => {
         type: SET_MESSAGE,
         message
       });
+      return false;
     }
   };
 };
@@ -229,13 +223,12 @@ export const uploadPicture = (file) => {
 export const removePicture = () => {
   return async (dispatch, getState) => {
     try {
-      const authUser = getState().authState.authUser;
-      await fileUtils.removeAll(`users/${authUser.userId}/profilePicture`);
+      const { authUser } = getState().authState;
       const newAuthUser = new AuthUser({
-        ...authUser,
-        profilePicture: ''
+        ...authUser
       });
-      await newAuthUser.save();
+      await newAuthUser.removeProfilePicture();
+      return true;
     } catch (error) {
       const message = new Message({
         title: 'Profile Picture',
@@ -246,6 +239,7 @@ export const removePicture = () => {
         type: SET_MESSAGE,
         message
       });
+      return false;
     }
   };
 };

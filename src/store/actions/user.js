@@ -105,7 +105,8 @@ export const unsubscribeUsersListener = () => {
 export const getUserAuthData = (userId) => {
   return async (dispatch, _getState) => {
     try {
-      return await User.getUserAuthData(userId);
+      const userAuthData = await User.getUserAuthData(userId);
+      return userAuthData;
     } catch (error) {
       const message = new Message({
         title: 'Admin Panel',
@@ -172,7 +173,22 @@ export const addUser = (values) => {
         location: values.location,
         manager: values.manager
       };
-      return await User.create(updatedValues);
+      await User.create(updatedValues);
+      const message = new Message({
+        title: 'Admin Panel',
+        body: 'User added successfully',
+        feedback: SNACKBAR,
+        options: {
+          duration: 5000,
+          variant: SNACKBAR_VARIANTS.FILLED,
+          severity: SNACKBAR_SEVERITY.SUCCESS
+        }
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        message
+      });
+      return true;
     } catch (error) {
       const message = new Message({
         title: 'Admin Panel',
@@ -203,8 +219,22 @@ export const editUser = (userId, values) => {
         location: values.location,
         manager: values.manager
       };
-      const result = await User.update(userId, updatedValues);
-      return result;
+      await User.update(userId, updatedValues);
+      const message = new Message({
+        title: 'Admin Panel',
+        body: 'User edited successfully',
+        feedback: SNACKBAR,
+        options: {
+          duration: 5000,
+          variant: SNACKBAR_VARIANTS.FILLED,
+          severity: SNACKBAR_SEVERITY.SUCCESS
+        }
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        message
+      });
+      return true;
     } catch (error) {
       const message = new Message({
         title: 'Admin Panel',

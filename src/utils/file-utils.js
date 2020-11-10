@@ -102,12 +102,3 @@ export const upload = ({ files, collection, collectionId, folder }) => {
     }
   };
 };
-
-export const removeAll = async (path) => {
-  const listAll = await firebase.storage().ref(path).listAll();
-  const promises = [];
-  for (const item of listAll.items) {
-    promises.push(firebase.storage().ref().child(item.fullPath).delete());
-  }
-  await Promise.all(promises);
-};

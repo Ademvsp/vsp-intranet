@@ -1,4 +1,9 @@
-import { DIALOG } from '../../utils/constants';
+import {
+  DIALOG,
+  SNACKBAR,
+  SNACKBAR_SEVERITY,
+  SNACKBAR_VARIANTS
+} from '../../utils/constants';
 import { SET_MESSAGE } from '../../utils/actions';
 import Message from '../../models/message';
 import Permission from '../../models/permission';
@@ -25,8 +30,22 @@ export const getPermissions = () => {
 export const setPermissions = (collection, group, members) => {
   return async (dispatch, _getState) => {
     try {
-      const result = await Permission.set(collection, group, members);
-      return result;
+      await Permission.set(collection, group, members);
+      const message = new Message({
+        title: 'Admin Panel',
+        body: 'Permission set successfully',
+        feedback: SNACKBAR,
+        options: {
+          duration: 5000,
+          variant: SNACKBAR_VARIANTS.FILLED,
+          severity: SNACKBAR_SEVERITY.SUCCESS
+        }
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        message
+      });
+      return true;
     } catch (error) {
       const message = new Message({
         title: 'Admin Panel',

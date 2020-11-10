@@ -6,94 +6,95 @@ import { StyledAvatar } from './styled-components';
 import { removePicture, uploadPicture } from '../../../store/actions/auth-user';
 
 const AccountAvatar = (props) => {
-	const authUser = props.authUser;
-	const fileInputRef = useRef();
-	const dispatch = useDispatch();
-	const [loading, setLoading] = useState(false);
-	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-	const [anchorElement, setAnchorElement] = useState(null);
+  const authUser = props.authUser;
+  const fileInputRef = useRef();
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [anchorElement, setAnchorElement] = useState(null);
 
-	const menuCloseHandler = () => {
-		setAnchorElement(null);
-	};
+  const menuCloseHandler = () => {
+    setAnchorElement(null);
+  };
 
-	const removeClickHandler = () => {
-		setShowConfirmDialog(true);
-		menuCloseHandler();
-	};
+  const removeClickHandler = () => {
+    setShowConfirmDialog(true);
+    menuCloseHandler();
+  };
 
-	const uploadClickHandler = () => {
-		fileInputRef.current.click();
-		menuCloseHandler();
-	};
+  const uploadClickHandler = () => {
+    fileInputRef.current.click();
+    menuCloseHandler();
+  };
 
-	const cancelClickHandler = () => {
-		setShowConfirmDialog(false);
-	};
+  const cancelClickHandler = () => {
+    setShowConfirmDialog(false);
+  };
 
-	const confirmClickHandler = async () => {
-		setLoading(true);
-		await dispatch(removePicture());
-		setLoading(false);
-		setShowConfirmDialog(false);
-	};
+  const confirmClickHandler = async () => {
+    setLoading(true);
+    await dispatch(removePicture());
+    setLoading(false);
+    setShowConfirmDialog(false);
+  };
 
-	const fileSelectedHandler = async (event) => {
-		setLoading(true);
-		const files = [...event.target.files];
-		if (files.length === 1) {
-			await dispatch(uploadPicture(files[0]));
-		}
-		setLoading(false);
-		fileInputRef.current.value = null;
-	};
+  const fileSelectedHandler = async (event) => {
+    setLoading(true);
+    const files = [...event.target.files];
+    if (files.length === 1) {
+      await dispatch(uploadPicture(files[0]));
+    }
+    setLoading(false);
+    fileInputRef.current.value = null;
+  };
 
-	return (
-		<Fragment>
-			<ConfirmDialog
-				open={showConfirmDialog}
-				cancel={cancelClickHandler}
-				confirm={confirmClickHandler}
-				title='Profile Picture'
-				message='Are you sure you want to remove your profile picture?'
-			/>
-			<StyledAvatar
-				user={authUser}
-				size={5}
-				clickable={true}
-				onClick={(event) => setAnchorElement(event.target)}
-				customFallback={loading ? <CircularProgress /> : null}
-			/>
+  return (
+    <Fragment>
+      <ConfirmDialog
+        open={showConfirmDialog}
+        cancel={cancelClickHandler}
+        confirm={confirmClickHandler}
+        title='Profile Picture'
+        message='Are you sure you want to remove your profile picture?'
+        loading={loading}
+      />
+      <StyledAvatar
+        user={authUser}
+        size={5}
+        clickable={true}
+        onClick={(event) => setAnchorElement(event.target)}
+        customFallback={loading ? <CircularProgress /> : null}
+      />
 
-			<input
-				type='file'
-				accept='image/*'
-				hidden
-				ref={fileInputRef}
-				onChange={fileSelectedHandler}
-			/>
+      <input
+        type='file'
+        accept='image/*'
+        hidden
+        ref={fileInputRef}
+        onChange={fileSelectedHandler}
+      />
 
-			<Menu
-				id='simple-menu'
-				anchorEl={anchorElement}
-				keepMounted
-				open={!!anchorElement}
-				onClose={menuCloseHandler}
-				anchorOrigin={{
-					vertical: 'bottom',
-					horizontal: 'right'
-				}}
-				transformOrigin={{
-					vertical: 'top',
-					horizontal: 'center'
-				}}
-				getContentAnchorEl={null}
-			>
-				<MenuItem onClick={uploadClickHandler}>Upload Picture</MenuItem>
-				<MenuItem onClick={removeClickHandler}>Remove Picture</MenuItem>
-			</Menu>
-		</Fragment>
-	);
+      <Menu
+        id='simple-menu'
+        anchorEl={anchorElement}
+        keepMounted
+        open={!!anchorElement}
+        onClose={menuCloseHandler}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right'
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center'
+        }}
+        getContentAnchorEl={null}
+      >
+        <MenuItem onClick={uploadClickHandler}>Upload Picture</MenuItem>
+        <MenuItem onClick={removeClickHandler}>Remove Picture</MenuItem>
+      </Menu>
+    </Fragment>
+  );
 };
 
 export default AccountAvatar;

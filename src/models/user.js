@@ -47,10 +47,9 @@ export default class User {
       .app()
       .functions(region)
       .httpsCallable('authFunctions-createUser');
-    const result = await functionRef({
+    await functionRef({
       values: values
     });
-    return result.data;
   }
 
   static async update(userId, values) {
@@ -58,11 +57,10 @@ export default class User {
       .app()
       .functions(region)
       .httpsCallable('authFunctions-updateUser');
-    const result = await functionRef({
+    await functionRef({
       userId: userId,
       values: values
     });
-    return result.data;
   }
 
   static async updatePassword(userId, password) {
@@ -70,11 +68,10 @@ export default class User {
       .app()
       .functions(region)
       .httpsCallable('authFunctions-updatePassword');
-    const result = await functionRef({
+    await functionRef({
       userId: userId,
       password: password
     });
-    return result.data;
   }
 
   static async revokeRefreshTokens(userId) {
