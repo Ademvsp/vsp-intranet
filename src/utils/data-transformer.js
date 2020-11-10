@@ -48,3 +48,12 @@ export const toReadableFilesize = (b) => {
   }
   return `${b} B`;
 };
+
+export const toTitleCase = (string) => {
+  return string
+    .split(' ')
+    .map(
+      (string) => string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
+    )
+    .join(' ');
+};

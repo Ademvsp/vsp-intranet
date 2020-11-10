@@ -1,6 +1,7 @@
 import { Card, Container, Tab, Tabs, useMediaQuery } from '@material-ui/core';
 import React from 'react';
 import { useState } from 'react';
+import Customers from './Customers';
 import Permissions from './Permissions';
 import Users from './Users';
 
@@ -8,7 +9,7 @@ const AdminPanel = (props) => {
   const tabs = [
     { name: 'Users', Component: Users },
     { name: 'Permissions', Component: Permissions },
-    { name: 'Customers', Component: null },
+    { name: 'Customers', Component: Customers },
     { name: 'Vendors', Component: null }
   ];
   const [activeTab, setActiveTab] = useState(0);

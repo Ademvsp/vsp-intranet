@@ -132,7 +132,7 @@ const Users = (props) => {
           },
           {
             icon: tableIcons.Edit,
-            tooltip: 'Edit Row',
+            tooltip: 'Edit User',
             onClick: editClickHandler
           },
           {

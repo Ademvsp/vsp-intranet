@@ -1,7 +1,12 @@
 import Customer from '../../models/customer';
 import Message from '../../models/message';
 import { SET_CUSTOMERS, SET_MESSAGE } from '../../utils/actions';
-import { SNACKBAR } from '../../utils/constants';
+import {
+  DIALOG,
+  SNACKBAR,
+  SNACKBAR_SEVERITY,
+  SNACKBAR_VARIANTS
+} from '../../utils/constants';
 
 let customersListener;
 
@@ -41,4 +46,38 @@ export const unsubscribeCustomerListener = () => {
   if (customersListener) {
     customersListener();
   }
+};
+
+export const addExternalCustomers = (values) => {
+  return async (dispatch, _getState) => {
+    try {
+      await Customer.saveAllExternal(values);
+      const message = new Message({
+        title: 'Admin Panel',
+        body: 'Customers added successfully',
+        feedback: SNACKBAR,
+        options: {
+          duration: 5000,
+          variant: SNACKBAR_VARIANTS.FILLED,
+          severity: SNACKBAR_SEVERITY.SUCCESS
+        }
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        message
+      });
+      return true;
+    } catch (error) {
+      const message = new Message({
+        title: 'Admin Panel',
+        body: 'Failed to add Customers',
+        feedback: DIALOG
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        message
+      });
+      return false;
+    }
+  };
 };

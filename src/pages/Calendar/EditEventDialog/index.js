@@ -443,7 +443,8 @@ const EditEventDialog = withTheme((props) => {
               {
                 buttonText: 'Delete',
                 onClick: () => setShowConfirmDialog(true),
-                buttonLoading: deleteLoading
+                buttonLoading: deleteLoading,
+                buttonDisabled: false
               }
             ]}
           />

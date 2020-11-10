@@ -68,7 +68,7 @@ const NotifyUsersList = withTheme((props) => {
   return (
     <Dialog open={open} onClose={closeHandler} fullWidth maxWidth='sm'>
       <DialogTitle style={{ padding: `0 ${props.theme.spacing(3)}px` }}>
-        <List dense={true}>
+        <List dense>
           <ListItem style={{ paddingLeft: 0 }}>
             {checkedUsers.length > 0 ? (
               <ListItemAvatar>
@@ -101,7 +101,7 @@ const NotifyUsersList = withTheme((props) => {
         </List>
       </DialogTitle>
       <DialogContent style={{ maxHeight: 300, overflowY: 'overlay' }}>
-        <List dense={true}>
+        <List dense>
           {users.map((user) => {
             const { firstName, lastName } = user;
             const checked = checkedUsers.some(

@@ -1,3 +1,4 @@
+import { INTERNAL } from '../data/source-types';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
 const collectionRef = firebase.firestore().collection('vendors-new');
 export default class Vendor {
@@ -18,7 +19,7 @@ export default class Vendor {
           updatedBy: firebase.auth().currentUser.uid
         },
         name: this.name,
-        source: 'internal',
+        source: INTERNAL,
         sourceId: null
       });
       this.vendorId = docRef.id;
