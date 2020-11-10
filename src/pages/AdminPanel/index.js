@@ -4,13 +4,14 @@ import { useState } from 'react';
 import Customers from './Customers';
 import Permissions from './Permissions';
 import Users from './Users';
+import Vendors from './Vendors';
 
 const AdminPanel = (props) => {
   const tabs = [
     { name: 'Users', Component: Users },
     { name: 'Permissions', Component: Permissions },
     { name: 'Customers', Component: Customers },
-    { name: 'Vendors', Component: null }
+    { name: 'Vendors', Component: Vendors }
   ];
   const [activeTab, setActiveTab] = useState(0);
   const ActiveComponent = tabs[activeTab].Component;

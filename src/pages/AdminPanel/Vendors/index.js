@@ -5,48 +5,46 @@ import FloatingActionButton from '../../../components/FloatingActionButton';
 import tableIcons from '../../../utils/table-icons';
 import columnSchema from './column-schema';
 import AddIcon from '@material-ui/icons/Add';
-import UploadCustomersDialog from './UploadCustomersDialog';
-import Customer from '../../../models/customer';
+import UploadVendorsDialog from './UploadVendorsDialog';
+import Vendor from '../../../models/vendor';
 
 const FlatContainer = (props) => (
   <Paper {...props} variant='outlined' style={{ border: 0 }} />
 );
 
-const Customers = (props) => {
-  const [customers, setCustomers] = useState();
-  const [showUploadCustomersDialog, setShowUploadCustomersDialog] = useState(
-    false
-  );
+const Vendors = (props) => {
+  const [vendors, setVendors] = useState();
+  const [showUploadVendorsDialog, setShowUploadVendorsDialog] = useState(false);
 
   useEffect(() => {
-    let customersListener = Customer.getExternalListener().onSnapshot(
+    let vendorsListener = Vendor.getExternalListener().onSnapshot(
       (snapshot) => {
-        const newCustomers = snapshot.docs.map((doc) => ({
-          customerId: doc.id,
+        const newVendors = snapshot.docs.map((doc) => ({
+          vendorId: doc.id,
           ...doc.data()
         }));
-        setCustomers(newCustomers);
+        setVendors(newVendors);
       }
     );
     return () => {
-      if (customersListener) {
-        customersListener();
+      if (vendorsListener) {
+        vendorsListener();
       }
     };
   }, []);
 
   return (
     <Fragment>
-      <UploadCustomersDialog
-        open={showUploadCustomersDialog}
-        close={() => setShowUploadCustomersDialog(false)}
-        customers={customers}
+      <UploadVendorsDialog
+        open={showUploadVendorsDialog}
+        close={() => setShowUploadVendorsDialog(false)}
+        vendors={vendors}
       />
       <MaterialTable
-        isLoading={!customers}
+        isLoading={!vendors}
         icons={tableIcons}
         columns={columnSchema}
-        data={customers}
+        data={vendors}
         options={{
           showTitle: false,
           paginationType: 'normal',
@@ -62,8 +60,8 @@ const Customers = (props) => {
       <FloatingActionButton
         style={{ zIndex: 100 }}
         color='primary'
-        tooltip='Upload Customers'
-        onClick={() => setShowUploadCustomersDialog(true)}
+        tooltip='Upload Vendors'
+        onClick={() => setShowUploadVendorsDialog(true)}
       >
         <AddIcon />
       </FloatingActionButton>
@@ -71,4 +69,4 @@ const Customers = (props) => {
   );
 };
 
-export default Customers;
+export default Vendors;

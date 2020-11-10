@@ -1,13 +1,13 @@
 import { Dialog, withTheme } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import CustomerUploadForm from './CustomerUploadForm';
+import CustomersUploadForm from './CustomersUploadForm';
 import SelectCustomersList from './SelectCustomersList';
 import UploadingCustomers from './UploadingCustomers';
 import { addExternalCustomers } from '../../../../store/actions/customer';
 import { toTitleCase } from '../../../../utils/data-transformer';
 
-const UploadCustomerDialog = withTheme((props) => {
+const UploadCustomersDialog = withTheme((props) => {
   const dispatch = useDispatch();
   const { open, close, customers } = props;
   const stepLabels = ['Copy .csv Data', 'Select Customers', 'Upload'];
@@ -16,7 +16,7 @@ const UploadCustomerDialog = withTheme((props) => {
   const [uploadCustomers, setUploadCustomers] = useState();
   const [activeStep, setActiveStep] = useState(0);
 
-  const processCustomerFormDataHandler = (formData) => {
+  const processCustomersFormDataHandler = (formData) => {
     const lines = formData.split('\n');
     const inputCustomers = lines.map((line) => {
       const splitLines = line.split(',');
@@ -70,11 +70,11 @@ const UploadCustomerDialog = withTheme((props) => {
     {
       label: stepLabels[0],
       Component: (
-        <CustomerUploadForm
+        <CustomersUploadForm
           customers={customers}
           activeStep={activeStep}
           stepLabels={stepLabels}
-          processCustomerFormDataHandler={processCustomerFormDataHandler}
+          processCustomersFormDataHandler={processCustomersFormDataHandler}
         />
       )
     },
@@ -110,4 +110,4 @@ const UploadCustomerDialog = withTheme((props) => {
   );
 });
 
-export default UploadCustomerDialog;
+export default UploadCustomersDialog;

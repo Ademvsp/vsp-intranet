@@ -13,8 +13,8 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import ActionsBar from '../../../../../components/ActionsBar';
 
-const CustomerUploadForm = withTheme((props) => {
-  const { stepLabels, activeStep, processCustomerFormDataHandler } = props;
+const CustomersUploadForm = withTheme((props) => {
+  const { stepLabels, activeStep, processCustomersFormDataHandler } = props;
   const [validatedOnMount, setValidatedOnMount] = useState(false);
 
   const validationSchema = yup.object().shape({
@@ -48,7 +48,7 @@ const CustomerUploadForm = withTheme((props) => {
 
   const formik = useFormik({
     initialValues: initialValues,
-    onSubmit: (values) => processCustomerFormDataHandler(values.customers),
+    onSubmit: (values) => processCustomersFormDataHandler(values.customers),
     validationSchema: validationSchema
   });
 
@@ -108,4 +108,4 @@ const CustomerUploadForm = withTheme((props) => {
   );
 });
 
-export default CustomerUploadForm;
+export default CustomersUploadForm;

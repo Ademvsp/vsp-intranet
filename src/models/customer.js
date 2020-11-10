@@ -31,7 +31,6 @@ export default class Customer {
     let batch = firebase.firestore().batch();
     let count = 0;
     const promises = [];
-
     for (const [index, customer] of customers.entries()) {
       const docRef = collectionRef.doc();
       batch.set(docRef, {

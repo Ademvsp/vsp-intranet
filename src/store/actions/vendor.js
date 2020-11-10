@@ -1,7 +1,12 @@
 import Vendor from '../../models/vendor';
 import Message from '../../models/message';
 import { SET_VENDORS, SET_MESSAGE } from '../../utils/actions';
-import { SNACKBAR } from '../../utils/constants';
+import {
+  DIALOG,
+  SNACKBAR,
+  SNACKBAR_SEVERITY,
+  SNACKBAR_VARIANTS
+} from '../../utils/constants';
 
 let vendorsListener;
 
@@ -41,4 +46,38 @@ export const unsubscribeVendorListener = () => {
   if (vendorsListener) {
     vendorsListener();
   }
+};
+
+export const addExternalVendors = (values) => {
+  return async (dispatch, _getState) => {
+    try {
+      await Vendor.saveAllExternal(values);
+      const message = new Message({
+        title: 'Admin Panel',
+        body: 'Vendors added successfully',
+        feedback: SNACKBAR,
+        options: {
+          duration: 5000,
+          variant: SNACKBAR_VARIANTS.FILLED,
+          severity: SNACKBAR_SEVERITY.SUCCESS
+        }
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        message
+      });
+      return true;
+    } catch (error) {
+      const message = new Message({
+        title: 'Admin Panel',
+        body: 'Failed to add Vendors',
+        feedback: DIALOG
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        message
+      });
+      return false;
+    }
+  };
 };
