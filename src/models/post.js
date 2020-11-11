@@ -33,6 +33,10 @@ export default class Post {
     return databaseObject;
   }
 
+  static getListener(postId) {
+    return collectionRef.doc(postId);
+  }
+
   async save() {
     const serverTime = await getServerTimeInMilliseconds();
     if (this.postId) {
@@ -88,28 +92,6 @@ export default class Post {
     this.comments.push(comment);
   }
 
-  static async get(postId) {
-    const doc = await collectionRef.doc(postId).get();
-    if (!doc.exists) {
-      return null;
-    }
-    const metadata = {
-      ...doc.data().metadata,
-      createdAt: doc.data().metadata.createdAt.toDate(),
-      updatedAt: doc.data().metadata.updatedAt.toDate()
-    };
-    return new Post({
-      ...doc.data(),
-      postId: doc.id,
-      metadata: metadata
-    });
-  }
-
-  static async getAll() {
-    const collection = await collectionRef.get();
-    return collection.docs;
-  }
-
   async toggleSubscribePost() {
     const userId = firebase.auth().currentUser.uid;
     let dbAction = firebase.firestore.FieldValue.arrayUnion(userId);
@@ -143,10 +125,6 @@ export default class Post {
     await collectionRef.doc(this.postId).update({
       comments: this.comments
     });
-  }
-
-  static getListener(postId) {
-    return collectionRef.doc(postId);
   }
 
   static async find(values) {

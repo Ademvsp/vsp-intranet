@@ -34,6 +34,19 @@ export default class LeaveRequest {
     return databaseObject;
   }
 
+  static async getPermissions() {
+    const userId = firebase.auth().currentUser.uid;
+    const permissions = await Permission.get('leave-requests');
+    for (const group in permissions.groups) {
+      permissions.groups[group] = permissions.groups[group].includes(userId);
+    }
+    return permissions.groups;
+  }
+
+  static getListener(leaveRequestId) {
+    return collectionRef.doc(leaveRequestId);
+  }
+
   async save() {
     const serverTime = await getServerTimeInMilliseconds();
     if (!this.leaveRequestId) {
@@ -105,18 +118,5 @@ export default class LeaveRequest {
     await collectionRef.doc(this.leaveRequestId).update({
       comments: this.comments
     });
-  }
-
-  static async getPermissions() {
-    const userId = firebase.auth().currentUser.uid;
-    const permissions = await Permission.get('leave-requests');
-    for (const group in permissions.groups) {
-      permissions.groups[group] = permissions.groups[group].includes(userId);
-    }
-    return permissions.groups;
-  }
-
-  static getListener(leaveRequestId) {
-    return collectionRef.doc(leaveRequestId);
   }
 }

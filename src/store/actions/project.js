@@ -41,7 +41,7 @@ export const addProject = (values) => {
       user: authUser.userId,
       value: value,
       vendors: vendors.map((vendor) => ({
-        vendorId: vendor.customerId,
+        vendorId: vendor.vendorId,
         name: vendor.name
       }))
     });
@@ -143,7 +143,10 @@ export const editProject = (project, values) => {
       ],
       attachments: [...existingAttachments, ...uploadedAttachments],
       comments: project.comments,
-      customer: { ...customer },
+      customer: {
+        customerId: customer.customerId,
+        name: customer.name
+      },
       description: description.trim(),
       metadata: project.metadata,
       name: name.trim(),
@@ -151,7 +154,10 @@ export const editProject = (project, values) => {
       reminder: reminder,
       user: authUser.userId,
       value: value,
-      vendors: vendors.map((vendor) => ({ ...vendor }))
+      vendors: vendors.map((vendor) => ({
+        vendorId: vendor.vendorId,
+        name: vendor.name
+      }))
     });
     try {
       await newProject.save();

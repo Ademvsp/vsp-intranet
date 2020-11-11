@@ -12,7 +12,7 @@ import AddIcon from '@material-ui/icons/Add';
 import FloatingActionButton from '../../../components/FloatingActionButton';
 import NewUserDialog from './NewUserDialog';
 import ConfirmDialog from '../../../components/ConfirmDialog';
-import { Paper } from '@material-ui/core';
+import { CircularProgress, Paper } from '@material-ui/core';
 
 const FlatContainer = (props) => (
   <Paper {...props} variant='outlined' style={{ border: 0 }} />
@@ -20,7 +20,7 @@ const FlatContainer = (props) => (
 
 const Users = (props) => {
   const dispatch = useDispatch();
-  const { users } = useSelector((state) => state.dataState);
+  const { users, usersData } = useSelector((state) => state.dataState);
   const [selectedUserData, setSelectedUserData] = useState();
   const [loading, setLoading] = useState();
   const [refreshTokenUserId, setRefreshTokenUserId] = useState();
@@ -70,6 +70,10 @@ const Users = (props) => {
     setSelectedUserData(newSelectedUserData);
     setLoading(false);
   };
+
+  if (users?.length !== usersData?.documents.length) {
+    return <CircularProgress />;
+  }
 
   const userTableData = users.map((user) => ({
     ...user,

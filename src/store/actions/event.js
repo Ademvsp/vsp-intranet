@@ -94,7 +94,7 @@ export const editEvent = (event, values) => {
     const userLocation = dataStateLocations.find(
       (dataStateLocation) => dataStateLocation.locationId === authUser.location
     );
-    let locations = [authUser.location];
+    let locations = event.locations;
     if (allCalendars) {
       locations = dataStateLocations.map((location) => location.locationId);
     }

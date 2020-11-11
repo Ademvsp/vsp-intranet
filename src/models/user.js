@@ -31,6 +31,14 @@ export default class User {
     this.workFromHome = workFromHome;
   }
 
+  getFullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
+
+  static getListener() {
+    return collectionRef.orderBy('firstName', 'asc');
+  }
+
   static async getUserAuthData(userId) {
     const functionRef = firebase
       .app()
@@ -83,13 +91,5 @@ export default class User {
       userId: userId
     });
     return result.data;
-  }
-
-  getFullName() {
-    return `${this.firstName} ${this.lastName}`;
-  }
-
-  static getListener() {
-    return collectionRef.orderBy('firstName', 'asc');
   }
 }

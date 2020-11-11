@@ -159,7 +159,7 @@ const ProductRequestCard = withTheme((props) => {
         </Badge>
       }
     >
-      Comment
+      Comments
     </Button>
   );
 

@@ -83,7 +83,7 @@ const pages = [
     link: '/leave-requests'
   },
   {
-    name: 'Expenses',
+    name: 'Expense Claim Form',
     description: 'Claim your company expenses here.',
     icon: ReceiptIcon,
     link: '/expense-claims'

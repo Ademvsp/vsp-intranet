@@ -97,7 +97,7 @@ const ViewJobDocumentDialog = withTheme((props) => {
         </Badge>
       }
     >
-      Comment
+      Comments
     </Button>
   );
 

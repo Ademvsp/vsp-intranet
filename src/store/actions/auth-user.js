@@ -93,7 +93,8 @@ export const logoutAll = () => {
 export const getPhoneNumber = (email) => {
   return async (dispatch, _getState) => {
     try {
-      return AuthUser.getPhoneNumber(email);
+      const phoneNumber = await AuthUser.getPhoneNumber(email);
+      return phoneNumber;
     } catch (error) {
       const message = new Message({
         title: 'Invalid Credentials',

@@ -222,7 +222,7 @@ export const editUser = (userId, values) => {
       await User.update(userId, updatedValues);
       const message = new Message({
         title: 'Admin Panel',
-        body: 'User edited successfully',
+        body: 'User updated successfully',
         feedback: SNACKBAR,
         options: {
           duration: 5000,

@@ -157,7 +157,7 @@ const PostCard = withTheme((props) => {
         </Badge>
       }
     >
-      Comment
+      Comments
     </Button>
   );
 

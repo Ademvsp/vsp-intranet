@@ -109,7 +109,8 @@ const NewExpenseClaimDialog = withTheme((props) => {
           icons={tableIcons}
           options={{
             search: false,
-            showTitle: false
+            showTitle: false,
+            actionsColumnIndex: -1
           }}
           components={{
             Container: FlatContainer,

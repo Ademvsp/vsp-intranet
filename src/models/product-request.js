@@ -112,8 +112,7 @@ export default class ProductRequest {
       actionedBy: firebase.auth().currentUser.uid
     };
     const metadata = {
-      createdAt: this.metadata.createdAt,
-      createdBy: this.metadata.createdBy,
+      ...this.metadata,
       updatedAt: new Date(serverTime),
       updatedBy: firebase.auth().currentUser.uid
     };

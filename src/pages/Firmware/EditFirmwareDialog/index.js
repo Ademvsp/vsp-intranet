@@ -88,7 +88,7 @@ const EditFirmwareDialog = withTheme((props) => {
 
   const submitHandler = async (values) => {
     setEditLoading(true);
-    const result = await dispatch(editFirmware(values));
+    const result = await dispatch(editFirmware(firmware, values));
     setEditLoading(false);
     if (result) {
       formik.setValues(initialValues);

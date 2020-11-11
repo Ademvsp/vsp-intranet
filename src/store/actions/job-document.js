@@ -122,7 +122,10 @@ export const editJobDocument = (jobDocument, values) => {
       attachments: [...existingAttachments, ...uploadedAttachments],
       body: body.trim(),
       comments: jobDocument.comments,
-      customer: { ...customer },
+      customer: {
+        customerId: customer.customerId,
+        name: customer.name
+      },
       metadata: jobDocument.metadata,
       salesOrder: salesOrder,
       siteReference: siteReference.trim(),

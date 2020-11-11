@@ -79,23 +79,6 @@ const Permissions = (props) => {
           pageSizeOptions: [10, 20, 50],
           actionsColumnIndex: -1
         }}
-        // actions={[
-        //   {
-        //     icon: tableIcons.FileCopy,
-        //     tooltip: 'Copy User ID',
-        //     onClick: copyUserIdClickHandler
-        //   },
-        //   {
-        //     icon: tableIcons.Edit,
-        //     tooltip: 'Edit Row',
-        //     onClick: editClickHandler
-        //   },
-        //   {
-        //     icon: tableIcons.Lock,
-        //     tooltip: 'Revoke Refresh Tokens',
-        //     onClick: revokeRefreshTokenClickHandler
-        //   }
-        // ]}
         components={{
           Container: FlatContainer
         }}

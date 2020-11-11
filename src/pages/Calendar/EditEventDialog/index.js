@@ -14,7 +14,8 @@ import {
   withTheme,
   Collapse,
   ListItemAvatar,
-  ListItemText
+  ListItemText,
+  Typography
 } from '@material-ui/core';
 import ActionsBar from '../../../components/ActionsBar';
 import { useFormik } from 'formik';
@@ -28,7 +29,6 @@ import {
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { isAfter, addHours } from 'date-fns';
-import { StyledTitle } from './styled-components';
 import ConfirmDialog from '../../../components/ConfirmDialog';
 import { LONG_DATE, LONG_DATE_TIME } from '../../../utils/date';
 import Event from '../../../models/event';
@@ -277,7 +277,9 @@ const EditEventDialog = withTheme((props) => {
       />
       <Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
         <DialogTitle>
-          <StyledTitle>{`Title Preview: ${eventTitle}`}</StyledTitle>
+          <Typography
+            style={{ overflowWrap: 'anywhere' }}
+          >{`Title Preview: ${eventTitle}`}</Typography>
         </DialogTitle>
         <DialogContent>
           <Grid container direction='column' spacing={2}>

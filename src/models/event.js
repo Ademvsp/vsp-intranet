@@ -85,6 +85,17 @@ export default class Event {
     }
   }
 
+  static getEventListener(eventId) {
+    return collectionRef.doc(eventId);
+  }
+
+  static getRangeListener(start, end) {
+    return collectionRef
+      .where('start', '>=', start)
+      .where('start', '<=', end)
+      .orderBy('start', 'asc');
+  }
+
   static async getPermissions() {
     const userId = firebase.auth().currentUser.uid;
     const permissions = await Permission.get('events');
@@ -218,16 +229,5 @@ export default class Event {
     await collectionRef.doc(this.eventId).update({
       subscribers: dbAction
     });
-  }
-
-  static getEventListener(eventId) {
-    return collectionRef.doc(eventId);
-  }
-
-  static getRangeListener(start, end) {
-    return collectionRef
-      .where('start', '>=', start)
-      .where('start', '<=', end)
-      .orderBy('start', 'asc');
   }
 }

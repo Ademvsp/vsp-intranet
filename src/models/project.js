@@ -37,6 +37,13 @@ export default class Project {
     return databaseObject;
   }
 
+  static getListener() {
+    const userId = firebase.auth().currentUser.uid;
+    return collectionRef
+      .where('owners', 'array-contains', userId)
+      .orderBy('metadata.createdAt', 'desc');
+  }
+
   async save() {
     const serverTime = await getServerTimeInMilliseconds();
     if (this.projectId) {
@@ -97,12 +104,5 @@ export default class Project {
     await collectionRef.doc(this.projectId).update({
       comments: this.comments
     });
-  }
-
-  static getListener() {
-    const userId = firebase.auth().currentUser.uid;
-    return collectionRef
-      .where('owners', 'array-contains', userId)
-      .orderBy('metadata.createdAt', 'desc');
   }
 }

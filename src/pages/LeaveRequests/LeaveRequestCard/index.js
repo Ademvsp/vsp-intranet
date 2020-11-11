@@ -157,7 +157,7 @@ const LeaveRequestCard = withTheme((props) => {
         </Badge>
       }
     >
-      Comment
+      Comments
     </Button>
   );
 

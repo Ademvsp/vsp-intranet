@@ -437,17 +437,29 @@ const AddCamerasDialog = withTheme((props) => {
             </Grid>
           )}
           <Grid item>
-            <Typography>{`Bitrate Adjustment: ${toPercentage(
-              formik.values.adjustment
-            )}`}</Typography>
+            <Grid container justify='space-between' alignItems='center'>
+              <Grid item>
+                <Typography>{`Bitrate Adjustment: ${toPercentage(
+                  formik.values.adjustment
+                )}`}</Typography>
+              </Grid>
+              <Grid item>
+                <Button
+                  onClick={() => formik.setFieldValue('adjustment', 0, true)}
+                  disabled={formik.values.adjustment === 0}
+                  variant='text'
+                >
+                  Reset
+                </Button>
+              </Grid>
+            </Grid>
             <Slider
               valueLabelDisplay='auto'
-              marks={[{ value: 0 }]}
               min={-100}
               max={100}
               value={formik.values.adjustment}
               onChange={(_event, newValue) =>
-                formik.setFieldValue('adjustment', newValue)
+                formik.setFieldValue('adjustment', newValue, true)
               }
             />
           </Grid>

@@ -170,7 +170,7 @@ const PromotionCard = withTheme((props) => {
         </Badge>
       }
     >
-      Comment
+      Comments
     </Button>
   );
 
@@ -182,7 +182,7 @@ const PromotionCard = withTheme((props) => {
   if (expiryDate) {
     const expired =
       startOfDay(expiryDate).getTime() < startOfDay(new Date()).getTime();
-    expiryText = `Expire${expired ? 'd' : 's'} ${format(
+    expiryText = `Expire${expired ? 'd' : 's'} on ${format(
       expiryDate,
       LONG_DATE
     )}`;
@@ -212,14 +212,12 @@ const PromotionCard = withTheme((props) => {
           }}
           subheader={promotion.title}
           action={
-            permissions.admins ? (
-              <PromotionCardMenu
-                promotion={promotion}
-                permissions={permissions}
-                setShowEditPromotionDialog={setShowEditPromotionDialog}
-                setShowDeleteConfirmDialog={setShowDeleteConfirmDialog}
-              />
-            ) : null
+            <PromotionCardMenu
+              promotion={promotion}
+              permissions={permissions}
+              setShowEditPromotionDialog={setShowEditPromotionDialog}
+              setShowDeleteConfirmDialog={setShowDeleteConfirmDialog}
+            />
           }
         />
         <CardContent>

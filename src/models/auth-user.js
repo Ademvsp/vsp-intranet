@@ -31,6 +31,18 @@ export default class AuthUser {
     return `${this.firstName} ${this.lastName}`;
   }
 
+  static getAuth() {
+    return firebase.auth();
+  }
+
+  static getServerTimestamp() {
+    return firebase.firestore.FieldValue.serverTimestamp();
+  }
+
+  static getAuthListener(userId) {
+    return collectionRef.doc(userId);
+  }
+
   async removeProfilePicture() {
     const userProfilePicturePath = `users/${this.userId}/profilePicture`;
     const listAll = await firebase
@@ -118,41 +130,11 @@ export default class AuthUser {
     await this.logout();
   }
 
-  static async get(userId) {
-    const doc = await collectionRef.doc(userId).get();
-    if (!doc.exists) {
-      return null;
-    }
-    const metadata = {
-      ...doc.data().metadata,
-      createdAt: doc.data().metadata.createdAt.toDate(),
-      updatedAt: doc.data().metadata.updatedAt.toDate()
-    };
-
-    return new AuthUser({
-      ...doc.data(),
-      userId: doc.id,
-      metadata: metadata
-    });
-  }
-
-  static getServerTimestamp() {
-    return firebase.firestore.FieldValue.serverTimestamp();
-  }
-
-  static getAuth() {
-    return firebase.auth();
-  }
-
-  static getAuthListener(userId) {
-    return collectionRef.doc(userId);
-  }
-
   static async getPhoneNumber(email) {
     const functionRef = firebase
       .app()
       .functions(region)
-      .httpsCallable('authFunctions.getAuthPhoneNumber');
+      .httpsCallable('authFunctions-getAuthPhoneNumber');
     const result = await functionRef({ email });
     return result.data;
   }

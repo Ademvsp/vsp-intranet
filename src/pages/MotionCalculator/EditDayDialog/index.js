@@ -40,8 +40,26 @@ const EditDayDialog = (props) => {
             const motionValueText = `${hours[index]}: ${motionValuePercentage}`;
             return (
               <Grid key={hours[index]} item container direction='column'>
-                <Grid item>
-                  <Typography>{motionValueText}</Typography>
+                <Grid
+                  item
+                  container
+                  justify='space-between'
+                  alignItems='center'
+                >
+                  <Grid item>
+                    <Typography>{motionValueText}</Typography>
+                  </Grid>
+                  <Grid item>
+                    <Button
+                      onClick={() =>
+                        motionValueUpdateHandler(index, day.values[index])
+                      }
+                      disabled={motionValue === day.values[index]}
+                      variant='text'
+                    >
+                      Reset
+                    </Button>
+                  </Grid>
                 </Grid>
                 <Grid item>
                   <Slider

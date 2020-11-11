@@ -169,7 +169,7 @@ const ExpenseClaimCard = withTheme((props) => {
         </Badge>
       }
     >
-      Comment
+      Comments
     </Button>
   );
 

@@ -93,7 +93,7 @@ const ViewFirmwareDialog = withTheme((props) => {
         </Badge>
       }
     >
-      Comment
+      Comments
     </Button>
   );
 

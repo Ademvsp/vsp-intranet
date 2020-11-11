@@ -231,6 +231,12 @@ const PricingCalculator = withTheme((props) => {
                       <Typography>{toCurrency(result.freight, 2)}</Typography>
                     </Grid>
                     <Grid item container justify='space-between'>
+                      <Typography>Landed Cost</Typography>
+                      <Typography>
+                        {toCurrency(values.cost + result.freight, 2)}
+                      </Typography>
+                    </Grid>
+                    <Grid item container justify='space-between'>
                       <Typography>Markup</Typography>
                       <Typography>{toPercentage(result.markup, 2)}</Typography>
                     </Grid>

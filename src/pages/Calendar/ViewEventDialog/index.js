@@ -138,7 +138,7 @@ const ViewEventDialog = (props) => {
         </Badge>
       }
     >
-      Comment
+      Comments
     </Button>
   );
 
