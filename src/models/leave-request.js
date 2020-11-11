@@ -13,6 +13,7 @@ export default class LeaveRequest {
     metadata,
     reason,
     start,
+    status,
     type,
     user
   }) {
@@ -24,6 +25,7 @@ export default class LeaveRequest {
     this.metadata = metadata;
     this.reason = reason;
     this.start = start;
+    this.status = status;
     this.type = type;
     this.user = user;
   }

@@ -12,6 +12,7 @@ export default class ExpenseClaim {
     expenses,
     manager,
     metadata,
+    status,
     user
   }) {
     this.expenseClaimId = expenseClaimId;
@@ -21,6 +22,7 @@ export default class ExpenseClaim {
     this.expenses = expenses;
     this.manager = manager;
     this.metadata = metadata;
+    this.status = status;
     this.user = user;
   }
 

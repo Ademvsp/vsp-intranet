@@ -327,255 +327,400 @@ service cloud.firestore {
           return request.auth.token.admin;
         }
         
+        // match /app-data/{appDataId} {
+        //     //For getting app information such as build number to update build listener
+        //     allow get: if isLoggedIn();
+        //     //Not a required function of the app
+        //     allow list: if false;
+        //     //Not a required function of the app
+        //     allow create: if false;
+        //     //Not a required function of the app
+        //     allow update: if false;
+        //     //Not a required function of the app
+        //     allow delete: if false;
+        // }
+        
+        // match /collection-data/{document=**} {
+        //     //Can get collection data is logged in
+        //     allow get: if isLoggedIn();
+        //     //Not a required function of the app
+        //     allow list: if false;
+        //     //Only performed on the back end
+        //     allow create: if false;
+        //     //Only performed on the back end
+        //     allow update: if false;
+        //     //Only performed on the back end
+        //     allow delete: if false;
+        // }
+        
+        // match /permissions/{document=**} {
+        //     //Allow general pages to get permission to conditionally render
+        //     allow get: if isLoggedIn();
+        //     //List all permission only available to app admins
+        //     allow list: if isAppAdmin();
+        //     //Only performed on the back end
+        //     allow create: if false;
+        //     //Update permission only available to app admins
+        //     allow update: if isAppAdmin();
+        //     //Not a required function of the app
+        //     allow delete: if false;
+        // }
+        
+        // match /users-new/{userId} {
+        //     //For user to get their initial authUser information upon loading app
+        //     allow get: if userId == request.auth.uid;
+        //     //Get initial list of app users upon loading app
+        //     allow list: if isLoggedIn();
+        //     //Only available from backend function for admins
+        //     allow create: if false;
+        //     //Only for updating profile picture and settings
+        //     allow update: if userId == request.auth.uid;
+        //     //Users can't be deleted as they might be reference in other documents. Disable users only
+        //     allow delete: if false;
+        // }
+        
+        // match /posts/{postId} {
+        //     //Get single post listeners per post card
+        //     allow get: if isLoggedIn();
+        //     //Not a required function of the app
+        //     allow list: if false;
+        //     //For creating a new post
+        //     allow create: if isLoggedIn();
+        //     //For adding a new comment or the write after uploading attachments
+        //     allow update: if isLoggedIn();
+        //     //Not a required function of the app
+        //     allow delete: if false;
+        // }
+        
+        // match /events-new/{eventId} {
+        //     //Get single event listeners for update and view event
+        //     allow get: if isLoggedIn();
+        //     //Get range of events through range listener
+        //     allow list: if isLoggedIn();
+        //     //For creating a new event
+        //     allow create: if isLoggedIn();
+        //     //Can update if you are the event user, you are the event user's manager or if you are calendar admin
+        //     allow update: if resource.data.user == request.auth.uid 
+        //       || (getUser(resource.data.user).manager == request.auth.uid && isAuthorized('events', 'managers'))
+        //       || isAuthorized('events', 'admins');
+        //     //Can delete if you are the event user, you are the event user's manager or if you are calendar admin
+        //     allow delete: if resource.data.user == request.auth.uid 
+        //       || (getUser(resource.data.user).manager == request.auth.uid && isAuthorized('events', 'managers'))
+        //       || isAuthorized('events', 'admins');
+        // }
+        
+        // match /locations-new/{locationId} {
+        //     //Not a required function of the app
+        //     allow get: if false;
+        //     //Get all locations on app load
+        //     allow list: if isLoggedIn();
+        //     //Not a required function of the app
+        //     allow create: if false;
+        //     //Not a required function of the app
+        //     allow update: if false;
+        //     //Not a required function of the app
+        //     allow delete: if false;
+        // }
+        
+        // match /notifications-new/{notificationId} {
+        //     //Not a required function of the app
+        //     allow get: if false;
+        //     //Only allow users to retrieve notifications where they are the recipient
+        //     allow list: if resource.data.recipient == request.auth.uid;
+        //     //Only the back end can create notifications
+        //     allow create: if false;
+        //     //Only the back end can modify notifications
+        //     allow update: if false;
+        //     //Only the back end can create notifications
+        //     allow delete: if resource.data.recipient == request.auth.uid;
+        // }
+        
+        // match /customers-new/{customerId} {
+        //     //Not a required function of the app
+        //     allow get: if false;
+        //     //Get all customers and load into redux
+        //     allow list: if isLoggedIn();
+        //     //Internal customers can be created by any user but external uploads only by an app admin
+        //     allow create: if (request.resource.data.source == 'INTERNAL' && isLoggedIn())
+        //       || (request.resource.data.source == 'EXTERNAL' && isAppAdmin());
+        //     //Not a required function of the app
+        //     allow update: if false;
+        //     //Not a required function of the app
+        //     allow delete: if false;
+        // }
+        
+        // match /vendors-new/{vendorId} {
+        //     //Not a required function of the app
+        //     allow get: if false;
+        //     //Get all vendors and load into redux
+        //     allow list: if isLoggedIn();
+        //     //Internal vendors can be created by any user but external uploads only by an app admin
+        //     allow create: if (request.resource.data.source == 'INTERNAL' && isLoggedIn())
+        //       || (request.resource.data.source == 'EXTERNAL' && isAppAdmin());
+        //     //Not a required function of the app
+        //     allow update: if false;
+        //     //Not a required function of the app
+        //     allow delete: if false;
+        // }
+        
+        // match /projects-new/{projectId} {
+        //     //Not a required function of the app
+        //     allow get: if false;
+        //     //Only list the projects where the user is an owner
+        //     allow list: if request.auth.uid in resource.data.owners;
+        //     //Any user where they are the owner can create a new project
+        //     allow create: if request.auth.uid in request.resource.data.owners;
+        //     //Any user where they are (or were) the owner can create a new project
+        //     allow update: if request.auth.uid in resource.data.owners;
+        //     //Not a required function of the app
+        //     allow delete: if false;
+        // }
+        
+        // match /product-requests/{productRequestId} {
+        //     //Only get product requests where user is the original request or if user is permimssion admin
+        //     allow get: if resource.data.user == request.auth.uid
+        //       || isAuthorized('product-requests', 'admins');
+        //     //Not a required function of the app
+        //     allow list: if false;
+        //     //User id has to be on the document to prevent creating for another user
+        //     allow create: if request.auth.uid == request.resource.data.user;
+        //     //User can update for attachment upload and admin can update to reject or approve
+        //     allow update: if resource.data.user == request.auth.uid
+        //       || isAuthorized('product-requests', 'admins');
+        //     //Not a required function of the app
+        //     allow delete: if false;
+        // }
+        
+        // match /leave-requests/{leaveRequestId} {
+        //     //Only get leave requests where user is the original requester or if user is permimssion admin or if user is the leave request manager
+        //     allow get: if resource.data.user == request.auth.uid
+        //       || isAuthorized('leave-requests', 'admins')
+        //       || resource.data.manager == request.auth.uid;
+        //     //Not a required function of the app
+        //     allow list: if false;
+        //     //User id has to be on the document to prevent creating for another user
+        //     allow create: if request.auth.uid == request.resource.data.user;
+        //     //User can update for attachment upload and admin/manager can update to reject or approve
+        //     allow update: if resource.data.user == request.auth.uid
+        //     || isAuthorized('leave-requests', 'admins')
+        //     || resource.data.manager == request.auth.uid;
+        //     //Not a required function of the app
+        //     allow delete: if false;
+        // }
+        
+        // match /expense-claims/{expenseClaimsId} {
+        //     //Only get expenses where user is the original claimer or if user is permimssion admin or if user is the expense manager
+        //     allow get: if resource.data.user == request.auth.uid
+        //       || isAuthorized('expense-claims', 'admins')
+        //       || resource.data.manager == request.auth.uid;
+        //     //Required for query to see if expenses were made within last x days
+        //     allow list: if resource.data.user == request.auth.uid;
+        //     //User id has to be on the document to prevent creating for another user
+        //     allow create: if request.auth.uid == request.resource.data.user;
+        //     //User can update for attachment upload, manager can update to reject or approve, admin can mark as paid
+        //     allow update: if resource.data.user == request.auth.uid
+        //     || isAuthorized('leave-requests', 'admins')
+        //     || resource.data.manager == request.auth.uid;
+        //     //Not a required function of the app
+        //     allow delete: if false;
+        // }
+        
+        // match /promotions-new/{promotionId} {
+        //     //Get single post listeners per promotion card
+        //     allow get: if isLoggedIn();
+        //     //Not a required function of the app
+        //     allow list: if false;
+        //     //For creating a new promotion
+        //     allow create: if isAuthorized('promotions', 'admins');
+        //     //For updating an existing promotion
+        //     allow update: if isAuthorized('promotions', 'admins');
+        //     //For deleting an existing promotion
+        //     allow delete: if isAuthorized('promotions', 'admins');
+        // }
+        
+        // match /job-documents/{jobDocumentId} {
+        //     //Not a required function of the app
+        //     allow get: if false;
+        //     //Get all job documents to load the table
+        //     allow list: if isLoggedIn();
+        //     //For creating a new job document only if user field is the same as the user logged in
+        //     allow create: if request.auth.uid == request.resource.data.user;
+        //     //For updating an existing job document. Only permission admins and original creator.
+        //     allow update: if request.auth.uid == resource.data.user
+        //       || isAuthorized('job-documents', 'admins');
+        //     //For deleting an existing job doument. Only permission admins and original creator.
+        //     allow delete: if request.auth.uid == resource.data.user
+        //       || isAuthorized('job-documents', 'admins');
+        // }
+        
+        // match /firmwares-new/{firmwareId} {
+        //     //Not a required function of the app
+        //     allow get: if false;
+        //     //Get all firmware to load the table
+        //     allow list: if isLoggedIn();
+        //     //For creating a new firmware only if user field is the same as the user logged in
+        //     allow create: if request.auth.uid == request.resource.data.user;
+        //     //For updating an existing firmware. Only permission admins and original creator.
+        //     allow update: if request.auth.uid == resource.data.user
+        //       || isAuthorized('firmwares', 'admins');
+        //     //For deleting an existing firmware. Only permission admins and original creator.
+        //     allow delete: if request.auth.uid == resource.data.user
+        //       || isAuthorized('firmwares', 'admins');
+        // }
+        
+        // match /resources/{resourceId} {
+        //     //Not a required function of the app
+        //     allow get: if false;
+        //     //Get all resources to load the list
+        //     allow list: if isLoggedIn();
+        //     allow create: if isAuthorized('resources', 'admins');
+        //     allow update: if isAuthorized('resources', 'admins');
+        //     allow delete: if isAuthorized('resources', 'admins');
+        // }
+        
+        
         match /app-data/{appDataId} {
-            //For getting app information such as build number to update build listener
             allow get: if isLoggedIn();
-            //Not a required function of the app
-            allow list: if false;
-            //Not a required function of the app
-            allow create: if false;
-            //Not a required function of the app
-            allow update: if false;
-            //Not a required function of the app
-            allow delete: if false;
+            allow list: if isLoggedIn();
+            allow create: if isLoggedIn();
+            allow update: if isLoggedIn();
+            allow delete: if isLoggedIn();
         }
         
         match /collection-data/{document=**} {
-            //Can get collection data is logged in
             allow get: if isLoggedIn();
-            //Not a required function of the app
-            allow list: if false;
-            //Only performed on the back end
-            allow create: if false;
-            //Only performed on the back end
-            allow update: if false;
-            //Only performed on the back end
-            allow delete: if false;
+            allow list: if isLoggedIn();
+            allow create: if isLoggedIn();
+            allow update: if isLoggedIn();
+            allow delete: if isLoggedIn();
         }
         
         match /permissions/{document=**} {
-            //Allow general pages to get permission to conditionally render
             allow get: if isLoggedIn();
-            //List all permission only available to app admins
-            allow list: if isAppAdmin();
-            //Only performed on the back end
-            allow create: if false;
-            //Update permission only available to app admins
-            allow update: if isAppAdmin();
-            //Not a required function of the app
-            allow delete: if false;
+            allow list: if isLoggedIn();
+            allow create: if isLoggedIn();
+            allow update: if isLoggedIn();
+            allow delete: if isLoggedIn();
         }
         
         match /users-new/{userId} {
-            //For user to get their initial authUser information upon loading app
-            allow get: if userId == request.auth.uid;
-            //Get initial list of app users upon loading app
+            allow get: if isLoggedIn();
             allow list: if isLoggedIn();
-            //Only available from backend function for admins
-            allow create: if false;
-            //Only for updating profile picture and settings
-            allow update: if userId == request.auth.uid;
-            //Users can't be deleted as they might be reference in other documents. Disable users only
-            allow delete: if false;
+            allow create: if isLoggedIn();
+            allow update: if isLoggedIn();
+            allow delete: if isLoggedIn();
         }
         
         match /posts/{postId} {
-            //Get single post listeners per post card
             allow get: if isLoggedIn();
-            //Not a required function of the app
-            allow list: if false;
-            //For creating a new post
+            allow list: if isLoggedIn();
             allow create: if isLoggedIn();
-            //For adding a new comment or the write after uploading attachments
             allow update: if isLoggedIn();
-            //Not a required function of the app
-            allow delete: if false;
+            allow delete: if isLoggedIn();
         }
         
         match /events-new/{eventId} {
-            //Get single event listeners for update and view event
             allow get: if isLoggedIn();
-            //Get range of events through range listener
             allow list: if isLoggedIn();
-            //For creating a new event
             allow create: if isLoggedIn();
-            //Can update if you are the event user, you are the event user's manager or if you are calendar admin
-            allow update: if resource.data.user == request.auth.uid 
-              || (getUser(resource.data.user).manager == request.auth.uid && isAuthorized('events', 'managers'))
-              || isAuthorized('events', 'admins');
-            //Can delete if you are the event user, you are the event user's manager or if you are calendar admin
-            allow delete: if resource.data.user == request.auth.uid 
-              || (getUser(resource.data.user).manager == request.auth.uid && isAuthorized('events', 'managers'))
-              || isAuthorized('events', 'admins');
+            allow update: if isLoggedIn();
+            allow delete: if isLoggedIn();
         }
         
         match /locations-new/{locationId} {
-            //Not a required function of the app
-            allow get: if false;
-            //Get all locations on app load
+            allow get: if isLoggedIn();
             allow list: if isLoggedIn();
-            //Not a required function of the app
-            allow create: if false;
-            //Not a required function of the app
-            allow update: if false;
-            //Not a required function of the app
-            allow delete: if false;
+            allow create: if isLoggedIn();
+            allow update: if isLoggedIn();
+            allow delete: if isLoggedIn();
         }
         
         match /notifications-new/{notificationId} {
-            //Not a required function of the app
-            allow get: if false;
-            //Only allow users to retrieve notifications where they are the recipient
-            allow list: if resource.data.recipient == request.auth.uid;
-            //Only the back end can create notifications
-            allow create: if false;
-            //Only the back end can modify notifications
-            allow update: if false;
-            //Only the back end can create notifications
-            allow delete: if resource.data.recipient == request.auth.uid;
+            allow get: if isLoggedIn();
+            allow list: if isLoggedIn();
+            allow create: if isLoggedIn();
+            allow update: if isLoggedIn();
+            allow delete: if isLoggedIn();
         }
         
         match /customers-new/{customerId} {
-            //Not a required function of the app
-            allow get: if false;
-            //Get all customers and load into redux
+            allow get: if isLoggedIn();
             allow list: if isLoggedIn();
-            //Internal customers can be created by any user but external uploads only by an app admin
-            allow create: if (request.resource.data.source == 'INTERNAL' && isLoggedIn())
-              || (request.resource.data.source == 'EXTERNAL' && isAppAdmin());
-            //Not a required function of the app
-            allow update: if false;
-            //Not a required function of the app
-            allow delete: if false;
+            allow create: if isLoggedIn();
+            allow update: if isLoggedIn();
+            allow delete: if isLoggedIn();
         }
         
         match /vendors-new/{vendorId} {
-            //Not a required function of the app
-            allow get: if false;
-            //Get all vendors and load into redux
+            allow get: if isLoggedIn();
             allow list: if isLoggedIn();
-            //Internal vendors can be created by any user but external uploads only by an app admin
-            allow create: if (request.resource.data.source == 'INTERNAL' && isLoggedIn())
-              || (request.resource.data.source == 'EXTERNAL' && isAppAdmin());
-            //Not a required function of the app
-            allow update: if false;
-            //Not a required function of the app
-            allow delete: if false;
+            allow create: if isLoggedIn();
+            allow update: if isLoggedIn();
+            allow delete: if isLoggedIn();
         }
         
         match /projects-new/{projectId} {
-            //Not a required function of the app
-            allow get: if false;
-            //Only list the projects where the user is an owner
-            allow list: if request.auth.uid in resource.data.owners;
-            //Any user where they are the owner can create a new project
-            allow create: if request.auth.uid in request.resource.data.owners;
-            //Any user where they are (or were) the owner can create a new project
-            allow update: if request.auth.uid in resource.data.owners;
-            //Not a required function of the app
-            allow delete: if false;
+            allow get: if isLoggedIn();
+            allow list: if isLoggedIn();
+            allow create: if isLoggedIn();
+            allow update: if isLoggedIn();
+            allow delete: if isLoggedIn();
         }
         
         match /product-requests/{productRequestId} {
-            //Only get product requests where user is the original request or if user is permimssion admin
-            allow get: if resource.data.user == request.auth.uid
-              || isAuthorized('product-requests', 'admins');
-            //Not a required function of the app
-            allow list: if false;
-            //User id has to be on the document to prevent creating for another user
-            allow create: if request.auth.uid == request.resource.data.user;
-            //User can update for attachment upload and admin can update to reject or approve
-            allow update: if resource.data.user == request.auth.uid
-              || isAuthorized('product-requests', 'admins');
-            //Not a required function of the app
-            allow delete: if false;
+            allow get: if isLoggedIn();
+            allow list: if isLoggedIn();
+            allow create: if isLoggedIn();
+            allow update: if isLoggedIn();
+            allow delete: if isLoggedIn();
         }
         
         match /leave-requests/{leaveRequestId} {
-            //Only get leave requests where user is the original requester or if user is permimssion admin or if user is the leave request manager
-            allow get: if resource.data.user == request.auth.uid
-              || isAuthorized('leave-requests', 'admins')
-              || resource.data.manager == request.auth.uid;
-            //Not a required function of the app
-            allow list: if false;
-            //User id has to be on the document to prevent creating for another user
-            allow create: if request.auth.uid == request.resource.data.user;
-            //User can update for attachment upload and admin/manager can update to reject or approve
-            allow update: if resource.data.user == request.auth.uid
-            || isAuthorized('leave-requests', 'admins')
-            || resource.data.manager == request.auth.uid;
-            //Not a required function of the app
-            allow delete: if false;
+            allow get: if isLoggedIn();
+            allow list: if isLoggedIn();
+            allow create: if isLoggedIn();
+            allow update: if isLoggedIn();
+            allow delete: if isLoggedIn();
         }
         
         match /expense-claims/{expenseClaimsId} {
-            //Only get expenses where user is the original claimer or if user is permimssion admin or if user is the expense manager
-            allow get: if resource.data.user == request.auth.uid
-              || isAuthorized('expense-claims', 'admins')
-              || resource.data.manager == request.auth.uid;
-            //Required for query to see if expenses were made within last x days
-            allow list: if resource.data.user == request.auth.uid;
-            //User id has to be on the document to prevent creating for another user
-            allow create: if request.auth.uid == request.resource.data.user;
-            //User can update for attachment upload, manager can update to reject or approve, admin can mark as paid
-            allow update: if resource.data.user == request.auth.uid
-            || isAuthorized('leave-requests', 'admins')
-            || resource.data.manager == request.auth.uid;
-            //Not a required function of the app
-            allow delete: if false;
+            allow get: if isLoggedIn();
+            allow list: if isLoggedIn();
+            allow create: if isLoggedIn();
+            allow update: if isLoggedIn();
+            allow delete: if isLoggedIn();
         }
         
         match /promotions-new/{promotionId} {
-            //Get single post listeners per promotion card
             allow get: if isLoggedIn();
-            //Not a required function of the app
-            allow list: if false;
-            //For creating a new promotion
-            allow create: if isAuthorized('promotions', 'admins');
-            //For updating an existing promotion
-            allow update: if isAuthorized('promotions', 'admins');
-            //For deleting an existing promotion
-            allow delete: if isAuthorized('promotions', 'admins');
+            allow list: if isLoggedIn();
+            allow create: if isLoggedIn();
+            allow update: if isLoggedIn();
+            allow delete: if isLoggedIn();
         }
         
         match /job-documents/{jobDocumentId} {
-            //Not a required function of the app
-            allow get: if false;
-            //Get all job documents to load the table
+            allow get: if isLoggedIn();
             allow list: if isLoggedIn();
-            //For creating a new job document only if user field is the same as the user logged in
-            allow create: if request.auth.uid == request.resource.data.user;
-            //For updating an existing job document. Only permission admins and original creator.
-            allow update: if request.auth.uid == resource.data.user
-              || isAuthorized('job-documents', 'admins');
-            //For deleting an existing job doument. Only permission admins and original creator.
-            allow delete: if request.auth.uid == resource.data.user
-              || isAuthorized('job-documents', 'admins');
+            allow create: if isLoggedIn();
+            allow update: if isLoggedIn();
+            allow delete: if isLoggedIn();
         }
         
         match /firmwares-new/{firmwareId} {
-            //Not a required function of the app
-            allow get: if false;
-            //Get all firmware to load the table
+            allow get: if isLoggedIn();
             allow list: if isLoggedIn();
-            //For creating a new firmware only if user field is the same as the user logged in
-            allow create: if request.auth.uid == request.resource.data.user;
-            //For updating an existing firmware. Only permission admins and original creator.
-            allow update: if request.auth.uid == resource.data.user
-              || isAuthorized('firmwares', 'admins');
-            //For deleting an existing firmware. Only permission admins and original creator.
-            allow delete: if request.auth.uid == resource.data.user
-              || isAuthorized('firmwares', 'admins');
+            allow create: if isLoggedIn();
+            allow update: if isLoggedIn();
+            allow delete: if isLoggedIn();
         }
         
         match /resources/{resourceId} {
-            //Not a required function of the app
-            allow get: if false;
-            //Get all resources to load the list
+            allow get: if isLoggedIn();
             allow list: if isLoggedIn();
-            allow create: if isAuthorized('resources', 'admins');
-            allow update: if isAuthorized('resources', 'admins');
-            allow delete: if isAuthorized('resources', 'admins');
+            allow create: if isLoggedIn();
+            allow update: if isLoggedIn();
+            allow delete: if isLoggedIn();
         }
     }
 } 

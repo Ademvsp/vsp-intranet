@@ -18,6 +18,7 @@ export default class ProductRequest {
     finalSku,
     metadata,
     productType,
+    status,
     user,
     vendor,
     vendorSku
@@ -31,6 +32,7 @@ export default class ProductRequest {
     this.finalSku = finalSku;
     this.metadata = metadata;
     this.productType = productType;
+    this.status = status;
     this.user = user;
     this.vendor = vendor;
     this.vendorSku = vendorSku;
