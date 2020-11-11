@@ -2,16 +2,16 @@ import React, { useState, Fragment } from 'react';
 import { Menu, MenuItem, IconButton } from '@material-ui/core';
 import { MoreVert as MoreVertIcon } from '@material-ui/icons';
 import { useDispatch, useSelector } from 'react-redux';
-import Message from '../../../../models/message';
+import Message from '../../../models/message';
 import {
   SNACKBAR,
   SNACKBAR_VARIANTS,
   SNACKBAR_SEVERITY
-} from '../../../../utils/constants';
-import { setMessage } from '../../../../store/actions/message';
-import Event from '../../../../models/event';
+} from '../../../utils/constants';
+import { setMessage } from '../../../store/actions/message';
+import Event from '../../../models/event';
 
-const ViewEvent = (props) => {
+const EventMenu = (props) => {
   const dispatch = useDispatch();
   const { authUser } = useSelector((state) => state.authState);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -72,7 +72,7 @@ const ViewEvent = (props) => {
         open={!!anchorEl}
         onClose={() => setAnchorEl(null)}
       >
-        <MenuItem onClick={copyClickHandler}>Copy Direct Link</MenuItem>
+        <MenuItem onClick={copyClickHandler}>Copy direct link</MenuItem>
         <MenuItem onClick={subscribeHandler}>
           {`${subscribeText} to notifications`}
         </MenuItem>
@@ -81,4 +81,4 @@ const ViewEvent = (props) => {
   );
 };
 
-export default ViewEvent;
+export default EventMenu;

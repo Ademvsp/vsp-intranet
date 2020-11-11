@@ -71,7 +71,7 @@ const PostCardMenu = (props) => {
         open={!!anchorEl}
         onClose={() => setAnchorEl(null)}
       >
-        <MenuItem onClick={copyClickHandler}>Copy Direct Link</MenuItem>
+        <MenuItem onClick={copyClickHandler}>Copy direct link</MenuItem>
         <MenuItem onClick={subscribeHandler}>
           {`${subscribeText} to notifications`}
         </MenuItem>

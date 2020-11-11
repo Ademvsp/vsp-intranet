@@ -26,7 +26,7 @@ import CommentOutlinedIcon from '@material-ui/icons/CommentOutlined';
 import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
 import Comments from '../../../components/Comments';
 import { addComment } from '../../../store/actions/event';
-import ViewEventMenu from './ViewEventMenu';
+import EventMenu from '../EventMenu';
 
 const ViewEventDialog = (props) => {
   const dispatch = useDispatch();
@@ -152,7 +152,7 @@ const ViewEventDialog = (props) => {
             </Typography>
           </Grid>
           <Grid item>
-            <ViewEventMenu event={event} />
+            <EventMenu event={event} />
           </Grid>
         </Grid>
       </DialogTitle>

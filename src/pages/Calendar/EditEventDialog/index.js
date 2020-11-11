@@ -39,6 +39,7 @@ import {
 } from '../../../store/actions/event';
 import Comments from '../../../components/Comments';
 import Avatar from '../../../components/Avatar';
+import EventMenu from '../EventMenu';
 
 const EditEventDialog = withTheme((props) => {
   const dispatch = useDispatch();
@@ -277,9 +278,16 @@ const EditEventDialog = withTheme((props) => {
       />
       <Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
         <DialogTitle>
-          <Typography
-            style={{ overflowWrap: 'anywhere' }}
-          >{`Title Preview: ${eventTitle}`}</Typography>
+          <Grid container justify='space-between' alignItems='center'>
+            <Grid item>
+              <Typography
+                style={{ overflowWrap: 'anywhere' }}
+              >{`Title Preview: ${eventTitle}`}</Typography>
+            </Grid>
+            <Grid item>
+              <EventMenu event={event} />
+            </Grid>
+          </Grid>
         </DialogTitle>
         <DialogContent>
           <Grid container direction='column' spacing={2}>
