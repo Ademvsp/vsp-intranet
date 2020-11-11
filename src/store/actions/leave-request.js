@@ -39,7 +39,7 @@ export const addLeaveRequest = (values) => {
       await newLeaveRequest.save();
       const message = new Message({
         title: 'Leave Requests',
-        body: 'Leave Request submitted successfully',
+        body: 'Leave request submitted successfully',
         feedback: SNACKBAR,
         options: {
           duration: 5000,
@@ -53,9 +53,10 @@ export const addLeaveRequest = (values) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Leave Requests',
-        body: 'Failed to submit Leave Request',
+        body: 'Failed to submit leave request',
         feedback: DIALOG
       });
       dispatch({
@@ -91,6 +92,7 @@ export const addComment = (leaveRequest, values) => {
       );
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Leave Requests',
         body: 'Comment failed to post',
@@ -112,7 +114,7 @@ export const approveLeaveRequest = (leaveRequest) => {
       await newLeaveRequest.saveAction(APPROVED);
       const message = new Message({
         title: 'Leave Requests',
-        body: 'Leave Request approved successfully',
+        body: 'Leave request approved successfully',
         feedback: SNACKBAR,
         options: {
           duration: 5000,
@@ -126,9 +128,10 @@ export const approveLeaveRequest = (leaveRequest) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Leave Requests',
-        body: 'The Leave Request failed to approve',
+        body: 'The leave request failed to approve',
         feedback: DIALOG
       });
       dispatch({
@@ -147,7 +150,7 @@ export const rejectLeaveRequest = (leaveRequest) => {
       await newLeaveRequest.saveAction(REJECTED);
       const message = new Message({
         title: 'Leave Requests',
-        body: 'Leave Request rejected successfully',
+        body: 'Leave request rejected successfully',
         feedback: SNACKBAR,
         options: {
           duration: 5000,
@@ -161,9 +164,10 @@ export const rejectLeaveRequest = (leaveRequest) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Leave Requests',
-        body: 'The Leave Request failed to reject',
+        body: 'The leave request failed to reject',
         feedback: DIALOG
       });
       dispatch({

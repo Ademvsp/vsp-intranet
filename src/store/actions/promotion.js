@@ -56,6 +56,7 @@ export const addPromotion = (values) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Promotions',
         body: 'Promotion failed to post',
@@ -129,6 +130,7 @@ export const editPromotion = (promotion, values) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Promotion',
         body: 'Failed to update promotion',
@@ -164,9 +166,10 @@ export const deletePromotion = (promotion) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Promotions',
-        body: 'Failed to delete Promotion',
+        body: 'Failed to delete promotion',
         feedback: DIALOG
       });
       dispatch({
@@ -203,6 +206,7 @@ export const addComment = (promotion, values) => {
       );
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Promotions',
         body: 'Comment failed to post',

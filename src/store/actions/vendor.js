@@ -29,6 +29,7 @@ export const subscribeVendorListener = () => {
         });
       });
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Vendors',
         body: 'Failed to retrieve vendors',
@@ -68,9 +69,10 @@ export const addExternalVendors = (values) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Admin Panel',
-        body: 'Failed to add Vendors',
+        body: 'Failed to add vendors',
         feedback: DIALOG
       });
       dispatch({

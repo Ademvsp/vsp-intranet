@@ -45,7 +45,7 @@ export const addExpense = (values) => {
       await newExpenseClaim.save();
       const message = new Message({
         title: 'Expense Claims',
-        body: 'Expense Claim submitted successfully',
+        body: 'Expense claim submitted successfully',
         feedback: SNACKBAR,
         options: {
           duration: 5000,
@@ -59,9 +59,10 @@ export const addExpense = (values) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Expense Claims',
-        body: 'Failed to submit Expense Claim',
+        body: 'Failed to submit expense claim',
         feedback: DIALOG
       });
       dispatch({
@@ -97,6 +98,7 @@ export const addComment = (expenseClaim, values) => {
       );
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Expense Claims',
         body: 'Comment failed to post',
@@ -118,7 +120,7 @@ export const approveExpenseClaim = (expenseClaim) => {
       await newExpenseClaim.saveAction(APPROVED);
       const message = new Message({
         title: 'Expense Claims',
-        body: 'Expense Claim approved successfully',
+        body: 'Expense claim approved successfully',
         feedback: SNACKBAR,
         options: {
           duration: 5000,
@@ -132,9 +134,10 @@ export const approveExpenseClaim = (expenseClaim) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Expense Claims',
-        body: 'The Expense Claim failed to approve',
+        body: 'The expense claim failed to approve',
         feedback: DIALOG
       });
       dispatch({
@@ -153,7 +156,7 @@ export const rejectExpenseClaim = (expenseClaim) => {
       await newExpenseClaim.saveAction(REJECTED);
       const message = new Message({
         title: 'Expense Claims',
-        body: 'Expense Claim rejected successfully',
+        body: 'Expense claim rejected successfully',
         feedback: SNACKBAR,
         options: {
           duration: 5000,
@@ -167,9 +170,10 @@ export const rejectExpenseClaim = (expenseClaim) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Expense Claims',
-        body: 'The Expense Claim failed to reject',
+        body: 'The expense claim failed to reject',
         feedback: DIALOG
       });
       dispatch({
@@ -188,7 +192,7 @@ export const payExpenseClaim = (expenseClaim) => {
       await newExpenseClaim.saveAction(PAID);
       const message = new Message({
         title: 'Expense Claims',
-        body: 'Expense Claim paid successfully',
+        body: 'Expense claim paid successfully',
         feedback: SNACKBAR,
         options: {
           duration: 5000,
@@ -202,9 +206,10 @@ export const payExpenseClaim = (expenseClaim) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Expense Claims',
-        body: 'The Expense Claim failed to be paid',
+        body: 'The expense claim failed to be paid',
         feedback: DIALOG
       });
       dispatch({

@@ -63,6 +63,7 @@ export const addEvent = (values) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Staff Calendar',
         body: 'Failed to add event',
@@ -128,9 +129,10 @@ export const editEvent = (event, values) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Staff Calendar',
-        body: 'Failed to edit event',
+        body: 'Failed to update event',
         feedback: DIALOG
       });
       dispatch({
@@ -163,6 +165,7 @@ export const deleteEvent = (event, notifyUsers) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Staff Calendar',
         body: 'Failed to delete event',
@@ -203,6 +206,7 @@ export const addComment = (event, values) => {
       );
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Events',
         body: 'Comment failed to post',

@@ -14,6 +14,7 @@ export const getPermissions = () => {
       const permissions = await Permission.getAll();
       return permissions;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Admin Panel',
         body: 'Failed to retrieve permissions',
@@ -47,6 +48,7 @@ export const setPermissions = (collection, group, members) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Admin Panel',
         body: 'Failed to write permissions',

@@ -52,7 +52,7 @@ export const addJobDocument = (values) => {
       await newJobDocument.save();
       const message = new Message({
         title: 'Job Documents',
-        body: 'Job Document added successfully',
+        body: 'Job document added successfully',
         feedback: SNACKBAR,
         options: {
           duration: 5000,
@@ -66,9 +66,10 @@ export const addJobDocument = (values) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Job Documents',
-        body: 'Failed to add Job Document',
+        body: 'Failed to add job document',
         feedback: DIALOG
       });
       dispatch({
@@ -135,7 +136,7 @@ export const editJobDocument = (jobDocument, values) => {
       await newJobDocument.save();
       const message = new Message({
         title: 'Job Documents',
-        body: 'Job Document updated successfully',
+        body: 'Job document updated successfully',
         feedback: SNACKBAR,
         options: {
           duration: 5000,
@@ -149,9 +150,10 @@ export const editJobDocument = (jobDocument, values) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Job Document',
-        body: 'Failed to update Job Document',
+        body: 'Failed to update job document',
         feedback: DIALOG
       });
       dispatch({
@@ -172,7 +174,7 @@ export const deleteJobDocument = (jobDocument) => {
       await Promise.all(promises);
       const message = new Message({
         title: 'Job Documents',
-        body: 'Job Document deleted successfully',
+        body: 'Job document deleted successfully',
         feedback: SNACKBAR,
         options: {
           duration: 5000,
@@ -186,9 +188,10 @@ export const deleteJobDocument = (jobDocument) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Job Documents',
-        body: 'Failed to delete Job Document',
+        body: 'Failed to delete job document',
         feedback: DIALOG
       });
       dispatch({
@@ -225,6 +228,7 @@ export const addComment = (jobDocument, values) => {
       );
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Job Documents',
         body: 'Comment failed to post',

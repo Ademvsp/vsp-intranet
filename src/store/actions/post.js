@@ -57,6 +57,7 @@ export const addPost = (values) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'News Feed',
         body: 'Post failed to post',
@@ -96,6 +97,7 @@ export const addComment = (post, values) => {
       );
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'News Feed',
         body: 'Comment failed to post',

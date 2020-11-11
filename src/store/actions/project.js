@@ -76,9 +76,10 @@ export const addProject = (values) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Projects',
-        body: 'Failed to add Project',
+        body: 'Failed to add project',
         feedback: DIALOG
       });
       dispatch({
@@ -177,6 +178,7 @@ export const editProject = (project, values) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Projects',
         body: 'Failed to update project',
@@ -215,6 +217,7 @@ export const addComment = (project, values) => {
       );
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Projects',
         body: 'Comment failed to post',

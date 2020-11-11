@@ -143,7 +143,7 @@ const NewEventDialog = withTheme((props) => {
       if (isLeaveType && !isAdmin) {
         const message = new Message({
           title: 'Staff Calendar',
-          body: 'You will now be redirected to the Leave Requests page.',
+          body: 'You will now be redirected to the leave requests page',
           feedback: DIALOG,
           options: {
             closeAction: () => push('/leave-requests')

@@ -77,6 +77,7 @@ export const subscribeUserListener = () => {
         dispatch(actions);
       });
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'User',
         body: 'Users failed to retrieve',
@@ -108,6 +109,7 @@ export const getUserAuthData = (userId) => {
       const userAuthData = await User.getUserAuthData(userId);
       return userAuthData;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Admin Panel',
         body: 'Failed to retrieve user',
@@ -129,7 +131,7 @@ export const revokeRefreshTokens = (userId) => {
       const message = new Message({
         title: 'Admin Panel',
         body:
-          'Refresh Token revoked successfully. This may take up to an hour to take effect.',
+          'Refresh token revoked successfully. This may take up to an hour to take effect.',
         feedback: SNACKBAR,
         options: {
           duration: 5000,
@@ -143,6 +145,7 @@ export const revokeRefreshTokens = (userId) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Admin Panel',
         body: 'Failed to retrieve user',
@@ -190,6 +193,7 @@ export const addUser = (values) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Admin Panel',
         body: 'Failed to create user',
@@ -236,6 +240,7 @@ export const editUser = (userId, values) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Admin Panel',
         body: 'Failed to update user',

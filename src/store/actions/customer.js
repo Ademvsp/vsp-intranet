@@ -29,6 +29,7 @@ export const subscribeCustomerListener = () => {
         });
       });
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Customers',
         body: 'Failed to retrieve customers',
@@ -68,6 +69,7 @@ export const addExternalCustomers = (values) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Admin Panel',
         body: 'Failed to add Customers',

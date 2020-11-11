@@ -96,6 +96,7 @@ export const getPhoneNumber = (email) => {
       const phoneNumber = await AuthUser.getPhoneNumber(email);
       return phoneNumber;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Invalid Credentials',
         body: 'Email address is invalid',
@@ -115,6 +116,7 @@ export const signInWithPhoneNumber = (phoneNumber, appVerifier) => {
     try {
       return AuthUser.signInWithPhoneNumber(phoneNumber, appVerifier);
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Invalid Credentials',
         body: 'Email address is invalid',
@@ -141,6 +143,7 @@ export const confirmVerificationCode = (
       );
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Invalid Credentials',
         body: 'Verification code is invalid',
@@ -161,6 +164,7 @@ export const loginWithPassword = (email, password) => {
       await AuthUser.signInWithEmailAndPassword(email, password);
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Invalid Credentials',
         body: 'Incorrect email or password',
@@ -183,6 +187,7 @@ export const updateSettings = (settings) => {
       await newAuthUser.save();
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Update Settings',
         body: 'Settings failed to update',
@@ -207,6 +212,7 @@ export const uploadPicture = (file) => {
       await newAuthUser.uploadProfilePicture(file);
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Profile Picture',
         body: 'Profile picture failed to upload',
@@ -231,6 +237,7 @@ export const removePicture = () => {
       await newAuthUser.removeProfilePicture();
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Profile Picture',
         body: 'Profile picture failed to remove',

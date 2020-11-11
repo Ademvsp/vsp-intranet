@@ -55,9 +55,10 @@ export const addFirmware = (values) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Firmware & Software',
-        body: 'Failed to add Firmware',
+        body: 'Failed to add firmware',
         feedback: DIALOG
       });
       dispatch({
@@ -127,8 +128,9 @@ export const editFirmware = (firmware, values) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
-        title: 'Firmware',
+        title: 'Firmware & Software',
         body: 'Failed to update Firmware',
         feedback: DIALOG
       });
@@ -164,6 +166,7 @@ export const deleteFirmware = (firmware) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Firmware & Software',
         body: 'Failed to delete Firmware',
@@ -203,6 +206,7 @@ export const addComment = (firmware, values) => {
       );
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Firmware & Software',
         body: 'Comment failed to post',

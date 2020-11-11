@@ -12,6 +12,7 @@ export const getLocations = () => {
         locations
       });
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Locations',
         body: 'Failed to retrieve locations',

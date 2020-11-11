@@ -55,7 +55,7 @@ export const addProductRequest = (values) => {
       await newProductRequest.save();
       const message = new Message({
         title: 'Product Requests',
-        body: 'Product Request submitted successfully',
+        body: 'Product request submitted successfully',
         feedback: SNACKBAR,
         options: {
           duration: 5000,
@@ -69,9 +69,10 @@ export const addProductRequest = (values) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Product Requests',
-        body: 'Failed to submit Product Request',
+        body: 'Failed to submit product request',
         feedback: DIALOG
       });
       dispatch({
@@ -107,6 +108,7 @@ export const addComment = (productRequest, values) => {
       );
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Product Requests',
         body: 'Comment failed to post',
@@ -128,7 +130,7 @@ export const approveProductRequest = (productRequest, values) => {
       await newProductRequest.saveAction(APPROVED, values.finalSku.trim());
       const message = new Message({
         title: 'Product Requests',
-        body: 'Product Request approved successfully',
+        body: 'Product request approved successfully',
         feedback: SNACKBAR,
         options: {
           duration: 5000,
@@ -142,9 +144,10 @@ export const approveProductRequest = (productRequest, values) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Product Requests',
-        body: 'The Product Request failed to approve',
+        body: 'The product request failed to approve',
         feedback: DIALOG
       });
       dispatch({
@@ -163,7 +166,7 @@ export const rejectProductRequest = (productRequest) => {
       await newProductRequest.saveAction(REJECTED);
       const message = new Message({
         title: 'Product Requests',
-        body: 'Product Request rejected successfully',
+        body: 'Product request rejected successfully',
         feedback: SNACKBAR,
         options: {
           duration: 5000,
@@ -177,9 +180,10 @@ export const rejectProductRequest = (productRequest) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Product Requests',
-        body: 'The Product Request failed to reject',
+        body: 'The product request failed to reject',
         feedback: DIALOG
       });
       dispatch({

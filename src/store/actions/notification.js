@@ -81,6 +81,7 @@ export const clearNotification = (notification) => {
     try {
       await notification.delete();
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Notifications',
         body: 'Notification failed to clear',
@@ -100,6 +101,7 @@ export const clearNotifications = () => {
       const notifications = getState().notificationState.notifications;
       await Notification.deleteAll(notifications);
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Notifications',
         body: 'Notifications failed to clear',

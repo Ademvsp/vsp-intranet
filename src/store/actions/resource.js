@@ -36,9 +36,10 @@ export const addResource = (values) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
         title: 'Resources',
-        body: 'Failed to add Resource',
+        body: 'Failed to add resource',
         feedback: DIALOG
       });
       dispatch({
@@ -77,9 +78,10 @@ export const editResource = (resource, values) => {
       });
       return true;
     } catch (error) {
+      console.error(error);
       const message = new Message({
-        title: 'Resource',
-        body: 'Failed to update Resource',
+        title: 'Resources',
+        body: 'Failed to update resource',
         feedback: DIALOG
       });
       dispatch({
@@ -114,7 +116,7 @@ export const deleteResource = (resource) => {
     } catch (error) {
       const message = new Message({
         title: 'Resources',
-        body: 'Failed to delete Resource',
+        body: 'Failed to delete resource',
         feedback: DIALOG
       });
       dispatch({

@@ -143,7 +143,7 @@ const ExpenseClaims = (props) => {
       const message = new Message({
         title: 'Expense Claims',
         body:
-          'You have already submitted an expense in the last 7 days. Please compile all your expenses into a single claim and submit it once a week.',
+          'You have already submitted an expense in the last 7 days. Please compile all your expenses into a single claim and submit it once a week',
         feedback: DIALOG
       });
       dispatch(setMessage(message));
