@@ -91,13 +91,17 @@ export const editEvent = (event, values) => {
       user
     } = values;
     const { authUser } = getState().authState;
-    const { locations: dataStateLocations } = getState().dataState;
+    const { locations: dataStateLocations, users } = getState().dataState;
     const userLocation = dataStateLocations.find(
       (dataStateLocation) => dataStateLocation.locationId === authUser.location
     );
-    let locations = event.locations;
+    let locations;
     if (allCalendars) {
       locations = dataStateLocations.map((location) => location.locationId);
+    } else {
+      const eventUser = users.find((user) => user.userId === event.user);
+      console.log(eventUser);
+      locations = [eventUser.location.locationId];
     }
     let startTransformed = transformDate(start, allDay, userLocation.timezone);
     let endTransformed = transformDate(end, allDay, userLocation.timezone);
