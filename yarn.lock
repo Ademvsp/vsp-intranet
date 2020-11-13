@@ -1441,6 +1441,11 @@
   resolved "https://registry.yarnpkg.com/@firebase/webchannel-wrapper/-/webchannel-wrapper-0.3.0.tgz#d1689566b94c25423d1fb2cb031c5c2ea4c9f939"
   integrity sha512-VniCGPIgSGNEgOkh5phb3iKmSGIzcwrccy3IomMFRWPCMiCk2y98UQNJEoDs1yIHtZMstVjYWKYxnunIGzC5UQ==
 
+"@fvilers/disable-react-devtools@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@fvilers/disable-react-devtools/-/disable-react-devtools-1.1.1.tgz#506455530d1a96cc716e9578b26e164b5179c7d6"
+  integrity sha512-TUm3qD6bDVVMi84lyigwikkB7SeE8tYwkKsfG+C+2ZDX0mMq0oi7547rRactKbew/JoDgsSE+olitkfaYzUsDw==
+
 "@grpc/grpc-js@^1.0.0":
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.1.6.tgz#43ab7bcb1aec071e18d7b45f8920afc0c9fcfb8e"

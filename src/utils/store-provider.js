@@ -23,6 +23,7 @@ let storeEnhancers = composeWithDevTools(
   applyMiddleware(ReduxThunk),
   reduxBatch
 );
+//Disable redux dev tools for production
 if (process.env.NODE_ENV === PRODUCTION) {
   storeEnhancers = compose(applyMiddleware(ReduxThunk), reduxBatch);
 }

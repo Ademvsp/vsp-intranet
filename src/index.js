@@ -7,6 +7,12 @@ import { BrowserRouter } from 'react-router-dom';
 import StoreProvider from './utils/store-provider';
 import ThemeProvider from './utils/theme-provider';
 import MessageHandler from './utils/message-provider';
+import { disableReactDevTools } from '@fvilers/disable-react-devtools';
+import { PRODUCTION } from './utils/constants';
+//Disabled react dev tools for production
+if (process.env.NODE_ENV === PRODUCTION) {
+  disableReactDevTools();
+}
 
 ReactDOM.render(
   <BrowserRouter>
