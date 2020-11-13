@@ -161,7 +161,7 @@ const ExpenseClaims = (props) => {
         open={showNewExpenseClaimDialog}
         close={() => setShowNewExpenseClaimDialog(false)}
       />
-      <Container disableGutters maxWidth='sm'>
+      <Container disableGutters maxWidth='md'>
         <Grid container direction='column' spacing={2}>
           <Grid item container direction='column' spacing={2}>
             {expenseClaimIds.map((expenseClaimId) => {

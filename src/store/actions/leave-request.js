@@ -1,4 +1,8 @@
-import { APPROVED, REJECTED } from '../../data/leave-request-status-types';
+import {
+  APPROVED,
+  REJECTED,
+  REQUESTED
+} from '../../data/leave-request-status-types';
 import LeaveRequest from '../../models/leave-request';
 import Message from '../../models/message';
 import { SET_MESSAGE } from '../../utils/actions';
@@ -31,6 +35,7 @@ export const addLeaveRequest = (values) => {
       metadata: null,
       reason: reason.trim(),
       start: startTransformed,
+      status: REQUESTED,
       type: type.name,
       user: authUser.userId
     });

@@ -1,7 +1,8 @@
 import {
   APPROVED,
   PAID,
-  REJECTED
+  REJECTED,
+  SUBMITTED
 } from '../../data/expense-claim-status-types';
 import ExpenseClaim from '../../models/expense-claim';
 import Message from '../../models/message';
@@ -25,6 +26,7 @@ export const addExpense = (values) => {
       comments: [],
       expenses: expenses,
       manager: authUser.manager,
+      status: SUBMITTED,
       user: authUser.userId
     });
 

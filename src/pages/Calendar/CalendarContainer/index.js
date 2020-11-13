@@ -11,10 +11,11 @@ import {
   add
 } from 'date-fns';
 import { Skeleton } from '@material-ui/lab';
-import { Grid } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 import colors from '../../../utils/colors';
 import { useHistory } from 'react-router-dom';
 import { set } from 'date-fns';
+import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 
 const locales = {
   'en-AU': import('date-fns/locale/en-AU')
@@ -29,6 +30,8 @@ const localizer = dateFnsLocalizer({
 
 const CalendarContainer = (props) => {
   const history = useHistory();
+  const { authUser } = useSelector((state) => state.authState);
+  const { userId } = authUser;
   const [transformedEvents, setTransformedEvents] = useState();
   const { locations, users } = useSelector((state) => state.dataState);
   const [view, setView] = useState('month');
@@ -43,16 +46,26 @@ const CalendarContainer = (props) => {
     if (props.events) {
       const newTransformedEvents = props.events.map((event) => {
         const title = event.getEventTitle(users);
+        const isEventUser = event.user === userId;
+        const isSubscriber = event.subscribers.includes(userId);
+        const showNotificationIcon = isEventUser || isSubscriber;
         return {
           ...event,
-          title,
+          title: (
+            <Grid container alignItems='center' wrap='nowrap'>
+              {showNotificationIcon && (
+                <NotificationsActiveIcon fontSize='inherit' />
+              )}
+              <Typography variant='caption'>{title}</Typography>
+            </Grid>
+          ),
           start: event.start,
           end: event.end
         };
       });
       setTransformedEvents(newTransformedEvents);
     }
-  }, [props.events, users]);
+  }, [props.events, users, userId]);
 
   const navigateChangeHandler = (event) => {
     const startOfEventMonth = startOfMonth(event);

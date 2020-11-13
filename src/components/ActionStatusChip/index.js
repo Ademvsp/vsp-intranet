@@ -1,11 +1,11 @@
 import { Chip, Popover, Typography, withTheme } from '@material-ui/core';
 import React, { Fragment, useState } from 'react';
 import {
-	APPROVED,
-	PAID,
-	REJECTED,
-	REQUESTED,
-	SUBMITTED
+  APPROVED,
+  PAID,
+  REJECTED,
+  REQUESTED,
+  SUBMITTED
 } from '../../utils/constants';
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
@@ -17,63 +17,63 @@ import { LONG_DATE_TIME } from '../../utils/date';
 import { useSelector } from 'react-redux';
 
 const ActionStatusChip = withTheme((props) => {
-	const { users } = useSelector((state) => state.dataState);
-	const { action } = props;
-	const actionUser = users.find((user) => user.userId === action.actionedBy);
-	const [anchorEl, setAnchorEl] = useState(null);
+  const { users } = useSelector((state) => state.dataState);
+  const { action } = props;
+  const actionUser = users.find((user) => user.userId === action.actionedBy);
+  const [anchorEl, setAnchorEl] = useState(null);
 
-	let ChipIcon;
+  let ChipIcon;
 
-	switch (action.actionType) {
-		case REQUESTED:
-			ChipIcon = ErrorOutlineIcon;
-			break;
-		case SUBMITTED:
-			ChipIcon = ErrorOutlineIcon;
-			break;
-		case REJECTED:
-			ChipIcon = ThumbDownAltIcon;
-			break;
-		case APPROVED:
-			ChipIcon = ThumbUpAltIcon;
-			break;
-		case PAID:
-			ChipIcon = AttachMoneyIcon;
-			break;
-		default:
-			break;
-	}
+  switch (action.actionType) {
+    case REQUESTED:
+      ChipIcon = ErrorOutlineIcon;
+      break;
+    case SUBMITTED:
+      ChipIcon = ErrorOutlineIcon;
+      break;
+    case REJECTED:
+      ChipIcon = ThumbDownAltIcon;
+      break;
+    case APPROVED:
+      ChipIcon = ThumbUpAltIcon;
+      break;
+    case PAID:
+      ChipIcon = AttachMoneyIcon;
+      break;
+    default:
+      break;
+  }
 
-	return (
-		<Fragment>
-			<Chip
-				color='secondary'
-				variant='outlined'
-				avatar={<Avatar user={actionUser} contactCard clickable />}
-				label={action.actionType}
-				deleteIcon={<ChipIcon />}
-				onDelete={(event) => setAnchorEl(event.currentTarget)}
-			/>
+  return (
+    <Fragment>
+      <Chip
+        color='secondary'
+        variant='outlined'
+        avatar={<Avatar user={actionUser} contactCard clickable />}
+        label={action.actionType}
+        deleteIcon={<ChipIcon />}
+        onDelete={(event) => setAnchorEl(event.currentTarget)}
+      />
 
-			<Popover
-				anchorEl={anchorEl}
-				open={!!anchorEl}
-				onClose={() => setAnchorEl(null)}
-				anchorOrigin={{
-					vertical: 'bottom',
-					horizontal: 'center'
-				}}
-				transformOrigin={{
-					vertical: 'top',
-					horizontal: 'center'
-				}}
-			>
-				<Typography style={{ padding: props.theme.spacing(2) }}>
-					@ {format(action.actionedAt, LONG_DATE_TIME)}
-				</Typography>
-			</Popover>
-		</Fragment>
-	);
+      <Popover
+        anchorEl={anchorEl}
+        open={!!anchorEl}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center'
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center'
+        }}
+      >
+        <Typography style={{ padding: props.theme.spacing(2) }}>
+          @ {format(action.actionedAt, LONG_DATE_TIME)}
+        </Typography>
+      </Popover>
+    </Fragment>
+  );
 });
 
 export default ActionStatusChip;
