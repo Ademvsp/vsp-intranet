@@ -16,6 +16,7 @@ import colors from '../../../utils/colors';
 import { useHistory } from 'react-router-dom';
 import { set } from 'date-fns';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
+import { PUBLIC_HOLIDAY } from '../../../data/event-types';
 
 const locales = {
   'en-AU': import('date-fns/locale/en-AU')
@@ -48,7 +49,9 @@ const CalendarContainer = (props) => {
         const title = event.getEventTitle(users);
         const isEventUser = event.user === userId;
         const isSubscriber = event.subscribers.includes(userId);
-        const showNotificationIcon = isEventUser || isSubscriber;
+        const isPublicHolliday = event.type === PUBLIC_HOLIDAY;
+        const showNotificationIcon =
+          isEventUser || isSubscriber || isPublicHolliday;
         return {
           ...event,
           title: (
