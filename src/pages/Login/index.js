@@ -82,22 +82,6 @@ const Login = (props) => {
       asyncFunction();
     }
   }, [confirmationResult, verificationCode, dispatch]);
-  //Side effect of password entered
-  // useEffect(() => {
-  //   const asyncFunction = async () => {
-  //     setLoading(true);
-  //     setActiveStep(2);
-  //     const newEmail = email.split('*').pop();
-  //     const result = await dispatch(loginWithPassword(newEmail, password));
-  //     if (!result) {
-  //       setActiveStep(1);
-  //       setLoading(false);
-  //     }
-  //   };
-  //   if (email && password) {
-  //     asyncFunction();
-  //   }
-  // }, [password, email, dispatch]);
 
   return (
     <Fragment>
