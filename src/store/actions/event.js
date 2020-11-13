@@ -100,7 +100,6 @@ export const editEvent = (event, values) => {
       locations = dataStateLocations.map((location) => location.locationId);
     } else {
       const eventUser = users.find((user) => user.userId === event.user);
-      console.log(eventUser);
       locations = [eventUser.location.locationId];
     }
     let startTransformed = transformDate(start, allDay, userLocation.timezone);

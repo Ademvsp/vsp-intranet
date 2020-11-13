@@ -1,0 +1,10 @@
+module.exports.GENERAL = 'General';
+module.exports.MEETING = 'Meeting';
+module.exports.ON_SITE = 'On Site';
+module.exports.TRAINING = 'Training';
+module.exports.OUT_OF_OFFICE = 'Out of Office';
+module.exports.SICK_LEAVE = 'Sick Leave';
+module.exports.ANNUAL_LEAVE = 'Annual Leave';
+module.exports.OTHER_LEAVE = 'Other Leave';
+module.exports.PUBLIC_HOLIDAY = 'Public Holiday';
+module.exports.PUBLIC_ANNOUNCEMENT = 'Public Announcement';
