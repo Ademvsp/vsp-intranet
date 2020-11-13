@@ -39,7 +39,7 @@ module.exports = class Project {
     return databaseObject;
   }
 
-  static async getDayProjects(date) {
+  static async getDayReminderProjects(date) {
     //Bring time back to midnight by subtracting the scheduled hour offset
     const startOfDay = setMinutes(subHours(date, scheduleHour), 0);
     const endOfDay = addDays(startOfDay, 1);

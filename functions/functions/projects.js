@@ -5,7 +5,7 @@ const Project = require('../models/project');
 const { toCurrency } = require('../utils/data-transformer');
 
 module.exports.sendProjectReminders = async () => {
-  const todayProjects = await Project.getDayProjects(new Date());
+  const todayProjects = await Project.getDayReminderProjects(new Date());
   let promises = [];
   //Get unique list of project owners
   const uniqueProjectOwners = [];
