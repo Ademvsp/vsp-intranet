@@ -1,4 +1,7 @@
 {
+  "globals": {
+    "process": true
+  },
   "env": {
     "browser": true,
     "es2020": true
@@ -11,7 +14,7 @@
     "ecmaFeatures": {
       "jsx": true
     },
-    "ecmaVersion": 12,
+    "ecmaVersion": 11,
     "sourceType": "module"
   },
   "plugins": [
@@ -36,6 +39,13 @@
     "semi": [
       "error",
       "always"
+    ],
+    "no-undef": "error",
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_|^props|process$"
+      }
     ]
   }
 }
