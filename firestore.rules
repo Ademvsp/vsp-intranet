@@ -329,7 +329,7 @@ service cloud.firestore {
         
         // match /app-data/{appDataId} {
         //     //For getting app information such as build number to update build listener
-        //     allow get: if isLoggedIn();
+        //     allow get: if true;
         //     //Not a required function of the app
         //     allow list: if false;
         //     //Not a required function of the app
@@ -580,7 +580,7 @@ service cloud.firestore {
         
         
         match /app-data/{appDataId} {
-            allow get: if isLoggedIn();
+            allow get: if true;
             allow list: if isLoggedIn();
             allow create: if isLoggedIn();
             allow update: if isLoggedIn();

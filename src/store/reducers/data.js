@@ -7,10 +7,13 @@ import {
   SET_USERS_DATA,
   SET_ACTIVE_USERS_DATA,
   SET_CUSTOMERS,
-  SET_VENDORS
+  SET_VENDORS,
+  SET_SERVER_BUILD
 } from '../../utils/actions';
 
 const initialState = {
+  browserBuild: 202011102048,
+  serverBuild: null,
   users: null,
   activeUsers: null,
   usersData: null,
@@ -68,6 +71,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         vendors: action.vendors
+      };
+    case SET_SERVER_BUILD:
+      return {
+        ...state,
+        serverBuild: action.serverBuild
       };
     default:
       return state;

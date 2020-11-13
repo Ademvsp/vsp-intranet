@@ -8,6 +8,7 @@ import * as authUserActions from './store/actions/auth-user';
 import * as notificationActions from './store/actions/notification';
 import * as userActions from './store/actions/user';
 import * as locationActions from './store/actions/location';
+import * as appActions from './store/actions/app';
 import Login from './pages/Login';
 import Account from './pages/Account';
 import NewsFeed from './pages/NewsFeed';
@@ -43,13 +44,25 @@ const App = (props) => {
   const authState = useSelector((state) => state.authState);
   const notificationState = useSelector((state) => state.notificationState);
   const dataState = useSelector((state) => state.dataState);
+  const { browserBuild, serverBuild } = dataState;
+  //Check server build version
+  useEffect(() => {
+    dispatch(appActions.subscribeBuildListener());
+  }, [dispatch]);
+  //Detect any changes to the serverBuild and force refresh if there is a backend update
+  useEffect(() => {
+    if (browserBuild && serverBuild) {
+      if (serverBuild > browserBuild) {
+        window.location.reload();
+      }
+    }
+  }, [browserBuild, serverBuild]);
   //Check authentication token from firebase
   useEffect(() => {
-    const verifyAuth = async () => {
-      await dispatch(authUserActions.verifyAuth());
-    };
-    verifyAuth();
-  }, [dispatch]);
+    if (dataState.serverBuild) {
+      dispatch(authUserActions.verifyAuth());
+    }
+  }, [dispatch, dataState.serverBuild]);
   //Get notification after logged in
   useEffect(() => {
     if (authState.authUser && !notificationState.touched) {
@@ -74,6 +87,7 @@ const App = (props) => {
       authUserActions.unsubscribeAuthUserListener();
       notificationActions.unsubscribeNotificationsListener();
       userActions.unsubscribeUsersListener();
+      appActions.unsubscribeBuildListener();
     };
   }, []);
 

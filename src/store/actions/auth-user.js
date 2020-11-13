@@ -14,6 +14,7 @@ import AuthUser from '../../models/auth-user';
 import Message from '../../models/message';
 import { unsubscribeNotificationsListener } from './notification';
 import { unsubscribeUsersListener } from '../../store/actions/user';
+import { unsubscribeBuildListener } from '../../store/actions/app';
 let authUserListener;
 
 export const verifyAuth = () => {
@@ -77,6 +78,7 @@ export const logout = () => {
     unsubscribeAuthUserListener();
     unsubscribeNotificationsListener();
     unsubscribeUsersListener();
+    unsubscribeBuildListener();
     await authUser.logout();
     dispatch({ type: LOGOUT });
   };
@@ -147,27 +149,6 @@ export const confirmVerificationCode = (
       const message = new Message({
         title: 'Invalid Credentials',
         body: 'Verification code is invalid',
-        feedback: DIALOG
-      });
-      dispatch({
-        type: SET_MESSAGE,
-        message
-      });
-      return false;
-    }
-  };
-};
-
-export const loginWithPassword = (email, password) => {
-  return async (dispatch, _getState) => {
-    try {
-      await AuthUser.signInWithEmailAndPassword(email, password);
-      return true;
-    } catch (error) {
-      console.error(error);
-      const message = new Message({
-        title: 'Invalid Credentials',
-        body: 'Incorrect email or password',
         feedback: DIALOG
       });
       dispatch({
