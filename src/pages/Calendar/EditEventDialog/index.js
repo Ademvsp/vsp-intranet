@@ -283,7 +283,12 @@ const EditEventDialog = withTheme((props) => {
       />
       <Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
         <DialogTitle>
-          <Grid container justify='space-between' alignItems='center'>
+          <Grid
+            container
+            justify='space-between'
+            alignItems='center'
+            wrap='nowrap'
+          >
             <Grid item>
               <Typography
                 style={{ overflowWrap: 'anywhere' }}

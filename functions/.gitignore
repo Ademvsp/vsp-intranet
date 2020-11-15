@@ -26,3 +26,4 @@ firestore-debug.log
 firebase-debug.log
 debug.log
 ui-debug.log
+/.firebase
