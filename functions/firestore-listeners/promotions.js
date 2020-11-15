@@ -16,7 +16,7 @@ const { UPDATE } = require('../data/actions');
 module.exports.promotionCreateListener = functions
   .region(region)
   .runWith(runtimeOptions)
-  .firestore.document('promotions-new/{promotionId}')
+  .firestore.document('promotions/{promotionId}')
   .onCreate(async (doc, context) => {
     const { promotionId } = context.params;
     //Update the collection-data document
@@ -29,7 +29,7 @@ module.exports.promotionCreateListener = functions
 module.exports.promotionUpdateListener = functions
   .region(region)
   .runWith(runtimeOptions)
-  .firestore.document('promotions-new/{promotionId}')
+  .firestore.document('promotions/{promotionId}')
   .onUpdate(async (change, context) => {
     const oldDocData = change.before.data();
     const docData = change.after.data();
@@ -211,10 +211,13 @@ const newCommentHandler = async (change, context) => {
 module.exports.promotionDeleteListener = functions
   .region(region)
   .runWith(runtimeOptions)
-  .firestore.document('promotions-new/{promotionId}')
-  .onDelete(async (_doc, context) => {
+  .firestore.document('promotions/{promotionId}')
+  .onDelete(async (doc, context) => {
     const { promotionId } = context.params;
-    const promotion = new Promotion({ promotionId: promotionId });
+    const promotion = new Promotion({
+      promotionId: promotionId,
+      ...doc.data()
+    });
     const promises = [
       CollectionData.deleteCollectionData({
         document: 'promotions',

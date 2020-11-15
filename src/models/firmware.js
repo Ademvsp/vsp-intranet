@@ -1,7 +1,7 @@
 import { CREATE, UPDATE } from '../utils/actions';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
 import Permission from './permission';
-const collectionRef = firebase.firestore().collection('firmwares-new');
+const collectionRef = firebase.firestore().collection('firmwares');
 
 export default class Firmware {
   constructor({
@@ -84,7 +84,7 @@ export default class Firmware {
           actionType: CREATE,
           actionedAt: new Date(serverTime),
           actionedBy: firebase.auth().currentUser.uid,
-          //notifyUsers from the firmwares-new actions
+          //notifyUsers from the firmwares actions
           notifyUsers: this.actions[0].notifyUsers
         }
       ];

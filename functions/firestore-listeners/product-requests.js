@@ -174,13 +174,14 @@ const newCommentHandler = async (change, context) => {
   const emailData = {
     commentBody: comment.body,
     attachments: comment.attachments,
-    type: productRequest.type
+    type: productRequest.type,
+    vendorSku: productRequest.vendorSku
   };
   const metadata = {
     createdAt: new Date(),
     createdBy: comment.metadata.createdBy,
     updatedAt: new Date(),
-    updatedBy: comment.metadata.udpatedBy
+    updatedBy: comment.metadata.updatedBy
   };
 
   const recipients = [...admins, productRequest.user];

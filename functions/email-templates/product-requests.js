@@ -146,7 +146,7 @@ module.exports.approvedProductRequest = async (notification, sender) => {
   const html = [
     wrapWithParagraph(`
 			Your Product Request to get "${vendorSku}" added to Fishbowl has been approved by ${senderFullName}<br/>
-			Thew new part number in Fishbowl is:
+			The new part number in Fishbowl is:
 		`),
     wrapWithQuote(`${finalSku}`),
     wrapWithParagraph(`

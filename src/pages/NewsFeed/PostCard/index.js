@@ -247,6 +247,7 @@ const PostCard = withTheme((props) => {
         </CardActions>
         <Collapse in={showComments} timeout='auto'>
           <Comments
+            collection='posts'
             submitHandler={newCommentHandler}
             comments={[...post.comments].reverse()}
             actionBarNotificationProps={{

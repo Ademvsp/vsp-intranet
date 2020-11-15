@@ -271,6 +271,7 @@ const PromotionCard = withTheme((props) => {
         </CardActions>
         <Collapse in={showComments} timeout='auto'>
           <Comments
+            collection='promotions'
             submitHandler={newCommentHandler}
             comments={[...promotion.comments].reverse()}
             actionBarNotificationProps={{

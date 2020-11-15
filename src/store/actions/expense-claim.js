@@ -47,7 +47,7 @@ export const addExpense = (values) => {
       await newExpenseClaim.save();
       const message = new Message({
         title: 'Expense Claims',
-        body: 'Expense claim submitted successfully',
+        body: 'Expense Claim submitted successfully',
         feedback: SNACKBAR,
         options: {
           duration: 5000,
@@ -88,7 +88,7 @@ export const addComment = (expenseClaim, values) => {
           upload({
             files: attachments,
             collection: 'expense-claims',
-            collectionId: expenseClaim.expenseId,
+            collectionId: expenseClaim.expenseClaimId,
             folder: serverTime.toString()
           })
         );
@@ -122,7 +122,7 @@ export const approveExpenseClaim = (expenseClaim) => {
       await newExpenseClaim.saveAction(APPROVED);
       const message = new Message({
         title: 'Expense Claims',
-        body: 'Expense claim approved successfully',
+        body: 'Expense Claim approved successfully',
         feedback: SNACKBAR,
         options: {
           duration: 5000,
@@ -158,7 +158,7 @@ export const rejectExpenseClaim = (expenseClaim) => {
       await newExpenseClaim.saveAction(REJECTED);
       const message = new Message({
         title: 'Expense Claims',
-        body: 'Expense claim rejected successfully',
+        body: 'Expense Claim rejected successfully',
         feedback: SNACKBAR,
         options: {
           duration: 5000,
@@ -194,7 +194,7 @@ export const payExpenseClaim = (expenseClaim) => {
       await newExpenseClaim.saveAction(PAID);
       const message = new Message({
         title: 'Expense Claims',
-        body: 'Expense claim paid successfully',
+        body: 'Expense Claim paid successfully',
         feedback: SNACKBAR,
         options: {
           duration: 5000,

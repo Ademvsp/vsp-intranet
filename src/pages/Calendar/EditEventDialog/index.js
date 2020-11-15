@@ -67,11 +67,16 @@ const EditEventDialog = withTheme((props) => {
       eventListener = await Event.getEventListener(
         propsEvent.eventId
       ).onSnapshot((snapshot) => {
-        const newEvent = new Event({
-          eventId: snapshot.id,
-          ...snapshot.data()
-        });
-        setEvent(newEvent);
+        if (snapshot.exists) {
+          const newEvent = new Event({
+            eventId: snapshot.id,
+            ...snapshot.data()
+          });
+          setEvent(newEvent);
+        } else {
+          //Handle another user deleting an event while you're viewing it
+          close();
+        }
       });
     };
     asyncFunction();
@@ -80,7 +85,7 @@ const EditEventDialog = withTheme((props) => {
         eventListener();
       }
     };
-  }, [propsEvent]);
+  }, [propsEvent, close]);
 
   const initialValues = {
     notifyUsers: [],
@@ -461,6 +466,7 @@ const EditEventDialog = withTheme((props) => {
         </DialogActions>
         <Collapse in={showComments} timeout='auto'>
           <Comments
+            collection='events'
             submitHandler={newCommentHandler}
             comments={[...event.comments].reverse()}
             actionBarNotificationProps={{

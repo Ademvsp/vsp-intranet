@@ -81,7 +81,7 @@ export const editPromotion = (promotion, values) => {
     await compareAndDelete({
       oldAttachments: promotion.attachments,
       newAttachments: existingAttachments,
-      collection: 'promotions-new',
+      collection: 'promotions',
       collectionId: promotion.promotionId,
       folder: promotion.metadata.createdAt.getTime().toString()
     });
@@ -94,7 +94,7 @@ export const editPromotion = (promotion, values) => {
       uploadedAttachments = await dispatch(
         upload({
           files: toBeUploadedAttachments,
-          collection: 'promotions-new',
+          collection: 'promotions',
           collectionId: promotion.promotionId,
           folder: promotion.metadata.createdAt.getTime().toString()
         })
@@ -192,7 +192,7 @@ export const addComment = (promotion, values) => {
         uploadedAttachments = await dispatch(
           upload({
             files: attachments,
-            collection: 'promotions-new',
+            collection: 'promotions',
             collectionId: promotion.promotionId,
             folder: serverTime.toString()
           })

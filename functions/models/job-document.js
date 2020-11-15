@@ -1,5 +1,6 @@
 const admin = require('firebase-admin');
 const Permission = require('./permission');
+const collectionRef = admin.firestore().collection('job-documents');
 
 module.exports = class JobDocument {
   constructor({
@@ -39,9 +40,7 @@ module.exports = class JobDocument {
 
   async save() {
     if (this.jobDocumentId) {
-      await admin
-        .firestore()
-        .collection('job-documents')
+      await collectionRef
         .doc(this.jobDocumentId)
         .update(this.getDatabaseObject());
     }

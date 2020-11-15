@@ -46,13 +46,18 @@ const ViewEventDialog = (props) => {
       eventListener = await Event.getEventListener(
         propsEvent.eventId
       ).onSnapshot((snapshot) => {
-        const newEvent = new Event({
-          ...snapshot.data(),
-          eventId: snapshot.id,
-          start: snapshot.data().start.toDate(),
-          end: snapshot.data().end.toDate()
-        });
-        setEvent(newEvent);
+        if (snapshot.exists) {
+          const newEvent = new Event({
+            ...snapshot.data(),
+            eventId: snapshot.id,
+            start: snapshot.data().start.toDate(),
+            end: snapshot.data().end.toDate()
+          });
+          setEvent(newEvent);
+        } else {
+          //Handle another user deleting an event while you're viewing it
+          close();
+        }
       });
     };
     asyncFunction();
@@ -61,7 +66,7 @@ const ViewEventDialog = (props) => {
         eventListener();
       }
     };
-  }, [propsEvent]);
+  }, [propsEvent, close]);
 
   const initialValues = {
     type: eventTypes.find((eventType) => eventType.name === event.type),
@@ -251,6 +256,7 @@ const ViewEventDialog = (props) => {
       </DialogActions>
       <Collapse in={showComments} timeout='auto'>
         <Comments
+          collection='events'
           submitHandler={newCommentHandler}
           comments={[...event.comments].reverse()}
           actionBarNotificationProps={{

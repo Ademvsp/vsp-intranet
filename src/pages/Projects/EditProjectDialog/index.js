@@ -121,11 +121,11 @@ const EditProjectDialog = withTheme((props) => {
         );
       }),
     status: yup
-      .object()
+      .string()
       .label('Status')
       .required()
       .test('isValidArrayElement', 'Status is not valid', (value) =>
-        projectStatusTypes.find((status) => status.name === value.name)
+        projectStatusTypes.find((status) => status === value)
       ),
     reminder: yup
       .date()
@@ -143,9 +143,8 @@ const EditProjectDialog = withTheme((props) => {
     vendors: project.vendors.map((vendor) => new Vendor({ ...vendor })),
     owners: project.owners,
     status: projectStatusTypes.find(
-      (statusType) =>
-        statusType.name ===
-        project.actions[project.actions.length - 1].actionType
+      (status) =>
+        status === project.actions[project.actions.length - 1].actionType
     ),
     reminder: new Date(project.reminder),
     value: project.value
@@ -245,7 +244,7 @@ const EditProjectDialog = withTheme((props) => {
     let newValue;
     if (value?.inputValue) {
       setCustomerAdding(true);
-      const newCustomerName = newValue.inputValue.trim();
+      const newCustomerName = value.inputValue.trim();
       const newCustomer = new Customer({ name: newCustomerName });
       await newCustomer.save();
       newValue = newCustomer;
@@ -487,8 +486,8 @@ const EditProjectDialog = withTheme((props) => {
                 }}
               >
                 {projectStatusTypes.map((status) => (
-                  <MenuItem key={status.name} value={status}>
-                    {status.name}
+                  <MenuItem key={status} value={status}>
+                    {status}
                   </MenuItem>
                 ))}
               </TextField>
@@ -573,6 +572,7 @@ const EditProjectDialog = withTheme((props) => {
       </DialogActions>
       <Collapse in={showComments} timeout='auto'>
         <Comments
+          collection='projects'
           submitHandler={newCommentHandler}
           comments={[...project.comments].reverse()}
           actionBarNotificationProps={{

@@ -10,6 +10,13 @@ import Avatar from '../../../components/Avatar';
 
 const columnSchema = [
   {
+    field: 'userId',
+    title: 'User ID',
+    type: 'string',
+    hidden: true,
+    searchable: true
+  },
+  {
     field: 'active',
     title: 'Active',
     type: 'boolean',
@@ -23,7 +30,7 @@ const columnSchema = [
       <Grid item container alignItems='center'>
         <Grid item>
           <ListItemAvatar>
-            <Avatar user={rowData} clickable={true} contactCard={true} />
+            <Avatar user={rowData} />
           </ListItemAvatar>
         </Grid>
         <Grid item>

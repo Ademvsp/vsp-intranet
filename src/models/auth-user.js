@@ -1,7 +1,7 @@
 import Compressor from 'compressorjs';
 import firebase from '../utils/firebase';
 const region = process.env.REACT_APP_FIREBASE_FUNCTIONS_REGION;
-const collectionRef = firebase.firestore().collection('users-new');
+const collectionRef = firebase.firestore().collection('users');
 export default class AuthUser {
   constructor({
     userId,
@@ -124,8 +124,9 @@ export default class AuthUser {
 
   async logoutAll() {
     const functionRef = firebase
-      .functions()
-      .httpsCallable('revokeRefreshTokens');
+      .app()
+      .functions(region)
+      .httpsCallable('authFunctions-revokeCurrentRefreshTokens');
     await functionRef();
     await this.logout();
   }

@@ -1,6 +1,6 @@
 import firebase from '../utils/firebase';
 const region = process.env.REACT_APP_FIREBASE_FUNCTIONS_REGION;
-const collectionRef = firebase.firestore().collection('users-new');
+const collectionRef = firebase.firestore().collection('users');
 
 export default class User {
   constructor({

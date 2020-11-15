@@ -86,9 +86,26 @@ export const logout = () => {
 
 export const logoutAll = () => {
   return async (dispatch, getState) => {
-    const { authUser } = getState().authState;
-    await authUser.logoutAll();
-    dispatch({ type: LOGOUT });
+    try {
+      const { authUser } = getState().authState;
+      await authUser.logoutAll();
+      dispatch({
+        type: LOGOUT
+      });
+      return true;
+    } catch (error) {
+      console.error(error);
+      const message = new Message({
+        title: 'Account',
+        body: 'Could not log you out of all devices',
+        feedback: DIALOG
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        message
+      });
+      return false;
+    }
   };
 };
 

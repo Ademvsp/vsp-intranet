@@ -8,18 +8,24 @@ import { logoutAll } from '../../../store/actions/auth-user';
 const Logout = (props) => {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
   const cancelClickHandler = () => {
     setShowConfirmDialog(false);
   };
 
   const confirmClickHandler = async () => {
-    await dispatch(logoutAll());
+    setLoading(true);
+    const result = await dispatch(logoutAll());
+    if (!result) {
+      setLoading(false);
+    }
   };
 
   return (
     <Fragment>
       <ConfirmDialog
+        loading={loading}
         open={showConfirmDialog}
         cancel={cancelClickHandler}
         confirm={confirmClickHandler}

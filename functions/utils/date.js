@@ -1,6 +1,6 @@
 const functions = require('firebase-functions');
 const { runtimeOptions, region } = require('./function-parameters');
-const { NOT_FOUND } = require('./error-codes');
+const { UNAUTHENTICATED, UNKNOWN } = require('./error-codes');
 
 module.exports.SHORT_DATE = 'dd/MM/yyyy';
 module.exports.LONG_DATE_TIME = 'eee, d MMM yyyy, h:mm aaa';
@@ -15,14 +15,18 @@ module.exports.getServerTimeInMilliseconds = functions
   .https.onCall(async (_data, context) => {
     try {
       if (!context.auth) {
-        throw new Error('Authentication error');
+        throw new functions.https.HttpsError(
+          UNAUTHENTICATED.code,
+          'Authentication error'
+        );
       }
       return Date.now();
     } catch (error) {
+      console.error(error);
       throw new functions.https.HttpsError(
-        NOT_FOUND.code,
-        error.message,
-        NOT_FOUND
+        UNKNOWN.code,
+        'Server Time error',
+        error
       );
     }
   });

@@ -16,13 +16,15 @@ const Comments = (props) => {
     comments,
     submitHandler,
     actionBarNotificationProps,
-    commentLikeClickHandler
+    commentLikeClickHandler,
+    collection
   } = props;
   return (
     <CardContent>
       <Grid container direction='column'>
         <Grid item>
           <NewComment
+            collection={collection}
             submitHandler={submitHandler}
             actionBarNotificationProps={actionBarNotificationProps}
           />

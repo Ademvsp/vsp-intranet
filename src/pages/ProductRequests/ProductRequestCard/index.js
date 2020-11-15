@@ -213,6 +213,7 @@ const ProductRequestCard = withTheme((props) => {
         </CardActions>
         <Collapse in={showComments} timeout='auto'>
           <Comments
+            collection='product-requests'
             submitHandler={newCommentHandler}
             comments={[...productRequest.comments].reverse()}
             actionBarNotificationProps={{

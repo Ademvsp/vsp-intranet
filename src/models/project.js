@@ -1,5 +1,5 @@
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
-const collectionRef = firebase.firestore().collection('projects-new');
+const collectionRef = firebase.firestore().collection('projects');
 export default class Project {
   constructor({
     projectId,

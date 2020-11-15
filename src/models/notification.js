@@ -1,5 +1,5 @@
 import firebase from '../utils/firebase';
-const collectionRef = firebase.firestore().collection('notifications-new');
+const collectionRef = firebase.firestore().collection('notifications');
 
 export default class Notification {
   constructor({

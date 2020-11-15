@@ -9,6 +9,7 @@ const BalloonEditorWrapper = (props) => {
     value,
     setValue,
     setUploading,
+    collection,
     loading,
     minHeight,
     maxHeight,
@@ -73,7 +74,7 @@ const BalloonEditorWrapper = (props) => {
             function MyCustomUploadAdapterPlugin(editor) {
               const plugin = 'FileRepository';
               editor.plugins.get(plugin).createUploadAdapter = (loader) =>
-                new UploadAdapter(loader, 'posts');
+                new UploadAdapter(loader, collection);
             }
           ],
           removePlugins: ['MediaEmbed']

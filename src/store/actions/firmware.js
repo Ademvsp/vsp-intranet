@@ -31,7 +31,7 @@ export const addFirmware = (values) => {
         uploadedAttachments = await dispatch(
           upload({
             files: attachments,
-            collection: 'firmwares-new',
+            collection: 'firmwares',
             collectionId: newFirmware.firmwareId,
             folder: newFirmware.metadata.createdAt.getTime().toString()
           })
@@ -80,7 +80,7 @@ export const editFirmware = (firmware, values) => {
     await compareAndDelete({
       oldAttachments: firmware.attachments,
       newAttachments: existingAttachments,
-      collection: 'firmwares-new',
+      collection: 'firmwares',
       collectionId: firmware.firmwareId,
       folder: firmware.metadata.createdAt.getTime().toString()
     });
@@ -93,7 +93,7 @@ export const editFirmware = (firmware, values) => {
       uploadedAttachments = await dispatch(
         upload({
           files: toBeUploadedAttachments,
-          collection: 'firmwares-new',
+          collection: 'firmwares',
           collectionId: firmware.firmwareId,
           folder: firmware.metadata.createdAt.getTime().toString()
         })
@@ -192,7 +192,7 @@ export const addComment = (firmware, values) => {
         uploadedAttachments = await dispatch(
           upload({
             files: attachments,
-            collection: 'firmwares-new',
+            collection: 'firmwares',
             collectionId: firmware.firmwareId,
             folder: serverTime.toString()
           })

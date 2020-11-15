@@ -356,6 +356,12 @@ const NewProductRequestDialog = withTheme((props) => {
             setAttachments: (attachments) =>
               formik.setFieldValue('attachments', attachments)
           }}
+          notifications={{
+            enabled: true,
+            readOnly: true,
+            tooltip:
+              'The product request admin and the original requester will be notified automatically'
+          }}
           buttonLoading={loading}
           disabled={loading || !validatedOnMount}
           isValid={formik.isValid}

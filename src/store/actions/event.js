@@ -195,7 +195,7 @@ export const addComment = (event, values) => {
         uploadedAttachments = await dispatch(
           upload({
             files: attachments,
-            collection: 'events-new',
+            collection: 'events',
             collectionId: event.eventId,
             folder: serverTime.toString()
           })

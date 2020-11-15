@@ -226,7 +226,7 @@ const newCommentHandler = async (change, context) => {
     createdAt: new Date(),
     createdBy: comment.metadata.createdBy,
     updatedAt: new Date(),
-    updatedBy: comment.metadata.udpatedBy
+    updatedBy: comment.metadata.updatedBy
   };
 
   const recipients = [...admins, expenseClaim.user, expenseClaim.manager];

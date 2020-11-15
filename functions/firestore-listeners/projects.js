@@ -14,7 +14,7 @@ const { toCurrency } = require('../utils/data-transformer');
 module.exports.projectCreateListener = functions
   .region(region)
   .runWith(runtimeOptions)
-  .firestore.document('projects-new/{projectId}')
+  .firestore.document('projects/{projectId}')
   .onCreate(async (doc, context) => {
     const { projectId } = context.params;
     await CollectionData.addCollectionData({
@@ -26,7 +26,7 @@ module.exports.projectCreateListener = functions
 module.exports.projectUpdateListener = functions
   .region(region)
   .runWith(runtimeOptions)
-  .firestore.document('projects-new/{projectId}')
+  .firestore.document('projects/{projectId}')
   .onUpdate(async (change, context) => {
     const oldDocData = change.before.data();
     const docData = change.after.data();

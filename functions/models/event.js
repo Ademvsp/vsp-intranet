@@ -10,12 +10,10 @@ const {
   PUBLIC_HOLIDAY
 } = require('../data/events');
 const admin = require('firebase-admin');
-const CollectionData = require('./collection-data');
-const { CREATE } = require('../data/actions');
 const Permission = require('./permission');
 const { addDays, subHours, setMinutes } = require('date-fns');
 const { scheduleHour } = require('../utils/function-parameters');
-const collectionRef = admin.firestore().collection('events-new');
+const collectionRef = admin.firestore().collection('events');
 module.exports = class Event {
   constructor({
     eventId,
@@ -93,27 +91,8 @@ module.exports = class Event {
 
   async save() {
     if (!this.eventId) {
-      this.metadata = {
-        createdAt: new Date(),
-        createdBy: this.user,
-        updatedAt: new Date(),
-        updatedBy: this.user
-      };
-      this.actions = [
-        ...this.actions,
-        {
-          actionType: CREATE,
-          actionedAt: new Date(),
-          actionedBy: this.user,
-          notifyUsers: []
-        }
-      ];
       const docRef = await collectionRef.add(this.getDatabaseObject());
       this.eventId = docRef.id;
-      await CollectionData.addCollectionData({
-        document: 'events',
-        docId: this.eventId
-      });
     }
   }
 
@@ -126,7 +105,7 @@ module.exports = class Event {
       .storage()
       .bucket()
       .deleteFiles({
-        prefix: `events-new/${this.eventId}`
+        prefix: `events/${this.eventId}`
       });
   }
 

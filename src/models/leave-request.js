@@ -103,7 +103,8 @@ export default class LeaveRequest {
     };
     await collectionRef.doc(this.leaveRequestId).update({
       actions: firebase.firestore.FieldValue.arrayUnion(action),
-      metadata: metadata
+      metadata: metadata,
+      status: actionType
     });
     this.metadata = metadata;
     this.actions = [...this.actions, action];

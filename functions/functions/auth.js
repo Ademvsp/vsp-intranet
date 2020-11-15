@@ -7,6 +7,7 @@ const {
   PERMISSION_DENIED
 } = require('../utils/error-codes');
 const CollectionData = require('../models/collection-data');
+const User = require('../models/user');
 
 module.exports.getAuthPhoneNumber = functions
   .region(region)
@@ -57,11 +58,24 @@ module.exports.revokeRefreshTokens = functions
     if (!context.auth.token.admin) {
       throw new functions.https.HttpsError(
         UNAUTHENTICATED.code,
-        'User is not authenticated as an admin'
+        'Authentication error'
       );
     }
     const { userId } = data;
     await admin.auth().revokeRefreshTokens(userId);
+  });
+
+module.exports.revokeCurrentRefreshTokens = functions
+  .region(region)
+  .runWith(runtimeOptions)
+  .https.onCall(async (_data, context) => {
+    if (!context.auth) {
+      throw new functions.https.HttpsError(
+        UNAUTHENTICATED.code,
+        'Authentication error'
+      );
+    }
+    await admin.auth().revokeRefreshTokens(context.auth.uid);
   });
 
 module.exports.createUser = functions
@@ -89,46 +103,30 @@ module.exports.createUser = functions
         location,
         manager
       } = values;
-      //Create the auth() user first to get the userId to work with
-      const userRef = await admin.auth().createUser({
+      const user = new User({
+        active: active,
         email: email,
-        phoneNumber: authPhone,
-        emailVerified: true,
-        displayName: `${firstName} ${lastName}`
+        extension: extension,
+        firstName: firstName,
+        lastName: lastName,
+        location: location,
+        manager: manager,
+        metadata: {
+          createdAt: new Date(),
+          createdBy: context.auth.uid,
+          updatedAt: new Date(),
+          updatedBy: context.auth.uid
+        },
+        phone: phone,
+        profilePicture: '',
+        settings: {
+          expandSideDrawerItems: {},
+          darkMode: false,
+          workFromHome: false
+        },
+        title: title
       });
-      const userId = userRef.uid;
-      //Simultaneously perform the next three actions to save time
-      const promises = [
-        admin
-          .firestore()
-          .collection('users-new')
-          .doc(userId)
-          .create({
-            active: active,
-            email: email,
-            extension: extension,
-            firstName: firstName,
-            lastName: lastName,
-            location: location,
-            manager: manager,
-            metadata: {
-              createdAt: new Date(),
-              createdBy: context.auth.uid,
-              updatedAt: new Date(),
-              updatedBy: context.auth.uid
-            },
-            phone: phone,
-            profilePicture: '',
-            settings: {
-              expandSideDrawerItems: {},
-              darkMode: false,
-              workFromHome: false
-            },
-            title: title
-          }),
-        admin.auth().setCustomUserClaims(userId, { admin: adminPermission })
-      ];
-      await Promise.all(promises);
+      await user.save({ authPhone, adminPermission });
     } catch (error) {
       console.error(error);
       throw new functions.https.HttpsError(UNKNOWN.code, JSON.stringify(error));
@@ -174,35 +172,24 @@ module.exports.updateUser = functions
           'You cannot disable yourself as a User. Promote another Administrator so they can disable you.'
         );
       }
-      let promises = [];
-      promises.push(
-        //Perform this first to make sure authPhone is accepted, and no error is thrown
-        admin.auth().updateUser(userId, {
-          email: email,
-          phoneNumber: authPhone,
-          displayName: `${firstName} ${lastName}`,
-          disabled: !active
-        }),
-        //Update custom claim for admin, perform this before firestore update, as firestore update will trigger onSnapshot change on client which will check admin custom claim
-        admin.auth().setCustomUserClaims(userId, {
-          admin: adminPermission
-        })
-      );
-      await Promise.all(promises);
-      promises = [
-        //Update firestore record
-        admin.firestore().collection('users-new').doc(userId).update({
-          active: active,
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          phone: phone,
-          extension: extension,
-          title: title,
-          location: location,
-          manager: manager,
-          'metadata.updatedBy': context.auth.uid,
-          'metadata.updatedAt': new Date()
+      const user = new User({
+        userId: userId,
+        active: active,
+        email: email,
+        extension: extension,
+        firstName: firstName,
+        lastName: lastName,
+        location: location,
+        manager: manager,
+        phone: phone,
+        title: title
+      });
+      //Update user record on back end
+      const promises = [
+        user.save({
+          authPhone: authPhone,
+          adminPermission: adminPermission,
+          updatedBy: context.auth.uid
         })
       ];
       if (active) {

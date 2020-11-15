@@ -91,14 +91,12 @@ module.exports.approveLeaveRequestUser = async (notification, _sender) => {
 
 module.exports.approveLeaveRequestAdmin = async (notification, sender) => {
   const { emailData, link, recipient } = notification;
-  const { type, start, end, reason, manager } = emailData;
-  const senderFullName = sender.getFullName();
+  const { type, start, end, reason, manager, user } = emailData;
 
   const html = [
     wrapWithParagraph(`
-			${senderFullName} ${type} Request form has been successfully approved by ${manager}.<br/>
-			An entry has automatically been created on the Staff Calendar.<br/>
-			Please deduct the leave accordingly.
+			${user}'s ${type} Request form has been successfully approved by ${manager}.<br/>
+			An entry has automatically been created on the Staff Calendar.
 		`),
     wrapWithQuote(`
 			Leave Type: ${type}<br/>
@@ -107,6 +105,9 @@ module.exports.approveLeaveRequestAdmin = async (notification, sender) => {
 			Reason: ${reason}<br/>
 			Approved by: ${manager}<br/>
 		`),
+    wrapWithParagraph(
+      wrapWithBold(`Action Required: Update the leave balance of ${user}.`)
+    ),
     wrapWithParagraph(`		
 			To view this Leave Request, visit this link:
 		`),

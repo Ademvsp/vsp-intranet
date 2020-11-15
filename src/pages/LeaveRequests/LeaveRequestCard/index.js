@@ -205,12 +205,13 @@ const LeaveRequestCard = withTheme((props) => {
         </CardActions>
         <Collapse in={showComments} timeout='auto'>
           <Comments
+            collection='leave-requests'
             submitHandler={newCommentHandler}
             comments={[...leaveRequest.comments].reverse()}
             actionBarNotificationProps={{
               enabled: true,
               tooltip:
-                'The leave request admin, the original requester and their manager will be notified automatically',
+                'The leave request admin and your manager will be notified automatically',
               readOnly: true
             }}
             commentLikeClickHandler={commentLikeClickHandler}

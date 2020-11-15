@@ -9,7 +9,7 @@ const { APP_NAME } = process.env;
 module.exports.userCreateListener = functions
   .region(region)
   .runWith(runtimeOptions)
-  .firestore.document('users-new/{userId}')
+  .firestore.document('users/{userId}')
   .onCreate(async (doc, context) => {
     const { userId } = context.params;
     const promises = [

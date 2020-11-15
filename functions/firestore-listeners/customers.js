@@ -10,7 +10,7 @@ const { INTERNAL } = require('../data/source-types');
 module.exports.customerCreateListener = functions
   .region(region)
   .runWith(runtimeOptions)
-  .firestore.document('customers-new/{customerId}')
+  .firestore.document('customers/{customerId}')
   .onCreate(async (doc, context) => {
     const { customerId } = context.params;
     const customer = new Customer({
@@ -25,6 +25,7 @@ module.exports.customerCreateListener = functions
       const admins = await Customer.getAdmins();
 
       const emailData = {
+        customerId: customer.customerId,
         name: customer.name,
         createdAt: customer.metadata.createdAt.toDate().getTime()
       };

@@ -17,6 +17,7 @@ import { useHistory } from 'react-router-dom';
 import { set } from 'date-fns';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import { PUBLIC_HOLIDAY } from '../../../data/event-types';
+import Event from '../../../models/event';
 
 const locales = {
   'en-AU': import('date-fns/locale/en-AU')
@@ -45,27 +46,12 @@ const CalendarContainer = (props) => {
 
   useEffect(() => {
     if (props.events) {
-      const newTransformedEvents = props.events.map((event) => {
-        const title = event.getEventTitle(users);
-        const isEventUser = event.user === userId;
-        const isSubscriber = event.subscribers.includes(userId);
-        const isPublicHolliday = event.type === PUBLIC_HOLIDAY;
-        const showNotificationIcon =
-          isEventUser || isSubscriber || isPublicHolliday;
-        return {
-          ...event,
-          title: (
-            <Grid container alignItems='center' wrap='nowrap'>
-              {showNotificationIcon && (
-                <NotificationsActiveIcon fontSize='inherit' />
-              )}
-              <Typography variant='caption'>{title}</Typography>
-            </Grid>
-          ),
-          start: event.start,
-          end: event.end
-        };
-      });
+      const newTransformedEvents = props.events.map((event) => ({
+        ...event,
+        title: event.getEventTitle(users),
+        start: event.start,
+        end: event.end
+      }));
       setTransformedEvents(newTransformedEvents);
     }
   }, [props.events, users, userId]);
@@ -92,6 +78,22 @@ const CalendarContainer = (props) => {
         backgroundColor
       }
     };
+  };
+
+  const titleAccessor = (event) => {
+    const newEvent = new Event({ ...event });
+    const title = newEvent.getEventTitle(users);
+    const isEventUser = event.user === userId;
+    const isSubscriber = event.subscribers.includes(userId);
+    const isPublicHolliday = event.type === PUBLIC_HOLIDAY;
+    const showNotificationIcon =
+      isEventUser || isSubscriber || isPublicHolliday;
+    return (
+      <Grid container alignItems='center' wrap='nowrap'>
+        {showNotificationIcon && <NotificationsActiveIcon fontSize='inherit' />}
+        <Typography variant='caption'>{title}</Typography>
+      </Grid>
+    );
   };
 
   const selectSlotHandler = (event) => {
@@ -144,6 +146,7 @@ const CalendarContainer = (props) => {
       onSelectSlot={selectSlotHandler}
       view={view}
       onView={(newView) => setView(newView)}
+      titleAccessor={titleAccessor}
     />
   );
 };

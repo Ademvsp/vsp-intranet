@@ -1,4 +1,5 @@
 const admin = require('firebase-admin');
+const collectionRef = admin.firestore().collection('posts');
 module.exports = class Post {
   constructor({
     postId,
@@ -32,11 +33,7 @@ module.exports = class Post {
 
   async save() {
     if (this.postId) {
-      await admin
-        .firestore()
-        .collection('posts')
-        .doc(this.postId)
-        .update(this.getDatabaseObject());
+      await collectionRef.doc(this.postId).update(this.getDatabaseObject());
     }
   }
 };

@@ -123,13 +123,15 @@ export default class ProductRequest {
       await docRef.update({
         actions: firebase.firestore.FieldValue.arrayUnion(action),
         finalSku: finalSku,
-        metadata: metadata
+        metadata: metadata,
+        status: actionType
       });
       this.finalSku = finalSku;
     } else if (actionType === REJECTED) {
       await docRef.update({
         actions: firebase.firestore.FieldValue.arrayUnion(action),
-        metadata: metadata
+        metadata: metadata,
+        status: actionType
       });
     }
     this.metadata = metadata;

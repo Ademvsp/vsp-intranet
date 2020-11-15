@@ -165,6 +165,7 @@ const ViewFirmwareDialog = withTheme((props) => {
       </DialogActions>
       <Collapse in={showComments} timeout='auto'>
         <Comments
+          collection='firmwares'
           submitHandler={newCommentHandler}
           comments={[...firmware.comments].reverse()}
           actionBarNotificationProps={{

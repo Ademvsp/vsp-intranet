@@ -1,5 +1,6 @@
 const admin = require('firebase-admin');
 const Permission = require('./permission');
+const collectionRef = admin.firestore().collection('promotions');
 module.exports = class Promotion {
   constructor({
     promotionId,
@@ -38,9 +39,7 @@ module.exports = class Promotion {
 
   async save() {
     if (this.promotionId) {
-      await admin
-        .firestore()
-        .collection('promotions-new')
+      await collectionRef
         .doc(this.promotionId)
         .update(this.getDatabaseObject());
     }
@@ -51,7 +50,7 @@ module.exports = class Promotion {
       .storage()
       .bucket()
       .deleteFiles({
-        prefix: `promotions-new/${this.promotionId}`
+        prefix: `promotions/${this.promotionId}`
       });
   }
 };

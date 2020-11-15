@@ -6,13 +6,13 @@ const {
   scheduleHour
 } = require('../utils/function-parameters');
 const { utcToZonedTime } = require('date-fns-tz');
-const { isWeekend, format } = require('date-fns');
+const { isWeekend } = require('date-fns');
 const { sendProductRequestActionReminder } = require('./product-requests');
-const { LONG_DATE } = require('../utils/date');
 const { sendEventReminder } = require('./events');
 const { sendProjectReminders } = require('./projects');
 const { sendLeaveRequestActionReminder } = require('./leave-requests');
 const { sendExpenseClaimActionReminder } = require('./expense-claims');
+const { deleteOldNotifications } = require('./notifications');
 
 module.exports.dailyTasks = functions
   .runWith(runtimeOptions)
@@ -21,9 +21,11 @@ module.exports.dailyTasks = functions
   .timeZone(timeZone)
   .onRun(async (_context) => {
     const zonedDate = utcToZonedTime(new Date(), timeZone);
-    console.log('Zoned Date:', format(zonedDate, LONG_DATE));
-    console.log('New Date:', format(new Date(), LONG_DATE));
-    const promises = [sendEventReminder(), sendProjectReminders()];
+    const promises = [
+      sendEventReminder(),
+      sendProjectReminders(),
+      deleteOldNotifications()
+    ];
     if (!isWeekend(zonedDate)) {
       promises.push(
         sendProductRequestActionReminder(),

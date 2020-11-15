@@ -1,7 +1,7 @@
 const { setMinutes, subHours, addDays } = require('date-fns');
 const admin = require('firebase-admin');
 const { scheduleHour } = require('../utils/function-parameters');
-const collectionRef = admin.firestore().collection('projects-new');
+const collectionRef = admin.firestore().collection('projects');
 module.exports = class Project {
   constructor({
     projectId,

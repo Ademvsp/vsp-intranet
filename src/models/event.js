@@ -12,7 +12,7 @@ import {
 import { CREATE, DELETE, UPDATE } from '../utils/actions';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
 import Permission from './permission';
-const collectionRef = firebase.firestore().collection('events-new');
+const collectionRef = firebase.firestore().collection('events');
 export default class Event {
   constructor({
     eventId,

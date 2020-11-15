@@ -1,5 +1,5 @@
 import firebase from '../utils/firebase';
-const collectionRef = firebase.firestore().collection('locations-new');
+const collectionRef = firebase.firestore().collection('locations');
 
 export default class Location {
   constructor({

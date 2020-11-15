@@ -51,7 +51,11 @@ const {
   LEAVE_REQUEST_ACTION_REMINDER,
   EXPENSE_CLAIM_ACTION_REMINDER
 } = require('../data/notification-types');
-const { PERMISSION_DENIED } = require('../utils/error-codes');
+const {
+  PERMISSION_DENIED,
+  UNAUTHENTICATED,
+  UNKNOWN
+} = require('../utils/error-codes');
 const { ADMIN_FROM, ADMIN_BCC } = process.env;
 const Email = require('../models/email');
 const { newPost, newPostComment } = require('../email-templates/posts');
@@ -116,6 +120,7 @@ const {
   editFirmware
 } = require('../email-templates/firmwares');
 const { newUser } = require('../email-templates/users');
+const CollectionData = require('../models/collection-data');
 
 const sendNotification = async (notification, sender) => {
   try {
@@ -272,19 +277,20 @@ const sendNotification = async (notification, sender) => {
       recipient: notification.recipient
     });
   } catch (error) {
-    throw new Error(error);
+    throw new functions.https.HttpsError(
+      UNAUTHENTICATED.code,
+      'Authentication error'
+    );
   }
 };
 
 const sendEmail = async (emailParams) => {
   // const { sender, subject, body, bcc, recipient } = emailParams;
-  // const { subject, html, recipient } = emailParams;
-  const { subject, html } = emailParams;
+  const { subject, html, recipient } = emailParams;
   let bcc = ADMIN_BCC ? ADMIN_BCC : '';
   const email = new Email({
     from: ADMIN_FROM,
-    // to: recipient.email, <-- Re-enabled for production
-    to: ADMIN_BCC,
+    to: recipient.email,
     bcc: bcc,
     subject: subject,
     html: html
@@ -295,27 +301,54 @@ const sendEmail = async (emailParams) => {
 module.exports.notificationCreateListener = functions
   .region(region)
   .runWith(runtimeOptions)
-  .firestore.document('/notifications-new/{notificationId}')
-  .onCreate(async (snapshot, _context) => {
+  .firestore.document('/notifications/{notificationId}')
+  .onCreate(async (doc, context) => {
     try {
-      if (!snapshot.data().metadata.createdBy) {
-        throw new Error('Authentication error');
+      const { notificationId } = context.params;
+      if (!doc.data().metadata.createdBy) {
+        throw new functions.https.HttpsError(
+          UNKNOWN.code,
+          'Authentication error'
+        );
       }
       const notification = new Notification({
-        ...snapshot.data(),
-        notificationId: snapshot.id
+        ...doc.data(),
+        notificationId: notificationId
       });
       const sender = await User.get(notification.metadata.createdBy);
       const recipient = await User.get(notification.recipient);
       notification.recipient = recipient;
-      await sendNotification(notification, sender);
-      return true;
+
+      const promises = [
+        sendNotification(notification, sender),
+        CollectionData.addCollectionData({
+          document: 'notifications',
+          docId: notification.notificationId
+        })
+      ];
+      await Promise.all(promises);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw new functions.https.HttpsError(
         PERMISSION_DENIED.code,
-        error.message,
-        PERMISSION_DENIED
+        'Notifiation error',
+        error
       );
     }
+  });
+
+module.exports.notificationDeleteListener = functions
+  .region(region)
+  .runWith(runtimeOptions)
+  .firestore.document('/notifications/{notificationId}')
+  .onDelete(async (doc, context) => {
+    const { notificationId } = context.params;
+    const notification = new Notification({
+      notificationId: notificationId,
+      ...doc.data()
+    });
+    await CollectionData.deleteCollectionData({
+      document: 'notifications',
+      docId: notification.notificationId
+    });
   });

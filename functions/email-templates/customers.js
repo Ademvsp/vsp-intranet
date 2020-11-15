@@ -10,7 +10,7 @@ const User = require('../models/user');
 
 module.exports.newCustomer = async (notification, sender) => {
   const { emailData, recipient: notificationRecipient } = notification;
-  const { name, createdAt } = emailData;
+  const { customerId, name, createdAt } = emailData;
   const senderFullName = sender.getFullName();
   const recipient = new User({ ...notificationRecipient });
   const timezone = await recipient.getTimezone();
@@ -24,7 +24,8 @@ module.exports.newCustomer = async (notification, sender) => {
       `${senderFullName} created a new Customer named "${name}".`
     ),
     wrapWithQuote(`
-			Created at: ${createdByFormatted}<br/>
+      Customer ID: ${customerId}<br/>
+      Created at: ${createdByFormatted}<br/>
 			Created by: ${senderFullName}
 		`)
   ];

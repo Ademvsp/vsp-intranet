@@ -57,7 +57,12 @@ const NewPost = (props) => {
             </Grid>
             <Grid item>
               {searchResults ? (
-                <Tooltip title='Clear search results' placement='bottom'>
+                <Tooltip
+                  title={`${searchResults.length} Result${
+                    searchResults.length === 1 ? '' : 's'
+                  }`}
+                  placement='bottom'
+                >
                   <IconButton onClick={clearResultsHandler}>
                     <ClearIcon />
                   </IconButton>

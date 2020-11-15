@@ -144,7 +144,7 @@ const EditFirmwareDialog = withTheme((props) => {
         cancel={() => setShowConfirmDialog(false)}
         confirm={deleteHandler}
         title='Firmwares'
-        message='Are you sure you want to delete this Firmwares?'
+        message='Are you sure you want to delete this Firmware?'
         loading={deleteLoading}
       />
       <Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
@@ -256,6 +256,7 @@ const EditFirmwareDialog = withTheme((props) => {
         </DialogActions>
         <Collapse in={showComments} timeout='auto'>
           <Comments
+            collection='firmwares'
             submitHandler={newCommentHandler}
             comments={[...firmware.comments].reverse()}
             actionBarNotificationProps={{

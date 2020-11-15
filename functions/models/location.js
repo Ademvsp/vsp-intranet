@@ -1,4 +1,5 @@
 const admin = require('firebase-admin');
+const collectionRef = admin.firestore().collection('locations');
 module.exports = class Location {
   constructor({
     locationId,
@@ -21,20 +22,12 @@ module.exports = class Location {
   }
 
   static async get(locationId) {
-    const doc = await admin
-      .firestore()
-      .collection('locations-new')
-      .doc(locationId)
-      .get();
+    const doc = await collectionRef.doc(locationId).get();
     return new Location({ ...doc.data(), locationId: doc.id });
   }
 
   static async getAll() {
-    const collection = await admin
-      .firestore()
-      .collection('locations-new')
-      .orderBy('state', 'asc')
-      .get();
+    const collection = await collectionRef.orderBy('state', 'asc').get();
     const locations = collection.docs.map((doc) => {
       return new Location({
         ...doc.data(),

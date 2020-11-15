@@ -1,5 +1,6 @@
 const admin = require('firebase-admin');
 const Permission = require('./permission');
+const collectionRef = admin.firestore().collection('firmwares');
 
 module.exports = class JobDocument {
   constructor({
@@ -37,11 +38,7 @@ module.exports = class JobDocument {
 
   async save() {
     if (this.firmwareId) {
-      await admin
-        .firestore()
-        .collection('firmwares-new')
-        .doc(this.firmwareId)
-        .update(this.getDatabaseObject());
+      await collectionRef.doc(this.firmwareId).update(this.getDatabaseObject());
     }
   }
 
@@ -50,7 +47,7 @@ module.exports = class JobDocument {
       .storage()
       .bucket()
       .deleteFiles({
-        prefix: `firmwares-new/${this.firmwareId}`
+        prefix: `firmwares/${this.firmwareId}`
       });
   }
 };

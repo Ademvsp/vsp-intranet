@@ -30,19 +30,6 @@ module.exports = class CollectionData {
       .update({ documents: admin.firestore.FieldValue.arrayUnion(docId) });
   }
 
-  static async deleteCollectionData({ document, docId }) {
-    const docRef = collectionRef.doc(document);
-    //Check is doc exists first and the field before doing an arrayRemove
-    const doc = await docRef.get();
-    if (doc.exists && doc.data().documents) {
-      await admin
-        .firestore()
-        .collection('collection-data')
-        .doc(document)
-        .update({ documents: admin.firestore.FieldValue.arrayRemove(docId) });
-    }
-  }
-
   static async addSubCollectionData({
     document,
     subCollection,
@@ -63,6 +50,19 @@ module.exports = class CollectionData {
       await docRef.update({
         documents: admin.firestore.FieldValue.arrayUnion(docId)
       });
+    }
+  }
+
+  static async deleteCollectionData({ document, docId }) {
+    const docRef = collectionRef.doc(document);
+    //Check is doc exists first and the field before doing an arrayRemove
+    const doc = await docRef.get();
+    if (doc.exists && doc.data().documents) {
+      await admin
+        .firestore()
+        .collection('collection-data')
+        .doc(document)
+        .update({ documents: admin.firestore.FieldValue.arrayRemove(docId) });
     }
   }
 };

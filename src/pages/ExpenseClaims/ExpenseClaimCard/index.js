@@ -232,6 +232,7 @@ const ExpenseClaimCard = withTheme((props) => {
         </CardActions>
         <Collapse in={showComments} timeout='auto'>
           <Comments
+            collection='expense-claims'
             submitHandler={newCommentHandler}
             comments={[...expenseClaim.comments].reverse()}
             actionBarNotificationProps={{

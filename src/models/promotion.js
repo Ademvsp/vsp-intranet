@@ -1,7 +1,7 @@
 import { CREATE, UPDATE } from '../utils/actions';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
 import Permission from './permission';
-const collectionRef = firebase.firestore().collection('promotions-new');
+const collectionRef = firebase.firestore().collection('promotions');
 
 export default class Promotion {
   constructor({

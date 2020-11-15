@@ -1,5 +1,5 @@
 const admin = require('firebase-admin');
-
+const collectionRef = admin.firestore().collection('notifications');
 module.exports = class Notification {
   constructor({
     notificationId,
@@ -29,19 +29,61 @@ module.exports = class Notification {
   }
 
   async save() {
-    const docRef = await admin
-      .firestore()
-      .collection('notifications-new')
-      .add(this.getDatabaseObject());
+    const docRef = await collectionRef.add(this.getDatabaseObject());
     this.notificationId = docRef.id;
   }
 
   static async saveAll(notifications) {
-    const batch = admin.firestore().batch();
+    const promises = [];
+    let batch = admin.firestore().batch();
+    let count = 0;
     for (const notification of notifications) {
-      const docRef = admin.firestore().collection('notifications-new').doc();
+      const docRef = collectionRef.doc();
       batch.set(docRef, notification.getDatabaseObject());
+      count++;
+      if (count === 500) {
+        promises.push(batch.commit());
+        batch = admin.firestore().batch();
+        count = 0;
+      }
     }
-    await batch.commit();
+    promises.push(batch.commit());
+    await Promise.all(promises);
+  }
+
+  static async deleteAll(notifications) {
+    const promises = [];
+    let batch = admin.firestore().batch();
+    let count = 0;
+    for (const notification of notifications) {
+      const docRef = collectionRef.doc(notification.notificationId);
+      batch.delete(docRef, notification.getDatabaseObject());
+      count++;
+      if (count === 500) {
+        promises.push(batch.commit());
+        batch = admin.firestore().batch();
+        count = 0;
+      }
+    }
+    promises.push(batch.commit());
+    await Promise.all(promises);
+  }
+
+  static async getOlderThan(date) {
+    const collection = await collectionRef
+      .where(
+        'metadata.createdAt',
+        '<=',
+        admin.firestore.Timestamp.fromDate(date)
+      )
+      .get();
+    const events = collection.docs.map(
+      (doc) =>
+        new Notification({
+          notificationId: doc.id,
+          ...doc.data()
+        })
+    );
+    return events;
   }
 };

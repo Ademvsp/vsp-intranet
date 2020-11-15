@@ -345,6 +345,7 @@ const EditJobDocumentDialog = withTheme((props) => {
         </DialogActions>
         <Collapse in={showComments} timeout='auto'>
           <Comments
+            collection='job-documents'
             submitHandler={newCommentHandler}
             comments={[...jobDocument.comments].reverse()}
             actionBarNotificationProps={{

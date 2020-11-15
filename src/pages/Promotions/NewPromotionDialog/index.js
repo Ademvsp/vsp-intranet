@@ -116,6 +116,7 @@ const NewPromotionDialog = withTheme((props) => {
           <Grid item container direction='column'>
             <Grid item>
               <BalloonEditorWrapper
+                collection='promotions'
                 value={formik.values.body}
                 setValue={formik.handleChange('body')}
                 setTouched={() => formik.setFieldTouched('body', true)}

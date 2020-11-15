@@ -16,6 +16,7 @@ const { runtimeOptions, region } = require('../utils/function-parameters');
 const User = require('../models/user');
 const LeaveRequest = require('../models/leave-request');
 const Event = require('../models/event');
+const { CREATE } = require('../data/actions');
 
 module.exports.leaveRequestCreateListener = functions
   .region(region)
@@ -128,12 +129,25 @@ const newActionHandler = async (change, context) => {
     adminNotificationType = APPROVED_LEAVE_REQUEST_ADMIN;
     //Create calendar event automatically
     const event = new Event({
-      actions: [],
+      actions: [
+        {
+          actionType: CREATE,
+          actionedAt: new Date(),
+          actionedBy: action.actionedBy,
+          notifyUsers: [leaveRequest.manager, leaveRequest.user]
+        }
+      ],
       allDay: true,
       comments: [],
       details: leaveRequest.reason,
       end: leaveRequest.end,
       locations: [leaveRequestUser.location],
+      metadata: {
+        createdAt: new Date(),
+        createdBy: action.actionedBy,
+        updatedAt: new Date(),
+        updatedBy: action.actionedBy
+      },
       start: leaveRequest.start,
       subscribers: [leaveRequestUser.userId],
       type: leaveRequest.type,
@@ -149,7 +163,8 @@ const newActionHandler = async (change, context) => {
     start: format(leaveRequest.start.toDate(), LONG_DATE),
     end: format(leaveRequest.end.toDate(), LONG_DATE),
     reason: leaveRequest.reason,
-    manager: manager.getFullName()
+    manager: manager.getFullName(),
+    user: leaveRequestUser.getFullName()
   };
   const metadata = {
     createdAt: new Date(),
@@ -214,7 +229,7 @@ const newCommentHandler = async (change, context) => {
     createdAt: new Date(),
     createdBy: comment.metadata.createdBy,
     updatedAt: new Date(),
-    updatedBy: comment.metadata.udpatedBy
+    updatedBy: comment.metadata.updatedBy
   };
 
   const recipients = [...admins, leaveRequest.user, leaveRequest.manager];

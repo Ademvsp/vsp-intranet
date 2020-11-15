@@ -20,7 +20,7 @@ const { SICK_LEAVE } = require('../data/events');
 module.exports.eventCreateListener = functions
   .region(region)
   .runWith(runtimeOptions)
-  .firestore.document('events-new/{eventId}')
+  .firestore.document('events/{eventId}')
   .onCreate(async (doc, context) => {
     const { eventId } = context.params;
     const event = new Event({
@@ -50,7 +50,7 @@ module.exports.eventCreateListener = functions
       start: event.start.toDate().getTime(),
       end: event.end.toDate().getTime(),
       allDay: event.allDay,
-      user: eventUserFullName
+      user: createdByFullName
     };
     const metadata = {
       createdAt: new Date(),
@@ -122,7 +122,7 @@ module.exports.eventCreateListener = functions
 module.exports.eventUpdateListener = functions
   .region(region)
   .runWith(runtimeOptions)
-  .firestore.document('events-new/{eventId}')
+  .firestore.document('events/{eventId}')
   .onUpdate(async (change, context) => {
     const oldDocData = change.before.data();
     const docData = change.after.data();
@@ -255,7 +255,7 @@ const newCommentHandler = async (change, context) => {
     createdAt: new Date(),
     createdBy: comment.metadata.createdBy,
     updatedAt: new Date(),
-    updatedBy: comment.metadata.udpatedBy
+    updatedBy: comment.metadata.updatedBy
   };
   //Send notification to original event user, subscribers and notifyUsers for this comment
   const recipients = [...comment.notifyUsers, ...event.subscribers, event.user];
@@ -280,7 +280,7 @@ const newCommentHandler = async (change, context) => {
 module.exports.eventDeleteListener = functions
   .region(region)
   .runWith(runtimeOptions)
-  .firestore.document('events-new/{eventId}')
+  .firestore.document('events/{eventId}')
   .onDelete(async (doc, context) => {
     const { eventId } = context.params;
     const event = new Event({

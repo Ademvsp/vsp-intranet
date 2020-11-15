@@ -110,6 +110,7 @@ const NewPostDialog = withTheme((props) => {
           <Grid item container direction='column'>
             <Grid item>
               <BalloonEditorWrapper
+                collection='posts'
                 value={formik.values.body}
                 setValue={formik.handleChange('body')}
                 setTouched={() => formik.setFieldTouched('body', true)}

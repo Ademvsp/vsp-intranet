@@ -49,7 +49,7 @@ const NewComment = (props) => {
 
   return (
     <Grid container direction='column' spacing={1}>
-      <Grid item container alignItems='center'>
+      <Grid item container alignItems='center' wrap='nowrap'>
         <Grid item>
           <ListItemAvatar>
             <Avatar user={authUser} />
@@ -57,6 +57,7 @@ const NewComment = (props) => {
         </Grid>
         <Grid item style={{ flexGrow: 1 }}>
           <BalloonEditorWrapper
+            collection={props.collection}
             value={formik.values.body}
             setValue={formik.handleChange('body')}
             setTouched={() => {}}

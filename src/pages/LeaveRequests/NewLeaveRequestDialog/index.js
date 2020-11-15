@@ -188,6 +188,11 @@ const NewLeaveRequestDialog = withTheme((props) => {
       </DialogContent>
       <DialogActions>
         <ActionsBar
+          notifications={{
+            enabled: true,
+            readOnly: true,
+            tooltip: 'Your manager will be notified automatically'
+          }}
           buttonLoading={loading}
           disabled={loading || !validatedOnMount}
           isValid={formik.isValid}

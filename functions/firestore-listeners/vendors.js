@@ -10,7 +10,7 @@ const { INTERNAL } = require('../data/source-types');
 module.exports.vendorCreateListener = functions
   .region(region)
   .runWith(runtimeOptions)
-  .firestore.document('vendors-new/{vendorId}')
+  .firestore.document('vendors/{vendorId}')
   .onCreate(async (doc, context) => {
     const { vendorId } = context.params;
     const vendor = new Vendor({
@@ -25,6 +25,7 @@ module.exports.vendorCreateListener = functions
       const admins = await Vendor.getAdmins();
 
       const emailData = {
+        vendorId: vendor.vendorId,
         name: vendor.name,
         createdAt: vendor.metadata.createdAt.toDate().getTime()
       };

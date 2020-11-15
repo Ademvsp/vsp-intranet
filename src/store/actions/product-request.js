@@ -35,7 +35,10 @@ export const addProductRequest = (values) => {
       productType: productType.name.trim(),
       status: REQUESTED,
       user: authUser.userId,
-      vendor: { ...vendor },
+      vendor: {
+        vendorId: vendor.vendorId,
+        name: vendor.name
+      },
       vendorSku: vendorSku.trim()
     });
     try {

@@ -31,7 +31,7 @@ module.exports.sendEventReminder = async () => {
   const eventUsers = await Promise.all(promises);
   promises = [];
   //Loop through each event and generate the notifications
-  for (const [index, event] of todayEvents.entries()) {
+  for (const [index, event] of filteredEvents.entries()) {
     //Use [index] to map the eventUser with the corresponing event
     const eventUser = eventUsers[index];
     const eventUserFullName = eventUser.getFullName();
@@ -49,8 +49,7 @@ module.exports.sendEventReminder = async () => {
       eventTitle: eventTitle,
       start: event.start.toDate().getTime(),
       end: event.end.toDate().getTime(),
-      allDay: event.allDay,
-      user: eventUserFullName
+      allDay: event.allDay
     };
     const metadata = {
       createdAt: new Date(),

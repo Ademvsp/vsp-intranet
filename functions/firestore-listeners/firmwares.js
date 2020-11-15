@@ -14,7 +14,7 @@ const Firmware = require('../models/firmware');
 module.exports.firmwareCreateListener = functions
   .region(region)
   .runWith(runtimeOptions)
-  .firestore.document('firmwares-new/{firmwareId}')
+  .firestore.document('firmwares/{firmwareId}')
   .onCreate(async (doc, context) => {
     const { firmwareId } = context.params;
     //Update the collection-data document
@@ -27,7 +27,7 @@ module.exports.firmwareCreateListener = functions
 module.exports.firmwareUpdateListener = functions
   .region(region)
   .runWith(runtimeOptions)
-  .firestore.document('firmwares-new/{firmwareId}')
+  .firestore.document('firmwares/{firmwareId}')
   .onUpdate(async (change, context) => {
     const oldDocData = change.before.data();
     const docData = change.after.data();
@@ -186,7 +186,7 @@ const newCommentHandler = async (change, context) => {
 module.exports.firmwareDeleteListener = functions
   .region(region)
   .runWith(runtimeOptions)
-  .firestore.document('firmwares-new/{firmwareId}')
+  .firestore.document('firmwares/{firmwareId}')
   .onDelete(async (doc, context) => {
     const { firmwareId } = context.params;
     const firmware = new Firmware({

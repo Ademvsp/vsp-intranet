@@ -26,7 +26,7 @@ export const addProject = (values) => {
     const { authUser } = getState().authState;
     const newProject = new Project({
       //The rest of .actions will be filled out in the model when you .save()
-      actions: [{ actionType: status.name }],
+      actions: [{ actionType: status }],
       attachments: [],
       comments: [],
       customer: {
@@ -52,7 +52,7 @@ export const addProject = (values) => {
         uploadedAttachments = await dispatch(
           upload({
             files: attachments,
-            collection: 'projects-new',
+            collection: 'projects',
             collectionId: newProject.projectId,
             folder: newProject.metadata.createdAt.getTime().toString()
           })
@@ -112,7 +112,7 @@ export const editProject = (project, values) => {
     await compareAndDelete({
       oldAttachments: project.attachments,
       newAttachments: existingAttachments,
-      collection: 'projects-new',
+      collection: 'projects',
       collectionId: project.projectId,
       folder: project.metadata.createdAt.getTime().toString()
     });
@@ -125,7 +125,7 @@ export const editProject = (project, values) => {
       uploadedAttachments = await dispatch(
         upload({
           files: toBeUploadedAttachments,
-          collection: 'projects-new',
+          collection: 'projects',
           collectionId: project.projectId,
           folder: project.metadata.createdAt.getTime().toString()
         })
@@ -137,7 +137,7 @@ export const editProject = (project, values) => {
       actions: [
         ...project.actions,
         {
-          actionType: status.name,
+          actionType: status,
           actionedAt: null,
           actionedBy: authUser.userId
         }
@@ -204,7 +204,7 @@ export const addComment = (project, values) => {
         uploadedAttachments = await dispatch(
           upload({
             files: attachments,
-            collection: 'projects-new',
+            collection: 'projects',
             collectionId: project.projectId,
             folder: serverTime.toString()
           })

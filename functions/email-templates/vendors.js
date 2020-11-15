@@ -10,7 +10,7 @@ const User = require('../models/user');
 
 module.exports.newVendor = async (notification, sender) => {
   const { emailData, recipient: notificationRecipient } = notification;
-  const { name, createdAt } = emailData;
+  const { vendorId, name, createdAt } = emailData;
   const senderFullName = sender.getFullName();
   const recipient = new User({ ...notificationRecipient });
   const timezone = await recipient.getTimezone();
@@ -24,6 +24,7 @@ module.exports.newVendor = async (notification, sender) => {
       `${senderFullName} created a new Vendor named "${name}".`
     ),
     wrapWithQuote(`
+      Vendor ID: ${vendorId}<br/>
 			Created at: ${createdByFormatted}<br/>
 			Created by: ${senderFullName}
 		`)

@@ -1,6 +1,6 @@
 import { EXTERNAL, INTERNAL } from '../data/source-types';
 import firebase, { getServerTimeInMilliseconds } from '../utils/firebase';
-const collectionRef = firebase.firestore().collection('customers-new');
+const collectionRef = firebase.firestore().collection('customers');
 export default class Customer {
   constructor({ customerId, metadata, name }) {
     this.customerId = customerId;

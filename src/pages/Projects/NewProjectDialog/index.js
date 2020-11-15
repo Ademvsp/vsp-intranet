@@ -122,11 +122,11 @@ const NewProjectDialog = withTheme((props) => {
         );
       }),
     status: yup
-      .object()
+      .string()
       .label('Status')
       .required()
       .test('isValidArrayElement', 'Status is not valid', (value) =>
-        projectStatusTypes.find((status) => status.name === value.name)
+        projectStatusTypes.find((status) => status === value)
       ),
     reminder: yup
       .date()
@@ -468,8 +468,8 @@ const NewProjectDialog = withTheme((props) => {
                 }}
               >
                 {projectStatusTypes.map((status) => (
-                  <MenuItem key={status.name} value={status}>
-                    {status.name}
+                  <MenuItem key={status} value={status}>
+                    {status}
                   </MenuItem>
                 ))}
               </TextField>
