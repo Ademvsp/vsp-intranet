@@ -69,6 +69,7 @@ const {
   resourceDeleteListener,
   resourceCreateListener
 } = require('./firestore-listeners/resource.js');
+const { profilePictureUploadListener } = require('./functions/storage.js');
 
 //Authentication functions
 module.exports.authFunctions = {
@@ -86,6 +87,10 @@ module.exports.getServerTimeInMilliseconds = getServerTimeInMilliseconds;
 //Scheduled functions
 module.exports.scheduledFunctions = {
   dailyTasks: dailyTasks
+};
+//Storage listeners
+module.exports.storageListeners = {
+  profilePictureUploadListener: profilePictureUploadListener
 };
 //Firestore listeners
 module.exports.usersFirestoreListener = {
