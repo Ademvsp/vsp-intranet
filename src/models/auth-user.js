@@ -44,7 +44,7 @@ export default class AuthUser {
   }
 
   async removeProfilePicture() {
-    const userProfilePicturePath = `users/${this.userId}/profilePicture`;
+    const userProfilePicturePath = `users/${this.userId}/profile-picture`;
     const listAll = await firebase
       .storage()
       .ref(userProfilePicturePath)
@@ -64,7 +64,10 @@ export default class AuthUser {
     }
     const resizedFile = await new Promise((resolve, reject) => {
       return new Compressor(file, {
+        strict: true,
         width: 400,
+        quality: 0.8,
+        convertSize: 1,
         success: (result) => {
           resolve(
             new File([result], file.name, {
@@ -76,7 +79,7 @@ export default class AuthUser {
         error: (error) => reject(error)
       });
     });
-    const userProfilePicturePath = `users/${this.userId}/profilePicture`;
+    const userProfilePicturePath = `users/${this.userId}/profile-picture`;
     const listAll = await firebase
       .storage()
       .ref(userProfilePicturePath)
