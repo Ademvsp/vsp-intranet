@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import {
   List,
   Divider,
@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core';
 import Comment from './Comment';
 import NewComment from './NewComment';
-import { ArrowDropDown as ArrowDropDownIcon } from '@material-ui/icons';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 
 const Comments = (props) => {
   const {
@@ -19,6 +19,15 @@ const Comments = (props) => {
     commentLikeClickHandler,
     collection
   } = props;
+  const [sortNewest, setSortNewest] = useState(true);
+
+  let sortedComments = [...comments];
+  if (!sortNewest) {
+    sortedComments.sort((a, b) =>
+      a.metadata.createdAt > b.metadata.createdAt ? 1 : -1
+    );
+  }
+
   return (
     <CardContent>
       <Grid container direction='column'>
@@ -27,6 +36,7 @@ const Comments = (props) => {
             collection={collection}
             submitHandler={submitHandler}
             actionBarNotificationProps={actionBarNotificationProps}
+            resetSort={() => setSortNewest(true)}
           />
         </Grid>
         <Grid item>
@@ -36,14 +46,15 @@ const Comments = (props) => {
               size='small'
               endIcon={<ArrowDropDownIcon />}
               color='secondary'
+              onClick={() => setSortNewest((prevState) => !prevState)}
             >
-              Newest Comments
+              {`${sortNewest ? 'New' : 'Old'}est Comments`}
             </Button>
           ) : null}
         </Grid>
         <Grid item>
           <List>
-            {comments.map((comment, index) => {
+            {sortedComments.map((comment, index) => {
               return (
                 <Fragment
                   key={comment.metadata.createdAt.toDate().getTime().toString()}

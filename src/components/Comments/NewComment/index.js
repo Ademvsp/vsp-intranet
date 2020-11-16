@@ -30,6 +30,7 @@ const NewComment = (props) => {
     const result = await props.submitHandler(values);
     setLoading(false);
     if (result) {
+      props.resetSort();
       formik.setValues(initialValues, true);
     }
   };
