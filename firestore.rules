@@ -77,8 +77,9 @@ service cloud.firestore {
       //For creating a new post
       allow create: if isLoggedIn();
       //For adding a new comment or the write after uploading attachments or likes
-      allow update: if request.resource.data.diff(resource.data).changedKeys().hasOnly(['comments'])
+      allow update: if request.resource.data.diff(resource.data).changedKeys().hasOnly(['comments', 'subscribers'])
         || request.resource.data.diff(resource.data).changedKeys().hasOnly(['likes'])
+        || request.resource.data.diff(resource.data).changedKeys().hasOnly(['subscribers'])
         || (request.auth.uid == resource.data.user && request.resource.data.diff(resource.data).changedKeys().hasOnly(['attachments', 'metadata']));
       //Not a required function of the app
       allow delete: if false;
@@ -92,7 +93,9 @@ service cloud.firestore {
       //For creating a new event
       allow create: if isLoggedIn();
       //Can update if you are the event user, you are the event user's manager or if you are calendar admin
-      allow update: if resource.data.user == request.auth.uid 
+      allow update: if resource.data.user == request.auth.uid
+        || request.resource.data.diff(resource.data).changedKeys().hasOnly(['comments', 'subscribers'])
+        || request.resource.data.diff(resource.data).changedKeys().hasOnly(['subscribers'])
         || (getUser(resource.data.user).manager == request.auth.uid && isAuthorized('events', 'managers'))
         || isAuthorized('events', 'admins');
       //Can delete if you are the event user, you are the event user's manager or if you are calendar admin

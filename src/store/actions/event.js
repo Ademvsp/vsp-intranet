@@ -37,7 +37,7 @@ export const addEvent = (values) => {
     const newEvent = new Event({
       allDay: allDay,
       comments: [],
-      details: details,
+      details: details.trim(),
       end: endTransformed,
       locations: locations,
       start: startTransformed,
@@ -107,7 +107,7 @@ export const editEvent = (event, values) => {
     const newEvent = new Event({
       ...event,
       allDay: allDay,
-      details: details,
+      details: details.trim(),
       end: endTransformed,
       locations: locations,
       start: startTransformed,
