@@ -4,7 +4,8 @@ const {
   wrapWithQuote,
   wrapWithTemplate,
   transformForEmail,
-  wrapWithBold
+  wrapWithBold,
+  wrapWithLineBreaks
 } = require('../utils/html-helper');
 const { BASE_URL } = process.env;
 
@@ -20,7 +21,7 @@ module.exports.newLeaveRequestUser = async (notification, _sender) => {
 			Leave Type: ${type}<br/>
 			Start Date: ${start}<br/>
 			End Date: ${end}<br/>
-			Reason: ${reason}<br/>
+			Reason: ${wrapWithLineBreaks(reason)}<br/>
 			Awaiting Approval from: ${manager}<br/>
 		`),
     wrapWithParagraph(`		
@@ -47,7 +48,7 @@ module.exports.newLeaveRequestManager = async (notification, sender) => {
 			Leave Type: ${type}<br/>
 			Start Date: ${start}<br/>
 			End Date: ${end}<br/>
-			Reason: ${reason}<br/>
+			Reason: ${wrapWithLineBreaks(reason)}<br/>
 			Awaiting Approval from: ${manager}<br/>
 		`),
     wrapWithParagraph(
@@ -75,7 +76,7 @@ module.exports.approveLeaveRequestUser = async (notification, _sender) => {
 			Leave Type: ${type}<br/>
 			Start Date: ${start}<br/>
 			End Date: ${end}<br/>
-			Reason: ${reason}<br/>
+			Reason: ${wrapWithLineBreaks(reason)}<br/>
 			Approved by: ${manager}<br/>
 		`),
     wrapWithParagraph(`		
@@ -102,7 +103,7 @@ module.exports.approveLeaveRequestAdmin = async (notification, sender) => {
 			Leave Type: ${type}<br/>
 			Start Date: ${start}<br/>
 			End Date: ${end}<br/>
-			Reason: ${reason}<br/>
+			Reason: ${wrapWithLineBreaks(reason)}<br/>
 			Approved by: ${manager}<br/>
 		`),
     wrapWithParagraph(
@@ -131,7 +132,7 @@ module.exports.rejectLeaveRequestUser = async (notification, _sender) => {
 			Leave Type: ${type}<br/>
 			Start Date: ${start}<br/>
 			End Date: ${end}<br/>
-			Reason: ${reason}<br/>
+			Reason: ${wrapWithLineBreaks(reason)}<br/>
 			Approved by: ${manager}<br/>
 		`),
     wrapWithParagraph(`		

@@ -2,7 +2,8 @@ const {
   wrapWithParagraph,
   wrapWithQuote,
   wrapWithTemplate,
-  transformForEmail
+  transformForEmail,
+  wrapWithLineBreaks
 } = require('../utils/html-helper');
 const { getShortenedLinkAttachments } = require('../utils/attachments');
 const { BASE_URL } = process.env;
@@ -20,7 +21,7 @@ module.exports.newJobDocument = async (notification, sender) => {
     wrapWithQuote(`
       Customer: ${customer}<br/>
       ${siteReference ? `Site Reference: ${siteReference}<br/>` : ''}
-      ${body ? `Notes: ${body}` : ''}
+      ${body ? `Notes: ${wrapWithLineBreaks(body)}` : ''}
     `)
   ];
   const shortenedLinkAttachments = await getShortenedLinkAttachments(
@@ -56,7 +57,7 @@ module.exports.editJobDocument = async (notification, sender) => {
     wrapWithQuote(`
       Customer: ${customer}<br/>
       ${siteReference ? `Site Reference: ${siteReference}<br/>` : ''}
-      ${body ? `Notes: ${body}` : ''}
+      ${body ? `Notes: ${wrapWithLineBreaks(body)}` : ''}
     `)
   ];
   const shortenedLinkAttachments = await getShortenedLinkAttachments(

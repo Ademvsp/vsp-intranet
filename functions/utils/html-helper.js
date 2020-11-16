@@ -45,10 +45,9 @@ const resizeImage = (html, imageSize) => {
   return html;
 };
 
-const convertPrewrap = (html) => {
-  html = html
-    .split('<p style="white-space: pre-wrap;">')
-    .join('<p style="white-space: pre;">');
+module.exports.wrapWithLineBreaks = (html) => {
+  html = html.split('\n');
+  html = html.join('<br/>');
   return html;
 };
 
@@ -102,6 +101,5 @@ module.exports.transformForEmail = (html) => {
   html = convertToLink(html);
   html = trimEmptyParagraph(html);
   html = resizeImage(html, '50%');
-  html = convertPrewrap(html);
   return html;
 };

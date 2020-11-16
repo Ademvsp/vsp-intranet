@@ -3,7 +3,8 @@ const {
   wrapWithQuote,
   wrapWithTemplate,
   transformForEmail,
-  wrapWithBold
+  wrapWithBold,
+  wrapWithLineBreaks
 } = require('../utils/html-helper');
 const { getShortenedLinkAttachments } = require('../utils/attachments');
 const { BASE_URL } = process.env;
@@ -28,7 +29,7 @@ module.exports.newProductRequestUser = async (notification, _sender) => {
 			SKU: ${vendorSku}<br/>
 			Product Type: ${productType}<br/>
 			Cost: ${cost}<br/>
-			Description: ${description}<br/>
+			Description: ${wrapWithLineBreaks(description)}<br/>
 		`)
   ];
 
@@ -76,7 +77,7 @@ module.exports.newProductRequestAdmin = async (notification, sender) => {
 			SKU: ${vendorSku}<br/>
 			Product Type: ${productType}<br/>
 			Cost: ${cost}<br/>
-			Description: ${description}<br/>
+			Description: ${wrapWithLineBreaks(description)}<br/>
     `)
   ];
 

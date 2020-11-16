@@ -8,8 +8,7 @@
     "node": true
   },
   "extends": [
-    "eslint:recommended",
-    "prettier"
+    "eslint:recommended"
   ],
   "parserOptions": {
     "ecmaVersion": 12

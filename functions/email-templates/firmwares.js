@@ -2,7 +2,8 @@ const {
   wrapWithParagraph,
   wrapWithQuote,
   wrapWithTemplate,
-  transformForEmail
+  transformForEmail,
+  wrapWithLineBreaks
 } = require('../utils/html-helper');
 const { getShortenedLinkAttachments } = require('../utils/attachments');
 const { BASE_URL } = process.env;
@@ -20,7 +21,7 @@ module.exports.newFirmware = async (notification, sender) => {
     wrapWithQuote(`
       Title: ${title}<br/>
       Product Affected: ${products}<br/>
-      ${body ? `Release Notes: ${body}` : ''}
+      ${body ? `Release Notes: ${wrapWithLineBreaks(body)}` : ''}
     `)
   ];
   const shortenedLinkAttachments = await getShortenedLinkAttachments(
@@ -56,7 +57,7 @@ module.exports.editFirmware = async (notification, sender) => {
     wrapWithQuote(`
       Title: ${title}<br/>
       Product Affected: ${products}<br/>
-      ${body ? `Release Notes: ${body}` : ''}
+      ${body ? `Release Notes: ${wrapWithLineBreaks(body)}` : ''}
     `)
   ];
   const shortenedLinkAttachments = await getShortenedLinkAttachments(

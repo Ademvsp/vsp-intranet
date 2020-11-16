@@ -2,7 +2,8 @@ const {
   wrapWithParagraph,
   wrapWithQuote,
   wrapWithTemplate,
-  transformForEmail
+  transformForEmail,
+  wrapWithLineBreaks
 } = require('../utils/html-helper');
 const { BASE_URL } = process.env;
 const { getShortenedLinkAttachments } = require('../utils/attachments');
@@ -32,7 +33,7 @@ module.exports.newProject = async (notification, sender) => {
 			Owners: ${owners}<br/>
 			Status: ${status}<br/>
 			Estimated Value: ${value}<br/>
-			Description: ${description}
+			Description: ${wrapWithLineBreaks(description)}
 		`)
   ];
 
@@ -81,7 +82,7 @@ module.exports.editProject = async (notification, sender) => {
 			Owners: ${owners}<br/>
 			Status: ${status}<br/>
 			Estimated Value: ${value}<br/>
-			Description: ${description}
+			Description: ${wrapWithLineBreaks(description)}
 		`)
   ];
 
@@ -157,7 +158,7 @@ module.exports.projectReminder = async (notification, _sender) => {
 			Owners: ${owners}<br/>
 			Status: ${status}<br/>
 			Estimated Value: ${value}<br/>
-			Description: ${description}
+			Description: ${wrapWithLineBreaks(description)}
 		`)
   ];
 
