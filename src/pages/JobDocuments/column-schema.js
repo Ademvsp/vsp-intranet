@@ -10,6 +10,13 @@ const columnSchema = [
     hidden: true
   },
   {
+    field: 'body',
+    title: 'Notes',
+    type: 'string',
+    hidden: true,
+    searchable: true
+  },
+  {
     field: 'metadata.createdAt',
     title: 'Date',
     type: 'date',

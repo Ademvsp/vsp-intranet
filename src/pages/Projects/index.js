@@ -1,5 +1,5 @@
 /* eslint-disable react/display-name */
-import { Container } from '@material-ui/core';
+import { CardContent, Container, Grid, Typography } from '@material-ui/core';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Project from '../../models/project';
@@ -12,6 +12,7 @@ import NewProjectDialog from './NewProjectDialog';
 import EditProjectDialog from './EditProjectDialog';
 import AddIcon from '@material-ui/icons/Add';
 import FloatingActionButton from '../../components/FloatingActionButton';
+import AttachmentsContainer from '../../components/AttachmentsContainer';
 
 const Projects = (props) => {
   const { push } = useHistory();
@@ -124,6 +125,31 @@ const Projects = (props) => {
           onRowClick={(event, rowData) =>
             push(`/projects/${rowData.projectId}`)
           }
+          detailPanel={(rowData) => {
+            return (
+              <CardContent>
+                <Grid container direction='column' spacing={1}>
+                  {rowData.description && (
+                    <Grid item>
+                      {rowData.description.split('\n').map((line, index) => {
+                        if (!line) {
+                          return <br />;
+                        }
+                        return (
+                          <Typography key={`${index}${line}`}>
+                            {line}
+                          </Typography>
+                        );
+                      })}
+                    </Grid>
+                  )}
+                  <Grid item>
+                    <AttachmentsContainer attachments={rowData.attachments} />
+                  </Grid>
+                </Grid>
+              </CardContent>
+            );
+          }}
         />
       </Container>
       <FloatingActionButton

@@ -1,4 +1,4 @@
-import { CardContent, Container } from '@material-ui/core';
+import { CardContent, Container, Grid, Typography } from '@material-ui/core';
 import MaterialTable from 'material-table';
 import React, { Fragment, useEffect, useState } from 'react';
 import FloatingActionButton from '../../components/FloatingActionButton';
@@ -139,7 +139,25 @@ const JobDocuments = (props) => {
           detailPanel={(rowData) => {
             return (
               <CardContent>
-                <AttachmentsContainer attachments={rowData.attachments} />
+                <Grid container direction='column' spacing={1}>
+                  {rowData.body && (
+                    <Grid item>
+                      {rowData.body.split('\n').map((line, index) => {
+                        if (!line) {
+                          return <br />;
+                        }
+                        return (
+                          <Typography key={`${index}${line}`}>
+                            {line}
+                          </Typography>
+                        );
+                      })}
+                    </Grid>
+                  )}
+                  <Grid item>
+                    <AttachmentsContainer attachments={rowData.attachments} />
+                  </Grid>
+                </Grid>
               </CardContent>
             );
           }}

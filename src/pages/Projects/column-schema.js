@@ -12,6 +12,13 @@ const columnSchema = [
     hidden: true
   },
   {
+    field: 'description',
+    title: 'Description',
+    type: 'string',
+    hidden: true,
+    searchable: true
+  },
+  {
     field: 'createdAt',
     title: 'Date',
     type: 'date',

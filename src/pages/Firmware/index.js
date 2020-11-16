@@ -134,7 +134,16 @@ const FirmwarePage = (props) => {
                 <Grid container direction='column' spacing={1}>
                   {rowData.body && (
                     <Grid item>
-                      <Typography>{rowData.body}</Typography>
+                      {rowData.body.split('\n').map((line, index) => {
+                        if (!line) {
+                          return <br />;
+                        }
+                        return (
+                          <Typography key={`${index}${line}`}>
+                            {line}
+                          </Typography>
+                        );
+                      })}
                     </Grid>
                   )}
                   <Grid item>
