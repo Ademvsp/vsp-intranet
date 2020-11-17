@@ -229,7 +229,7 @@ const NewEventDialog = withTheme((props) => {
       <DialogTitle>
         <StyledTitle>{`Title Preview: ${eventTitle}`}</StyledTitle>
       </DialogTitle>
-      <DialogContent>
+      <DialogContent style={{ overflowY: 'auto' }}>
         <Grid container direction='column' spacing={2}>
           {showUserField && <Grid item>{userField()}</Grid>}
           <Grid item>

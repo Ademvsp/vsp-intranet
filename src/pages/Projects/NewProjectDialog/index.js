@@ -335,7 +335,7 @@ const NewProjectDialog = withTheme((props) => {
   return (
     <Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
       <DialogTitle>New Project</DialogTitle>
-      <DialogContent>
+      <DialogContent style={{ overflowY: 'auto' }}>
         <Grid container direction='column' spacing={2}>
           <Grid item>
             <TextField

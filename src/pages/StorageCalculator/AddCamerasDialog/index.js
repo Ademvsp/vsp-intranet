@@ -200,7 +200,7 @@ const AddCamerasDialog = withTheme((props) => {
   return (
     <Dialog open={open} onClose={close} maxWidth='xs' fullWidth>
       <DialogTitle>Add Cameras</DialogTitle>
-      <DialogContent>
+      <DialogContent style={{ overflowY: 'auto' }}>
         <Grid container direction='column' spacing={2}>
           <Grid item container spacing={2}>
             <Grid item xs={6}>
