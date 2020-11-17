@@ -31,7 +31,12 @@ export const compareAndDelete = async ({
       );
     }
   }
-  await Promise.all(promises);
+  try {
+    await Promise.all(promises);
+  } catch (error) {
+    //Ignore failed references to old collection names
+    console.error(error);
+  }
   return newAttachments;
 };
 
