@@ -22,10 +22,11 @@ export const EventContext = createContext();
 
 const Calendar = (props) => {
   const { action } = props;
+  //Make range 1 month before and 1 month after current month
   const initalRange = {
     startOfMonth: startOfMonth(new Date()),
     start: sub(startOfMonth(new Date()), { months: 1 }),
-    end: add(startOfMonth(new Date()), { months: 1 })
+    end: add(startOfMonth(new Date()), { months: 2 })
   };
   const params = useParams();
   const { push, replace } = useHistory();
