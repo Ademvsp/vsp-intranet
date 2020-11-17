@@ -57,11 +57,17 @@ const CalendarContainer = (props) => {
   }, [props.events, users, userId]);
 
   const navigateChangeHandler = (event) => {
+    //Make initial range 1 month before and 1 month after current month
     const startOfEventMonth = startOfMonth(event);
     const start = sub(startOfEventMonth, { months: 1 });
-    const end = add(startOfEventMonth, { months: 1 });
+    const end = add(startOfEventMonth, { months: 2 });
     if (startOfEventMonth.valueOf() !== range.startOfMonth.valueOf()) {
-      setRange({ startOfMonth, start, end });
+      //No need to set new range if still navigating through weeks of same month
+      setRange({
+        startOfMonth: startOfEventMonth,
+        start: start,
+        end: end
+      });
     }
   };
 

@@ -216,6 +216,7 @@ service cloud.firestore {
       //User can update for attachment upload, manager can update to reject or approve, admin can mark as paid
       allow update: if request.resource.data.diff(resource.data).changedKeys().hasOnly(['comments'])
       || (resource.data.manager == request.auth.uid && request.resource.data.diff(resource.data).changedKeys().hasOnly(['actions', 'metadata', 'status']))
+      || (request.auth.uid == resource.data.user && request.resource.data.diff(resource.data).changedKeys().hasOnly(['attachments', 'metadata']))
       || isAuthorized('expense-claims', 'admins');
       //Not a required function of the app
       allow delete: if false;
