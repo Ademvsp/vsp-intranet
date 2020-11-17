@@ -29,16 +29,18 @@ const Calendar = (props) => {
   };
   const params = useParams();
   const { push, replace } = useHistory();
-  const { users } = useSelector((state) => state.dataState);
+  const { users, locations } = useSelector((state) => state.dataState);
   const { authUser } = useSelector((state) => state.authState);
   const { userId } = authUser;
+  const authUserLocation = locations.find(
+    (location) => location.locationId === authUser.location
+  );
+  const initialSelectedStates = [authUserLocation.state];
   const [events, setEvents] = useState();
   const [newEventPrefillData, setNewEventPrefillData] = useState();
   const [showAddEventDialog, setShowAddEventDialog] = useState(false);
   const [filteredEvents, setFilteredEvents] = useState();
-  const [selectedLocations, setSelectedLocations] = useState([
-    authUser.location
-  ]);
+  const [selectedStates, setSelectedStates] = useState(initialSelectedStates);
   const [selectedEventTypes, setSelectedEventTypes] = useState(
     eventTypes.map((eventType) => eventType.name)
   );
@@ -90,18 +92,23 @@ const Calendar = (props) => {
   useEffect(() => {
     if (events) {
       const newFilteredEvents = [];
-      events.forEach((event) => {
-        const locationMatch = event.locations.some((eventLocation) =>
-          selectedLocations.includes(eventLocation)
-        );
+
+      for (const event of events) {
+        const stateMatch = event.locations.some((eventLocation) => {
+          //Get the state of the event location
+          const location = locations.find(
+            (location) => location.locationId === eventLocation
+          );
+          return selectedStates.includes(location.state);
+        });
         const eventTypeMatch = selectedEventTypes.includes(event.type);
-        if (locationMatch && eventTypeMatch) {
+        if (stateMatch && eventTypeMatch) {
           newFilteredEvents.push(event);
         }
         setFilteredEvents(newFilteredEvents);
-      });
+      }
     }
-  }, [events, selectedLocations, selectedEventTypes]);
+  }, [events, locations, selectedStates, selectedEventTypes]);
 
   useEffect(() => {
     const asyncFunction = async () => {
@@ -160,8 +167,8 @@ const Calendar = (props) => {
   return (
     <EventContext.Provider
       value={{
-        selectedLocations,
-        setSelectedLocations,
+        selectedStates,
+        setSelectedStates,
         selectedEventTypes,
         setSelectedEventTypes,
         events
