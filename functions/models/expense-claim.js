@@ -1,7 +1,7 @@
 const admin = require('firebase-admin');
 const Permission = require('./permission');
 const collectionRef = admin.firestore().collection('expense-claims');
-const { SUBMITTED } = require('../data/expense-claim-status-types');
+const { SUBMITTED, APPROVED } = require('../data/expense-claim-status-types');
 
 module.exports = class ExpenseClaim {
   constructor({
@@ -48,6 +48,16 @@ module.exports = class ExpenseClaim {
   static async getAwaitingApproval() {
     const collection = await collectionRef
       .where('status', '==', SUBMITTED)
+      .get();
+    const expenseClaims = collection.docs.map(
+      (doc) => new ExpenseClaim({ expenseClaimId: doc.id, ...doc.data() })
+    );
+    return expenseClaims;
+  }
+
+  static async getAwaitingPayment() {
+    const collection = await collectionRef
+      .where('status', '==', APPROVED)
       .get();
     const expenseClaims = collection.docs.map(
       (doc) => new ExpenseClaim({ expenseClaimId: doc.id, ...doc.data() })
