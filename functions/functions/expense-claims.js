@@ -1,5 +1,8 @@
 const Notification = require('../models/notification');
-const { EXPENSE_CLAIM_ACTION_REMINDER } = require('../data/notification-types');
+const {
+  EXPENSE_CLAIM_ACTION_REMINDER,
+  EXPENSE_CLAIM_PAYMENT_REMINDER
+} = require('../data/notification-types');
 const ExpenseClaim = require('../models/expense-claim');
 
 module.exports.sendExpenseClaimActionReminder = async () => {
@@ -27,6 +30,33 @@ module.exports.sendExpenseClaimActionReminder = async () => {
         recipient: manager,
         title: 'Expense Claims reminder to Approve outstanding Requests',
         type: EXPENSE_CLAIM_ACTION_REMINDER
+      });
+      notifications.push(notification);
+    }
+    await Notification.saveAll(notifications);
+  }
+};
+
+module.exports.sendExpenseClaimPaymentReminder = async () => {
+  const expenseClaims = await ExpenseClaim.getAwaitingApproval();
+  //Only send notifications if there is at least one document returned
+  if (expenseClaims.length > 0) {
+    // Get list of all expense claim admins
+    const admins = await ExpenseClaim.getAdmins();
+    const notifications = [];
+    for (const admin of admins) {
+      const notification = new Notification({
+        link: '/expense-claims',
+        metadata: {
+          createdAt: new Date(),
+          createdBy: admin,
+          updatedAt: new Date(),
+          updatedBy: admin
+        },
+        page: 'Expense Claims',
+        recipient: admin,
+        title: 'Expense Claims reminder to Pay outstanding Requests',
+        type: EXPENSE_CLAIM_PAYMENT_REMINDER
       });
       notifications.push(notification);
     }

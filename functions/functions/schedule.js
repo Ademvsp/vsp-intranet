@@ -11,7 +11,10 @@ const { sendProductRequestActionReminder } = require('./product-requests');
 const { sendEventReminder } = require('./events');
 const { sendProjectReminders } = require('./projects');
 const { sendLeaveRequestActionReminder } = require('./leave-requests');
-const { sendExpenseClaimActionReminder } = require('./expense-claims');
+const {
+  sendExpenseClaimActionReminder,
+  sendExpenseClaimPaymentReminder
+} = require('./expense-claims');
 const { deleteOldNotifications } = require('./notifications');
 
 module.exports.dailyTasks = functions
@@ -30,7 +33,8 @@ module.exports.dailyTasks = functions
       promises.push(
         sendProductRequestActionReminder(),
         sendLeaveRequestActionReminder(),
-        sendExpenseClaimActionReminder()
+        sendExpenseClaimActionReminder(),
+        sendExpenseClaimPaymentReminder()
       );
     }
     await Promise.all(promises);

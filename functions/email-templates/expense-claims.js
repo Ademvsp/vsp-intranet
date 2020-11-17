@@ -352,3 +352,19 @@ module.exports.expenseClaimActionReminder = async (notification, _sender) => {
   const transformedHtml = transformForEmail(templateHtml);
   return transformedHtml;
 };
+
+module.exports.expenseClaimPaymentReminder = async (notification, _sender) => {
+  const { link, recipient } = notification;
+
+  const html = [
+    wrapWithParagraph(
+      'This is a reminder that you have outstanding Expense Claims that need to be Paid.'
+    ),
+    wrapWithParagraph('To view all Expense Claims, visit this link:'),
+    wrapWithParagraph(`${BASE_URL}${link}`)
+  ];
+
+  const templateHtml = wrapWithTemplate(html.join('\n'), recipient);
+  const transformedHtml = transformForEmail(templateHtml);
+  return transformedHtml;
+};

@@ -49,7 +49,8 @@ const {
   PROJECT_REMINDER,
   PRODUCT_REQUEST_ACTION_REMINDER,
   LEAVE_REQUEST_ACTION_REMINDER,
-  EXPENSE_CLAIM_ACTION_REMINDER
+  EXPENSE_CLAIM_ACTION_REMINDER,
+  EXPENSE_CLAIM_PAYMENT_REMINDER
 } = require('../data/notification-types');
 const {
   PERMISSION_DENIED,
@@ -102,7 +103,8 @@ const {
   rejectedExpenseClaimUser,
   paidExpenseClaimUser,
   newExpenseClaimComment,
-  expenseClaimActionReminder
+  expenseClaimActionReminder,
+  expenseClaimPaymentReminder
 } = require('../email-templates/expense-claims');
 const {
   newPromotion,
@@ -240,6 +242,9 @@ const sendNotification = async (notification, sender) => {
         break;
       case EXPENSE_CLAIM_ACTION_REMINDER:
         html = await expenseClaimActionReminder(notification, sender);
+        break;
+      case EXPENSE_CLAIM_PAYMENT_REMINDER:
+        html = await expenseClaimPaymentReminder(notification, sender);
         break;
       case NEW_PROMOTION:
         html = await newPromotion(notification, sender);
