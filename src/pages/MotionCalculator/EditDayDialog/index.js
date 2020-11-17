@@ -33,7 +33,7 @@ const EditDayDialog = (props) => {
   return (
     <Dialog open={open} onClose={close} fullWidth maxWidth='sm'>
       <DialogTitle>{`Edit ${day.day}`}</DialogTitle>
-      <DialogContent>
+      <DialogContent style={{ overflowY: 'auto' }}>
         <Grid container direction='column' spacing={1}>
           {motionValues.map((motionValue, index) => {
             const motionValuePercentage = toPercentage(motionValue);

@@ -166,7 +166,7 @@ const ViewEventDialog = (props) => {
           </Grid>
         </Grid>
       </DialogTitle>
-      <DialogContent>
+      <DialogContent style={{ overflowY: 'auto' }}>
         <Grid container direction='column' spacing={2}>
           <Grid item>
             <TextField
