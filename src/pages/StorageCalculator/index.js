@@ -29,17 +29,18 @@ const StorageCalculator = withTheme((props) => {
   const mobile = useMediaQuery('(max-width: 767px)');
 
   useEffect(() => {
+    console.log(cameraGroups);
     const newResult = cameraGroups.reduce(
       (previousValue, currentValue) => {
         const overheadDecimal = overhead / 100;
         const bitrateOverhead = currentValue.bitrate * overheadDecimal;
         const storageOvherhead = currentValue.storage * overheadDecimal;
+        const bitrateTotal = currentValue.bitrate * currentValue.quantity;
+        const storageTotal = currentValue.storage * currentValue.quantity;
         return {
           quantity: previousValue.quantity + currentValue.quantity,
-          bitrate:
-            previousValue.bitrate + currentValue.bitrate + bitrateOverhead,
-          storage:
-            previousValue.storage + currentValue.storage + storageOvherhead
+          bitrate: previousValue.bitrate + bitrateTotal + bitrateOverhead,
+          storage: previousValue.storage + storageTotal + storageOvherhead
         };
       },
       { quantity: 0, bitrate: 0, storage: 0 }
