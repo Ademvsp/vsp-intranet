@@ -39,7 +39,7 @@ const NotificationsPopover = (props) => {
 
   return (
     <Fragment>
-      <Tooltip title='Notificaions'>
+      <Tooltip title='Notifications'>
         <IconButton
           color='inherit'
           onClick={(event) => {
