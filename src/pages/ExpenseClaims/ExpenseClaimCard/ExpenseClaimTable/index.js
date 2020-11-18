@@ -16,6 +16,10 @@ const ExpenseClaimForm = withTheme((props) => {
     0
   );
 
+  const sortedExpenses = [...expenseClaim.expenses].sort((a, b) =>
+    a.date > b.date ? 1 : -1
+  );
+
   const FlatContainer = (props) => <Paper variant='outlined' {...props} />;
   const SummaryRow = (props) => (
     <Grid
@@ -41,13 +45,13 @@ const ExpenseClaimForm = withTheme((props) => {
       isLoading={!expenseClaim}
       icons={tableIcons}
       columns={columnSchema}
-      data={expenseClaim.expenses}
+      data={sortedExpenses}
       options={{
         search: false,
         showTitle: false,
         toolbar: false,
         maxBodyHeight: props.theme.spacing(60),
-        pageSize: expenseClaim.expenses.length,
+        pageSize: sortedExpenses.length,
         headerStyle: {
           borderTopRightRadius: borderRadius,
           borderTopLeftRadius: borderRadius
