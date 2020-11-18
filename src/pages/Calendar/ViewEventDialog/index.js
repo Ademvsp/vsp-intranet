@@ -13,9 +13,10 @@ import {
   Badge,
   Collapse,
   Button,
-  Typography
+  Typography,
+  IconButton
 } from '@material-ui/core';
-import eventTypes from '../../../data/event-types';
+import eventTypes, { PUBLIC_HOLIDAY } from '../../../data/event-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
@@ -27,6 +28,7 @@ import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
 import Comments from '../../../components/Comments';
 import { addComment } from '../../../store/actions/event';
 import EventMenu from '../EventMenu';
+import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 
 const ViewEventDialog = (props) => {
   const dispatch = useDispatch();
@@ -146,6 +148,10 @@ const ViewEventDialog = (props) => {
       Comments
     </Button>
   );
+  const isEventUser = event.user === authUser.userId;
+  const isSubscriber = event.subscribers.includes(authUser.userId);
+  const isPublicHolliday = event.type === PUBLIC_HOLIDAY;
+  const showNotificationIcon = isEventUser || isSubscriber || isPublicHolliday;
 
   return (
     <Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
@@ -162,7 +168,24 @@ const ViewEventDialog = (props) => {
             </Typography>
           </Grid>
           <Grid item>
-            <EventMenu event={event} />
+            <Grid container alignContent='center' wrap='nowrap'>
+              {showNotificationIcon && (
+                <Grid item>
+                  <Tooltip title='You will be reminded on the day of this event as well as any comments on this event'>
+                    <IconButton
+                      disableRipple
+                      disableTouchRipple
+                      disableFocusRipple
+                    >
+                      <NotificationsActiveIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Grid>
+              )}
+              <Grid item>
+                <EventMenu event={event} />
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
       </DialogTitle>

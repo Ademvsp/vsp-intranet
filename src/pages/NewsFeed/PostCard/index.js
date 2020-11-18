@@ -30,6 +30,7 @@ import scrollToComponent from 'react-scroll-to-component';
 import PostCardMenu from './PostCardMenu';
 import { LONG_DATE_TIME } from '../../../utils/date';
 import { addComment } from '../../../store/actions/post';
+import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 
 const PostCard = withTheme((props) => {
   const dispatch = useDispatch();
@@ -195,6 +196,8 @@ const PostCard = withTheme((props) => {
 
   const user = users.find((user) => user.userId === post.user);
   const postDate = post.metadata.createdAt;
+  const showNotificationIcon =
+    post.subscribers.includes(authUser.userId) || post.user === authUser.userId;
 
   return (
     <div ref={scrollRef}>
@@ -206,7 +209,26 @@ const PostCard = withTheme((props) => {
             variant: 'body1'
           }}
           subheader={post.title}
-          action={<PostCardMenu post={post} />}
+          action={
+            <Grid container alignContent='center' wrap='nowrap'>
+              {showNotificationIcon && (
+                <Grid item>
+                  <Tooltip title='You will be notified of any comments on this post'>
+                    <IconButton
+                      disableRipple
+                      disableTouchRipple
+                      disableFocusRipple
+                    >
+                      <NotificationsActiveIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Grid>
+              )}
+              <Grid item>
+                <PostCardMenu post={post} />
+              </Grid>
+            </Grid>
+          }
         />
         <CardContent>
           <InnerHtml html={post.body} />
