@@ -173,7 +173,7 @@ module.exports.projectReminder = async (notification, _sender) => {
     );
   }
   html.push(
-    wrapWithParagraph('To view this Projects, visit this link:'),
+    wrapWithParagraph('To view this Project, visit this link:'),
     wrapWithParagraph(`${BASE_URL}${link}`)
   );
 

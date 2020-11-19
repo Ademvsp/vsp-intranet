@@ -12,7 +12,7 @@ import {
 } from '../../utils/actions';
 
 const initialState = {
-  browserBuild: 202011182144,
+  browserBuild: 202011242116,
   serverBuild: null,
   users: null,
   activeUsers: null,

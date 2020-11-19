@@ -278,7 +278,7 @@ module.exports.eventReminder = async (notification, _sender) => {
 			Start Date: ${startDateFormatted}<br/>
 			End Date: ${endDateFormatted}
 		`),
-    wrapWithParagraph('To view all Events, visit this link:'),
+    wrapWithParagraph('To view this Events, visit this link:'),
     wrapWithParagraph(`${BASE_URL}${link}`)
   ];
 
