@@ -32,7 +32,7 @@ const NewUserDialog = withTheme((props) => {
     email: yup.string().label('Email').required().email(),
     authPhone: yup.string().label('Auth Phone').required().max(12),
     phone: yup.string().label('Phone (Display)').required().max(16),
-    extension: yup.string().label('Phone (Display)').required().max(12),
+    extension: yup.string().label('Extension').required().max(12),
     location: yup
       .string()
       .label('Location')

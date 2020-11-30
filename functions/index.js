@@ -64,12 +64,11 @@ const {
   firmwareDeleteListener
 } = require('./firestore-listeners/firmwares.js');
 const { userCreateListener } = require('./firestore-listeners/users.js');
-const { dailyTasks } = require('./functions/schedule.js');
+const { dailyTasks, monthlyTasks } = require('./functions/schedule.js');
 const {
   resourceDeleteListener,
   resourceCreateListener
 } = require('./firestore-listeners/resource.js');
-const { profilePictureUploadListener } = require('./functions/storage.js');
 
 //Authentication functions
 module.exports.authFunctions = {
@@ -86,11 +85,8 @@ module.exports.authFunctions = {
 module.exports.getServerTimeInMilliseconds = getServerTimeInMilliseconds;
 //Scheduled functions
 module.exports.scheduledFunctions = {
-  dailyTasks: dailyTasks
-};
-//Storage listeners
-module.exports.storageListeners = {
-  profilePictureUploadListener: profilePictureUploadListener
+  dailyTasks: dailyTasks,
+  monthlyTasks: monthlyTasks
 };
 //Firestore listeners
 module.exports.usersFirestoreListener = {

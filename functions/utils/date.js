@@ -6,6 +6,7 @@ module.exports.SHORT_DATE = 'dd/MM/yyyy';
 module.exports.LONG_DATE_TIME = 'eee, d MMM yyyy, h:mm aaa';
 module.exports.LONG_DATE = 'eee, d MMM yyyy';
 module.exports.FULL_DATE_TIME = 'yyyy-MM-dd HH:mm:ss zzz';
+module.exports.DATE_STRING = 'yyyyMMdd';
 module.exports.MILLISECONDS = 'T';
 module.exports.LOCALE = 'en-au';
 

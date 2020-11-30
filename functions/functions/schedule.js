@@ -16,6 +16,7 @@ const {
   sendExpenseClaimPaymentReminder
 } = require('./expense-claims');
 const { deleteOldNotifications } = require('./notifications');
+const Backup = require('../models/backup');
 
 module.exports.dailyTasks = functions
   .runWith(runtimeOptions)
@@ -38,4 +39,14 @@ module.exports.dailyTasks = functions
       );
     }
     await Promise.all(promises);
+  });
+
+module.exports.monthlyTasks = functions
+  .runWith(runtimeOptions)
+  .region(region)
+  .pubsub.schedule('1st day of month 00:00')
+  .timeZone(timeZone)
+  .onRun(async (_context) => {
+    const backup = await Backup.get();
+    await backup.create();
   });

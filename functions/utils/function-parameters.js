@@ -1,6 +1,6 @@
 module.exports = {
   runtimeOptions: {
-    timeoutSeconds: 500,
+    timeoutSeconds: 540,
     memory: '256MB'
   },
   region: 'australia-southeast1',
