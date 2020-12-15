@@ -52,6 +52,8 @@ const App = (props) => {
   //Detect any changes to the serverBuild and force refresh if there is a backend update
   useEffect(() => {
     if (browserBuild && serverBuild) {
+      console.log(`Browser build: ${browserBuild}`);
+      console.log(`Server build: ${serverBuild}`);
       if (serverBuild > browserBuild) {
         window.location.reload();
       }
