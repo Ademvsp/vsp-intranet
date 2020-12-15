@@ -29,7 +29,6 @@ const StorageCalculator = withTheme((props) => {
   const mobile = useMediaQuery('(max-width: 767px)');
 
   useEffect(() => {
-    console.log(cameraGroups);
     const newResult = cameraGroups.reduce(
       (previousValue, currentValue) => {
         const overheadDecimal = overhead / 100;

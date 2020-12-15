@@ -23,17 +23,27 @@ export const addEvent = (values) => {
       allCalendars,
       user
     } = values;
-    const { authUser } = getState().authState;
-    const { locations: dataStateLocations } = getState().dataState;
-    const userLocation = dataStateLocations.find(
-      (dataStateLocation) => dataStateLocation.locationId === authUser.location
+    const {
+      locations: dataStateLocations,
+      users: dataStateUsers
+    } = getState().dataState;
+    const eventUser = dataStateUsers.find(
+      (dataStateUser) => dataStateUser.userId === user
     );
-    let locations = [authUser.location];
+    const eventUserLocation = dataStateLocations.find(
+      (dataStateLocation) =>
+        dataStateLocation.locationId === eventUser.location.locationId
+    );
+    let locations = [eventUserLocation.locationId];
     if (allCalendars) {
       locations = dataStateLocations.map((location) => location.locationId);
     }
-    let startTransformed = transformDate(start, allDay, userLocation.timezone);
-    let endTransformed = transformDate(end, allDay, userLocation.timezone);
+    let startTransformed = transformDate(
+      start,
+      allDay,
+      eventUserLocation.timezone
+    );
+    let endTransformed = transformDate(end, allDay, eventUserLocation.timezone);
     const newEvent = new Event({
       allDay: allDay,
       comments: [],
@@ -90,20 +100,27 @@ export const editEvent = (event, values) => {
       allCalendars,
       user
     } = values;
-    const { authUser } = getState().authState;
-    const { locations: dataStateLocations, users } = getState().dataState;
-    const userLocation = dataStateLocations.find(
-      (dataStateLocation) => dataStateLocation.locationId === authUser.location
+    const {
+      locations: dataStateLocations,
+      users: dataStateUsers
+    } = getState().dataState;
+    const eventUser = dataStateUsers.find(
+      (dataStateUser) => dataStateUser.userId === user
     );
-    let locations;
+    const eventUserLocation = dataStateLocations.find(
+      (dataStateLocation) =>
+        dataStateLocation.locationId === eventUser.location.locationId
+    );
+    let locations = [eventUserLocation.locationId];
     if (allCalendars) {
       locations = dataStateLocations.map((location) => location.locationId);
-    } else {
-      const eventUser = users.find((user) => user.userId === event.user);
-      locations = [eventUser.location.locationId];
     }
-    let startTransformed = transformDate(start, allDay, userLocation.timezone);
-    let endTransformed = transformDate(end, allDay, userLocation.timezone);
+    let startTransformed = transformDate(
+      start,
+      allDay,
+      eventUserLocation.timezone
+    );
+    let endTransformed = transformDate(end, allDay, eventUserLocation.timezone);
     const newEvent = new Event({
       ...event,
       allDay: allDay,
