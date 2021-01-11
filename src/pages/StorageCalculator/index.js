@@ -32,10 +32,10 @@ const StorageCalculator = withTheme((props) => {
     const newResult = cameraGroups.reduce(
       (previousValue, currentValue) => {
         const overheadDecimal = overhead / 100;
-        const bitrateOverhead = currentValue.bitrate * overheadDecimal;
-        const storageOvherhead = currentValue.storage * overheadDecimal;
         const bitrateTotal = currentValue.bitrate * currentValue.quantity;
         const storageTotal = currentValue.storage * currentValue.quantity;
+        const bitrateOverhead = bitrateTotal * overheadDecimal;
+        const storageOvherhead = storageTotal * overheadDecimal;
         return {
           quantity: previousValue.quantity + currentValue.quantity,
           bitrate: previousValue.bitrate + bitrateTotal + bitrateOverhead,
