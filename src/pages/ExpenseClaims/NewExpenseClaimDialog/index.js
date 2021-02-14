@@ -71,8 +71,8 @@ const NewExpenseClaimDialog = withTheme((props) => {
     setValidatedOnMount(true);
   }, [validateForm]);
 
-  const summaryBackgroundColor = props.theme.palette.background.default;
-  const borderRadius = props.theme.spacing(1);
+  // const summaryBackgroundColor = props.theme.palette.background.default;
+  // const borderRadius = props.theme.spacing(1);
 
   const totalValue = formik.values.expenses.reduce(
     (previousValue, currentValue) => previousValue + currentValue.value,
@@ -81,15 +81,7 @@ const NewExpenseClaimDialog = withTheme((props) => {
 
   const FlatContainer = (props) => <Paper variant='outlined' {...props} />;
   const SummaryRow = (props) => (
-    <Grid
-      container
-      justify='flex-end'
-      style={{
-        backgroundColor: summaryBackgroundColor,
-        borderBottomRightRadius: borderRadius,
-        borderBottomLeftRadius: borderRadius
-      }}
-    >
+    <Grid container justify='flex-end'>
       <TableCell variant='body' style={{ borderBottom: 0 }}>
         Total Value:
       </TableCell>
@@ -102,7 +94,7 @@ const NewExpenseClaimDialog = withTheme((props) => {
   return (
     <Dialog open={open} onClose={dialogCloseHandler} fullWidth maxWidth='sm'>
       <DialogTitle>New Expense Claim</DialogTitle>
-      <DialogContent>
+      <DialogContent style={{ overflowY: 'auto' }}>
         <MaterialTable
           columns={columnSchema}
           data={formik.values.expenses}
@@ -110,7 +102,8 @@ const NewExpenseClaimDialog = withTheme((props) => {
           options={{
             search: false,
             showTitle: false,
-            actionsColumnIndex: -1
+            actionsColumnIndex: -1,
+            paging: false
           }}
           components={{
             Container: FlatContainer,
@@ -154,6 +147,7 @@ const NewExpenseClaimDialog = withTheme((props) => {
               })
           }}
         />
+        <SummaryRow />
       </DialogContent>
       <DialogActions>
         <ActionsBar
