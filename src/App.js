@@ -37,6 +37,7 @@ import PricingCalculator from './pages/PricingCalculator';
 import StorageCalculator from './pages/StorageCalculator';
 import MotionCalculator from './pages/MotionCalculator';
 import RAIDCalculator from './pages/RAIDCalculator';
+import VSAASCalculator from './pages/VSAASCalculator';
 import AdminPanel from './pages/AdminPanel';
 
 const App = (props) => {
@@ -190,6 +191,9 @@ const App = (props) => {
           </Route>
           <Route path='/raid-calculator'>
             <RAIDCalculator />
+          </Route>
+          <Route path='/vsaas-calculator'>
+            <VSAASCalculator />
           </Route>
           <Redirect from='/product-requests' to='/product-requests/page/1' />
           <Redirect from='/leave-requests' to='/leave-requests/page/1' />

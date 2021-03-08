@@ -21,6 +21,7 @@ import StorageIcon from '@material-ui/icons/Storage';
 import TransferWithinAStationIcon from '@material-ui/icons/TransferWithinAStation';
 import SlowMotionVideoIcon from '@material-ui/icons/SlowMotionVideo';
 import SettingsIcon from '@material-ui/icons/Settings';
+import CloudIcon from '@material-ui/icons/Cloud';
 import { useSelector } from 'react-redux';
 
 const SideDrawerItems = (props) => {
@@ -92,6 +93,13 @@ const SideDrawerItems = (props) => {
               Icon={DataUsageIcon}
               text='RAID Calculator'
               link='/raid-calculator'
+              subItem={true}
+            />,
+            <SideDrawerItem
+              key='4'
+              Icon={CloudIcon}
+              text='VSAAS Calculator'
+              link='/vsaas-calculator'
               subItem={true}
             />
           ]}

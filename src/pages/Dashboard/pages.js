@@ -16,6 +16,7 @@ import StorageIcon from '@material-ui/icons/Storage';
 import TransferWithinAStationIcon from '@material-ui/icons/TransferWithinAStation';
 import SlowMotionVideoIcon from '@material-ui/icons/SlowMotionVideo';
 import DataUsageIcon from '@material-ui/icons/DataUsage';
+import CloudIcon from '@material-ui/icons/Cloud';
 
 const pages = [
   {
@@ -115,6 +116,13 @@ const pages = [
       'Use the RAID calculator to calculate the quantity and capacity of hard drives required.',
     icon: DataUsageIcon,
     link: '/raid-calculator'
+  },
+  {
+    name: 'VSAAS Calculator',
+    description:
+      'Use the VSAAS calculator to calculate the monthly cost of cloud surveillance as a service.',
+    icon: CloudIcon,
+    link: '/vsaas-calculator'
   },
   {
     name: 'Account',
