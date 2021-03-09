@@ -16,14 +16,11 @@ import * as yup from 'yup';
 import { toCurrency } from '../../utils/data-transformer';
 const STORAGE_MAX = 99999;
 const BANDWIDTH_MAX = 9999;
-const STORAGE_SELL = 27;
-const BANDWIDTH_SELL = 4;
+const STORAGE_SELL = 28.35;
+const BANDWIDTH_SELL = 4.2;
 
 const VSAASCalculator = withTheme((props) => {
-  const [result, setResult] = useState({
-    storage: 0,
-    bandwidth: 0
-  });
+  const [result, setResult] = useState(0);
 
   const validationSchema = yup.object().shape({
     storage: yup.number().label('Storage').required().min(0).max(STORAGE_MAX),
@@ -54,10 +51,8 @@ const VSAASCalculator = withTheme((props) => {
   useEffect(() => {
     const storageSell = STORAGE_SELL * values.storage;
     const bandwidthSell = BANDWIDTH_SELL * values.bandwidth;
-    setResult({
-      storage: storageSell,
-      bandwidth: bandwidthSell
-    });
+    const total = storageSell + bandwidthSell;
+    setResult(total);
   }, [values]);
 
   return (
@@ -99,7 +94,6 @@ const VSAASCalculator = withTheme((props) => {
               <TextField
                 type='number'
                 label='Bandwidth'
-                autoFocus
                 fullWidth
                 value={formik.values.bandwidth}
                 onChange={formik.handleChange('bandwidth')}
@@ -131,18 +125,8 @@ const VSAASCalculator = withTheme((props) => {
                 <CardContent>
                   <Grid container direction='column' spacing={1}>
                     <Grid item container justify='space-between'>
-                      <Typography>Storage sell / month</Typography>
-                      <Typography>{toCurrency(result.storage, 2)}</Typography>
-                    </Grid>
-                    <Grid item container justify='space-between'>
-                      <Typography>Bandwidth sell / month</Typography>
-                      <Typography>{toCurrency(result.bandwidth, 2)}</Typography>
-                    </Grid>
-                    <Grid item container justify='space-between'>
                       <Typography>Total sell / month</Typography>
-                      <Typography>
-                        {toCurrency(result.bandwidth + result.storage, 2)}
-                      </Typography>
+                      <Typography>{toCurrency(result)}</Typography>
                     </Grid>
                   </Grid>
                 </CardContent>
