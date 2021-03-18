@@ -142,11 +142,6 @@ const VSAASCalculator = withTheme((props) => {
                 H.264/H.265 or under.
               </Typography>
               <Typography variant='caption'>
-                • The camera connection to NX Witness is highly recommended to
-                be via HTTPS only, otherwise the connection is not considered
-                secure.
-              </Typography>
-              <Typography variant='caption'>
                 • Access to system is via the NX Client, NX Mobile and NX Cloud
                 only. No operating system level access.
               </Typography>
