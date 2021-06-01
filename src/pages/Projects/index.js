@@ -13,6 +13,7 @@ import EditProjectDialog from './EditProjectDialog';
 import AddIcon from '@material-ui/icons/Add';
 import FloatingActionButton from '../../components/FloatingActionButton';
 import AttachmentsContainer from '../../components/AttachmentsContainer';
+import { format } from 'date-fns';
 
 const Projects = (props) => {
   const { push } = useHistory();
@@ -110,6 +111,7 @@ const Projects = (props) => {
       )}
       <Container disableGutters maxWidth='lg'>
         <MaterialTable
+          title={`Projects ${format(new Date(), 'yyyy-MM-dd')}`}
           isLoading={!projects}
           icons={tableColumns}
           columns={columnSchema}
