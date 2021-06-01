@@ -120,7 +120,8 @@ const Projects = (props) => {
             minBodyHeight: window.innerHeight / 1.5,
             maxBodyHeight: window.innerHeight / 1.5,
             pageSize: 10,
-            pageSizeOptions: [10, 20, 50, 100]
+            pageSizeOptions: [10, 20, 50, 100],
+            exportButton: true
           }}
           onRowClick={(event, rowData) =>
             push(`/projects/${rowData.projectId}`)
